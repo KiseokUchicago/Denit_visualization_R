@@ -476,16 +476,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomKiseokUchicagoDenitvisualizationRtree8c7b9362b43090956821074fa7d202d544bb99ectargetblank8c7b936a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/KiseokUchicago/Denit_visualization_R/tree/8c7b9362b43090956821074fa7d202d544bb99ec" target="_blank">8c7b936</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomKiseokUchicagoDenitvisualizationRtree61dee2a64ccfe50a1972f31b677294dcd677fd09targetblank61dee2aa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/KiseokUchicago/Denit_visualization_R/tree/61dee2a64ccfe50a1972f31b677294dcd677fd09" target="_blank">61dee2a</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomKiseokUchicagoDenitvisualizationRtree8c7b9362b43090956821074fa7d202d544bb99ectargetblank8c7b936a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomKiseokUchicagoDenitvisualizationRtree61dee2a64ccfe50a1972f31b677294dcd677fd09targetblank61dee2aa" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/KiseokUchicago/Denit_visualization_R/tree/8c7b9362b43090956821074fa7d202d544bb99ec" target="_blank">8c7b936</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/KiseokUchicago/Denit_visualization_R/tree/61dee2a64ccfe50a1972f31b677294dcd677fd09" target="_blank">61dee2a</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -495,9 +495,14 @@ Ignored files:
     Ignored:    .Rproj.user/
 
 Untracked files:
+    Untracked:  data/210922_Griess_sample_plate1-investigating.xlsx
     Untracked:  data/210922_Griess_sample_plate1.xlsx
     Untracked:  data/dry_weight_curve(9.5.21).xlsx
     Untracked:  data/pH_data(9.14.21).xlsx
+    Untracked:  df_NO2NO3.xlsx
+
+Unstaged changes:
+    Modified:   analysis/index.Rmd
 
 </code></pre>
 <p>
@@ -536,6 +541,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/KiseokUchicago/Denit_visualization_R/blob/61dee2a64ccfe50a1972f31b677294dcd677fd09/analysis/Soil_extraction_method_Griess.Rmd" target="_blank">61dee2a</a>
+</td>
+<td>
+KiseokUchicago
+</td>
+<td>
+2021-09-24
+</td>
+<td>
+wflow_publish(“analysis/Soil_extraction_method_Griess.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/KiseokUchicago/Denit_visualization_R/390659b56a5e91f40a41aeb2f44107f88ec363ab/docs/Soil_extraction_method_Griess.html" target="_blank">390659b</a>
+</td>
+<td>
+KiseokUchicago
+</td>
+<td>
+2021-09-24
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -613,6 +652,7 @@ library(gtools)
 library(devtools)
 library(openxlsx)
 library(ape)
+library(stringr)
 
 ## theme for ggplot
 mytheme &lt;- theme_bw() + 
@@ -657,26 +697,221 @@ my_color_collection &lt;- c(
 </div>
 <div id="import-data-table-from-python-code" class="section level2">
 <h2>1. Import data table from python code</h2>
+<p>When I did the experiment, B05 and B06 was switched. D05, D06 also switched. F05, F06 switched.</p>
 <pre class="r"><code># import file
-setwd(&quot;C:/Users/there/Desktop/Dr_Kuehn/13_denitrification/03_Plate_reader_measurements/210923_Extract_method&quot;)</code></pre>
-<pre><code>Error in setwd(&quot;C:/Users/there/Desktop/Dr_Kuehn/13_denitrification/03_Plate_reader_measurements/210923_Extract_method&quot;): cannot change working directory</code></pre>
-<pre class="r"><code>df_extract &lt;- openxlsx::read.xlsx(&quot;210922_Griess_sample_plate1.xlsx&quot;)</code></pre>
-<pre><code>Error in read.xlsx.default(&quot;210922_Griess_sample_plate1.xlsx&quot;): File does not exist.</code></pre>
-<pre class="r"><code>class(df_extract)</code></pre>
-<pre><code>Error in eval(expr, envir, enclos): object &#39;df_extract&#39; not found</code></pre>
+df_extract &lt;- openxlsx::read.xlsx(&quot;data/210922_Griess_sample_plate1.xlsx&quot;)
+class(df_extract)</code></pre>
+<pre><code>[1] &quot;data.frame&quot;</code></pre>
 <pre class="r"><code>head(df_extract)</code></pre>
-<pre><code>Error in head(df_extract): object &#39;df_extract&#39; not found</code></pre>
+<pre><code>  Well          SampleID          Sample Buffer Soil_weight   Method
+1  A01   KCl_1g_Spin_a_1   KCl_1g_Spin_a    KCl           1 Spindown
+2  A02   KCl_1g_Spin_b_1   KCl_1g_Spin_b    KCl           1 Spindown
+3  A03 K2SO4_1g_Spin_a_1 K2SO4_1g_Spin_a  K2SO4           1 Spindown
+4  A04 K2SO4_1g_Spin_b_1 K2SO4_1g_Spin_b  K2SO4           1 Spindown
+5  A05   H2O_1g_Spin_a_1   H2O_1g_Spin_a    H2O           1 Spindown
+6  A06   H2O_1g_Spin_b_1   H2O_1g_Spin_b    H2O           1 Spindown
+         Spike_in NO2_OD540 NO2NO3_OD540     NO2_mM NO2NO3_mM
+1 Original_sample   0.08610      0.16430 0.04397089 0.1477700
+2   Spiked_sample   0.43815      0.59715 0.21573012 0.5412232
+3 Original_sample   0.10460      0.17260 0.05287393 0.1551473
+4   Spiked_sample   0.39900      0.54640 0.19637972 0.4941345
+5 Original_sample   0.10020      0.14310 0.05075525 0.1289551
+6   Spiked_sample   0.40780      0.52120 0.20072364 0.4708508</code></pre>
+<pre class="r"><code>colnames(df_extract)</code></pre>
+<pre><code> [1] &quot;Well&quot;         &quot;SampleID&quot;     &quot;Sample&quot;       &quot;Buffer&quot;       &quot;Soil_weight&quot; 
+ [6] &quot;Method&quot;       &quot;Spike_in&quot;     &quot;NO2_OD540&quot;    &quot;NO2NO3_OD540&quot; &quot;NO2_mM&quot;      
+[11] &quot;NO2NO3_mM&quot;   </code></pre>
 <pre class="r"><code># remove NA
 dim(df_extract)</code></pre>
-<pre><code>Error in eval(expr, envir, enclos): object &#39;df_extract&#39; not found</code></pre>
-<pre class="r"><code>df_extract &lt;- na.omit(df_extract)</code></pre>
-<pre><code>Error in na.omit(df_extract): object &#39;df_extract&#39; not found</code></pre>
-<pre class="r"><code>dim(df_extract)</code></pre>
-<pre><code>Error in eval(expr, envir, enclos): object &#39;df_extract&#39; not found</code></pre>
+<pre><code>[1] 84 11</code></pre>
+<pre class="r"><code>df_extract &lt;- na.omit(df_extract)
+dim(df_extract)</code></pre>
+<pre><code>[1] 84 11</code></pre>
+<pre class="r"><code># Check
+df_extract %&gt;% filter(Well ==&quot;B06&quot;)</code></pre>
+<pre><code>  Well          SampleID          Sample Buffer Soil_weight   Method
+1  B06 H2O_0.1g_Spin_b_1 H2O_0.1g_Spin_b    H2O         0.1 Spindown
+       Spike_in NO2_OD540 NO2NO3_OD540    NO2_mM NO2NO3_mM
+1 Spiked_sample    0.3987       0.5315 0.1962317 0.4803598</code></pre>
+<pre class="r"><code>df_extract %&gt;% filter(Well ==&quot;D05&quot;)</code></pre>
+<pre><code>  Well          SampleID          Sample Buffer Soil_weight   Method
+1  D05 H2O_0.1g_Spin_a_2 H2O_0.1g_Spin_a    H2O         0.1 Spindown
+         Spike_in NO2_OD540 NO2NO3_OD540     NO2_mM NO2NO3_mM
+1 Original_sample   0.11235        0.181 0.05660752 0.1626199</code></pre>
+<pre class="r"><code>df_extract %&gt;% filter(Well ==&quot;F05&quot;)</code></pre>
+<pre><code>  Well          SampleID          Sample Buffer Soil_weight   Method
+1  F05 H2O_0.1g_Spin_a_3 H2O_0.1g_Spin_a    H2O         0.1 Spindown
+         Spike_in NO2_OD540 NO2NO3_OD540   NO2_mM NO2NO3_mM
+1 Original_sample   0.11515      0.18815 0.057957 0.1689855</code></pre>
+</div>
+<div id="get-average-and-standard-deviation" class="section level2">
+<h2>2. Get average and standard deviation</h2>
+<pre class="r"><code># average and standard deviation
+df_NO2NO3 &lt;- df_extract %&gt;% group_by(Sample, Buffer, Soil_weight, Method, Spike_in) %&gt;% summarise(Ave_NO2_mM = mean(NO2_mM), Std_NO2_mM = sd(NO2_mM), Ave_NO2NO3_mM = mean(NO2NO3_mM), Std_NO2NO3_mM = sd(NO2NO3_mM), Ave_NO3_mM = mean(NO2NO3_mM - NO2_mM), Std_NO3_mM = sd(NO2NO3_mM - NO2_mM)) %&gt;% ungroup()
+# NO3_mM = NO2NO3_mM - NO2_mM
+
+# Factor in orders
+df_NO2NO3$Buffer &lt;-  factor(df_NO2NO3$Buffer, levels = c(&quot;KCl&quot;,&quot;K2SO4&quot;,&quot;H2O&quot;))
+
+# Put is values for known spike_ins
+df_spike_in &lt;- df_NO2NO3 %&gt;% filter(Spike_in == &quot;Original_sample&quot;)
+df_spike_in</code></pre>
+<pre><code># A tibble: 15 x 11
+   Sample Buffer Soil_weight Method Spike_in Ave_NO2_mM Std_NO2_mM Ave_NO2NO3_mM
+   &lt;chr&gt;  &lt;fct&gt;        &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;         &lt;dbl&gt;      &lt;dbl&gt;         &lt;dbl&gt;
+ 1 H2O_0~ H2O            0.1 Filter Origina~     0.0472   0.000834         0.172
+ 2 H2O_0~ H2O            0.1 Spind~ Origina~     0.0568   0.00101          0.165
+ 3 H2O_1~ H2O            1   Filter Origina~     0.0437   0.000412         0.161
+ 4 H2O_1~ H2O            1   Spind~ Origina~     0.0623   0.0101           0.147
+ 5 H2O_1~ H2O            1   Whatm~ Origina~     0.0548   0.000477         0.160
+ 6 K2SO4~ K2SO4          0.1 Filter Origina~     0.0439   0.00162          0.168
+ 7 K2SO4~ K2SO4          0.1 Spind~ Origina~     0.0561   0.00324          0.149
+ 8 K2SO4~ K2SO4          1   Filter Origina~     0.0398   0.00105          0.163
+ 9 K2SO4~ K2SO4          1   Spind~ Origina~     0.0542   0.00221          0.157
+10 K2SO4~ K2SO4          1   Whatm~ Origina~     0.0383   0.000408         0.170
+11 KCl_0~ KCl            0.1 Filter Origina~     0.0326   0.000163         0.161
+12 KCl_0~ KCl            0.1 Spind~ Origina~     0.0457   0.000791         0.161
+13 KCl_1~ KCl            1   Filter Origina~     0.0328   0.00114          0.157
+14 KCl_1~ KCl            1   Spind~ Origina~     0.0460   0.00174          0.147
+15 KCl_1~ KCl            1   Whatm~ Origina~     0.0340   0.000543         0.167
+# ... with 3 more variables: Std_NO2NO3_mM &lt;dbl&gt;, Ave_NO3_mM &lt;dbl&gt;,
+#   Std_NO3_mM &lt;dbl&gt;</code></pre>
+<pre class="r"><code># increase the concentration as the spike in &amp; make standard deviation to 0
+df_spike_in2 &lt;- df_spike_in %&gt;%  mutate(Ave_NO2_mM = Ave_NO2_mM + 0.2, Ave_NO2NO3_mM = Ave_NO2NO3_mM + 0.4, Ave_NO3_mM = Ave_NO3_mM + 0.2, Std_NO2_mM = 0, Std_NO2NO3_mM = 0, Std_NO3_mM = 0) 
+
+# change Sample name
+df_spike_in2$Sample &lt;- str_replace(df_spike_in2$Sample,&quot;$&quot;,&quot;_spike_in&quot;)
+
+# label in Spike_in column
+df_spike_in2$Spike_in &lt;- &quot;Assuming_full_extraction&quot;
+df_spike_in2$Spike_in</code></pre>
+<pre><code> [1] &quot;Assuming_full_extraction&quot; &quot;Assuming_full_extraction&quot;
+ [3] &quot;Assuming_full_extraction&quot; &quot;Assuming_full_extraction&quot;
+ [5] &quot;Assuming_full_extraction&quot; &quot;Assuming_full_extraction&quot;
+ [7] &quot;Assuming_full_extraction&quot; &quot;Assuming_full_extraction&quot;
+ [9] &quot;Assuming_full_extraction&quot; &quot;Assuming_full_extraction&quot;
+[11] &quot;Assuming_full_extraction&quot; &quot;Assuming_full_extraction&quot;
+[13] &quot;Assuming_full_extraction&quot; &quot;Assuming_full_extraction&quot;
+[15] &quot;Assuming_full_extraction&quot;</code></pre>
+<pre class="r"><code>dim(df_spike_in2)</code></pre>
+<pre><code>[1] 15 11</code></pre>
+<pre class="r"><code># Bind this df to the original dataframe df_NO2NO3
+dim(df_NO2NO3)</code></pre>
+<pre><code>[1] 30 11</code></pre>
+<pre class="r"><code>df_NO2NO3 &lt;- rbind(df_NO2NO3, df_spike_in2)
+dim(df_NO2NO3)</code></pre>
+<pre><code>[1] 45 11</code></pre>
+<pre class="r"><code>tail(df_NO2NO3)</code></pre>
+<pre><code># A tibble: 6 x 11
+  Sample  Buffer Soil_weight Method Spike_in Ave_NO2_mM Std_NO2_mM Ave_NO2NO3_mM
+  &lt;chr&gt;   &lt;fct&gt;        &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;         &lt;dbl&gt;      &lt;dbl&gt;         &lt;dbl&gt;
+1 K2SO4_~ K2SO4          1   Whatm~ Assumin~      0.238          0         0.570
+2 KCl_0.~ KCl            0.1 Filter Assumin~      0.233          0         0.561
+3 KCl_0.~ KCl            0.1 Spind~ Assumin~      0.246          0         0.561
+4 KCl_1g~ KCl            1   Filter Assumin~      0.233          0         0.557
+5 KCl_1g~ KCl            1   Spind~ Assumin~      0.246          0         0.547
+6 KCl_1g~ KCl            1   Whatm~ Assumin~      0.234          0         0.567
+# ... with 3 more variables: Std_NO2NO3_mM &lt;dbl&gt;, Ave_NO3_mM &lt;dbl&gt;,
+#   Std_NO3_mM &lt;dbl&gt;</code></pre>
+<pre class="r"><code>df_NO2NO3$Spike_in</code></pre>
+<pre><code> [1] &quot;Original_sample&quot;          &quot;Spiked_sample&quot;           
+ [3] &quot;Original_sample&quot;          &quot;Spiked_sample&quot;           
+ [5] &quot;Original_sample&quot;          &quot;Spiked_sample&quot;           
+ [7] &quot;Original_sample&quot;          &quot;Spiked_sample&quot;           
+ [9] &quot;Original_sample&quot;          &quot;Spiked_sample&quot;           
+[11] &quot;Original_sample&quot;          &quot;Spiked_sample&quot;           
+[13] &quot;Original_sample&quot;          &quot;Spiked_sample&quot;           
+[15] &quot;Original_sample&quot;          &quot;Spiked_sample&quot;           
+[17] &quot;Original_sample&quot;          &quot;Spiked_sample&quot;           
+[19] &quot;Original_sample&quot;          &quot;Spiked_sample&quot;           
+[21] &quot;Original_sample&quot;          &quot;Spiked_sample&quot;           
+[23] &quot;Original_sample&quot;          &quot;Spiked_sample&quot;           
+[25] &quot;Original_sample&quot;          &quot;Spiked_sample&quot;           
+[27] &quot;Original_sample&quot;          &quot;Spiked_sample&quot;           
+[29] &quot;Original_sample&quot;          &quot;Spiked_sample&quot;           
+[31] &quot;Assuming_full_extraction&quot; &quot;Assuming_full_extraction&quot;
+[33] &quot;Assuming_full_extraction&quot; &quot;Assuming_full_extraction&quot;
+[35] &quot;Assuming_full_extraction&quot; &quot;Assuming_full_extraction&quot;
+[37] &quot;Assuming_full_extraction&quot; &quot;Assuming_full_extraction&quot;
+[39] &quot;Assuming_full_extraction&quot; &quot;Assuming_full_extraction&quot;
+[41] &quot;Assuming_full_extraction&quot; &quot;Assuming_full_extraction&quot;
+[43] &quot;Assuming_full_extraction&quot; &quot;Assuming_full_extraction&quot;
+[45] &quot;Assuming_full_extraction&quot;</code></pre>
+<pre class="r"><code># Factor in orders
+df_NO2NO3$Spike_in &lt;-  factor(df_NO2NO3$Spike_in, levels = c(&quot;Spiked_sample&quot;,&quot;Original_sample&quot;, &quot;Assuming_full_extraction&quot;))
+
+df_NO2NO3$Spike_in</code></pre>
+<pre><code> [1] Original_sample          Spiked_sample            Original_sample         
+ [4] Spiked_sample            Original_sample          Spiked_sample           
+ [7] Original_sample          Spiked_sample            Original_sample         
+[10] Spiked_sample            Original_sample          Spiked_sample           
+[13] Original_sample          Spiked_sample            Original_sample         
+[16] Spiked_sample            Original_sample          Spiked_sample           
+[19] Original_sample          Spiked_sample            Original_sample         
+[22] Spiked_sample            Original_sample          Spiked_sample           
+[25] Original_sample          Spiked_sample            Original_sample         
+[28] Spiked_sample            Original_sample          Spiked_sample           
+[31] Assuming_full_extraction Assuming_full_extraction Assuming_full_extraction
+[34] Assuming_full_extraction Assuming_full_extraction Assuming_full_extraction
+[37] Assuming_full_extraction Assuming_full_extraction Assuming_full_extraction
+[40] Assuming_full_extraction Assuming_full_extraction Assuming_full_extraction
+[43] Assuming_full_extraction Assuming_full_extraction Assuming_full_extraction
+Levels: Spiked_sample Original_sample Assuming_full_extraction</code></pre>
+<pre class="r"><code>write.xlsx(df_NO2NO3,&quot;df_NO2NO3.xlsx&quot;)</code></pre>
 </div>
 <div id="plot-data" class="section level2">
-<h2>2. Plot data</h2>
-<pre class="r"><code># (1) plot
+<h2>3. Plot data</h2>
+<p>4 graphs: (1) 1g &amp; Spindown method (2) 0.1g &amp; Spindown method (3) 1g &amp; filtered method (4) 0.1g &amp; Spindown method</p>
+<pre class="r"><code># First, let&#39;s see extraction efficiency soil NO2
+
+# (1) 1g &amp; Spindown method
+colnames(df_NO2NO3)</code></pre>
+<pre><code> [1] &quot;Sample&quot;        &quot;Buffer&quot;        &quot;Soil_weight&quot;   &quot;Method&quot;       
+ [5] &quot;Spike_in&quot;      &quot;Ave_NO2_mM&quot;    &quot;Std_NO2_mM&quot;    &quot;Ave_NO2NO3_mM&quot;
+ [9] &quot;Std_NO2NO3_mM&quot; &quot;Ave_NO3_mM&quot;    &quot;Std_NO3_mM&quot;   </code></pre>
+<pre class="r"><code>df_spin1 &lt;- df_NO2NO3 %&gt;% filter(Method == &quot;Spindown&quot;, Soil_weight ==1)
+dim(df_spin1)</code></pre>
+<pre><code>[1]  9 11</code></pre>
+<pre class="r"><code>df_spin1$Spike_in</code></pre>
+<pre><code>[1] Original_sample          Spiked_sample            Original_sample         
+[4] Spiked_sample            Original_sample          Spiked_sample           
+[7] Assuming_full_extraction Assuming_full_extraction Assuming_full_extraction
+Levels: Spiked_sample Original_sample Assuming_full_extraction</code></pre>
+<pre class="r"><code>df_spin1 %&gt;% filter(Spike_in == &quot;Assuming_full_extraction&quot;)</code></pre>
+<pre><code># A tibble: 3 x 11
+  Sample  Buffer Soil_weight Method Spike_in Ave_NO2_mM Std_NO2_mM Ave_NO2NO3_mM
+  &lt;chr&gt;   &lt;fct&gt;        &lt;dbl&gt; &lt;chr&gt;  &lt;fct&gt;         &lt;dbl&gt;      &lt;dbl&gt;         &lt;dbl&gt;
+1 H2O_1g~ H2O              1 Spind~ Assumin~      0.262          0         0.547
+2 K2SO4_~ K2SO4            1 Spind~ Assumin~      0.254          0         0.557
+3 KCl_1g~ KCl              1 Spind~ Assumin~      0.246          0         0.547
+# ... with 3 more variables: Std_NO2NO3_mM &lt;dbl&gt;, Ave_NO3_mM &lt;dbl&gt;,
+#   Std_NO3_mM &lt;dbl&gt;</code></pre>
+<pre class="r"><code>df_spin1 %&gt;% filter(Spike_in == &quot;Spiked_sample&quot;)</code></pre>
+<pre><code># A tibble: 3 x 11
+  Sample  Buffer Soil_weight Method Spike_in Ave_NO2_mM Std_NO2_mM Ave_NO2NO3_mM
+  &lt;chr&gt;   &lt;fct&gt;        &lt;dbl&gt; &lt;chr&gt;  &lt;fct&gt;         &lt;dbl&gt;      &lt;dbl&gt;         &lt;dbl&gt;
+1 H2O_1g~ H2O              1 Spind~ Spiked_~      0.201    0.00198         0.484
+2 K2SO4_~ K2SO4            1 Spind~ Spiked_~      0.199    0.00278         0.489
+3 KCl_1g~ KCl              1 Spind~ Spiked_~      0.214    0.00142         0.539
+# ... with 3 more variables: Std_NO2NO3_mM &lt;dbl&gt;, Ave_NO3_mM &lt;dbl&gt;,
+#   Std_NO3_mM &lt;dbl&gt;</code></pre>
+<pre class="r"><code>ggplot(df_spin1, aes(x=Buffer, y=Ave_NO2_mM, color=Spike_in, group=Spike_in)) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO2- (mM) \n&quot;) +
+  xlab(&quot;\n Extraction buffer&quot;) +
+  scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;(1) Soil weight 1g &amp; Spindown method \n&quot;) +
+  # label
+  geom_text(aes(label = round(Ave_NO2_mM,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;)+
+  mytheme_2d</code></pre>
+<p><img src="figure/Soil_extraction_method_Griess.Rmd/unnamed-chunk-4-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># (2) 
+
+
+# (1) plot
 ggplot(df_extract, aes(x=Method, y=pH, color=Solution, group=Solution)) +
   geom_point(size=2.5, shape=21) +
   geom_line(size=1)+
@@ -688,7 +923,8 @@ ggplot(df_extract, aes(x=Method, y=pH, color=Solution, group=Solution)) +
   # label
   geom_label()+
   mytheme_2d</code></pre>
-<pre><code>Error in ggplot(df_extract, aes(x = Method, y = pH, color = Solution, : object &#39;df_extract&#39; not found</code></pre>
+<pre><code>Error in FUN(X[[i]], ...): object &#39;Solution&#39; not found</code></pre>
+<p><img src="figure/Soil_extraction_method_Griess.Rmd/unnamed-chunk-4-2.png" width="1056" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -714,31 +950,32 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] ape_5.5            openxlsx_4.2.3     devtools_2.4.0     usethis_2.0.1     
- [5] gtools_3.8.2       reshape2_1.4.4     readxl_1.3.1       magrittr_2.0.1    
- [9] vegan_2.5-7        lattice_0.20-41    permute_0.9-5      RColorBrewer_1.1-2
-[13] ggplot2_3.3.3      dplyr_1.0.5        workflowr_1.6.2   
+ [1] stringr_1.4.0      ape_5.5            openxlsx_4.2.3     devtools_2.4.0    
+ [5] usethis_2.0.1      gtools_3.8.2       reshape2_1.4.4     readxl_1.3.1      
+ [9] magrittr_2.0.1     vegan_2.5-7        lattice_0.20-41    permute_0.9-5     
+[13] RColorBrewer_1.1-2 ggplot2_3.3.3      dplyr_1.0.5        workflowr_1.6.2   
 
 loaded via a namespace (and not attached):
- [1] pkgload_1.2.1     sass_0.4.0        tidyr_1.1.3       jsonlite_1.7.2   
- [5] splines_4.0.3     bslib_0.2.5.1     assertthat_0.2.1  cellranger_1.1.0 
- [9] remotes_2.4.0     yaml_2.2.1        sessioninfo_1.1.1 pillar_1.6.0     
-[13] backports_1.2.1   glue_1.4.2        digest_0.6.27     promises_1.2.0.1 
-[17] colorspace_2.0-0  htmltools_0.5.1.1 httpuv_1.6.0      Matrix_1.2-18    
-[21] plyr_1.8.6        pkgconfig_2.0.3   broom_0.7.9       purrr_0.3.4      
-[25] scales_1.1.1      processx_3.5.1    whisker_0.4       later_1.2.0      
-[29] git2r_0.28.0      tibble_3.0.4      mgcv_1.8-33       generics_0.1.0   
-[33] ellipsis_0.3.1    cachem_1.0.4      withr_2.4.2       cli_3.0.1        
-[37] crayon_1.4.1      ps_1.6.0          memoise_2.0.0     evaluate_0.14    
-[41] fs_1.5.0          fansi_0.4.2       nlme_3.1-149      MASS_7.3-53      
-[45] forcats_0.5.1     pkgbuild_1.2.0    prettyunits_1.1.1 tools_4.0.3      
-[49] lifecycle_1.0.0   stringr_1.4.0     munsell_0.5.0     zip_2.1.1        
-[53] cluster_2.1.0     callr_3.7.0       compiler_4.0.3    jquerylib_0.1.4  
-[57] rlang_0.4.10      grid_4.0.3        rstudioapi_0.13   rmarkdown_2.9    
-[61] testthat_3.0.2    gtable_0.3.0      DBI_1.1.1         R6_2.5.0         
-[65] knitr_1.33        fastmap_1.1.0     utf8_1.1.4        rprojroot_2.0.2  
-[69] desc_1.3.0        stringi_1.5.3     parallel_4.0.3    Rcpp_1.0.5       
-[73] vctrs_0.3.6       dbplyr_2.1.1      tidyselect_1.1.1  xfun_0.22        </code></pre>
+ [1] nlme_3.1-149      fs_1.5.0          rprojroot_2.0.2   tools_4.0.3      
+ [5] backports_1.2.1   bslib_0.2.5.1     utf8_1.1.4        R6_2.5.0         
+ [9] DBI_1.1.1         mgcv_1.8-33       colorspace_2.0-0  withr_2.4.2      
+[13] tidyselect_1.1.1  prettyunits_1.1.1 processx_3.5.1    compiler_4.0.3   
+[17] git2r_0.28.0      cli_3.0.1         desc_1.3.0        sass_0.4.0       
+[21] scales_1.1.1      callr_3.7.0       digest_0.6.27     rmarkdown_2.9    
+[25] pkgconfig_2.0.3   htmltools_0.5.1.1 sessioninfo_1.1.1 dbplyr_2.1.1     
+[29] fastmap_1.1.0     highr_0.9         rlang_0.4.10      rstudioapi_0.13  
+[33] jquerylib_0.1.4   generics_0.1.0    farver_2.1.0      jsonlite_1.7.2   
+[37] zip_2.1.1         Matrix_1.2-18     Rcpp_1.0.5        munsell_0.5.0    
+[41] fansi_0.4.2       lifecycle_1.0.0   stringi_1.5.3     whisker_0.4      
+[45] yaml_2.2.1        MASS_7.3-53       pkgbuild_1.2.0    plyr_1.8.6       
+[49] grid_4.0.3        parallel_4.0.3    promises_1.2.0.1  forcats_0.5.1    
+[53] crayon_1.4.1      splines_4.0.3     knitr_1.33        ps_1.6.0         
+[57] pillar_1.6.0      pkgload_1.2.1     glue_1.4.2        evaluate_0.14    
+[61] remotes_2.4.0     vctrs_0.3.6       httpuv_1.6.0      testthat_3.0.2   
+[65] cellranger_1.1.0  gtable_0.3.0      purrr_0.3.4       tidyr_1.1.3      
+[69] assertthat_0.2.1  cachem_1.0.4      xfun_0.22         broom_0.7.9      
+[73] later_1.2.0       tibble_3.0.4      memoise_2.0.0     cluster_2.1.0    
+[77] ellipsis_0.3.1   </code></pre>
 </div>
 </div>
 
