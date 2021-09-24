@@ -10,4 +10,6 @@ editor_options:
 
 Welcome to Kiseok Denitrification data visualization website.
 
-* [Soil_extraction_method_Griess](Soil_extraction_method_Griess.html)
+* [Soil_drying_test(9/5/21)](Soil_drying_curve.html)
+* [Soil_pH_test(9/14/21)](Soil_pH_method.html)
+* [Soil_extraction_method_Griess(9/23/21)](Soil_extraction_method_Griess.html)

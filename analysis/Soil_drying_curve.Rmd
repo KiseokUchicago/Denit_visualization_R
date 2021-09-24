@@ -1,5 +1,5 @@
 ---
-title: "Soil_extraction_method_Griess"
+title: "Soil_drying_curve"
 author: "KiseokUchicago"
 date: "2021-09-24"
 output: workflowr::wflow_html
@@ -12,8 +12,10 @@ knitr::opts_chunk$set(fig.width=11, fig.height=9,
                       error=TRUE, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE)
 ```
 
-## Soil extraction method testing (Griess assay)
+## Soil drying method testing
+
 Researcher: **Kiseok Lee** \
+Data: 9/5/21 \
 Lab: **Seppe Kuehn**
 
 ```{r}
@@ -74,34 +76,37 @@ my_color_collection <- c(
 
 ```
 
-## 1. Import data table from python code
+## 1. Import data
 ```{r}
 # import file
-setwd("C:/Users/there/Desktop/Dr_Kuehn/13_denitrification/03_Plate_reader_measurements/210923_Extract_method")
-df_extract <- openxlsx::read.xlsx("210922_Griess_sample_plate1.xlsx")
-class(df_extract)
-head(df_extract)
+df_dry <- openxlsx::read.xlsx("data/dry_weight_curve(9.5.21).xlsx")
+colnames(df_dry) <- c("Temperature",0,1,2,3,4,5,6)
+df_dry_gg <- melt(df_dry, id.vars = c("Temperature"), variable.name = "Day",value.name = "Weight")
+df_dry_gg$Day <- as.numeric(df_dry_gg$Day)
+df_dry_gg$Temperature <- as.factor(df_dry_gg$Temperature)
+class(df_dry_gg$Day)
+class(df_dry_gg$Temperature)
+dim(df_dry_gg)
 
 # remove NA
-dim(df_extract)
-df_extract <- na.omit(df_extract)
-dim(df_extract)
+dim(df_dry_gg)
+df_dry_gg2 <- na.omit(df_dry_gg)
+dim(df_dry_gg2)
+
+
 ```
 
-## 2. Plot data
+## 2. Plot
 ```{r}
-# (1) plot
-ggplot(df_extract, aes(x=Method, y=pH, color=Solution, group=Solution)) +
+# plot
+ggplot(df_dry_gg2, aes(x=Day,y=Weight, color=Temperature, group=Temperature)) +
   geom_point(size=2.5, shape=21) +
   geom_line(size=1)+
   scale_fill_brewer(palette='Set2') +
-  ylab("pH \n") +
-  xlab("\n Settling method") +
-  scale_y_continuous(breaks = seq(6,7,0.05), limits=c(6.1, 7))+
-  ggtitle("pH difference by method & solution \n") +
-  # label
-  geom_label()+
+  ylab("Weight(g) \n") +
+  xlab("\n Days(every 24hr)") +
+  scale_x_continuous(breaks = c(1,2,3,4,5,6,7), labels=c("0","1","2","3","4","5","6"))+
+  ggtitle("Weight change in dry oven \n") +
   mytheme_2d
-
 ```
 
