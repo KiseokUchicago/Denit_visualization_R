@@ -476,25 +476,32 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomKiseokUchicagoDenitvisualizationRtree61dee2a64ccfe50a1972f31b677294dcd677fd09targetblank61dee2aa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/KiseokUchicago/Denit_visualization_R/tree/61dee2a64ccfe50a1972f31b677294dcd677fd09" target="_blank">61dee2a</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomKiseokUchicagoDenitvisualizationRtree715b4adcee0ef2004090a8a02ad2d9f29b4a2e40targetblank715b4ada"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/KiseokUchicago/Denit_visualization_R/tree/715b4adcee0ef2004090a8a02ad2d9f29b4a2e40" target="_blank">715b4ad</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomKiseokUchicagoDenitvisualizationRtree61dee2a64ccfe50a1972f31b677294dcd677fd09targetblank61dee2aa" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomKiseokUchicagoDenitvisualizationRtree715b4adcee0ef2004090a8a02ad2d9f29b4a2e40targetblank715b4ada" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/KiseokUchicago/Denit_visualization_R/tree/61dee2a64ccfe50a1972f31b677294dcd677fd09" target="_blank">61dee2a</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/KiseokUchicago/Denit_visualization_R/tree/715b4adcee0ef2004090a8a02ad2d9f29b4a2e40" target="_blank">715b4ad</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 </p>
 <pre><code>
 Ignored files:
+    Ignored:    .Rhistory
     Ignored:    .Rproj.user/
 
 Untracked files:
+    Untracked:  Rplot.pdf
+    Untracked:  Soil0.1g_filter.pdf
+    Untracked:  Soil0.1g_spindown_7_10.pdf
+    Untracked:  Soil1g_filter_7_10.pdf
+    Untracked:  Soil1g_spindown_7_10.pdf
+    Untracked:  Soil1g_whatman_7_10.pdf
     Untracked:  data/210922_Griess_sample_plate1-investigating.xlsx
     Untracked:  data/210922_Griess_sample_plate1.xlsx
     Untracked:  data/dry_weight_curve(9.5.21).xlsx
@@ -541,6 +548,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/KiseokUchicago/Denit_visualization_R/blob/715b4adcee0ef2004090a8a02ad2d9f29b4a2e40/analysis/Soil_extraction_method_Griess.Rmd" target="_blank">715b4ad</a>
+</td>
+<td>
+KiseokUchicago
+</td>
+<td>
+2021-09-24
+</td>
+<td>
+wflow_publish(“analysis/Soil_extraction_method_Griess.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/KiseokUchicago/Denit_visualization_R/39bfa16bde709732443756bcff96cfd5ed50877a/docs/Soil_extraction_method_Griess.html" target="_blank">39bfa16</a>
+</td>
+<td>
+KiseokUchicago
+</td>
+<td>
+2021-09-24
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -656,6 +697,7 @@ library(stringr)
 
 ## theme for ggplot
 mytheme &lt;- theme_bw() + 
+  theme(text = element_text(family=&quot;serif&quot;)) +
   theme(plot.title = element_text(size = 19,hjust = 0.5, family=&quot;serif&quot;)) + 
   theme(axis.title.x = element_text(size = 17,hjust = 0.5, family=&quot;serif&quot;)) + 
   theme(axis.title.y = element_text(size = 17,hjust = 0.5, family=&quot;serif&quot;)) + 
@@ -666,6 +708,7 @@ mytheme &lt;- theme_bw() +
   theme(axis.ticks = element_line(size = 1.1))
 
 mytheme_2d &lt;- theme_bw() + 
+  theme(text = element_text(family=&quot;serif&quot;)) +
   theme(plot.title = element_text(size = 19,hjust = 0.5, family=&quot;serif&quot;)) + 
   theme(axis.title.x = element_text(size = 17,hjust = 0.5, family=&quot;serif&quot;)) + 
   theme(axis.title.y = element_text(size = 17,hjust = 0.5, family=&quot;serif&quot;)) + 
@@ -861,7 +904,7 @@ Levels: Spiked_sample Original_sample Assuming_full_extraction</code></pre>
 </div>
 <div id="plot-data" class="section level2">
 <h2>3. Plot data</h2>
-<p>4 graphs: (1) 1g &amp; Spindown method (2) 0.1g &amp; Spindown method (3) 1g &amp; filtered method (4) 0.1g &amp; Spindown method</p>
+<p>4 graphs: (1) Soil 1g &amp; Spindown method (2) Soil 0.1g &amp; Spindown method (3) Soil 1g &amp; filtered(0.22um) method (4) Soil 0.1g &amp; filtered(0.22um) method (5) Soil 1g &amp; Whatman no.42 paper filtered</p>
 <pre class="r"><code># First, let&#39;s see extraction efficiency soil NO2
 
 # (1) 1g &amp; Spindown method
@@ -903,28 +946,241 @@ Levels: Spiked_sample Original_sample Assuming_full_extraction</code></pre>
   ylab(&quot;NO2- (mM) \n&quot;) +
   xlab(&quot;\n Extraction buffer&quot;) +
   scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
-  ggtitle(&quot;(1) Soil weight 1g &amp; Spindown method \n&quot;) +
+  ggtitle(&quot;(1) Soil 1g &amp; Spindown method \n&quot;) +
   # label
-  geom_text(aes(label = round(Ave_NO2_mM,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;)+
+  geom_text(aes(label = round(Ave_NO2_mM,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
   mytheme_2d</code></pre>
 <p><img src="figure/Soil_extraction_method_Griess.Rmd/unnamed-chunk-4-1.png" width="1056" style="display: block; margin: auto;" /></p>
-<pre class="r"><code># (2) 
-
-
-# (1) plot
-ggplot(df_extract, aes(x=Method, y=pH, color=Solution, group=Solution)) +
+<pre class="r"><code># (2) Soil 0.1g &amp; Spindown method
+colnames(df_NO2NO3)</code></pre>
+<pre><code> [1] &quot;Sample&quot;        &quot;Buffer&quot;        &quot;Soil_weight&quot;   &quot;Method&quot;       
+ [5] &quot;Spike_in&quot;      &quot;Ave_NO2_mM&quot;    &quot;Std_NO2_mM&quot;    &quot;Ave_NO2NO3_mM&quot;
+ [9] &quot;Std_NO2NO3_mM&quot; &quot;Ave_NO3_mM&quot;    &quot;Std_NO3_mM&quot;   </code></pre>
+<pre class="r"><code>df_spin0.1 &lt;- df_NO2NO3 %&gt;% filter(Method == &quot;Spindown&quot;, Soil_weight ==0.1)
+dim(df_spin0.1)</code></pre>
+<pre><code>[1]  9 11</code></pre>
+<pre class="r"><code>head(df_spin0.1)</code></pre>
+<pre><code># A tibble: 6 x 11
+  Sample  Buffer Soil_weight Method Spike_in Ave_NO2_mM Std_NO2_mM Ave_NO2NO3_mM
+  &lt;chr&gt;   &lt;fct&gt;        &lt;dbl&gt; &lt;chr&gt;  &lt;fct&gt;         &lt;dbl&gt;      &lt;dbl&gt;         &lt;dbl&gt;
+1 H2O_0.~ H2O            0.1 Spind~ Origina~     0.0568   0.00101          0.165
+2 H2O_0.~ H2O            0.1 Spind~ Spiked_~     0.211    0.0125           0.503
+3 K2SO4_~ K2SO4          0.1 Spind~ Origina~     0.0561   0.00324          0.149
+4 K2SO4_~ K2SO4          0.1 Spind~ Spiked_~     0.207    0.0122           0.506
+5 KCl_0.~ KCl            0.1 Spind~ Origina~     0.0457   0.000791         0.161
+6 KCl_0.~ KCl            0.1 Spind~ Spiked_~     0.214    0.00497          0.529
+# ... with 3 more variables: Std_NO2NO3_mM &lt;dbl&gt;, Ave_NO3_mM &lt;dbl&gt;,
+#   Std_NO3_mM &lt;dbl&gt;</code></pre>
+<pre class="r"><code>df_spin0.1$Spike_in</code></pre>
+<pre><code>[1] Original_sample          Spiked_sample            Original_sample         
+[4] Spiked_sample            Original_sample          Spiked_sample           
+[7] Assuming_full_extraction Assuming_full_extraction Assuming_full_extraction
+Levels: Spiked_sample Original_sample Assuming_full_extraction</code></pre>
+<pre class="r"><code>df_spin0.1 %&gt;% filter(Spike_in == &quot;Assuming_full_extraction&quot;)</code></pre>
+<pre><code># A tibble: 3 x 11
+  Sample  Buffer Soil_weight Method Spike_in Ave_NO2_mM Std_NO2_mM Ave_NO2NO3_mM
+  &lt;chr&gt;   &lt;fct&gt;        &lt;dbl&gt; &lt;chr&gt;  &lt;fct&gt;         &lt;dbl&gt;      &lt;dbl&gt;         &lt;dbl&gt;
+1 H2O_0.~ H2O            0.1 Spind~ Assumin~      0.257          0         0.565
+2 K2SO4_~ K2SO4          0.1 Spind~ Assumin~      0.256          0         0.549
+3 KCl_0.~ KCl            0.1 Spind~ Assumin~      0.246          0         0.561
+# ... with 3 more variables: Std_NO2NO3_mM &lt;dbl&gt;, Ave_NO3_mM &lt;dbl&gt;,
+#   Std_NO3_mM &lt;dbl&gt;</code></pre>
+<pre class="r"><code>df_spin0.1 %&gt;% filter(Spike_in == &quot;Spiked_sample&quot;)</code></pre>
+<pre><code># A tibble: 3 x 11
+  Sample  Buffer Soil_weight Method Spike_in Ave_NO2_mM Std_NO2_mM Ave_NO2NO3_mM
+  &lt;chr&gt;   &lt;fct&gt;        &lt;dbl&gt; &lt;chr&gt;  &lt;fct&gt;         &lt;dbl&gt;      &lt;dbl&gt;         &lt;dbl&gt;
+1 H2O_0.~ H2O            0.1 Spind~ Spiked_~      0.211    0.0125          0.503
+2 K2SO4_~ K2SO4          0.1 Spind~ Spiked_~      0.207    0.0122          0.506
+3 KCl_0.~ KCl            0.1 Spind~ Spiked_~      0.214    0.00497         0.529
+# ... with 3 more variables: Std_NO2NO3_mM &lt;dbl&gt;, Ave_NO3_mM &lt;dbl&gt;,
+#   Std_NO3_mM &lt;dbl&gt;</code></pre>
+<pre class="r"><code>ggplot(df_spin0.1, aes(x=Buffer, y=Ave_NO2_mM, color=Spike_in, group=Spike_in)) +
   geom_point(size=2.5, shape=21) +
   geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
   scale_fill_brewer(palette=&#39;Set2&#39;) +
-  ylab(&quot;pH \n&quot;) +
-  xlab(&quot;\n Settling method&quot;) +
-  scale_y_continuous(breaks = seq(6,7,0.05), limits=c(6.1, 7))+
-  ggtitle(&quot;pH difference by method &amp; solution \n&quot;) +
+  ylab(&quot;NO2- (mM) \n&quot;) +
+  xlab(&quot;\n Extraction buffer&quot;) +
+  scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;(2) Soil 0.1g &amp; Spindown method \n&quot;) +
   # label
-  geom_label()+
+  geom_text(aes(label = round(Ave_NO2_mM,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
   mytheme_2d</code></pre>
-<pre><code>Error in FUN(X[[i]], ...): object &#39;Solution&#39; not found</code></pre>
 <p><img src="figure/Soil_extraction_method_Griess.Rmd/unnamed-chunk-4-2.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># (3) Soil 1g &amp; filtered(0.22um) method
+colnames(df_NO2NO3)</code></pre>
+<pre><code> [1] &quot;Sample&quot;        &quot;Buffer&quot;        &quot;Soil_weight&quot;   &quot;Method&quot;       
+ [5] &quot;Spike_in&quot;      &quot;Ave_NO2_mM&quot;    &quot;Std_NO2_mM&quot;    &quot;Ave_NO2NO3_mM&quot;
+ [9] &quot;Std_NO2NO3_mM&quot; &quot;Ave_NO3_mM&quot;    &quot;Std_NO3_mM&quot;   </code></pre>
+<pre class="r"><code>df_NO2NO3$Method %&gt;% unique()</code></pre>
+<pre><code>[1] &quot;Filter&quot;   &quot;Spindown&quot; &quot;Whatman&quot; </code></pre>
+<pre class="r"><code>df_filt1 &lt;- df_NO2NO3 %&gt;% filter(Method == &quot;Filter&quot;, Soil_weight ==1)
+dim(df_filt1)</code></pre>
+<pre><code>[1]  9 11</code></pre>
+<pre class="r"><code>head(df_filt1)</code></pre>
+<pre><code># A tibble: 6 x 11
+  Sample  Buffer Soil_weight Method Spike_in Ave_NO2_mM Std_NO2_mM Ave_NO2NO3_mM
+  &lt;chr&gt;   &lt;fct&gt;        &lt;dbl&gt; &lt;chr&gt;  &lt;fct&gt;         &lt;dbl&gt;      &lt;dbl&gt;         &lt;dbl&gt;
+1 H2O_1g~ H2O              1 Filter Origina~     0.0437   0.000412         0.161
+2 H2O_1g~ H2O              1 Filter Spiked_~     0.225    0.00466          0.535
+3 K2SO4_~ K2SO4            1 Filter Origina~     0.0398   0.00105          0.163
+4 K2SO4_~ K2SO4            1 Filter Spiked_~     0.227    0.0111           0.535
+5 KCl_1g~ KCl              1 Filter Origina~     0.0328   0.00114          0.157
+6 KCl_1g~ KCl              1 Filter Spiked_~     0.233    0.00288          0.550
+# ... with 3 more variables: Std_NO2NO3_mM &lt;dbl&gt;, Ave_NO3_mM &lt;dbl&gt;,
+#   Std_NO3_mM &lt;dbl&gt;</code></pre>
+<pre class="r"><code>df_filt1$Spike_in</code></pre>
+<pre><code>[1] Original_sample          Spiked_sample            Original_sample         
+[4] Spiked_sample            Original_sample          Spiked_sample           
+[7] Assuming_full_extraction Assuming_full_extraction Assuming_full_extraction
+Levels: Spiked_sample Original_sample Assuming_full_extraction</code></pre>
+<pre class="r"><code>df_filt1 %&gt;% filter(Spike_in == &quot;Assuming_full_extraction&quot;)</code></pre>
+<pre><code># A tibble: 3 x 11
+  Sample  Buffer Soil_weight Method Spike_in Ave_NO2_mM Std_NO2_mM Ave_NO2NO3_mM
+  &lt;chr&gt;   &lt;fct&gt;        &lt;dbl&gt; &lt;chr&gt;  &lt;fct&gt;         &lt;dbl&gt;      &lt;dbl&gt;         &lt;dbl&gt;
+1 H2O_1g~ H2O              1 Filter Assumin~      0.244          0         0.561
+2 K2SO4_~ K2SO4            1 Filter Assumin~      0.240          0         0.563
+3 KCl_1g~ KCl              1 Filter Assumin~      0.233          0         0.557
+# ... with 3 more variables: Std_NO2NO3_mM &lt;dbl&gt;, Ave_NO3_mM &lt;dbl&gt;,
+#   Std_NO3_mM &lt;dbl&gt;</code></pre>
+<pre class="r"><code>df_filt1 %&gt;% filter(Spike_in == &quot;Spiked_sample&quot;)</code></pre>
+<pre><code># A tibble: 3 x 11
+  Sample  Buffer Soil_weight Method Spike_in Ave_NO2_mM Std_NO2_mM Ave_NO2NO3_mM
+  &lt;chr&gt;   &lt;fct&gt;        &lt;dbl&gt; &lt;chr&gt;  &lt;fct&gt;         &lt;dbl&gt;      &lt;dbl&gt;         &lt;dbl&gt;
+1 H2O_1g~ H2O              1 Filter Spiked_~      0.225    0.00466         0.535
+2 K2SO4_~ K2SO4            1 Filter Spiked_~      0.227    0.0111          0.535
+3 KCl_1g~ KCl              1 Filter Spiked_~      0.233    0.00288         0.550
+# ... with 3 more variables: Std_NO2NO3_mM &lt;dbl&gt;, Ave_NO3_mM &lt;dbl&gt;,
+#   Std_NO3_mM &lt;dbl&gt;</code></pre>
+<pre class="r"><code>ggplot(df_filt1, aes(x=Buffer, y=Ave_NO2_mM, color=Spike_in, group=Spike_in)) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO2- (mM) \n&quot;) +
+  xlab(&quot;\n Extraction buffer&quot;) +
+  scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;(3) Soil 1g &amp; filtered (0.22um) method \n&quot;) +
+  # label
+  geom_text(aes(label = round(Ave_NO2_mM,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d</code></pre>
+<p><img src="figure/Soil_extraction_method_Griess.Rmd/unnamed-chunk-4-3.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># (4) Soil 0.1g &amp; filtered(0.22um) method
+colnames(df_NO2NO3)</code></pre>
+<pre><code> [1] &quot;Sample&quot;        &quot;Buffer&quot;        &quot;Soil_weight&quot;   &quot;Method&quot;       
+ [5] &quot;Spike_in&quot;      &quot;Ave_NO2_mM&quot;    &quot;Std_NO2_mM&quot;    &quot;Ave_NO2NO3_mM&quot;
+ [9] &quot;Std_NO2NO3_mM&quot; &quot;Ave_NO3_mM&quot;    &quot;Std_NO3_mM&quot;   </code></pre>
+<pre class="r"><code>df_NO2NO3$Method %&gt;% unique()</code></pre>
+<pre><code>[1] &quot;Filter&quot;   &quot;Spindown&quot; &quot;Whatman&quot; </code></pre>
+<pre class="r"><code>df_filt0.1 &lt;- df_NO2NO3 %&gt;% filter(Method == &quot;Filter&quot;, Soil_weight ==0.1)
+dim(df_filt0.1)</code></pre>
+<pre><code>[1]  9 11</code></pre>
+<pre class="r"><code>head(df_filt0.1)</code></pre>
+<pre><code># A tibble: 6 x 11
+  Sample  Buffer Soil_weight Method Spike_in Ave_NO2_mM Std_NO2_mM Ave_NO2NO3_mM
+  &lt;chr&gt;   &lt;fct&gt;        &lt;dbl&gt; &lt;chr&gt;  &lt;fct&gt;         &lt;dbl&gt;      &lt;dbl&gt;         &lt;dbl&gt;
+1 H2O_0.~ H2O            0.1 Filter Origina~     0.0472   0.000834         0.172
+2 H2O_0.~ H2O            0.1 Filter Spiked_~     0.234    0.00536          0.526
+3 K2SO4_~ K2SO4          0.1 Filter Origina~     0.0439   0.00162          0.168
+4 K2SO4_~ K2SO4          0.1 Filter Spiked_~     0.230    0.00369          0.515
+5 KCl_0.~ KCl            0.1 Filter Origina~     0.0326   0.000163         0.161
+6 KCl_0.~ KCl            0.1 Filter Spiked_~     0.226    0.00359          0.547
+# ... with 3 more variables: Std_NO2NO3_mM &lt;dbl&gt;, Ave_NO3_mM &lt;dbl&gt;,
+#   Std_NO3_mM &lt;dbl&gt;</code></pre>
+<pre class="r"><code>df_filt0.1$Spike_in</code></pre>
+<pre><code>[1] Original_sample          Spiked_sample            Original_sample         
+[4] Spiked_sample            Original_sample          Spiked_sample           
+[7] Assuming_full_extraction Assuming_full_extraction Assuming_full_extraction
+Levels: Spiked_sample Original_sample Assuming_full_extraction</code></pre>
+<pre class="r"><code>df_filt0.1 %&gt;% filter(Spike_in == &quot;Assuming_full_extraction&quot;)</code></pre>
+<pre><code># A tibble: 3 x 11
+  Sample  Buffer Soil_weight Method Spike_in Ave_NO2_mM Std_NO2_mM Ave_NO2NO3_mM
+  &lt;chr&gt;   &lt;fct&gt;        &lt;dbl&gt; &lt;chr&gt;  &lt;fct&gt;         &lt;dbl&gt;      &lt;dbl&gt;         &lt;dbl&gt;
+1 H2O_0.~ H2O            0.1 Filter Assumin~      0.247          0         0.572
+2 K2SO4_~ K2SO4          0.1 Filter Assumin~      0.244          0         0.568
+3 KCl_0.~ KCl            0.1 Filter Assumin~      0.233          0         0.561
+# ... with 3 more variables: Std_NO2NO3_mM &lt;dbl&gt;, Ave_NO3_mM &lt;dbl&gt;,
+#   Std_NO3_mM &lt;dbl&gt;</code></pre>
+<pre class="r"><code>df_filt0.1 %&gt;% filter(Spike_in == &quot;Spiked_sample&quot;)</code></pre>
+<pre><code># A tibble: 3 x 11
+  Sample  Buffer Soil_weight Method Spike_in Ave_NO2_mM Std_NO2_mM Ave_NO2NO3_mM
+  &lt;chr&gt;   &lt;fct&gt;        &lt;dbl&gt; &lt;chr&gt;  &lt;fct&gt;         &lt;dbl&gt;      &lt;dbl&gt;         &lt;dbl&gt;
+1 H2O_0.~ H2O            0.1 Filter Spiked_~      0.234    0.00536         0.526
+2 K2SO4_~ K2SO4          0.1 Filter Spiked_~      0.230    0.00369         0.515
+3 KCl_0.~ KCl            0.1 Filter Spiked_~      0.226    0.00359         0.547
+# ... with 3 more variables: Std_NO2NO3_mM &lt;dbl&gt;, Ave_NO3_mM &lt;dbl&gt;,
+#   Std_NO3_mM &lt;dbl&gt;</code></pre>
+<pre class="r"><code>ggplot(df_filt0.1, aes(x=Buffer, y=Ave_NO2_mM, color=Spike_in, group=Spike_in)) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO2- (mM) \n&quot;) +
+  xlab(&quot;\n Extraction buffer&quot;) +
+  scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;(4) Soil 0.1g &amp; filtered (0.22um) method \n&quot;) +
+  # label
+  geom_text(aes(label = round(Ave_NO2_mM,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d</code></pre>
+<p><img src="figure/Soil_extraction_method_Griess.Rmd/unnamed-chunk-4-4.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># (5) Soil 1g &amp; Whatman no.42 paper filtered
+colnames(df_NO2NO3)</code></pre>
+<pre><code> [1] &quot;Sample&quot;        &quot;Buffer&quot;        &quot;Soil_weight&quot;   &quot;Method&quot;       
+ [5] &quot;Spike_in&quot;      &quot;Ave_NO2_mM&quot;    &quot;Std_NO2_mM&quot;    &quot;Ave_NO2NO3_mM&quot;
+ [9] &quot;Std_NO2NO3_mM&quot; &quot;Ave_NO3_mM&quot;    &quot;Std_NO3_mM&quot;   </code></pre>
+<pre class="r"><code>df_NO2NO3$Method %&gt;% unique()</code></pre>
+<pre><code>[1] &quot;Filter&quot;   &quot;Spindown&quot; &quot;Whatman&quot; </code></pre>
+<pre class="r"><code>df_what1 &lt;- df_NO2NO3 %&gt;% filter(Method == &quot;Whatman&quot;, Soil_weight ==1)
+dim(df_what1)</code></pre>
+<pre><code>[1]  9 11</code></pre>
+<pre class="r"><code>head(df_what1)</code></pre>
+<pre><code># A tibble: 6 x 11
+  Sample  Buffer Soil_weight Method Spike_in Ave_NO2_mM Std_NO2_mM Ave_NO2NO3_mM
+  &lt;chr&gt;   &lt;fct&gt;        &lt;dbl&gt; &lt;chr&gt;  &lt;fct&gt;         &lt;dbl&gt;      &lt;dbl&gt;         &lt;dbl&gt;
+1 H2O_1g~ H2O              1 Whatm~ Origina~     0.0548   0.000477         0.160
+2 H2O_1g~ H2O              1 Whatm~ Spiked_~     0.229    0.00335          0.545
+3 K2SO4_~ K2SO4            1 Whatm~ Origina~     0.0383   0.000408         0.170
+4 K2SO4_~ K2SO4            1 Whatm~ Spiked_~     0.170    0.00330          0.467
+5 KCl_1g~ KCl              1 Whatm~ Origina~     0.0340   0.000543         0.167
+6 KCl_1g~ KCl              1 Whatm~ Spiked_~     0.158    0.00452          0.486
+# ... with 3 more variables: Std_NO2NO3_mM &lt;dbl&gt;, Ave_NO3_mM &lt;dbl&gt;,
+#   Std_NO3_mM &lt;dbl&gt;</code></pre>
+<pre class="r"><code>df_what1$Spike_in</code></pre>
+<pre><code>[1] Original_sample          Spiked_sample            Original_sample         
+[4] Spiked_sample            Original_sample          Spiked_sample           
+[7] Assuming_full_extraction Assuming_full_extraction Assuming_full_extraction
+Levels: Spiked_sample Original_sample Assuming_full_extraction</code></pre>
+<pre class="r"><code>df_what1 %&gt;% filter(Spike_in == &quot;Assuming_full_extraction&quot;)</code></pre>
+<pre><code># A tibble: 3 x 11
+  Sample  Buffer Soil_weight Method Spike_in Ave_NO2_mM Std_NO2_mM Ave_NO2NO3_mM
+  &lt;chr&gt;   &lt;fct&gt;        &lt;dbl&gt; &lt;chr&gt;  &lt;fct&gt;         &lt;dbl&gt;      &lt;dbl&gt;         &lt;dbl&gt;
+1 H2O_1g~ H2O              1 Whatm~ Assumin~      0.255          0         0.560
+2 K2SO4_~ K2SO4            1 Whatm~ Assumin~      0.238          0         0.570
+3 KCl_1g~ KCl              1 Whatm~ Assumin~      0.234          0         0.567
+# ... with 3 more variables: Std_NO2NO3_mM &lt;dbl&gt;, Ave_NO3_mM &lt;dbl&gt;,
+#   Std_NO3_mM &lt;dbl&gt;</code></pre>
+<pre class="r"><code>df_what1 %&gt;% filter(Spike_in == &quot;Spiked_sample&quot;)</code></pre>
+<pre><code># A tibble: 3 x 11
+  Sample  Buffer Soil_weight Method Spike_in Ave_NO2_mM Std_NO2_mM Ave_NO2NO3_mM
+  &lt;chr&gt;   &lt;fct&gt;        &lt;dbl&gt; &lt;chr&gt;  &lt;fct&gt;         &lt;dbl&gt;      &lt;dbl&gt;         &lt;dbl&gt;
+1 H2O_1g~ H2O              1 Whatm~ Spiked_~      0.229    0.00335         0.545
+2 K2SO4_~ K2SO4            1 Whatm~ Spiked_~      0.170    0.00330         0.467
+3 KCl_1g~ KCl              1 Whatm~ Spiked_~      0.158    0.00452         0.486
+# ... with 3 more variables: Std_NO2NO3_mM &lt;dbl&gt;, Ave_NO3_mM &lt;dbl&gt;,
+#   Std_NO3_mM &lt;dbl&gt;</code></pre>
+<pre class="r"><code>ggplot(df_what1, aes(x=Buffer, y=Ave_NO2_mM, color=Spike_in, group=Spike_in)) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO2- (mM) \n&quot;) +
+  xlab(&quot;\n Extraction buffer&quot;) +
+  scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;(5) Soil 1g &amp; Whatman no.42 paper filtered \n&quot;) +
+  # label
+  geom_text(aes(label = round(Ave_NO2_mM,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d</code></pre>
+<p><img src="figure/Soil_extraction_method_Griess.Rmd/unnamed-chunk-4-5.png" width="1056" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
