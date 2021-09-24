@@ -1,7 +1,7 @@
-name: "Denit_visualization_R"
+name: Denit_visualization_R
 output_dir: ../docs
 navbar:
-  title: "Denit_visualization_R"
+  title: Denit_visualization_R
   left:
   - text: Home
     href: index.html
@@ -9,6 +9,10 @@ navbar:
     href: about.html
   - text: License
     href: license.html
+  right:
+  - icon: fa-github
+    text: Source code
+    href: https://github.com/KiseokUchicago/Denit_visualization_R
 output:
   workflowr::wflow_html:
     toc: yes
