@@ -34,6 +34,7 @@ library(stringr)
 
 ## theme for ggplot
 mytheme <- theme_bw() + 
+  theme(text = element_text(family="serif")) +
   theme(plot.title = element_text(size = 19,hjust = 0.5, family="serif")) + 
   theme(axis.title.x = element_text(size = 17,hjust = 0.5, family="serif")) + 
   theme(axis.title.y = element_text(size = 17,hjust = 0.5, family="serif")) + 
@@ -44,6 +45,7 @@ mytheme <- theme_bw() +
   theme(axis.ticks = element_line(size = 1.1))
 
 mytheme_2d <- theme_bw() + 
+  theme(text = element_text(family="serif")) +
   theme(plot.title = element_text(size = 19,hjust = 0.5, family="serif")) + 
   theme(axis.title.x = element_text(size = 17,hjust = 0.5, family="serif")) + 
   theme(axis.title.y = element_text(size = 17,hjust = 0.5, family="serif")) + 
@@ -138,10 +140,11 @@ write.xlsx(df_NO2NO3,"df_NO2NO3.xlsx")
 
 ## 3. Plot data
 4 graphs:
-(1) 1g & Spindown method
-(2) 0.1g & Spindown method
-(3) 1g & filtered method
-(4) 0.1g & Spindown method
+(1) Soil 1g & Spindown method
+(2) Soil 0.1g & Spindown method
+(3) Soil 1g & filtered(0.22um) method
+(4) Soil 0.1g & filtered(0.22um) method
+(5) Soil 1g & Whatman no.42 paper filtered
 ```{r}
 # First, let's see extraction efficiency soil NO2
 
@@ -162,26 +165,107 @@ ggplot(df_spin1, aes(x=Buffer, y=Ave_NO2_mM, color=Spike_in, group=Spike_in)) +
   ylab("NO2- (mM) \n") +
   xlab("\n Extraction buffer") +
   scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
-  ggtitle("(1) Soil weight 1g & Spindown method \n") +
+  ggtitle("(1) Soil 1g & Spindown method \n") +
   # label
-  geom_text(aes(label = round(Ave_NO2_mM,3)), size = 3, vjust = -1.5, family="serif")+
+  geom_text(aes(label = round(Ave_NO2_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
   mytheme_2d
 
-# (2) 
+# (2) Soil 0.1g & Spindown method
+colnames(df_NO2NO3)
+df_spin0.1 <- df_NO2NO3 %>% filter(Method == "Spindown", Soil_weight ==0.1)
+dim(df_spin0.1)
+head(df_spin0.1)
 
+df_spin0.1$Spike_in
+df_spin0.1 %>% filter(Spike_in == "Assuming_full_extraction")
+df_spin0.1 %>% filter(Spike_in == "Spiked_sample")
 
-# (1) plot
-ggplot(df_extract, aes(x=Method, y=pH, color=Solution, group=Solution)) +
+ggplot(df_spin0.1, aes(x=Buffer, y=Ave_NO2_mM, color=Spike_in, group=Spike_in)) +
   geom_point(size=2.5, shape=21) +
   geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
   scale_fill_brewer(palette='Set2') +
-  ylab("pH \n") +
-  xlab("\n Settling method") +
-  scale_y_continuous(breaks = seq(6,7,0.05), limits=c(6.1, 7))+
-  ggtitle("pH difference by method & solution \n") +
+  ylab("NO2- (mM) \n") +
+  xlab("\n Extraction buffer") +
+  scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("(2) Soil 0.1g & Spindown method \n") +
   # label
-  geom_label()+
+  geom_text(aes(label = round(Ave_NO2_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
   mytheme_2d
+
+# (3) Soil 1g & filtered(0.22um) method
+colnames(df_NO2NO3)
+df_NO2NO3$Method %>% unique()
+df_filt1 <- df_NO2NO3 %>% filter(Method == "Filter", Soil_weight ==1)
+dim(df_filt1)
+head(df_filt1)
+
+df_filt1$Spike_in
+df_filt1 %>% filter(Spike_in == "Assuming_full_extraction")
+df_filt1 %>% filter(Spike_in == "Spiked_sample")
+
+ggplot(df_filt1, aes(x=Buffer, y=Ave_NO2_mM, color=Spike_in, group=Spike_in)) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO2- (mM) \n") +
+  xlab("\n Extraction buffer") +
+  scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("(3) Soil 1g & filtered (0.22um) method \n") +
+  # label
+  geom_text(aes(label = round(Ave_NO2_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+# (4) Soil 0.1g & filtered(0.22um) method
+colnames(df_NO2NO3)
+df_NO2NO3$Method %>% unique()
+df_filt0.1 <- df_NO2NO3 %>% filter(Method == "Filter", Soil_weight ==0.1)
+dim(df_filt0.1)
+head(df_filt0.1)
+
+df_filt0.1$Spike_in
+df_filt0.1 %>% filter(Spike_in == "Assuming_full_extraction")
+df_filt0.1 %>% filter(Spike_in == "Spiked_sample")
+
+ggplot(df_filt0.1, aes(x=Buffer, y=Ave_NO2_mM, color=Spike_in, group=Spike_in)) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO2- (mM) \n") +
+  xlab("\n Extraction buffer") +
+  scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("(4) Soil 0.1g & filtered (0.22um) method \n") +
+  # label
+  geom_text(aes(label = round(Ave_NO2_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+# (5) Soil 1g & Whatman no.42 paper filtered
+colnames(df_NO2NO3)
+df_NO2NO3$Method %>% unique()
+df_what1 <- df_NO2NO3 %>% filter(Method == "Whatman", Soil_weight ==1)
+dim(df_what1)
+head(df_what1)
+
+df_what1$Spike_in
+df_what1 %>% filter(Spike_in == "Assuming_full_extraction")
+df_what1 %>% filter(Spike_in == "Spiked_sample")
+
+ggplot(df_what1, aes(x=Buffer, y=Ave_NO2_mM, color=Spike_in, group=Spike_in)) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO2- (mM) \n") +
+  xlab("\n Extraction buffer") +
+  scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("(5) Soil 1g & Whatman no.42 paper filtered \n") +
+  # label
+  geom_text(aes(label = round(Ave_NO2_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+
 
 ```
 
