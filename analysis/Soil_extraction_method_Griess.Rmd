@@ -30,6 +30,7 @@ library(gtools)
 library(devtools)
 library(openxlsx)
 library(ape)
+library(stringr)
 
 ## theme for ggplot
 mytheme <- theme_bw() + 
@@ -75,21 +76,100 @@ my_color_collection <- c(
 ```
 
 ## 1. Import data table from python code
+When I did the experiment, B05 and B06 was switched. D05, D06 also switched. F05, F06 switched.
 ```{r}
 # import file
-setwd("C:/Users/there/Desktop/Dr_Kuehn/13_denitrification/03_Plate_reader_measurements/210923_Extract_method")
-df_extract <- openxlsx::read.xlsx("210922_Griess_sample_plate1.xlsx")
+df_extract <- openxlsx::read.xlsx("data/210922_Griess_sample_plate1.xlsx")
 class(df_extract)
 head(df_extract)
+colnames(df_extract)
 
 # remove NA
 dim(df_extract)
 df_extract <- na.omit(df_extract)
 dim(df_extract)
+
+# Check
+df_extract %>% filter(Well =="B06")
+df_extract %>% filter(Well =="D05")
+df_extract %>% filter(Well =="F05")
+
 ```
 
-## 2. Plot data
+## 2. Get average and standard deviation
 ```{r}
+# average and standard deviation
+df_NO2NO3 <- df_extract %>% group_by(Sample, Buffer, Soil_weight, Method, Spike_in) %>% summarise(Ave_NO2_mM = mean(NO2_mM), Std_NO2_mM = sd(NO2_mM), Ave_NO2NO3_mM = mean(NO2NO3_mM), Std_NO2NO3_mM = sd(NO2NO3_mM), Ave_NO3_mM = mean(NO2NO3_mM - NO2_mM), Std_NO3_mM = sd(NO2NO3_mM - NO2_mM)) %>% ungroup()
+# NO3_mM = NO2NO3_mM - NO2_mM
+
+# Factor in orders
+df_NO2NO3$Buffer <-  factor(df_NO2NO3$Buffer, levels = c("KCl","K2SO4","H2O"))
+
+# Put is values for known spike_ins
+df_spike_in <- df_NO2NO3 %>% filter(Spike_in == "Original_sample")
+df_spike_in
+
+# increase the concentration as the spike in & make standard deviation to 0
+df_spike_in2 <- df_spike_in %>%  mutate(Ave_NO2_mM = Ave_NO2_mM + 0.2, Ave_NO2NO3_mM = Ave_NO2NO3_mM + 0.4, Ave_NO3_mM = Ave_NO3_mM + 0.2, Std_NO2_mM = 0, Std_NO2NO3_mM = 0, Std_NO3_mM = 0) 
+
+# change Sample name
+df_spike_in2$Sample <- str_replace(df_spike_in2$Sample,"$","_spike_in")
+
+# label in Spike_in column
+df_spike_in2$Spike_in <- "Assuming_full_extraction"
+df_spike_in2$Spike_in
+dim(df_spike_in2)
+
+# Bind this df to the original dataframe df_NO2NO3
+dim(df_NO2NO3)
+df_NO2NO3 <- rbind(df_NO2NO3, df_spike_in2)
+dim(df_NO2NO3)
+tail(df_NO2NO3)
+
+df_NO2NO3$Spike_in
+# Factor in orders
+df_NO2NO3$Spike_in <-  factor(df_NO2NO3$Spike_in, levels = c("Spiked_sample","Original_sample", "Assuming_full_extraction"))
+
+df_NO2NO3$Spike_in
+
+write.xlsx(df_NO2NO3,"df_NO2NO3.xlsx")
+
+```
+
+## 3. Plot data
+4 graphs:
+(1) 1g & Spindown method
+(2) 0.1g & Spindown method
+(3) 1g & filtered method
+(4) 0.1g & Spindown method
+```{r}
+# First, let's see extraction efficiency soil NO2
+
+# (1) 1g & Spindown method
+colnames(df_NO2NO3)
+df_spin1 <- df_NO2NO3 %>% filter(Method == "Spindown", Soil_weight ==1)
+dim(df_spin1)
+
+df_spin1$Spike_in
+df_spin1 %>% filter(Spike_in == "Assuming_full_extraction")
+df_spin1 %>% filter(Spike_in == "Spiked_sample")
+
+ggplot(df_spin1, aes(x=Buffer, y=Ave_NO2_mM, color=Spike_in, group=Spike_in)) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO2- (mM) \n") +
+  xlab("\n Extraction buffer") +
+  scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("(1) Soil weight 1g & Spindown method \n") +
+  # label
+  geom_text(aes(label = round(Ave_NO2_mM,3)), size = 3, vjust = -1.5, family="serif")+
+  mytheme_2d
+
+# (2) 
+
+
 # (1) plot
 ggplot(df_extract, aes(x=Method, y=pH, color=Solution, group=Solution)) +
   geom_point(size=2.5, shape=21) +
