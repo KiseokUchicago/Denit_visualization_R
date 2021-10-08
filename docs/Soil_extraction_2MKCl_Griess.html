@@ -11,9 +11,9 @@
 
 <meta name="author" content="KiseokUchicago" />
 
-<meta name="date" content="2021-09-24" />
+<meta name="date" content="2021-10-06" />
 
-<title>Soil_drying_curve</title>
+<title>Soil_kclion_2MKCl_Griess</title>
 
 <script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
@@ -358,9 +358,9 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Soil_drying_curve</h1>
+<h1 class="title toc-ignore">Soil_kclion_2MKCl_Griess</h1>
 <h4 class="author">KiseokUchicago</h4>
-<h4 class="date">2021-09-24</h4>
+<h4 class="date">2021-10-06</h4>
 
 </div>
 
@@ -562,7 +562,7 @@ Note that any generated files, e.g. HTML, png, CSS, etc., are not included in t
 <div id="versions" class="tab-pane fade">
 
 <p>
-These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/Soil_drying_curve.Rmd</code>) and HTML (<code>docs/Soil_drying_curve.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/Soil_extraction_2MKCl_Griess.Rmd</code>) and HTML (<code>docs/Soil_extraction_2MKCl_Griess.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
 </p>
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
@@ -591,47 +591,13 @@ Message
 Rmd
 </td>
 <td>
-<a href="https://github.com/KiseokUchicago/Denit_visualization_R/blob/f0fe6107fc6c40cc9dd6e8aa9b462f41c128de06/analysis/Soil_drying_curve.Rmd" target="_blank">f0fe610</a>
+<a href="https://github.com/KiseokUchicago/Denit_visualization_R/blob/f0fe6107fc6c40cc9dd6e8aa9b462f41c128de06/analysis/Soil_extraction_2MKCl_Griess.Rmd" target="_blank">f0fe610</a>
 </td>
 <td>
 KiseokUchicago
 </td>
 <td>
 2021-10-08
-</td>
-<td>
-wflow_publish("analysis/*.Rmd")
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/KiseokUchicago/Denit_visualization_R/390659b56a5e91f40a41aeb2f44107f88ec363ab/docs/Soil_drying_curve.html" target="_blank">390659b</a>
-</td>
-<td>
-KiseokUchicago
-</td>
-<td>
-2021-09-24
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/KiseokUchicago/Denit_visualization_R/blob/8c7b9362b43090956821074fa7d202d544bb99ec/analysis/Soil_drying_curve.Rmd" target="_blank">8c7b936</a>
-</td>
-<td>
-KiseokUchicago
-</td>
-<td>
-2021-09-24
 </td>
 <td>
 wflow_publish("analysis/*.Rmd")
@@ -644,10 +610,10 @@ wflow_publish("analysis/*.Rmd")
 </div>
 </div>
 </div>
-<div id="soil-drying-method-testing" class="section level2">
-<h2>Soil drying method testing</h2>
+<div id="soil-extraction-kcl-optimization-griess-assay" class="section level2">
+<h2>Soil extraction KCl optimization (Griess assay)</h2>
 <p>Researcher: <strong>Kiseok Lee</strong><br />
-Data: 9/5/21<br />
+Data: 10/6/21<br />
 Lab: <strong>Seppe Kuehn</strong></p>
 <pre class="r"><code># libraries
 library(dplyr)
@@ -667,6 +633,7 @@ library(tidyr)
 
 ## theme for ggplot
 mytheme &lt;- theme_bw() + 
+  theme(text = element_text(family=&quot;serif&quot;)) +
   theme(plot.title = element_text(size = 19,hjust = 0.5, family=&quot;serif&quot;)) + 
   theme(axis.title.x = element_text(size = 17,hjust = 0.5, family=&quot;serif&quot;)) + 
   theme(axis.title.y = element_text(size = 17,hjust = 0.5, family=&quot;serif&quot;)) + 
@@ -677,6 +644,7 @@ mytheme &lt;- theme_bw() +
   theme(axis.ticks = element_line(size = 1.1))
 
 mytheme_2d &lt;- theme_bw() + 
+  theme(text = element_text(family=&quot;serif&quot;)) +
   theme(plot.title = element_text(size = 19,hjust = 0.5, family=&quot;serif&quot;)) + 
   theme(axis.title.x = element_text(size = 17,hjust = 0.5, family=&quot;serif&quot;)) + 
   theme(axis.title.y = element_text(size = 17,hjust = 0.5, family=&quot;serif&quot;)) + 
@@ -706,40 +674,207 @@ my_color_collection &lt;- c(
 # for git push, use this instead of using wflow_git_push()
 # git push -u origin master (in the Git app / in the working directory)</code></pre>
 </div>
-<div id="import-data" class="section level2">
-<h2>1. Import data</h2>
+<div id="import-data-table-from-python-code" class="section level2">
+<h2>1. Import data table from python code</h2>
+<p>We need to remove well H06, H09. Didn’t have enough samples for that well.</p>
 <pre class="r"><code># import file
-df_dry &lt;- openxlsx::read.xlsx(&quot;data/dry_weight_curve(9.5.21).xlsx&quot;)
-colnames(df_dry) &lt;- c(&quot;Temperature&quot;,0,1,2,3,4,5,6)
-df_dry_gg &lt;- melt(df_dry, id.vars = c(&quot;Temperature&quot;), variable.name = &quot;Day&quot;,value.name = &quot;Weight&quot;)
-df_dry_gg$Day &lt;- as.numeric(df_dry_gg$Day)
-df_dry_gg$Temperature &lt;- as.factor(df_dry_gg$Temperature)
-class(df_dry_gg$Day)</code></pre>
-<pre><code>[1] &quot;numeric&quot;</code></pre>
-<pre class="r"><code>class(df_dry_gg$Temperature)</code></pre>
-<pre><code>[1] &quot;factor&quot;</code></pre>
-<pre class="r"><code>dim(df_dry_gg)</code></pre>
-<pre><code>[1] 28  3</code></pre>
+df_kcl &lt;- openxlsx::read.xlsx(&quot;data/211005_Griess_sample_plate1.xlsx&quot;)
+class(df_kcl)</code></pre>
+<pre><code>[1] &quot;data.frame&quot;</code></pre>
+<pre class="r"><code>head(df_kcl)</code></pre>
+<pre><code>  Well        Sample Time_point Nitrate_input Sample_type Biological_replicate
+1  A01 T0_2mM_Soil_A          0             2        Soil                    A
+2  A02 T0_2mM_Soil_B          0             2        Soil                    B
+3  A03 T0_2mM_Soil_C          0             2        Soil                    C
+4  A04 T0_2mM_Soil_A          0             2        Soil                    A
+5  A05 T0_2mM_Soil_B          0             2        Soil                    B
+6  A06 T0_2mM_Soil_C          0             2        Soil                    C
+  Plate NO2_OD540 NO2NO3_OD540     NO2_mM NO2NO3_mM
+1    P1   0.06070      1.78730 0.03625936  2.014923
+2    P1   0.05945      1.69050 0.03570100  1.884635
+3    P1   0.05760      1.71780 0.03487472  1.921026
+4    P1   0.06120      1.68575 0.03648272  1.878331
+5    P1   0.06060      1.66250 0.03621469  1.847591
+6    P1   0.05830      1.68710 0.03518735  1.880122</code></pre>
+<pre class="r"><code>colnames(df_kcl)</code></pre>
+<pre><code> [1] &quot;Well&quot;                 &quot;Sample&quot;               &quot;Time_point&quot;          
+ [4] &quot;Nitrate_input&quot;        &quot;Sample_type&quot;          &quot;Biological_replicate&quot;
+ [7] &quot;Plate&quot;                &quot;NO2_OD540&quot;            &quot;NO2NO3_OD540&quot;        
+[10] &quot;NO2_mM&quot;               &quot;NO2NO3_mM&quot;           </code></pre>
 <pre class="r"><code># remove NA
-dim(df_dry_gg)</code></pre>
-<pre><code>[1] 28  3</code></pre>
-<pre class="r"><code>df_dry_gg2 &lt;- na.omit(df_dry_gg)
-dim(df_dry_gg2)</code></pre>
-<pre><code>[1] 22  3</code></pre>
+dim(df_kcl)</code></pre>
+<pre><code>[1] 96 11</code></pre>
+<pre class="r"><code>df_kcl &lt;- na.omit(df_kcl)
+dim(df_kcl)</code></pre>
+<pre><code>[1] 96 11</code></pre>
+<pre class="r"><code># Check
+df_kcl %&gt;% filter(Well ==&quot;H06&quot;)</code></pre>
+<pre><code>  Well        Sample Time_point Nitrate_input Sample_type Biological_replicate
+1  H06 T0_0mM_Soil_C          0             0        Soil                    C
+  Plate NO2_OD540 NO2NO3_OD540     NO2_mM  NO2NO3_mM
+1    P1   0.05895      0.09345 0.03547767 0.09212313</code></pre>
+<pre class="r"><code>df_kcl %&gt;% filter(Well ==&quot;H09&quot;)</code></pre>
+<pre><code>  Well        Sample Time_point Nitrate_input Sample_type Biological_replicate
+1  H09 T0_0mM_Soil_C          0             0        Soil                    C
+  Plate NO2_OD540 NO2NO3_OD540   NO2_mM  NO2NO3_mM
+1    P1    0.0587        0.087 0.035366 0.08585731</code></pre>
+<pre class="r"><code># remove wells H06, H09
+df_kcl %&lt;&gt;% filter(!(Well %in% c(&quot;H06&quot;,&quot;H09&quot;)))
+dim(df_kcl)</code></pre>
+<pre><code>[1] 94 11</code></pre>
 </div>
-<div id="plot" class="section level2">
-<h2>2. Plot</h2>
-<pre class="r"><code># plot
-ggplot(df_dry_gg2, aes(x=Day,y=Weight, color=Temperature, group=Temperature)) +
+<div id="get-average-and-standard-deviation" class="section level2">
+<h2>2. Get average and standard deviation</h2>
+<pre class="r"><code># average and standard deviation
+head(df_kcl)</code></pre>
+<pre><code>  Well        Sample Time_point Nitrate_input Sample_type Biological_replicate
+1  A01 T0_2mM_Soil_A          0             2        Soil                    A
+2  A02 T0_2mM_Soil_B          0             2        Soil                    B
+3  A03 T0_2mM_Soil_C          0             2        Soil                    C
+4  A04 T0_2mM_Soil_A          0             2        Soil                    A
+5  A05 T0_2mM_Soil_B          0             2        Soil                    B
+6  A06 T0_2mM_Soil_C          0             2        Soil                    C
+  Plate NO2_OD540 NO2NO3_OD540     NO2_mM NO2NO3_mM
+1    P1   0.06070      1.78730 0.03625936  2.014923
+2    P1   0.05945      1.69050 0.03570100  1.884635
+3    P1   0.05760      1.71780 0.03487472  1.921026
+4    P1   0.06120      1.68575 0.03648272  1.878331
+5    P1   0.06060      1.66250 0.03621469  1.847591
+6    P1   0.05830      1.68710 0.03518735  1.880122</code></pre>
+<pre class="r"><code>dim(df_kcl)</code></pre>
+<pre><code>[1] 94 11</code></pre>
+<pre class="r"><code># average technical replicate
+df_NO2NO3 &lt;- df_kcl %&gt;% group_by(Sample, Time_point, Nitrate_input, Sample_type, Biological_replicate) %&gt;% summarise(Ave_NO2_mM = mean(NO2_mM), Std_NO2_mM = sd(NO2_mM), Ave_NO2NO3_mM = mean(NO2NO3_mM), Std_NO2NO3_mM = sd(NO2NO3_mM), Ave_NO3_mM = mean(NO2NO3_mM - NO2_mM), Std_NO3_mM = sd(NO2NO3_mM - NO2_mM)) %&gt;% ungroup()
+
+# plot to see
+ggplot(df_NO2NO3, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
   geom_point(size=2.5, shape=21) +
-  geom_line(size=1)+
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
   scale_fill_brewer(palette=&#39;Set2&#39;) +
-  ylab(&quot;Weight(g) \n&quot;) +
-  xlab(&quot;\n Days(every 24hr)&quot;) +
-  scale_x_continuous(breaks = c(1,2,3,4,5,6,7), labels=c(&quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,&quot;5&quot;,&quot;6&quot;))+
-  ggtitle(&quot;Weight change in dry oven \n&quot;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Ploting nitrate concentration \n&quot;) +
   mytheme_2d</code></pre>
-<p><img src="figure/Soil_drying_curve.Rmd/unnamed-chunk-3-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<p><img src="figure/Soil_extraction_2MKCl_Griess.Rmd/unnamed-chunk-3-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># average biological replicates &amp; standard deviation is the standard deviation of the technical replicate average
+dim(df_NO2NO3)</code></pre>
+<pre><code>[1] 32 11</code></pre>
+<pre class="r"><code># we need to separate water from soil samples. Blank samples have no biological replicates.
+df_blank &lt;- df_NO2NO3 %&gt;% filter(Sample_type == &quot;Blank&quot;) %&gt;% select(-Sample, -Biological_replicate) %&gt;% rename(NO2_mM = Ave_NO2_mM, sd_NO2_mM = Std_NO2_mM, NO2NO3_mM = Ave_NO2NO3_mM, sd_NO2NO3_mM = Std_NO2NO3_mM, NO3_mM = Ave_NO3_mM, sd_NO3_mM = Std_NO3_mM)
+dim(df_blank)</code></pre>
+<pre><code>[1] 8 9</code></pre>
+<pre class="r"><code>df_soil &lt;- df_NO2NO3 %&gt;% filter(Sample_type == &quot;Soil&quot;)
+
+df_sample &lt;- df_soil %&gt;% group_by(Time_point, Nitrate_input, Sample_type) %&gt;% summarise(NO2_mM = mean(Ave_NO2_mM), sd_NO2_mM = sd(Ave_NO2_mM), NO2NO3_mM = mean(Ave_NO2NO3_mM), sd_NO2NO3_mM = sd(Ave_NO2NO3_mM), NO3_mM = mean(Ave_NO2NO3_mM - Ave_NO2_mM), sd_NO3_mM = sd(Ave_NO2NO3_mM - Ave_NO2_mM)) %&gt;% ungroup()
+
+dim(df_sample)</code></pre>
+<pre><code>[1] 8 9</code></pre>
+<pre class="r"><code>colnames(df_sample)</code></pre>
+<pre><code>[1] &quot;Time_point&quot;    &quot;Nitrate_input&quot; &quot;Sample_type&quot;   &quot;NO2_mM&quot;       
+[5] &quot;sd_NO2_mM&quot;     &quot;NO2NO3_mM&quot;     &quot;sd_NO2NO3_mM&quot;  &quot;NO3_mM&quot;       
+[9] &quot;sd_NO3_mM&quot;    </code></pre>
+<pre class="r"><code>colnames(df_blank)</code></pre>
+<pre><code>[1] &quot;Time_point&quot;    &quot;Nitrate_input&quot; &quot;Sample_type&quot;   &quot;NO2_mM&quot;       
+[5] &quot;sd_NO2_mM&quot;     &quot;NO2NO3_mM&quot;     &quot;sd_NO2NO3_mM&quot;  &quot;NO3_mM&quot;       
+[9] &quot;sd_NO3_mM&quot;    </code></pre>
+<pre class="r"><code>df_all &lt;- rbind(df_sample, df_blank)
+
+# plot to see
+ggplot(df_all, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Ploting nitrate concentration \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/Soil_extraction_2MKCl_Griess.Rmd/unnamed-chunk-3-2.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Factor in orders
+df_all$Sample_type &lt;-  factor(df_all$Sample_type, levels = c(&quot;Soil&quot;,&quot;Blank&quot;))</code></pre>
+</div>
+<div id="subtract-the-inherent-nitrate-and-see-if-we-have-retrieved-the-spike-ins." class="section level2">
+<h2>3. Subtract the inherent nitrate and see if we have retrieved the spike ins.</h2>
+<pre class="r"><code># Plot only the blank (without soil) samples
+df_blank</code></pre>
+<pre><code># A tibble: 8 x 9
+  Time_point Nitrate_input Sample_type NO2_mM sd_NO2_mM NO2NO3_mM sd_NO2NO3_mM
+       &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;        &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;        &lt;dbl&gt;
+1          0        0.0312 Blank       0.0347 0.000516     0.112      0.00248 
+2          0        0.0625 Blank       0.0348 0.000541     0.144      0.00157 
+3          0        0.125  Blank       0.0352 0.000412     0.204      0.00209 
+4          0        0.25   Blank       0.0345 0.000515     0.323      0.00391 
+5          0        0.5    Blank       0.0346 0.000213     0.557      0.0114  
+6          0        0      Blank       0.0361 0.0000341    0.0873     0.000955
+7          0        1      Blank       0.0346 0.000251     1.02       0.0643  
+8          0        2      Blank       0.0347 0.000448     1.91       0.0241  
+# ... with 2 more variables: NO3_mM &lt;dbl&gt;, sd_NO3_mM &lt;dbl&gt;</code></pre>
+<pre class="r"><code>ggplot(df_blank, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  scale_color_manual(values = &quot;deepskyblue2&quot;)+
+  ylab(&quot;Measured NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle(&quot;Blank spike in \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  mytheme_2d</code></pre>
+<p><img src="figure/Soil_extraction_2MKCl_Griess.Rmd/unnamed-chunk-4-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Plot the soil &amp; blank samples (before subtracting soil innate nitrate)
+df_soil2 &lt;- df_all %&gt;% filter(Sample_type == &quot;Soil&quot;)
+
+ggplot(df_all, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_fill_brewer(palette=&#39;Set2&#39;) +
+  scale_color_manual(values = c(&quot;brown3&quot;,&quot;deepskyblue2&quot;))+
+  ylab(&quot;Measured NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle(&quot;Measured nitrate concentrations (before subtracting soil innate nitrate) \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  mytheme_2d</code></pre>
+<p><img src="figure/Soil_extraction_2MKCl_Griess.Rmd/unnamed-chunk-4-2.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># subtract innate nitrate
+innate_no3 &lt;- df_soil2 %&gt;% filter(Nitrate_input == 0) %&gt;% select(NO3_mM) %&gt;% unlist()
+df_soil2$Retrieved_NO3_mM &lt;- df_soil2$NO3_mM - innate_no3
+
+ggplot(df_soil2, aes(x=Nitrate_input, y=Retrieved_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Retrieved_NO3_mM - sd_NO3_mM, ymax=Retrieved_NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_fill_brewer(palette=&#39;Set2&#39;) +
+  scale_color_manual(values = c(&quot;brown3&quot;,&quot;deepskyblue2&quot;))+
+  ylab(&quot;Measured NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle(&quot;Retrieved nitrate concentrations (after subtracting soil innate nitrate) \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  mytheme_2d</code></pre>
+<p><img src="figure/Soil_extraction_2MKCl_Griess.Rmd/unnamed-chunk-4-3.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Retrieved ratio of spike ins
+df_soil2$Ratio_retrieved &lt;- df_soil2$Retrieved_NO3_mM / df_soil2$Nitrate_input 
+
+ggplot(df_soil2, aes(x=Nitrate_input, y=Ratio_retrieved)) +  ## I put fill=value which was wrong
+  geom_bar(stat=&quot;identity&quot;,position=&quot;dodge&quot;, fill=&quot;brown3&quot;)+
+  geom_line(size=0.2, color=&quot;brown&quot;)+
+  ylab(&quot;Ratio of retrieved nitrate concentraion \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle(&quot;Retrieved nitrate ratio (after subtracting soil innate nitrate) \n&quot;) +
+  geom_text(aes(label = round(Ratio_retrieved,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d</code></pre>
+<p><img src="figure/Soil_extraction_2MKCl_Griess.Rmd/unnamed-chunk-4-4.png" width="1056" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">

@@ -11,9 +11,9 @@
 
 <meta name="author" content="KiseokUchicago" />
 
-<meta name="date" content="2021-09-24" />
+<meta name="date" content="2021-09-29" />
 
-<title>Soil_drying_curve</title>
+<title>Griess_time_series_210926</title>
 
 <script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
@@ -358,9 +358,9 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Soil_drying_curve</h1>
+<h1 class="title toc-ignore">Griess_time_series_210926</h1>
 <h4 class="author">KiseokUchicago</h4>
-<h4 class="date">2021-09-24</h4>
+<h4 class="date">2021-09-29</h4>
 
 </div>
 
@@ -562,7 +562,7 @@ Note that any generated files, e.g. HTML, png, CSS, etc., are not included in t
 <div id="versions" class="tab-pane fade">
 
 <p>
-These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/Soil_drying_curve.Rmd</code>) and HTML (<code>docs/Soil_drying_curve.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/Griess_time_series_210926.Rmd</code>) and HTML (<code>docs/Griess_time_series_210926.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
 </p>
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
@@ -591,47 +591,13 @@ Message
 Rmd
 </td>
 <td>
-<a href="https://github.com/KiseokUchicago/Denit_visualization_R/blob/f0fe6107fc6c40cc9dd6e8aa9b462f41c128de06/analysis/Soil_drying_curve.Rmd" target="_blank">f0fe610</a>
+<a href="https://github.com/KiseokUchicago/Denit_visualization_R/blob/f0fe6107fc6c40cc9dd6e8aa9b462f41c128de06/analysis/Griess_time_series_210926.Rmd" target="_blank">f0fe610</a>
 </td>
 <td>
 KiseokUchicago
 </td>
 <td>
 2021-10-08
-</td>
-<td>
-wflow_publish("analysis/*.Rmd")
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/KiseokUchicago/Denit_visualization_R/390659b56a5e91f40a41aeb2f44107f88ec363ab/docs/Soil_drying_curve.html" target="_blank">390659b</a>
-</td>
-<td>
-KiseokUchicago
-</td>
-<td>
-2021-09-24
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/KiseokUchicago/Denit_visualization_R/blob/8c7b9362b43090956821074fa7d202d544bb99ec/analysis/Soil_drying_curve.Rmd" target="_blank">8c7b936</a>
-</td>
-<td>
-KiseokUchicago
-</td>
-<td>
-2021-09-24
 </td>
 <td>
 wflow_publish("analysis/*.Rmd")
@@ -644,10 +610,10 @@ wflow_publish("analysis/*.Rmd")
 </div>
 </div>
 </div>
-<div id="soil-drying-method-testing" class="section level2">
-<h2>Soil drying method testing</h2>
+<div id="soil-extraction-method-testing-griess-assay" class="section level2">
+<h2>Soil extraction method testing (Griess assay)</h2>
 <p>Researcher: <strong>Kiseok Lee</strong><br />
-Data: 9/5/21<br />
+Data: 9/23/21<br />
 Lab: <strong>Seppe Kuehn</strong></p>
 <pre class="r"><code># libraries
 library(dplyr)
@@ -667,6 +633,7 @@ library(tidyr)
 
 ## theme for ggplot
 mytheme &lt;- theme_bw() + 
+  theme(text = element_text(family=&quot;serif&quot;)) +
   theme(plot.title = element_text(size = 19,hjust = 0.5, family=&quot;serif&quot;)) + 
   theme(axis.title.x = element_text(size = 17,hjust = 0.5, family=&quot;serif&quot;)) + 
   theme(axis.title.y = element_text(size = 17,hjust = 0.5, family=&quot;serif&quot;)) + 
@@ -677,6 +644,7 @@ mytheme &lt;- theme_bw() +
   theme(axis.ticks = element_line(size = 1.1))
 
 mytheme_2d &lt;- theme_bw() + 
+  theme(text = element_text(family=&quot;serif&quot;)) +
   theme(plot.title = element_text(size = 19,hjust = 0.5, family=&quot;serif&quot;)) + 
   theme(axis.title.x = element_text(size = 17,hjust = 0.5, family=&quot;serif&quot;)) + 
   theme(axis.title.y = element_text(size = 17,hjust = 0.5, family=&quot;serif&quot;)) + 
@@ -706,40 +674,195 @@ my_color_collection &lt;- c(
 # for git push, use this instead of using wflow_git_push()
 # git push -u origin master (in the Git app / in the working directory)</code></pre>
 </div>
-<div id="import-data" class="section level2">
-<h2>1. Import data</h2>
+<div id="import-data-table-from-python-code" class="section level2">
+<h2>1. Import data table from python code</h2>
+<p>When I did the experiment, B05 and B06 was switched. D05, D06 also switched. F05, F06 switched.</p>
 <pre class="r"><code># import file
-df_dry &lt;- openxlsx::read.xlsx(&quot;data/dry_weight_curve(9.5.21).xlsx&quot;)
-colnames(df_dry) &lt;- c(&quot;Temperature&quot;,0,1,2,3,4,5,6)
-df_dry_gg &lt;- melt(df_dry, id.vars = c(&quot;Temperature&quot;), variable.name = &quot;Day&quot;,value.name = &quot;Weight&quot;)
-df_dry_gg$Day &lt;- as.numeric(df_dry_gg$Day)
-df_dry_gg$Temperature &lt;- as.factor(df_dry_gg$Temperature)
-class(df_dry_gg$Day)</code></pre>
-<pre><code>[1] &quot;numeric&quot;</code></pre>
-<pre class="r"><code>class(df_dry_gg$Temperature)</code></pre>
-<pre><code>[1] &quot;factor&quot;</code></pre>
-<pre class="r"><code>dim(df_dry_gg)</code></pre>
-<pre><code>[1] 28  3</code></pre>
+df_p1 &lt;- openxlsx::read.xlsx(&quot;data/210928_Griess_sample_plate1.xlsx&quot;)
+class(df_p1)</code></pre>
+<pre><code>[1] &quot;data.frame&quot;</code></pre>
+<pre class="r"><code>head(df_p1)</code></pre>
+<pre><code>  Well Time_point Nitrate_input Spike_in Plate Succinate_input NO2_OD540
+1  A01          0           2.5        F    P1           0.000   0.07505
+2  A02          0           2.5        F    P1           0.000   0.06670
+3  A03          0           2.5        F    P1           0.000   0.07440
+4  A04          0           5.0        T    P1           0.025   0.08735
+5  A05          0           5.0        T    P1           0.025   0.08155
+6  A06          0           5.0        T    P1           0.025   0.07455
+  NO2NO3_OD540     NO2_mM NO2NO3_mM
+1      0.85935 0.04571112 0.7656799
+2      0.91115 0.04176118 0.8144370
+3      1.09995 0.04540355 0.9951520
+4      1.34105 0.05153414 1.2332790
+5      1.13250 0.04878765 1.0268036
+6      0.87070 0.04547453 0.7763337</code></pre>
+<pre class="r"><code>colnames(df_p1)</code></pre>
+<pre><code> [1] &quot;Well&quot;            &quot;Time_point&quot;      &quot;Nitrate_input&quot;   &quot;Spike_in&quot;       
+ [5] &quot;Plate&quot;           &quot;Succinate_input&quot; &quot;NO2_OD540&quot;       &quot;NO2NO3_OD540&quot;   
+ [9] &quot;NO2_mM&quot;          &quot;NO2NO3_mM&quot;      </code></pre>
 <pre class="r"><code># remove NA
-dim(df_dry_gg)</code></pre>
-<pre><code>[1] 28  3</code></pre>
-<pre class="r"><code>df_dry_gg2 &lt;- na.omit(df_dry_gg)
-dim(df_dry_gg2)</code></pre>
-<pre><code>[1] 22  3</code></pre>
+dim(df_p1)</code></pre>
+<pre><code>[1] 96 10</code></pre>
+<pre class="r"><code>df_p1 &lt;- na.omit(df_p1)
+dim(df_p1)</code></pre>
+<pre><code>[1] 96 10</code></pre>
 </div>
-<div id="plot" class="section level2">
-<h2>2. Plot</h2>
-<pre class="r"><code># plot
-ggplot(df_dry_gg2, aes(x=Day,y=Weight, color=Temperature, group=Temperature)) +
+<div id="get-average-and-standard-deviation" class="section level2">
+<h2>2. Get average and standard deviation</h2>
+<pre class="r"><code># average and standard deviation
+df_NO2NO3 &lt;- df_p1 %&gt;% group_by(Time_point, Nitrate_input, Succinate_input, Spike_in) %&gt;% summarise(Ave_NO2_mM = mean(NO2_mM), Std_NO2_mM = sd(NO2_mM), Ave_NO2NO3_mM = mean(NO2NO3_mM), Std_NO2NO3_mM = sd(NO2NO3_mM), Ave_NO3_mM = mean(NO2NO3_mM - NO2_mM), Std_NO3_mM = sd(NO2NO3_mM - NO2_mM)) %&gt;% ungroup()
+# NO3_mM = NO2NO3_mM - NO2_mM
+
+dim(df_NO2NO3)</code></pre>
+<pre><code>[1] 32 10</code></pre>
+<pre class="r"><code># Factor in orders
+# df_NO2NO3$Buffer &lt;-  factor(df_NO2NO3$Buffer, levels = c(&quot;KCl&quot;,&quot;K2SO4&quot;,&quot;H2O&quot;))</code></pre>
+</div>
+<div id="plot---no-carbon-added" class="section level2">
+<h2>3. Plot - no carbon added</h2>
+<pre class="r"><code># (1) Nitrite dynamics - no carbon added
+colnames(df_NO2NO3)</code></pre>
+<pre><code> [1] &quot;Time_point&quot;      &quot;Nitrate_input&quot;   &quot;Succinate_input&quot; &quot;Spike_in&quot;       
+ [5] &quot;Ave_NO2_mM&quot;      &quot;Std_NO2_mM&quot;      &quot;Ave_NO2NO3_mM&quot;   &quot;Std_NO2NO3_mM&quot;  
+ [9] &quot;Ave_NO3_mM&quot;      &quot;Std_NO3_mM&quot;     </code></pre>
+<pre class="r"><code>dim(df_NO2NO3)</code></pre>
+<pre><code>[1] 32 10</code></pre>
+<pre class="r"><code>head(df_NO2NO3)</code></pre>
+<pre><code># A tibble: 6 x 10
+  Time_point Nitrate_input Succinate_input Spike_in Ave_NO2_mM Std_NO2_mM
+       &lt;dbl&gt;         &lt;dbl&gt;           &lt;dbl&gt; &lt;chr&gt;         &lt;dbl&gt;      &lt;dbl&gt;
+1          0           2.5           0     F            0.0443   0.00220 
+2          0           5             0     F            0.0416   0.00124 
+3          0           5             0.025 T            0.0486   0.00303 
+4          0          10             0     F            0.0403   0.00168 
+5          0          10             0.025 T            0.0441   0.00321 
+6          0          15             0     F            0.0408   0.000917
+# ... with 4 more variables: Ave_NO2NO3_mM &lt;dbl&gt;, Std_NO2NO3_mM &lt;dbl&gt;,
+#   Ave_NO3_mM &lt;dbl&gt;, Std_NO3_mM &lt;dbl&gt;</code></pre>
+<pre class="r"><code>df_NO2NO3$Nitrate_input &lt;- factor(df_NO2NO3$Nitrate_input)
+df_no_C_added &lt;- df_NO2NO3 %&gt;% filter(Spike_in == &quot;F&quot;)
+
+ggplot(df_no_C_added, aes(x=Time_point, y=Ave_NO2_mM, color=Nitrate_input, group=Nitrate_input )) +
   geom_point(size=2.5, shape=21) +
   geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
   scale_fill_brewer(palette=&#39;Set2&#39;) +
-  ylab(&quot;Weight(g) \n&quot;) +
-  xlab(&quot;\n Days(every 24hr)&quot;) +
-  scale_x_continuous(breaks = c(1,2,3,4,5,6,7), labels=c(&quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,&quot;5&quot;,&quot;6&quot;))+
-  ggtitle(&quot;Weight change in dry oven \n&quot;) +
+  ylab(&quot;NO2- (mM) \n&quot;) +
+  xlab(&quot;\n Time point (hr)&quot;) +
+  scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;(1) Nitrite dynamics - No carbon added \n&quot;) +
+  # label
+  geom_text(aes(label = round(Ave_NO2_mM,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
   mytheme_2d</code></pre>
-<p><img src="figure/Soil_drying_curve.Rmd/unnamed-chunk-3-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<p><img src="figure/Griess_time_series_210926.Rmd/unnamed-chunk-4-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># (2) Nitrate dynamics - no carbon added
+colnames(df_NO2NO3)</code></pre>
+<pre><code> [1] &quot;Time_point&quot;      &quot;Nitrate_input&quot;   &quot;Succinate_input&quot; &quot;Spike_in&quot;       
+ [5] &quot;Ave_NO2_mM&quot;      &quot;Std_NO2_mM&quot;      &quot;Ave_NO2NO3_mM&quot;   &quot;Std_NO2NO3_mM&quot;  
+ [9] &quot;Ave_NO3_mM&quot;      &quot;Std_NO3_mM&quot;     </code></pre>
+<pre class="r"><code>dim(df_NO2NO3)</code></pre>
+<pre><code>[1] 32 10</code></pre>
+<pre class="r"><code>head(df_NO2NO3)</code></pre>
+<pre><code># A tibble: 6 x 10
+  Time_point Nitrate_input Succinate_input Spike_in Ave_NO2_mM Std_NO2_mM
+       &lt;dbl&gt; &lt;fct&gt;                   &lt;dbl&gt; &lt;chr&gt;         &lt;dbl&gt;      &lt;dbl&gt;
+1          0 2.5                     0     F            0.0443   0.00220 
+2          0 5                       0     F            0.0416   0.00124 
+3          0 5                       0.025 T            0.0486   0.00303 
+4          0 10                      0     F            0.0403   0.00168 
+5          0 10                      0.025 T            0.0441   0.00321 
+6          0 15                      0     F            0.0408   0.000917
+# ... with 4 more variables: Ave_NO2NO3_mM &lt;dbl&gt;, Std_NO2NO3_mM &lt;dbl&gt;,
+#   Ave_NO3_mM &lt;dbl&gt;, Std_NO3_mM &lt;dbl&gt;</code></pre>
+<pre class="r"><code>df_NO2NO3$Nitrate_input &lt;- factor(df_NO2NO3$Nitrate_input)
+df_no_C_added &lt;- df_NO2NO3 %&gt;% filter(Spike_in == &quot;F&quot;)
+
+ggplot(df_no_C_added, aes(x=Time_point, y=Ave_NO3_mM, color=Nitrate_input, group=Nitrate_input )) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Time point (hr)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;(2) Nitrate dynamics - No carbon added \n&quot;) +
+  # label
+  geom_text(aes(label = round(Ave_NO3_mM,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d</code></pre>
+<p><img src="figure/Griess_time_series_210926.Rmd/unnamed-chunk-4-2.png" width="1056" style="display: block; margin: auto;" /></p>
+</div>
+<div id="carbon-added" class="section level2">
+<h2>4. Carbon added</h2>
+<pre class="r"><code># (3) Nitrite dynamics - carbon added (Succinate)
+colnames(df_NO2NO3)</code></pre>
+<pre><code> [1] &quot;Time_point&quot;      &quot;Nitrate_input&quot;   &quot;Succinate_input&quot; &quot;Spike_in&quot;       
+ [5] &quot;Ave_NO2_mM&quot;      &quot;Std_NO2_mM&quot;      &quot;Ave_NO2NO3_mM&quot;   &quot;Std_NO2NO3_mM&quot;  
+ [9] &quot;Ave_NO3_mM&quot;      &quot;Std_NO3_mM&quot;     </code></pre>
+<pre class="r"><code>dim(df_NO2NO3)</code></pre>
+<pre><code>[1] 32 10</code></pre>
+<pre class="r"><code>head(df_NO2NO3)</code></pre>
+<pre><code># A tibble: 6 x 10
+  Time_point Nitrate_input Succinate_input Spike_in Ave_NO2_mM Std_NO2_mM
+       &lt;dbl&gt; &lt;fct&gt;                   &lt;dbl&gt; &lt;chr&gt;         &lt;dbl&gt;      &lt;dbl&gt;
+1          0 2.5                     0     F            0.0443   0.00220 
+2          0 5                       0     F            0.0416   0.00124 
+3          0 5                       0.025 T            0.0486   0.00303 
+4          0 10                      0     F            0.0403   0.00168 
+5          0 10                      0.025 T            0.0441   0.00321 
+6          0 15                      0     F            0.0408   0.000917
+# ... with 4 more variables: Ave_NO2NO3_mM &lt;dbl&gt;, Std_NO2NO3_mM &lt;dbl&gt;,
+#   Ave_NO3_mM &lt;dbl&gt;, Std_NO3_mM &lt;dbl&gt;</code></pre>
+<pre class="r"><code>df_NO2NO3$Nitrate_input &lt;- factor(df_NO2NO3$Nitrate_input)
+df_C_added &lt;- df_NO2NO3 %&gt;% filter(Spike_in == &quot;T&quot;)
+
+ggplot(df_C_added, aes(x=Time_point, y=Ave_NO2_mM, color=Nitrate_input, group=Nitrate_input )) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO2- (mM) \n&quot;) +
+  xlab(&quot;\n Time point (hr)&quot;) +
+  scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;(1) Nitrite dynamics - carbon added (TOC + 0.025%) \n&quot;) +
+  # label
+  geom_text(aes(label = round(Ave_NO2_mM,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d</code></pre>
+<p><img src="figure/Griess_time_series_210926.Rmd/unnamed-chunk-5-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># (4) Nitrate dynamics - no carbon added
+colnames(df_NO2NO3)</code></pre>
+<pre><code> [1] &quot;Time_point&quot;      &quot;Nitrate_input&quot;   &quot;Succinate_input&quot; &quot;Spike_in&quot;       
+ [5] &quot;Ave_NO2_mM&quot;      &quot;Std_NO2_mM&quot;      &quot;Ave_NO2NO3_mM&quot;   &quot;Std_NO2NO3_mM&quot;  
+ [9] &quot;Ave_NO3_mM&quot;      &quot;Std_NO3_mM&quot;     </code></pre>
+<pre class="r"><code>dim(df_NO2NO3)</code></pre>
+<pre><code>[1] 32 10</code></pre>
+<pre class="r"><code>head(df_NO2NO3)</code></pre>
+<pre><code># A tibble: 6 x 10
+  Time_point Nitrate_input Succinate_input Spike_in Ave_NO2_mM Std_NO2_mM
+       &lt;dbl&gt; &lt;fct&gt;                   &lt;dbl&gt; &lt;chr&gt;         &lt;dbl&gt;      &lt;dbl&gt;
+1          0 2.5                     0     F            0.0443   0.00220 
+2          0 5                       0     F            0.0416   0.00124 
+3          0 5                       0.025 T            0.0486   0.00303 
+4          0 10                      0     F            0.0403   0.00168 
+5          0 10                      0.025 T            0.0441   0.00321 
+6          0 15                      0     F            0.0408   0.000917
+# ... with 4 more variables: Ave_NO2NO3_mM &lt;dbl&gt;, Std_NO2NO3_mM &lt;dbl&gt;,
+#   Ave_NO3_mM &lt;dbl&gt;, Std_NO3_mM &lt;dbl&gt;</code></pre>
+<pre class="r"><code>df_NO2NO3$Nitrate_input &lt;- factor(df_NO2NO3$Nitrate_input)
+df_C_added &lt;- df_NO2NO3 %&gt;% filter(Spike_in == &quot;T&quot;)
+
+ggplot(df_C_added, aes(x=Time_point, y=Ave_NO3_mM, color=Nitrate_input, group=Nitrate_input )) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Time point (hr)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;(2) Nitrate dynamics - carbon added (TOC + 0.025%) \n&quot;) +
+  # label
+  geom_text(aes(label = round(Ave_NO3_mM,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d</code></pre>
+<p><img src="figure/Griess_time_series_210926.Rmd/unnamed-chunk-5-2.png" width="1056" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
