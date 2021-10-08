@@ -31,6 +31,8 @@ library(gtools)
 library(devtools)
 library(openxlsx)
 library(ape)
+library(stringr)
+library(tidyr)
 
 ## theme for ggplot
 mytheme <- theme_bw() + 

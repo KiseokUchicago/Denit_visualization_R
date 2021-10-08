@@ -329,10 +329,10 @@ ggplot(df_five_method_NO2, aes(x=Buffer, y=Ratio_extracted, color=Five_Methods, 
   geom_point(size=2.5, shape=21) +
   geom_line(size=1)+
   scale_fill_brewer(palette='Set2') +
-  ylab("NO2- (mM) \n") +
+  ylab("Ratio of extracted spike-ins \n") +
   xlab("\n Extraction buffer") +
   #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
-  ggtitle("Extraction ratio (retrieved / spike in) depending on Soil weight, Filter method, and Extraction buffer \n") +
+  ggtitle("Extraction ratio (retrieved / spike in) depending on Soil weight, Filter method, and Extraction buffer (NO2-) \n") +
   # label
   geom_text(aes(label = round(Ratio_extracted,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
   mytheme_2d
@@ -424,7 +424,7 @@ ggplot(df_five_method_NO2NO3, aes(x=Buffer, y=Ratio_extracted, color=Five_Method
   geom_point(size=2.5, shape=21) +
   geom_line(size=1)+
   scale_fill_brewer(palette='Set2') +
-  ylab("NO2- + NO3- (mM) \n") +
+  ylab("Ratio of extracted spike-ins \n") +
   xlab("\n Extraction buffer") +
   scale_y_continuous(breaks = seq(0.7,1,0.05), limits=c(0.7, 1))+
   ggtitle("Extraction ratio (retrieved / spike in) depending on Soil weight, Filter method, and Extraction buffer (NO2+NO3) \n") +
@@ -519,10 +519,10 @@ ggplot(df_five_method_NO3, aes(x=Buffer, y=Ratio_extracted, color=Five_Methods, 
   geom_point(size=2.5, shape=21) +
   geom_line(size=1)+
   scale_fill_brewer(palette='Set2') +
-  ylab("NO3- (mM) \n") +
+  ylab("Ratio of extracted spike-ins \n") +
   xlab("\n Extraction buffer") +
   # scale_y_continuous(breaks = seq(0.7,1,0.05), limits=c(0.7, 1))+
-  ggtitle("Extraction ratio (retrieved / spike in) depending on Soil weight, Filter method, and Extraction buffer (NO3) \n") +
+  ggtitle("Extraction ratio (retrieved / spike in) depending on Soil weight, Filter method, and Extraction buffer (NO3-) \n") +
   # label
   geom_text(aes(label = round(Ratio_extracted,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
   mytheme_2d
