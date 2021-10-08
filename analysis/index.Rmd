@@ -15,4 +15,4 @@ Welcome to Kiseok Denitrification data visualization website.
 * [Soil_extraction_method_Griess (9/23/21)](Soil_extraction_method_Griess.html)
 * [Griess_time_series_first_attempt_210926 (9/26/21)](Griess_time_series_210926.html)
 * [Soil_extraction_method_Griess (10/5/21)](Soil_extraction_method_Griess.html)
-* [Blank_extraction_2MKCl_Greiss (10/7/21)](Blank_extraction_2MKCl_Greiss_211007.html)
+* [Blank_extraction_2MKCl_Greiss (10/7/21)](Blank_extraction_2MKCl_Griess_211007.html)
