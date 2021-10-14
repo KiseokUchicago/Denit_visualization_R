@@ -11,9 +11,9 @@
 
 <meta name="author" content="KiseokUchicago" />
 
-<meta name="date" content="2021-09-24" />
+<meta name="date" content="2021-10-13" />
 
-<title>Soil_pH_method</title>
+<title>210911_TOC_measurement</title>
 
 <script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
@@ -358,9 +358,9 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Soil_pH_method</h1>
+<h1 class="title toc-ignore">210911_TOC_measurement</h1>
 <h4 class="author">KiseokUchicago</h4>
-<h4 class="date">2021-09-24</h4>
+<h4 class="date">2021-10-13</h4>
 
 </div>
 
@@ -529,7 +529,7 @@ Note that any generated files, e.g. HTML, png, CSS, etc., are not included in t
 <div id="versions" class="tab-pane fade">
 
 <p>
-These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/Soil_pH_method.Rmd</code>) and HTML (<code>docs/Soil_pH_method.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/210911_TOC_measurement.Rmd</code>) and HTML (<code>docs/210911_TOC_measurement.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
 </p>
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
@@ -555,101 +555,16 @@ Message
 <tbody>
 <tr>
 <td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/KiseokUchicago/Denit_visualization_R/9d23c75cc759cf242a3adf94018d981bd17959b2/docs/Soil_pH_method.html" target="_blank">9d23c75</a>
-</td>
-<td>
-KiseokUchicago
-</td>
-<td>
-2021-10-08
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/KiseokUchicago/Denit_visualization_R/d20847015f8d55297dff3f6d49db24c917a8d066/docs/Soil_pH_method.html" target="_blank">d208470</a>
-</td>
-<td>
-KiseokUchicago
-</td>
-<td>
-2021-10-08
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/KiseokUchicago/Denit_visualization_R/ae8de176de07679638e7ccb04309155961480157/docs/Soil_pH_method.html" target="_blank">ae8de17</a>
-</td>
-<td>
-KiseokUchicago
-</td>
-<td>
-2021-10-08
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
 Rmd
 </td>
 <td>
-<a href="https://github.com/KiseokUchicago/Denit_visualization_R/blob/f0fe6107fc6c40cc9dd6e8aa9b462f41c128de06/analysis/Soil_pH_method.Rmd" target="_blank">f0fe610</a>
+<a href="https://github.com/KiseokUchicago/Denit_visualization_R/blob/77a9accf4240b266f5a9fe93d25c68dad932bf67/analysis/210911_TOC_measurement.Rmd" target="_blank">77a9acc</a>
 </td>
 <td>
 KiseokUchicago
 </td>
 <td>
-2021-10-08
-</td>
-<td>
-wflow_publish("analysis/*.Rmd")
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/KiseokUchicago/Denit_visualization_R/390659b56a5e91f40a41aeb2f44107f88ec363ab/docs/Soil_pH_method.html" target="_blank">390659b</a>
-</td>
-<td>
-KiseokUchicago
-</td>
-<td>
-2021-09-24
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/KiseokUchicago/Denit_visualization_R/blob/8c7b9362b43090956821074fa7d202d544bb99ec/analysis/Soil_pH_method.Rmd" target="_blank">8c7b936</a>
-</td>
-<td>
-KiseokUchicago
-</td>
-<td>
-2021-09-24
+2021-10-14
 </td>
 <td>
 wflow_publish("analysis/*.Rmd")
@@ -662,11 +577,11 @@ wflow_publish("analysis/*.Rmd")
 </div>
 </div>
 </div>
-<div id="soil-ph-measurement-method-testing" class="section level2">
-<h2>Soil pH measurement method testing</h2>
+<div id="toctotal-organic-carbon-measurements" class="section level2">
+<h2>TOC(Total organic carbon) measurements</h2>
 <p>Researcher: <strong>Kiseok Lee</strong><br />
-Data: 9/14/21<br />
-Lab: <strong>Seppe Kuehn</strong></p>
+Experiment Date: 9/11/21<br />
+Analysis Date: 10/13/21 Lab: <strong>Seppe Kuehn</strong></p>
 <pre class="r"><code># libraries
 library(dplyr)
 library(ggplot2)
@@ -682,9 +597,12 @@ library(openxlsx)
 library(ape)
 library(stringr)
 library(tidyr)
+library(ggrepel)
+library(ggpubr)
 
 ## theme for ggplot
 mytheme &lt;- theme_bw() + 
+  theme(text = element_text(family=&quot;serif&quot;)) +
   theme(plot.title = element_text(size = 19,hjust = 0.5, family=&quot;serif&quot;)) + 
   theme(axis.title.x = element_text(size = 17,hjust = 0.5, family=&quot;serif&quot;)) + 
   theme(axis.title.y = element_text(size = 17,hjust = 0.5, family=&quot;serif&quot;)) + 
@@ -695,6 +613,7 @@ mytheme &lt;- theme_bw() +
   theme(axis.ticks = element_line(size = 1.1))
 
 mytheme_2d &lt;- theme_bw() + 
+  theme(text = element_text(family=&quot;serif&quot;)) +
   theme(plot.title = element_text(size = 19,hjust = 0.5, family=&quot;serif&quot;)) + 
   theme(axis.title.x = element_text(size = 17,hjust = 0.5, family=&quot;serif&quot;)) + 
   theme(axis.title.y = element_text(size = 17,hjust = 0.5, family=&quot;serif&quot;)) + 
@@ -724,41 +643,97 @@ my_color_collection &lt;- c(
 # for git push, use this instead of using wflow_git_push()
 # git push -u origin master (in the Git app / in the working directory)</code></pre>
 </div>
-<div id="import-data" class="section level2">
-<h2>1. Import data</h2>
+<div id="import-data-table-from-python-code" class="section level2">
+<h2>1. Import data table from python code</h2>
 <pre class="r"><code># import file
-df_pH &lt;- openxlsx::read.xlsx(&quot;data/pH_data(9.14.21).xlsx&quot;)
-class(df_pH)</code></pre>
+df_p1 &lt;- openxlsx::read.xlsx(&quot;data/210911_TOC_sample_plate1.xlsx&quot;)
+
+class(df_p1)</code></pre>
 <pre><code>[1] &quot;data.frame&quot;</code></pre>
-<pre class="r"><code>df_pH &lt;- df_pH %&gt;% rename(Method = X1)
-
-df_pH_gg &lt;- melt(df_pH ,variable.name = &quot;Solution&quot;,value.name = &quot;pH&quot;)
-# Order the method
-df_pH_gg$Method &lt;- ordered(df_pH_gg$Method, levels=c(&quot;Stand_20min&quot;, &quot;Spin_down&quot;, &quot;Filter_0.22um&quot;))
-
-
-# remove NA
-dim(df_pH_gg)</code></pre>
-<pre><code>[1] 9 3</code></pre>
-<pre class="r"><code>df_pH_gg2 &lt;- na.omit(df_pH_gg)
-dim(df_pH_gg2)</code></pre>
-<pre><code>[1] 9 3</code></pre>
+<pre class="r"><code>head(df_p1)</code></pre>
+<pre><code>  Well   Sample Soil_weight Preprocess_dilution Serial_dilution TOC_OD600
+1  A01 Soil0.1g         0.1                   1     1.000000000   0.39680
+2  A02 Soil0.1g         0.1                   1     0.250000000   0.11340
+3  A03 Soil0.1g         0.1                   1     0.062500000   0.04725
+4  A04 Soil0.1g         0.1                   1     0.015625000   0.02325
+5  A05 Soil0.1g         0.1                   1     0.003906250   0.02140
+6  A06 Soil0.1g         0.1                   1     0.000976563   0.01970
+     TOC_mg
+1 5.0610263
+2 1.4594895
+3 0.5977743
+4 0.2830557
+5 0.2587496
+6 0.2364083</code></pre>
+<pre class="r"><code>colnames(df_p1)</code></pre>
+<pre><code>[1] &quot;Well&quot;                &quot;Sample&quot;              &quot;Soil_weight&quot;        
+[4] &quot;Preprocess_dilution&quot; &quot;Serial_dilution&quot;     &quot;TOC_OD600&quot;          
+[7] &quot;TOC_mg&quot;             </code></pre>
+<pre class="r"><code>dim(df_p1)</code></pre>
+<pre><code>[1] 96  7</code></pre>
+<pre class="r"><code># remove NA
+dim(df_p1)</code></pre>
+<pre><code>[1] 96  7</code></pre>
+<pre class="r"><code>df_p1 &lt;- na.omit(df_p1)
+dim(df_p1)</code></pre>
+<pre><code>[1] 96  7</code></pre>
+<pre class="r"><code># Check
+df_p1 %&gt;% filter(Well ==&quot;H06&quot;)</code></pre>
+<pre><code>  Well Sample Soil_weight Preprocess_dilution Serial_dilution TOC_OD600
+1  H06    H2O           1                   1               1    0.0208
+     TOC_mg
+1 0.2508651</code></pre>
+<pre class="r"><code>df_p1 %&gt;% filter(Well ==&quot;H09&quot;)</code></pre>
+<pre><code>  Well Sample Soil_weight Preprocess_dilution Serial_dilution TOC_OD600
+1  H09    H2O           1                   1               1    0.0185
+     TOC_mg
+1 0.2206346</code></pre>
+<pre class="r"><code># remove wells H06, H09
+# df_p %&lt;&gt;% filter(!(Well %in% c(&quot;H06&quot;,&quot;H09&quot;)))
+# dim(df_p)</code></pre>
 </div>
-<div id="plot" class="section level2">
-<h2>2. Plot</h2>
-<pre class="r"><code># plot
-ggplot(df_pH_gg2, aes(x=Method, y=pH, color=Solution, group=Solution)) +
-  geom_point(size=2.5, shape=21) +
-  geom_line(size=1)+
+<div id="preprocess-data-and-select-datapoints-to-visualize" class="section level2">
+<h2>2. Preprocess data and select datapoints to visualize</h2>
+<pre class="r"><code>## convert TOC according to dilutions (mg to percent TOC)
+
+df_percent &lt;- df_p1 %&gt;% mutate(TOC_percent = (TOC_mg * 0.001 * 100) / (Soil_weight * Preprocess_dilution * Serial_dilution))
+
+## need only 3 wells
+head(df_percent)</code></pre>
+<pre><code>  Well   Sample Soil_weight Preprocess_dilution Serial_dilution TOC_OD600
+1  A01 Soil0.1g         0.1                   1     1.000000000   0.39680
+2  A02 Soil0.1g         0.1                   1     0.250000000   0.11340
+3  A03 Soil0.1g         0.1                   1     0.062500000   0.04725
+4  A04 Soil0.1g         0.1                   1     0.015625000   0.02325
+5  A05 Soil0.1g         0.1                   1     0.003906250   0.02140
+6  A06 Soil0.1g         0.1                   1     0.000976563   0.01970
+     TOC_mg TOC_percent
+1 5.0610263    5.061026
+2 1.4594895    5.837958
+3 0.5977743    9.564389
+4 0.2830557   18.115565
+5 0.2587496   66.239892
+6 0.2364083  242.082003</code></pre>
+<pre class="r"><code>df_3 &lt;- df_percent %&gt;% filter(Well %in% c(&quot;A01&quot;,&quot;A12&quot;,&quot;B01&quot;))
+
+# set factor for plot order
+df_3$Sample &lt;- factor(df_3$Sample, levels = c(&quot;Soil0.1g&quot;, &quot;WSC&quot;,&quot;H2O&quot;))
+
+
+# plot to see
+ggplot(df_3, aes(x=Sample, y=TOC_percent, fill=Sample)) +
+  # geom_point(size=2.5, shape=21) +
+  geom_bar(stat=&quot;identity&quot;)+
+  # geom_line(size=1)+
+  # geom_errorbar(aes(ymin=Ave_TOC_percent - Std_TOC_percent, ymax=Ave_TOC_percent + Std_TOC_percent), width=.05)+
   scale_fill_brewer(palette=&#39;Set2&#39;) +
-  ylab(&quot;pH \n&quot;) +
-  xlab(&quot;\n Settling method&quot;) +
-  scale_y_continuous(breaks = seq(6,7,0.05), limits=c(6.1, 7))+
-  ggtitle(&quot;pH difference by method &amp; solution \n&quot;) +
-  # label
-  geom_text(aes(label = pH), size = 3, vjust = -1.5, family=&quot;serif&quot;)+
+  ylab(&quot;TOC (% weight) \n&quot;) +
+  xlab(&quot;\n Sample&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.12,0.05), limits=c(0, 0.12))+
+  ggtitle(&quot;Total organic carbon \n&quot;) +
+  geom_text(aes(label = round(TOC_percent,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
   mytheme_2d</code></pre>
-<p><img src="figure/Soil_pH_method.Rmd/unnamed-chunk-3-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<p><img src="figure/210911_TOC_measurement.Rmd/unnamed-chunk-3-1.png" width="1056" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -784,35 +759,37 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] ape_5.5            openxlsx_4.2.3     devtools_2.4.0     usethis_2.0.1     
- [5] gtools_3.8.2       reshape2_1.4.4     readxl_1.3.1       magrittr_2.0.1    
- [9] forcats_0.5.1      stringr_1.4.0      purrr_0.3.4        readr_1.4.0       
-[13] tidyr_1.1.3        tibble_3.0.4       tidyverse_1.3.1    vegan_2.5-7       
-[17] lattice_0.20-41    permute_0.9-5      RColorBrewer_1.1-2 ggplot2_3.3.5     
-[21] dplyr_1.0.5        workflowr_1.6.2   
+ [1] ggpubr_0.4.0       ggrepel_0.9.1      ape_5.5            openxlsx_4.2.3    
+ [5] devtools_2.4.0     usethis_2.0.1      gtools_3.8.2       reshape2_1.4.4    
+ [9] readxl_1.3.1       magrittr_2.0.1     forcats_0.5.1      stringr_1.4.0     
+[13] purrr_0.3.4        readr_1.4.0        tidyr_1.1.3        tibble_3.0.4      
+[17] tidyverse_1.3.1    vegan_2.5-7        lattice_0.20-41    permute_0.9-5     
+[21] RColorBrewer_1.1-2 ggplot2_3.3.5      dplyr_1.0.5        workflowr_1.6.2   
 
 loaded via a namespace (and not attached):
- [1] nlme_3.1-149      fs_1.5.0          lubridate_1.7.10  httr_1.4.2       
- [5] rprojroot_2.0.2   tools_4.0.3       backports_1.2.1   bslib_0.2.5.1    
- [9] utf8_1.1.4        R6_2.5.0          DBI_1.1.1         mgcv_1.8-33      
-[13] colorspace_2.0-0  withr_2.4.2       prettyunits_1.1.1 processx_3.5.1   
-[17] tidyselect_1.1.1  compiler_4.0.3    git2r_0.28.0      cli_3.0.1        
-[21] rvest_1.0.1       xml2_1.3.2        desc_1.3.0        sass_0.4.0       
-[25] scales_1.1.1      callr_3.7.0       digest_0.6.27     rmarkdown_2.9    
-[29] pkgconfig_2.0.3   htmltools_0.5.1.1 sessioninfo_1.1.1 highr_0.9        
-[33] dbplyr_2.1.1      fastmap_1.1.0     rlang_0.4.10      rstudioapi_0.13  
-[37] farver_2.1.0      jquerylib_0.1.4   generics_0.1.0    jsonlite_1.7.2   
-[41] zip_2.1.1         Matrix_1.2-18     Rcpp_1.0.5        munsell_0.5.0    
-[45] fansi_0.4.2       lifecycle_1.0.0   stringi_1.5.3     whisker_0.4      
-[49] yaml_2.2.1        MASS_7.3-53       pkgbuild_1.2.0    plyr_1.8.6       
-[53] grid_4.0.3        parallel_4.0.3    promises_1.2.0.1  crayon_1.4.1     
-[57] haven_2.4.1       splines_4.0.3     hms_1.1.0         ps_1.6.0         
-[61] knitr_1.33        pillar_1.6.0      pkgload_1.2.1     reprex_2.0.0     
-[65] glue_1.4.2        evaluate_0.14     remotes_2.4.0     modelr_0.1.8     
-[69] vctrs_0.3.8       httpuv_1.6.0      testthat_3.0.2    cellranger_1.1.0 
-[73] gtable_0.3.0      assertthat_0.2.1  cachem_1.0.4      xfun_0.22        
-[77] broom_0.7.9       later_1.2.0       memoise_2.0.0     cluster_2.1.0    
-[81] ellipsis_0.3.2   </code></pre>
+ [1] colorspace_2.0-0  ggsignif_0.6.2    ellipsis_0.3.2    rio_0.5.27       
+ [5] rprojroot_2.0.2   fs_1.5.0          rstudioapi_0.13   farver_2.1.0     
+ [9] remotes_2.4.0     fansi_0.4.2       lubridate_1.7.10  xml2_1.3.2       
+[13] splines_4.0.3     cachem_1.0.4      knitr_1.33        pkgload_1.2.1    
+[17] jsonlite_1.7.2    broom_0.7.9       cluster_2.1.0     dbplyr_2.1.1     
+[21] compiler_4.0.3    httr_1.4.2        backports_1.2.1   assertthat_0.2.1 
+[25] Matrix_1.2-18     fastmap_1.1.0     cli_3.0.1         later_1.2.0      
+[29] htmltools_0.5.1.1 prettyunits_1.1.1 tools_4.0.3       gtable_0.3.0     
+[33] glue_1.4.2        Rcpp_1.0.5        carData_3.0-4     cellranger_1.1.0 
+[37] jquerylib_0.1.4   vctrs_0.3.8       nlme_3.1-149      xfun_0.22        
+[41] ps_1.6.0          testthat_3.0.2    rvest_1.0.1       lifecycle_1.0.0  
+[45] rstatix_0.7.0     MASS_7.3-53       scales_1.1.1      hms_1.1.0        
+[49] promises_1.2.0.1  parallel_4.0.3    yaml_2.2.1        curl_4.3.2       
+[53] memoise_2.0.0     sass_0.4.0        stringi_1.5.3     highr_0.9        
+[57] desc_1.3.0        pkgbuild_1.2.0    zip_2.1.1         rlang_0.4.10     
+[61] pkgconfig_2.0.3   evaluate_0.14     labeling_0.4.2    tidyselect_1.1.1 
+[65] processx_3.5.1    plyr_1.8.6        R6_2.5.0          generics_0.1.0   
+[69] DBI_1.1.1         pillar_1.6.0      haven_2.4.1       whisker_0.4      
+[73] foreign_0.8-80    withr_2.4.2       mgcv_1.8-33       abind_1.4-5      
+[77] modelr_0.1.8      crayon_1.4.1      car_3.0-11        utf8_1.1.4       
+[81] rmarkdown_2.9     grid_4.0.3        data.table_1.14.0 callr_3.7.0      
+[85] git2r_0.28.0      reprex_2.0.0      digest_0.6.27     httpuv_1.6.0     
+[89] munsell_0.5.0     bslib_0.2.5.1     sessioninfo_1.1.1</code></pre>
 </div>
 </div>
 
