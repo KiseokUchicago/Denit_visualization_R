@@ -127,7 +127,7 @@ head(df_p)
 dim(df_p)
 
 # average technical replicate
-df_NO2NO3 <- df_p %>% group_by(Sample, Nitrate_input, Sample_type, Replicate, Plate) %>% summarise(Ave_NO2_mM = mean(NO2_mM), Std_NO2_mM = sd(NO2_mM), Ave_NO2NO3_mM = mean(NO2NO3_mM), Std_NO2NO3_mM = sd(NO2NO3_mM), Ave_NO3_mM = mean(NO2NO3_mM - NO2_mM), Std_NO3_mM = sd(NO2NO3_mM - NO2_mM)) %>% ungroup()
+df_NO2NO3 <- df_p %>% group_by(Sample, Nitrate_input, Sample_type, Replicate, Plate) %>% summarise(Ave_NO2_mM = mean(NO2_mM), Std_NO2_mM = sd(NO2_mM), Ave_NO2NO3_mM = mean(NO2NO3_mM), Std_NO2NO3_mM = sd(NO2NO3_mM), Ave_NO3_mM = mean(NO3_mM), Std_NO3_mM = sd(NO3_mM)) %>% ungroup()
 
 # plot to see
 ggplot(df_NO2NO3, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
@@ -145,7 +145,7 @@ ggplot(df_NO2NO3, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Sample_type, group=Sa
 dim(df_NO2NO3)
 head(df_NO2NO3)
 
-df_blank <- df_NO2NO3 %>% group_by(Nitrate_input, Sample_type, Plate) %>% summarise(NO2_mM = mean(Ave_NO2_mM), sd_NO2_mM = sd(Ave_NO2_mM), NO2NO3_mM = mean(Ave_NO2NO3_mM), sd_NO2NO3_mM = sd(Ave_NO2NO3_mM), NO3_mM = mean(Ave_NO2NO3_mM - Ave_NO2_mM), sd_NO3_mM = sd(Ave_NO2NO3_mM - Ave_NO2_mM)) %>% ungroup()
+df_blank <- df_NO2NO3 %>% group_by(Nitrate_input, Sample_type, Plate) %>% summarise(NO2_mM = mean(Ave_NO2_mM), sd_NO2_mM = sd(Ave_NO2_mM), NO3_mM = mean(Ave_NO3_mM), sd_NO3_mM = sd(Ave_NO3_mM)) %>% ungroup()
 
 dim(df_blank)
 
@@ -229,6 +229,7 @@ ggplot(df_kcl, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_ty
 df_blank$Ratio_retrieved <- df_blank$NO3_mM / df_blank$Nitrate_input
 
 df_ratio <- df_blank %>% filter(!(Nitrate_input == 0))
+df_ratio$Nitrate_input <- factor(df_ratio$Nitrate_input)
 
 ggplot(df_ratio, aes(x=Nitrate_input, y=Ratio_retrieved, fill=Sample_type, group=Sample_type)) +  ## I put fill=value which was wrong
   geom_bar(stat="identity",position="dodge")+
@@ -236,10 +237,11 @@ ggplot(df_ratio, aes(x=Nitrate_input, y=Ratio_retrieved, fill=Sample_type, group
   scale_fill_manual(values = c("deepskyblue4","maroon2"))+
   ylab("Ratio of retrieved nitrate concentraion \n") +
   xlab("\n Nitrate_spike_in (mM)") +
-  scale_y_continuous(breaks = seq(0,4,0.5), limits=c(0, 4))+
-  scale_x_continuous(breaks = seq(0,2.1,0.1), limits=c(0, 2.1))+
+  # scale_y_continuous(breaks = seq(0,1.2,0.5), limits=c(0, 1.2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.1), limits=c(0, 2.1))+
   ggtitle("Retrieved nitrate ratio \n") +
   geom_text_repel(aes(label = round(Ratio_retrieved,3)), size = 3,family="serif", show.legend = FALSE)+
+  geom_abline(slope = 0, intercept=1, linetype="dashed", color="maroon")+
   mytheme_2d
 
 
@@ -258,7 +260,7 @@ ggplot(df_over, aes(x=Nitrate_input, y=Nitrate_over_spike_in_mM, color=Sample_ty
   scale_color_manual(values = c("deepskyblue4","maroon2"))+
   ylab("Measured NO3 - Spiked in NO3 (mM) \n") +
   xlab("\n Nitrate_spike_in (mM)") +
-  scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # scale_y_continuous(breaks = seq(0,0.2,0.05), limits=c(0, 0.2))+
   scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
   # geom_text_repel(aes(label = round(Nitrate_over_spike_in_mM,3)), size = 3,family="serif", show.legend = FALSE)+
   ggtitle("Over-measured Nitrate \n") +
@@ -295,14 +297,13 @@ ggplot(df_raw_h2o, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sampl
   scale_y_continuous(breaks = seq(0,2.25,0.25), limits=c(0, 2.25))+
   scale_x_continuous(breaks = seq(0,2.1,0.1), limits=c(0, 2.1))+
   # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,family="serif", show.legend = FALSE)+
-  ggtitle("Water based Blank spike in \n") +
+  ggtitle(paste0("Water based Blank spike in \n")) +
   geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
   # regression line
   geom_abline(slope = coef(fit.h2o)[[2]], intercept = coef(fit.h2o)[[1]],
               color = "deepskyblue4") +
   # show equation
-  # stat_cor(aes(label = paste(..rr.label.., ..p.label.., sep = "~`,`~"))) +
-  stat_regline_equation(show.legend  = FALSE)+
+  annotate("text",x=1,y=2, label= paste0("y = ", round(coef(fit.h2o)[[1]],3),"+",round(coef(fit.h2o)[[2]],3),"x"), color = "deepskyblue4") + 
   mytheme_2d
 
 # KCl based
@@ -325,7 +326,7 @@ ggplot(df_raw_kcl, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sampl
               color = "maroon2") +
   # show equation
   # stat_cor(aes(label = paste(..rr.label.., ..p.label.., sep = "~`,`~"))) +
-  stat_regline_equation(show.legend  = FALSE)+
+  annotate("text",x=1,y=2, label= paste0("y = ", round(coef(fit.kcl)[[1]],3),"+",round(coef(fit.kcl)[[2]],3),"x"), color = "maroon2") +
   mytheme_2d
 
 

@@ -11,8 +11,12 @@ editor_options:
 Welcome to Kiseok Denitrification data visualization website.
 
 * [Soil_drying_test (9/5/21)](Soil_drying_curve.html)
+* [TOC_measurement (9/11/21)](210911_TOC_measurement.html)
 * [Soil_pH_test (9/14/21)](Soil_pH_method.html)
 * [Soil_extraction_method_Griess (9/23/21)](Soil_extraction_method_Griess.html)
 * [Griess_time_series_first_attempt_210926 (9/26/21)](Griess_time_series_210926.html)
-* [Soil_extraction_method_Griess (10/5/21)](Soil_extraction_method_Griess.html)
+* [Soil_extraction_2MKCl_Griess (10/5/21)](Soil_extraction_2MKCl_Griess.html)
 * [Blank_extraction_2MKCl_Griess (10/7/21)](Blank_extraction_2MKCl_Griess_211007.html)
+* [Testing_controls_vortex_procedures (10/8/21)](Testing_controls_vortex_procedures_211008.html)
+* [211014_TOC_sample_size_test (10/13/21)](211014_TOC_sample_size_test.html)
+

@@ -1,0 +1,291 @@
+---
+title: "Testing_controls_vortex_procedures_211008"
+author: "KiseokUchicago"
+date: "2021-10-11"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=11, fig.height=9,
+                      error=TRUE, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE)
+```
+
+## Testing controls and vortex procedures (Griess assay)
+Researcher: **Kiseok Lee** \
+Experiment Date: 10/8/21 \
+Analysis Date: 10/11/21
+Lab: **Seppe Kuehn**
+
+```{r}
+# libraries
+library(dplyr)
+library(ggplot2)
+library(RColorBrewer)
+library(vegan)
+library(tidyverse)
+library(magrittr)
+library(readxl)
+library(reshape2)
+library(gtools)
+library(devtools)
+library(openxlsx)
+library(ape)
+library(stringr)
+library(tidyr)
+library(ggrepel)
+library(ggpubr)
+
+## theme for ggplot
+mytheme <- theme_bw() + 
+  theme(text = element_text(family="serif")) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5, family="serif")) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13, family="serif"))+
+  theme(axis.text.y = element_text(size=10, family="serif"))+
+  theme(panel.grid.major = element_blank()) +
+  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),panel.border=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))
+
+mytheme_2d <- theme_bw() + 
+  theme(text = element_text(family="serif")) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5, family="serif")) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13, family="serif"))+
+  theme(axis.text.y = element_text(size=13, family="serif"))+
+  # theme(panel.grid.major = element_blank()) +
+  # theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))
+
+
+# color collection
+my_color_collection <- c(
+  "#CBD588", "#5F7FC7", "orange", "#AD6F3B", "#673770", 
+  "#D14285", "#652926", "#C84248", "#8569D5", "#5E738F",
+  "#D1A33D", "#8A7C64", "#599861","#616163", "#FFCDB2",
+  "#6D9F71", "#242F40",
+  "#CCA43B", "#F92A82", "#ED7B84", "#7EB77F", 
+  "#DEC4A1", "#E5D1D0", '#0E8482', '#C9DAEA', '#337357', 
+  '#95C623', '#E55812', '#04471C', '#F2D7EE', '#D3BCC0', 
+  '#A5668B', '#69306D', '#0E103D', '#1A535C', '#4ECDC4', 
+  '#F7FFF7', '#FF6B6B', '#FFE66D', '#6699CC', '#FFF275', 
+  '#FF8C42', '#FF3C38', '#A23E48', '#000000', '#CF5C36', 
+  '#EEE5E9', '#7C7C7C', '#EFC88B', '#2E5266', '#6E8898', 
+  '#9FB1BC', '#D3D0CB', '#E2C044', '#5BC0EB', '#FDE74C', 
+  '#9BC53D', '#E55934', '#FA7921', "#CD9BCD", "#508578", "#DA5724")
+
+# for git push, use this instead of using wflow_git_push()
+# git push -u origin master (in the Git app / in the working directory)
+
+```
+
+
+## 1. Import data table from python code
+```{r}
+# import file
+df_p0 <- openxlsx::read.xlsx("data/211008_Griess_blank_plate0.xlsx")
+df_p1 <- openxlsx::read.xlsx("data/211008_Griess_blank_plate1.xlsx")
+
+class(df_p0)
+head(df_p0)
+colnames(df_p0)
+dim(df_p0)
+
+# bind two dataframe
+# df_p <- rbind(df_p0, df_p2)
+# colnames(df_p)
+# dim(df_p)
+
+# remove NA
+dim(df_p0)
+df_p0 <- na.omit(df_p0)
+dim(df_p0)
+
+# Check
+df_p0 %>% filter(Well =="H06")
+df_p0 %>% filter(Well =="H09")
+
+# remove wells H06, H09
+# df_p %<>% filter(!(Well %in% c("H06","H09")))
+# dim(df_p)
+
+```
+
+## 2. Get average and standard deviation
+```{r}
+# average and standard deviation
+head(df_p0)
+dim(df_p0)
+
+# average technical replicate
+df_NO2NO3 <- df_p0 %>% group_by(Sample, Nitrate_input, Sample_type, Replicate, Plate) %>% summarise(Ave_NO2_mM = mean(NO2_mM), Std_NO2_mM = sd(NO2_mM), Ave_NO2NO3_mM = mean(NO2NO3_mM), Std_NO2NO3_mM = sd(NO2NO3_mM), Ave_NO3_mM = mean(NO3_mM), Std_NO3_mM = sd(NO3_mM)) %>% ungroup()
+
+# only use H2O, KCl
+df_HK <- df_NO2NO3 %>% filter(Sample_type %in% c("H2O","KCl"))
+
+# plot to see
+ggplot(df_HK, aes(x=Sample_type, y=Ave_NO3_mM, color=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Control Sample ") +
+  # scale_y_continuous(breaks = seq(0,0.12,0.05), limits=c(0, 0.12))+
+  ggtitle("Control's nitrate concentration \n") +
+  mytheme_2d
+
+```
+
+## 3. Test the extraction methods
+## 3.1. The spike in step (before adding 2M KCl to the blank and vortex)
+```{r}
+
+# Before adding 2M KCl and vortexing
+df_no_kcl_vortex <- df_NO2NO3 %>% filter(Sample_type %in% c("Blank_H2O"))
+
+# fitting regression
+fit.nkc <- lm(Ave_NO3_mM ~ Nitrate_input, df_no_kcl_vortex)
+
+# plot 
+ggplot(df_no_kcl_vortex, aes(x=Nitrate_input, y=Ave_NO3_mM)) +
+  geom_point(size=2.5, shape=21, color = "deepskyblue4") +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate input (mM) ") +
+  # scale_y_continuous(breaks = seq(0,0.12,0.05), limits=c(0, 0.12))+
+  ggtitle("Spike-in step's nitrate concentration \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x", linetype="dashed")+
+  # regression line
+  geom_abline(slope = coef(fit.nkc)[[2]], intercept = coef(fit.nkc)[[1]],
+              color = "deepskyblue4") +
+  stat_regline_equation(show.legend  = FALSE, color = "deepskyblue4")+
+  mytheme_2d
+
+```
+
+## 3.2. The vortex step
+Purpose:
+Testing various procedures during the KCl extraction step. Here I test various methods of shaking the Blank + 2M KCl added solution .
+This is a sanity test whether cross-contamination of samples happen during vortexing and spin-down procedures.
+Method:
+Various methods 
+(1) 30s: Vortex with Gini vortexer and spindown 0rpm -> 2000rpm for 30 seconds.
+(2) 5min: Vortex with Gini vortexer and spindown 4000rpm for 5 min. (this will strongly remove all droplets from the seal, which could be the source of cross-contamination when peeling the seal from the 96 well plate)
+(3) Shake: Shake with the table top shaker in front of the MilliQ for 30 seconds without seeling. This would not be recommended when using real soils.
+(4) Pipetting: Use the pipette to homogenize the solution. This would not be used when using real soils.
+3 replicates of various nitrate concentrations in 2M KCl was used (0mM to 10mM -> in the final measurements it will be diluted to 1/5)
+
+```{r}
+## now using plate1
+# average technical replicate
+df_vortex <- df_p1 %>% group_by(Sample, Nitrate_input, Sample_type, Replicate, Plate, Vortex) %>% summarise(Ave_NO2_mM = mean(NO2_mM), Std_NO2_mM = sd(NO2_mM), Ave_NO2NO3_mM = mean(NO2NO3_mM), Std_NO2NO3_mM = sd(NO2NO3_mM), Ave_NO3_mM = mean(NO3_mM), Std_NO3_mM = sd(NO3_mM)) %>% ungroup()
+
+# average biological replicates & standard deviation is the standard deviation of the technical replicate average
+# dim(df_vortex)
+# head(df_vortex)
+# 
+# df_blank <- df_vortex %>% group_by(Nitrate_input, Sample_type, Plate) %>% summarise(NO2_mM = mean(Ave_NO2_mM), sd_NO2_mM = sd(Ave_NO2_mM), NO2NO3_mM = mean(Ave_NO2NO3_mM), sd_NO2NO3_mM = sd(Ave_NO2NO3_mM), NO3_mM = mean(Ave_NO2NO3_mM - Ave_NO2_mM), sd_NO3_mM = sd(Ave_NO2NO3_mM - Ave_NO2_mM)) %>% ungroup()
+
+head(df_vortex)
+dim(df_vortex)
+colnames(df_vortex)
+
+# (1) 30s: Vortex with Gini vortexer and spindown 0rpm -> 2000rpm for 30 seconds.
+df_30s <- df_vortex %>% filter(Vortex=="30s")
+fit.30s <- lm(Ave_NO3_mM ~ Nitrate_input, df_30s)
+
+# plot
+ggplot(df_30s, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Vortex, group=Vortex)) +
+  geom_point(size=2.5, shape=21, color = "orange") +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Vortex and spindown 30s \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x", linetype="dashed")+
+  # regression line
+  geom_abline(slope = coef(fit.30s)[[2]], intercept = coef(fit.30s)[[1]],
+              color = "orange") +
+  annotate("text",x=1,y=2, label= paste0("y = ", round(coef(fit.30s)[[1]],3),"+",round(coef(fit.30s)[[2]],3),"x"), color = "deepskyblue4") +
+  mytheme_2d
+
+# (2) 5min: Vortex with Gini vortexer and spindown 4000rpm for 5 min. (this will strongly remove all droplets from the seal, which could be the source of cross-contamination when peeling the seal from the 96 well plate)
+df_5min <- df_vortex %>% filter(Vortex=="5min")
+fit.5min <- lm(Ave_NO3_mM ~ Nitrate_input, df_5min)
+
+# plot
+ggplot(df_5min, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Vortex, group=Vortex)) +
+  geom_point(size=2.5, shape=21, color = "purple") +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Vortex and spindown 5min \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x", linetype="dashed")+
+  # regression line
+  geom_abline(slope = coef(fit.5min)[[2]], intercept = coef(fit.5min)[[1]],
+              color = "purple") +
+  annotate("text",x=1,y=2, label= paste0("y = ", round(coef(fit.5min)[[1]],3),"+",round(coef(fit.5min)[[2]],3),"x"), color = "purple") +
+  mytheme_2d
+
+# (3) Shake: Shake with the table top shaker in front of the MilliQ for 30 seconds without seeling. This would not be recommended when using real soils.
+df_Shaken <- df_vortex %>% filter(Vortex=="Shaken")
+fit.Shaken <- lm(Ave_NO3_mM ~ Nitrate_input, df_Shaken)
+
+# plot
+ggplot(df_Shaken, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Vortex, group=Vortex)) +
+  geom_point(size=2.5, shape=21, color = "blue") +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_color_manual(values = c("blue")) +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Shaken without seeling \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x", linetype="dashed")+
+  # regression line
+  geom_abline(slope = coef(fit.Shaken)[[2]], intercept = coef(fit.Shaken)[[1]],
+              color = "blue") +
+  annotate("text",x=1,y=2, label= paste0("y = ", round(coef(fit.Shaken)[[1]],3),"+",round(coef(fit.Shaken)[[2]],3),"x"), color = "blue") +
+  mytheme_2d
+
+
+# (4) Pipetting: Use the pipette to homogenize the solution. This would not be used when using real soils.
+df_Pipetting <- df_vortex %>% filter(Vortex=="Pipetting")
+fit.Pipetting <- lm(Ave_NO3_mM ~ Nitrate_input, df_Pipetting)
+
+# plot
+ggplot(df_Pipetting, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Vortex, group=Vortex)) +
+  geom_point(size=2.5, shape=21, color = "navy") +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_color_manual(values = c("navy")) +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Pipetting without seeling \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x", linetype="dashed")+
+  # regression line
+  geom_abline(slope = coef(fit.Pipetting)[[2]], intercept = coef(fit.Pipetting)[[1]],
+              color = "navy") +
+  annotate("text",x=1,y=2, label= paste0("y = ", round(coef(fit.Pipetting)[[1]],3),"+",round(coef(fit.Pipetting)[[2]],3),"x"), color = "navy") +
+  mytheme_2d
+
+```
+
+
+
+
+
+

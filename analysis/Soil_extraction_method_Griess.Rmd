@@ -103,7 +103,7 @@ df_extract %>% filter(Well =="F05")
 ## 2. Get average and standard deviation
 ```{r}
 # average and standard deviation
-df_NO2NO3 <- df_extract %>% group_by(Sample, Buffer, Soil_weight, Method, Spike_in) %>% summarise(Ave_NO2_mM = mean(NO2_mM), Std_NO2_mM = sd(NO2_mM), Ave_NO2NO3_mM = mean(NO2NO3_mM), Std_NO2NO3_mM = sd(NO2NO3_mM), Ave_NO3_mM = mean(NO2NO3_mM - NO2_mM), Std_NO3_mM = sd(NO2NO3_mM - NO2_mM)) %>% ungroup()
+df_NO2NO3 <- df_extract %>% group_by(Sample, Buffer, Soil_weight, Method, Spike_in) %>% summarise(Ave_NO2_mM = mean(NO2_mM), Std_NO2_mM = sd(NO2_mM), Ave_NO3_mM = mean(NO3_mM), Std_NO3_mM = sd(NO3_mM)) %>% ungroup()
 # NO3_mM = NO2NO3_mM - NO2_mM
 
 # Factor in orders
@@ -114,7 +114,7 @@ df_spike_in <- df_NO2NO3 %>% filter(Spike_in == "Original_sample")
 df_spike_in
 
 # increase the concentration as the spike in & make standard deviation to 0
-df_spike_in2 <- df_spike_in %>%  mutate(Ave_NO2_mM = Ave_NO2_mM + 0.2, Ave_NO2NO3_mM = Ave_NO2NO3_mM + 0.4, Ave_NO3_mM = Ave_NO3_mM + 0.2, Std_NO2_mM = 0, Std_NO2NO3_mM = 0, Std_NO3_mM = 0) 
+df_spike_in2 <- df_spike_in %>%  mutate(Ave_NO2_mM = Ave_NO2_mM + 0.2, Ave_NO3_mM = Ave_NO3_mM + 0.2, Std_NO2_mM = 0, Std_NO3_mM = 0) 
 
 # change Sample name
 df_spike_in2$Sample <- str_replace(df_spike_in2$Sample,"$","_spike_in")
@@ -339,103 +339,7 @@ ggplot(df_five_method_NO2, aes(x=Buffer, y=Ratio_extracted, color=Five_Methods, 
 
 ```
 
-
-## 4. Effect of buffer and filter method - NO2+NO3
-5 graphs:
-(1) Soil 1g & Spindown method
-(2) Soil 0.1g & Spindown method
-(3) Soil 1g & filtered(0.22um) method
-(4) Soil 0.1g & filtered(0.22um) method
-(5) Soil 1g & Whatman no.42 paper filtered
-```{r}
-# First, let's see extraction efficiency soil NO2
-
-# function
-
-plot_per_method_NO2NO3 <- function(df_NO2NO3, method, soil_weight, title){
-  df_method <- df_NO2NO3 %>% filter(Method == method, Soil_weight ==soil_weight)
-
-  ggplot(df_method, aes(x=Buffer, y=Ave_NO2NO3_mM, color=Spike_in, group=Spike_in)) +
-    geom_point(size=2.5, shape=21) +
-    geom_line(size=1)+
-    geom_errorbar(aes(ymin=Ave_NO2NO3_mM - Std_NO2NO3_mM, ymax=Ave_NO2NO3_mM + Std_NO2NO3_mM), width=.05)+
-    scale_fill_brewer(palette='Set2') +
-    ylab("NO2- + NO3- (mM) \n") +
-    xlab("\n Extraction buffer") +
-    scale_y_continuous(breaks = seq(0,0.6,0.05), limits=c(0, 0.6))+
-    ggtitle(paste0(title, " \n")) +
-    # label
-    geom_text(aes(label = round(Ave_NO2NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
-    mytheme_2d
-}
-
-# (1) 1g & Spindown method
-plot_per_method_NO2NO3(df_NO2NO3, method="Spindown", soil_weight=1, title = "(1) Soil 1g & Spindown (NO2 + NO3)")
-
-# (2) Soil 0.1g & Spindown method
-plot_per_method_NO2NO3(df_NO2NO3, method="Spindown", soil_weight=0.1, title = "(2) Soil 0.1g & Spindown (NO2 + NO3)")
-
-# (3) Soil 1g & filtered(0.22um) method
-plot_per_method_NO2NO3(df_NO2NO3, method="Filter", soil_weight=1, title = "(3) Soil 1g & filtered(0.22um) (NO2 + NO3)")
-
-# (4) Soil 0.1g & filtered(0.22um) method
-plot_per_method_NO2NO3(df_NO2NO3, method="Filter", soil_weight=0.1, title = "(4) Soil 0.1g & filtered(0.22um) (NO2 + NO3)")
-
-# (5) Soil 1g & Whatman no.42 paper filtered
-plot_per_method_NO2NO3(df_NO2NO3, method="Whatman", soil_weight=1, title = "(5) Soil 1g & Whatman no.42 paper (NO2 + NO3)")
-```
-
-## 4.2. Comparison of 5 methods - NO2NO3
-
-```{r}
-# (1) Compare Just the Original samples
-df_NO2NO3 %>% filter(Spike_in == "Original_sample")
-df_original <- df_NO2NO3 %>% filter(Spike_in == "Original_sample")
-
-df_five_method <- df_original %>% unite(col="Five_Methods", Soil_weight, Method, sep="-")
-
-ggplot(df_five_method, aes(x=Buffer, y=Ave_NO2NO3_mM, color=Five_Methods, group=Five_Methods)) +
-  geom_point(size=2.5, shape=21) +
-  geom_line(size=1)+
-  geom_errorbar(aes(ymin=Ave_NO2NO3_mM - Std_NO2NO3_mM, ymax=Ave_NO2NO3_mM + Std_NO2NO3_mM), width=.05)+
-  scale_fill_brewer(palette='Set2') +
-  ylab("NO2- + NO3- (mM) \n") +
-  xlab("\n Extraction buffer") +
-  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
-  ggtitle("Effect of Soil weight, Filter method, and Extraction buffer (NO2+NO3) \n") +
-  # label
-  geom_text(aes(label = round(Ave_NO2NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
-  mytheme_2d
-
-
-# (2) Percentage of 5 different methods retrieving the spike ins.
-df_NO2NO3
-df_five_method2 <- df_NO2NO3 %>% unite(col="Five_Methods", Soil_weight, Method, sep="-")
-dim(df_five_method2)
-
-# reshape data to get the extraction percentage
-df_five_method_NO2NO3 <- dcast(df_five_method2, Five_Methods + Buffer ~ Spike_in, value.var = "Ave_NO2NO3_mM")
-
-# get the percentage of extraction
-df_five_method_NO2NO3 <- df_five_method_NO2NO3 %>% mutate(Ratio_extracted = (Spiked_sample - Original_sample) / (Assuming_full_extraction - Original_sample))
-
-# Plot
-ggplot(df_five_method_NO2NO3, aes(x=Buffer, y=Ratio_extracted, color=Five_Methods, group=Five_Methods)) +
-  geom_point(size=2.5, shape=21) +
-  geom_line(size=1)+
-  scale_fill_brewer(palette='Set2') +
-  ylab("Ratio of extracted spike-ins \n") +
-  xlab("\n Extraction buffer") +
-  scale_y_continuous(breaks = seq(0.7,1,0.05), limits=c(0.7, 1))+
-  ggtitle("Extraction ratio (retrieved / spike in) depending on Soil weight, Filter method, and Extraction buffer (NO2+NO3) \n") +
-  # label
-  geom_text(aes(label = round(Ratio_extracted,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
-  mytheme_2d
-
-```
-
-
-## 5. Effect of buffer and filter method - NO3
+## 4. Effect of buffer and filter method - NO3
 5 graphs:
 (1) Soil 1g & Spindown method
 (2) Soil 0.1g & Spindown method
@@ -480,7 +384,7 @@ plot_per_method_NO3(df_NO2NO3, method="Whatman", soil_weight=1, title = "(5) Soi
 
 ```
 
-## 5.2. Comparison of 5 methods - NO3
+## 4.2. Comparison of 5 methods - NO3
 
 ```{r}
 # (1) Compare Just the Original samples
