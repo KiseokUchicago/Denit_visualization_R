@@ -1,0 +1,1708 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="KiseokUchicago" />
+
+<meta name="date" content="2021-10-18" />
+
+<title>211017_Griess_slurry_extraction</title>
+
+<script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/master/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Denit_visualization_R</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/KiseokUchicago/Denit_visualization_R">
+    <span class="fa fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">211017_Griess_slurry_extraction</h1>
+<h4 class="author">KiseokUchicago</h4>
+<h4 class="date">2021-10-18</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2021-10-21
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>Denit_visualization_R/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.2). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20210924code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20210924)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20210924code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20210924)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomKiseokUchicagoDenitvisualizationRtreea2e06a93c88d9df4070d1d6e0d67b2eec17f4f80targetblanka2e06a9a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/KiseokUchicago/Denit_visualization_R/tree/a2e06a93c88d9df4070d1d6e0d67b2eec17f4f80" target="_blank">a2e06a9</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomKiseokUchicagoDenitvisualizationRtreea2e06a93c88d9df4070d1d6e0d67b2eec17f4f80targetblanka2e06a9a" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://github.com/KiseokUchicago/Denit_visualization_R/tree/a2e06a93c88d9df4070d1d6e0d67b2eec17f4f80" target="_blank">a2e06a9</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    Figure_211014_external_lab/
+
+Untracked files:
+    Untracked:  210928_pH.pdf
+    Untracked:  211014_TN.pdf
+    Untracked:  211014_drying_oven_TOC.pdf
+    Untracked:  211014_toc_lab.pdf
+    Untracked:  211020_df_full_innate.xlsx
+    Untracked:  Figure_210911_TOC/
+    Untracked:  Figure_210924/
+    Untracked:  Figure_210927_TOC/
+    Untracked:  Figure_210929/
+    Untracked:  Figure_211006/
+    Untracked:  Figure_211007/
+    Untracked:  Figure_211008/
+    Untracked:  Figure_211013/
+    Untracked:  data/210911_TOC_sample_plate1.xlsx
+    Untracked:  data/210922_Griess_sample_plate1-investigating.xlsx
+    Untracked:  data/210922_Griess_sample_plate1.xlsx
+    Untracked:  data/210927_TOC_sample_plate1_100ul.xlsx
+    Untracked:  data/210927_TOC_sample_plate1_10ul.xlsx
+    Untracked:  data/210928_Griess_sample_plate1.xlsx
+    Untracked:  data/211005_Griess_sample_plate1.xlsx
+    Untracked:  data/211007_Griess_blank_plate1.xlsx
+    Untracked:  data/211007_Griess_blank_plate2.xlsx
+    Untracked:  data/211008_Griess_blank_plate0.xlsx
+    Untracked:  data/211008_Griess_blank_plate1.xlsx
+    Untracked:  data/211017_Griess_plate0.xlsx
+    Untracked:  data/211017_Griess_plate1.xlsx
+    Untracked:  data/211017_Griess_plate2.xlsx
+    Untracked:  data/211017_Griess_plate3.xlsx
+    Untracked:  data/211017_Griess_plate4.xlsx
+    Untracked:  data/211017_Griess_plate5.xlsx
+    Untracked:  data/211017_Griess_plate6.xlsx
+    Untracked:  data/211017_Griess_plate7.xlsx
+    Untracked:  data/211017_Griess_plate8.xlsx
+    Untracked:  data/211019_Griess_plate1.xlsx
+    Untracked:  data/211020_Griess_plate0.xlsx
+    Untracked:  data/211020_Griess_plate1.xlsx
+    Untracked:  data/211020_df_full_innate.xlsx
+    Untracked:  data/TOC_TN_measurement_2_labs_211014.xlsx
+    Untracked:  data/dry_weight_curve(9.5.21).xlsx
+    Untracked:  data/pH_data(9.14.21).xlsx
+    Untracked:  data/pH_data(9.28.21).xlsx
+    Untracked:  df_NO2NO3.xlsx
+
+Unstaged changes:
+    Modified:   analysis/211020_Griess_pipet_confirm.Rmd
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/211017_Griess_slurry_extraction.Rmd</code>) and HTML (<code>docs/211017_Griess_slurry_extraction.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/KiseokUchicago/Denit_visualization_R/blob/a2e06a93c88d9df4070d1d6e0d67b2eec17f4f80/analysis/211017_Griess_slurry_extraction.Rmd" target="_blank">a2e06a9</a>
+</td>
+<td>
+KiseokUchicago
+</td>
+<td>
+2021-10-21
+</td>
+<td>
+all
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="slurry-extraction-condition-test-griess-assay" class="section level2">
+<h2>Slurry extraction condition test (Griess assay)</h2>
+<p>Researcher: <strong>Kiseok Lee</strong><br />
+Experiment Date: 10/17/21<br />
+Analysis Date: 10/18/21 Lab: <strong>Seppe Kuehn</strong></p>
+<pre class="r"><code># libraries
+library(dplyr)
+library(ggplot2)
+library(RColorBrewer)
+library(vegan)
+library(tidyverse)
+library(magrittr)
+library(readxl)
+library(reshape2)
+library(gtools)
+library(devtools)
+library(openxlsx)
+library(ape)
+library(stringr)
+library(tidyr)
+library(ggrepel)
+library(ggpubr)
+
+## theme for ggplot
+mytheme &lt;- theme_bw() + 
+  theme(text = element_text(family=&quot;serif&quot;)) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5, family=&quot;serif&quot;)) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5, family=&quot;serif&quot;)) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5, family=&quot;serif&quot;)) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13, family=&quot;serif&quot;))+
+  theme(axis.text.y = element_text(size=10, family=&quot;serif&quot;))+
+  theme(panel.grid.major = element_blank()) +
+  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),panel.border=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))
+
+mytheme_2d &lt;- theme_bw() + 
+  theme(text = element_text(family=&quot;serif&quot;)) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5, family=&quot;serif&quot;)) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5, family=&quot;serif&quot;)) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5, family=&quot;serif&quot;)) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13, family=&quot;serif&quot;))+
+  theme(axis.text.y = element_text(size=13, family=&quot;serif&quot;))+
+  # theme(panel.grid.major = element_blank()) +
+  # theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))
+
+
+# color collection
+my_color_collection &lt;- c(
+  &quot;#CBD588&quot;, &quot;#5F7FC7&quot;, &quot;orange&quot;, &quot;#AD6F3B&quot;, &quot;#673770&quot;, 
+  &quot;#D14285&quot;, &quot;#652926&quot;, &quot;#C84248&quot;, &quot;#8569D5&quot;, &quot;#5E738F&quot;,
+  &quot;#D1A33D&quot;, &quot;#8A7C64&quot;, &quot;#599861&quot;,&quot;#616163&quot;, &quot;#FFCDB2&quot;,
+  &quot;#6D9F71&quot;, &quot;#242F40&quot;,
+  &quot;#CCA43B&quot;, &quot;#F92A82&quot;, &quot;#ED7B84&quot;, &quot;#7EB77F&quot;, 
+  &quot;#DEC4A1&quot;, &quot;#E5D1D0&quot;, &#39;#0E8482&#39;, &#39;#C9DAEA&#39;, &#39;#337357&#39;, 
+  &#39;#95C623&#39;, &#39;#E55812&#39;, &#39;#04471C&#39;, &#39;#F2D7EE&#39;, &#39;#D3BCC0&#39;, 
+  &#39;#A5668B&#39;, &#39;#69306D&#39;, &#39;#0E103D&#39;, &#39;#1A535C&#39;, &#39;#4ECDC4&#39;, 
+  &#39;#F7FFF7&#39;, &#39;#FF6B6B&#39;, &#39;#FFE66D&#39;, &#39;#6699CC&#39;, &#39;#FFF275&#39;, 
+  &#39;#FF8C42&#39;, &#39;#FF3C38&#39;, &#39;#A23E48&#39;, &#39;#000000&#39;, &#39;#CF5C36&#39;, 
+  &#39;#EEE5E9&#39;, &#39;#7C7C7C&#39;, &#39;#EFC88B&#39;, &#39;#2E5266&#39;, &#39;#6E8898&#39;, 
+  &#39;#9FB1BC&#39;, &#39;#D3D0CB&#39;, &#39;#E2C044&#39;, &#39;#5BC0EB&#39;, &#39;#FDE74C&#39;, 
+  &#39;#9BC53D&#39;, &#39;#E55934&#39;, &#39;#FA7921&#39;, &quot;#CD9BCD&quot;, &quot;#508578&quot;, &quot;#DA5724&quot;)
+
+# for git push, use this instead of using wflow_git_push()
+# git push -u origin master (in the Git app / in the working directory)</code></pre>
+</div>
+<div id="import-data-table-from-python-code" class="section level2">
+<h2>1. Import data table from python code</h2>
+<pre class="r"><code># import file
+df_p0 &lt;- openxlsx::read.xlsx(&quot;data/211017_Griess_plate0.xlsx&quot;)
+df_p1 &lt;- openxlsx::read.xlsx(&quot;data/211017_Griess_plate1.xlsx&quot;)
+df_p2 &lt;- openxlsx::read.xlsx(&quot;data/211017_Griess_plate2.xlsx&quot;)
+df_p3 &lt;- openxlsx::read.xlsx(&quot;data/211017_Griess_plate3.xlsx&quot;)
+df_p4 &lt;- openxlsx::read.xlsx(&quot;data/211017_Griess_plate4.xlsx&quot;)
+df_p5 &lt;- openxlsx::read.xlsx(&quot;data/211017_Griess_plate5.xlsx&quot;)
+df_p6 &lt;- openxlsx::read.xlsx(&quot;data/211017_Griess_plate6.xlsx&quot;)
+df_p7 &lt;- openxlsx::read.xlsx(&quot;data/211017_Griess_plate7.xlsx&quot;)
+df_p8 &lt;- openxlsx::read.xlsx(&quot;data/211017_Griess_plate8.xlsx&quot;)
+
+head(df_p0)</code></pre>
+<pre><code>  Well                       Sample Extraction_method Extraction_ul
+1  A10      Spike_0.625mM_1_1_1_2ml             1_1_1          2000
+2  A11       Spike_0.25mM_1_1_4_5ml             1_1_4          5000
+3  A12 Spike_0.25mM_0.5_1_1.5_2.5ml         0.5_1_1.5          2500
+4  B10      Spike_0.625mM_1_1_1_2ml             1_1_1          2000
+5  B11       Spike_0.25mM_1_1_4_5ml             1_1_4          5000
+6  B12 Spike_0.25mM_0.5_1_1.5_2.5ml         0.5_1_1.5          2500
+  Nitrate_input Sample_type Replicate Plate NO2_OD540 NO2NO3_OD540     NO2_mM
+1         0.625       Spike         A    P0   0.00555      1.22535 0.01122669
+2         0.250       Spike         A    P0   0.00305      0.55075 0.01010864
+3         0.250       Spike         A    P0   0.00125      0.56290 0.00930378
+4         0.625       Spike         B    P0   0.00670      1.20570 0.01174108
+5         0.250       Spike         B    P0   0.00370      0.56045 0.01039931
+6         0.250       Spike         B    P0   0.00315      0.56565 0.01015335
+  NO2NO3_mM    NO3_mM
+1 1.2860837 1.2748570
+2 0.5484580 0.5383493
+3 0.5609649 0.5516611
+4 1.2631939 1.2514529
+5 0.5584409 0.5480415
+6 0.5637991 0.5536458</code></pre>
+<pre class="r"><code>head(df_p1)</code></pre>
+<pre><code>  Well                Sample Extraction_method Extraction_ul Nitrate_input
+1  A01 Spike_5mM_1_1_1_100ul             1_1_1           100             5
+2  A02 Spike_5mM_1_1_1_100ul             1_1_1           100             5
+3  A03 Spike_5mM_1_1_1_100ul             1_1_1           100             5
+4  A04 Blank_5mM_1_1_1_100ul             1_1_1           100             5
+5  A05 Blank_5mM_1_1_1_100ul             1_1_1           100             5
+6  A06 Blank_5mM_1_1_1_100ul             1_1_1           100             5
+  Sample_type Replicate Plate NO2_OD540 NO2NO3_OD540      NO2_mM NO2NO3_mM
+1       Spike         A    P1   0.01535      2.99630 0.015611755  4.056485
+2       Spike         B    P1   0.02275      3.09310 0.018925333  4.296707
+3       Spike         C    P1   0.02235      3.05455 0.018746168  4.198322
+4       Blank         A    P1   0.00000      3.05815 0.008744925  4.207348
+5       Blank         B    P1   0.00035      3.19990 0.008901399  4.592649
+6       Blank         C    P1   0.00090      3.11485 0.009147295  4.354002
+    NO3_mM
+1 4.040873
+2 4.277781
+3 4.179576
+4 4.198603
+5 4.583748
+6 4.344855</code></pre>
+<pre class="r"><code>colnames(df_p0)</code></pre>
+<pre><code> [1] &quot;Well&quot;              &quot;Sample&quot;            &quot;Extraction_method&quot;
+ [4] &quot;Extraction_ul&quot;     &quot;Nitrate_input&quot;     &quot;Sample_type&quot;      
+ [7] &quot;Replicate&quot;         &quot;Plate&quot;             &quot;NO2_OD540&quot;        
+[10] &quot;NO2NO3_OD540&quot;      &quot;NO2_mM&quot;            &quot;NO2NO3_mM&quot;        
+[13] &quot;NO3_mM&quot;           </code></pre>
+<pre class="r"><code>colnames(df_p1)</code></pre>
+<pre><code> [1] &quot;Well&quot;              &quot;Sample&quot;            &quot;Extraction_method&quot;
+ [4] &quot;Extraction_ul&quot;     &quot;Nitrate_input&quot;     &quot;Sample_type&quot;      
+ [7] &quot;Replicate&quot;         &quot;Plate&quot;             &quot;NO2_OD540&quot;        
+[10] &quot;NO2NO3_OD540&quot;      &quot;NO2_mM&quot;            &quot;NO2NO3_mM&quot;        
+[13] &quot;NO3_mM&quot;           </code></pre>
+<pre class="r"><code>dim(df_p0)</code></pre>
+<pre><code>[1] 24 13</code></pre>
+<pre class="r"><code>dim(df_p1)</code></pre>
+<pre><code>[1] 96 13</code></pre>
+<pre class="r"><code># remove wells H06, H09
+df_p1 %&lt;&gt;% filter(!(Well %in% c(&quot;E03&quot;)))
+dim(df_p1)</code></pre>
+<pre><code>[1] 95 13</code></pre>
+<pre class="r"><code>df_p2 %&lt;&gt;% filter(!(Well %in% c(&quot;E03&quot;)))
+dim(df_p2)</code></pre>
+<pre><code>[1] 95 13</code></pre>
+<pre class="r"><code>df_p3 %&lt;&gt;% filter(!(Well %in% c(&quot;A03&quot;,&quot;A04&quot;,&quot;A09&quot;,&quot;A10&quot;,&quot;H03&quot;,&quot;H09&quot;))) # leaked during vortexing
+dim(df_p3)</code></pre>
+<pre><code>[1] 90 13</code></pre>
+<pre class="r"><code>df_p4 %&lt;&gt;% filter(!(Well %in% c(&quot;A03&quot;,&quot;A04&quot;,&quot;A09&quot;,&quot;A10&quot;))) # leaked during vortexing
+dim(df_p4)</code></pre>
+<pre><code>[1] 92 13</code></pre>
+<pre class="r"><code>df_p5 %&lt;&gt;% filter(!(Well %in% c(&quot;A03&quot;,&quot;A04&quot;,&quot;A09&quot;,&quot;A10&quot;))) # leaked during vortexing
+dim(df_p5)</code></pre>
+<pre><code>[1] 92 13</code></pre>
+<pre class="r"><code># bind two dataframe
+df_p &lt;- rbind(df_p0, df_p1, df_p2, df_p3, df_p4, df_p5, df_p6, df_p7, df_p8)
+dim(df_p)</code></pre>
+<pre><code>[1] 776  13</code></pre>
+<pre class="r"><code>24+96*8 -16</code></pre>
+<pre><code>[1] 776</code></pre>
+<pre class="r"><code>colnames(df_p)</code></pre>
+<pre><code> [1] &quot;Well&quot;              &quot;Sample&quot;            &quot;Extraction_method&quot;
+ [4] &quot;Extraction_ul&quot;     &quot;Nitrate_input&quot;     &quot;Sample_type&quot;      
+ [7] &quot;Replicate&quot;         &quot;Plate&quot;             &quot;NO2_OD540&quot;        
+[10] &quot;NO2NO3_OD540&quot;      &quot;NO2_mM&quot;            &quot;NO2NO3_mM&quot;        
+[13] &quot;NO3_mM&quot;           </code></pre>
+<pre class="r"><code># remove NA
+dim(df_p)</code></pre>
+<pre><code>[1] 776  13</code></pre>
+<pre class="r"><code>df_p &lt;- na.omit(df_p)
+dim(df_p)</code></pre>
+<pre><code>[1] 776  13</code></pre>
+<pre class="r"><code># Check
+# df_p %&gt;% filter(Well ==&quot;H06&quot;)</code></pre>
+</div>
+<div id="get-average-and-standard-deviation" class="section level2">
+<h2>2. Get average and standard deviation</h2>
+<pre class="r"><code># average and standard deviation
+head(df_p)</code></pre>
+<pre><code>  Well                       Sample Extraction_method Extraction_ul
+1  A10      Spike_0.625mM_1_1_1_2ml             1_1_1          2000
+2  A11       Spike_0.25mM_1_1_4_5ml             1_1_4          5000
+3  A12 Spike_0.25mM_0.5_1_1.5_2.5ml         0.5_1_1.5          2500
+4  B10      Spike_0.625mM_1_1_1_2ml             1_1_1          2000
+5  B11       Spike_0.25mM_1_1_4_5ml             1_1_4          5000
+6  B12 Spike_0.25mM_0.5_1_1.5_2.5ml         0.5_1_1.5          2500
+  Nitrate_input Sample_type Replicate Plate NO2_OD540 NO2NO3_OD540     NO2_mM
+1         0.625       Spike         A    P0   0.00555      1.22535 0.01122669
+2         0.250       Spike         A    P0   0.00305      0.55075 0.01010864
+3         0.250       Spike         A    P0   0.00125      0.56290 0.00930378
+4         0.625       Spike         B    P0   0.00670      1.20570 0.01174108
+5         0.250       Spike         B    P0   0.00370      0.56045 0.01039931
+6         0.250       Spike         B    P0   0.00315      0.56565 0.01015335
+  NO2NO3_mM    NO3_mM
+1 1.2860837 1.2748570
+2 0.5484580 0.5383493
+3 0.5609649 0.5516611
+4 1.2631939 1.2514529
+5 0.5584409 0.5480415
+6 0.5637991 0.5536458</code></pre>
+<pre class="r"><code>dim(df_p)</code></pre>
+<pre><code>[1] 776  13</code></pre>
+<pre class="r"><code># plot to see
+
+
+ggplot(df_p1, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-3-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(df_p2, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-3-2.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(df_p3, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-3-3.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(df_p4, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-3-4.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>df_p4_1 &lt;- df_p4 %&gt;% filter(Sample_type == &quot;Spike&quot;, Extraction_ul ==100) 
+
+ggplot(df_p4_1, aes(x=Nitrate_input, y=NO3_mM, color=Replicate, group=Replicate)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-3-5.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(df_p5, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-3-6.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(df_p6, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-3-7.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(df_p7, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-3-8.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(df_p8, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-3-9.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>df_p8_1 &lt;- df_p8 %&gt;% filter(Sample_type == &quot;Spike&quot;)
+  
+  
+ggplot(df_p8_1, aes(x=Nitrate_input, y=NO3_mM, color=Extraction_ul, group=Extraction_ul)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-3-10.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># average technical replicate
+df_NO2NO3 &lt;- df_p %&gt;% group_by(Sample, Extraction_method, Extraction_ul, Nitrate_input, Sample_type, Replicate) %&gt;% summarise(Ave_NO2_mM = mean(NO2_mM), Std_NO2_mM = sd(NO2_mM), Ave_NO2NO3_mM = mean(NO2NO3_mM), Std_NO2NO3_mM = sd(NO2NO3_mM), Ave_NO3_mM = mean(NO3_mM), Std_NO3_mM = sd(NO3_mM)) %&gt;% ungroup()
+
+dim(df_NO2NO3)</code></pre>
+<pre><code>[1] 388  12</code></pre>
+<pre class="r"><code># plot to see
+ggplot(df_NO2NO3, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;After averaging with technical replicates \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-3-11.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># average biological replicates
+# standard deviation is the standard deviation of the technical replicate average
+dim(df_NO2NO3)</code></pre>
+<pre><code>[1] 388  12</code></pre>
+<pre class="r"><code>head(df_NO2NO3)</code></pre>
+<pre><code># A tibble: 6 x 12
+  Sample      Extraction_meth~ Extraction_ul Nitrate_input Sample_type Replicate
+  &lt;chr&gt;       &lt;chr&gt;                    &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;       &lt;chr&gt;    
+1 Blank_0.01~ 1_1_4                      100             0 Blank       A        
+2 Blank_0.01~ 1_1_4                      100             0 Blank       B        
+3 Blank_0.01~ 1_1_4                      100             0 Blank       C        
+4 Blank_0.01~ 1_1_4                      300             0 Blank       A        
+5 Blank_0.01~ 1_1_4                      300             0 Blank       B        
+6 Blank_0.01~ 1_1_4                      300             0 Blank       C        
+# ... with 6 more variables: Ave_NO2_mM &lt;dbl&gt;, Std_NO2_mM &lt;dbl&gt;,
+#   Ave_NO2NO3_mM &lt;dbl&gt;, Std_NO2NO3_mM &lt;dbl&gt;, Ave_NO3_mM &lt;dbl&gt;,
+#   Std_NO3_mM &lt;dbl&gt;</code></pre>
+<pre class="r"><code>df_ave &lt;- df_NO2NO3 %&gt;% group_by(Sample, Extraction_method, Extraction_ul, Nitrate_input, Sample_type) %&gt;% summarise(NO2_mM = mean(Ave_NO2_mM), sd_NO2_mM = sd(Ave_NO2_mM), NO3_mM = mean(Ave_NO3_mM), sd_NO3_mM = sd(Ave_NO3_mM)) %&gt;% ungroup()
+
+dim(df_ave)</code></pre>
+<pre><code>[1] 134   9</code></pre>
+<pre class="r"><code># plot to see
+ggplot(df_ave, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Ploting nitrate concentration \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-3-12.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Factor in orders
+# df_all$Sample_type &lt;-  factor(df_all$Sample_type, levels = c(&quot;Soil&quot;,&quot;Blank&quot;))</code></pre>
+</div>
+<div id="plot-per-method" class="section level2">
+<h2>3. Plot per method</h2>
+</div>
+<div id="method-1g-soil-1ml-spike-in-1ml-2m-kcl" class="section level2">
+<h2>3.1. 1_1_1 method (1g soil, 1ml spike in, 1ml 2M KCl)</h2>
+<pre class="r"><code># (1) 1_1_1 method (1g soil, 1ml spike in, 1ml 2M KCl)
+df_111 &lt;- df_ave %&gt;% filter(Extraction_method == &quot;1_1_1&quot;)
+dim(df_111)</code></pre>
+<pre><code>[1] 34  9</code></pre>
+<pre class="r"><code># (1-1) 1_1_1 method (1g soil, 1ml spike in, 1ml 2M KCl) 100ul
+df_111_100 &lt;- df_111 %&gt;% filter(Extraction_ul == 100)
+
+ggplot(df_111_100, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  scale_color_manual(values = c(&quot;deepskyblue4&quot;,&quot;maroon2&quot;))+
+  ylab(&quot;Measured NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle(&quot;1_1_1 method (1g soil, 1ml spike in, 1ml 2M KCl) 100ul \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-4-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># subtract innate nitrate in soil
+df_111_100_soil &lt;- df_111_100 %&gt;% filter(Sample_type == &quot;Spike&quot;)
+innate_no3 &lt;- df_111_100 %&gt;% filter(Sample_type== &quot;Spike&quot;, Nitrate_input == 0) %&gt;% select(NO3_mM) %&gt;% unlist()
+df_111_100_soil$Retrieved_NO3_mM &lt;- df_111_100_soil$NO3_mM - innate_no3
+
+ggplot(df_111_100_soil, aes(x=Nitrate_input, y=Retrieved_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Retrieved_NO3_mM - sd_NO3_mM, ymax=Retrieved_NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_fill_brewer(palette=&#39;Set2&#39;) +
+  scale_color_manual(values = c(&quot;brown3&quot;,&quot;deepskyblue2&quot;))+
+  ylab(&quot;Retrieved NO3 concentrations (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle(&quot;1_1_1 method (1g soil, 1ml spike in, 1ml 2M KCl) 100ul \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-4-2.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Retrieved ratio of spike ins
+df_111_100_soil$Ratio_retrieved &lt;- df_111_100_soil$Retrieved_NO3_mM / df_111_100_soil$Nitrate_input 
+
+ggplot(df_111_100_soil, aes(x=Nitrate_input, y=Ratio_retrieved)) +  ## I put fill=value which was wrong
+  geom_bar(stat=&quot;identity&quot;,position=&quot;dodge&quot;, fill=&quot;brown3&quot;)+
+  geom_line(size=0.2, color=&quot;brown&quot;)+
+  ylab(&quot;Ratio of retrieved nitrate concentraion \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle(&quot;1_1_1 method (1g soil, 1ml spike in, 1ml 2M KCl) 100ul \n&quot;) +
+  geom_text(aes(label = round(Ratio_retrieved,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-4-3.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># (1) 1_1_1 method (1g soil, 1ml spike in, 1ml 2M KCl)
+df_111 &lt;- df_ave %&gt;% filter(Extraction_method == &quot;1_1_1&quot;)
+dim(df_111)</code></pre>
+<pre><code>[1] 34  9</code></pre>
+<pre class="r"><code># (1-2) 1_1_1 method (1g soil, 1ml spike in, 1ml 2M KCl) 300ul
+df_111_300 &lt;- df_111 %&gt;% filter(Extraction_ul == 300)
+
+ggplot(df_111_300, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  scale_color_manual(values = c(&quot;deepskyblue4&quot;,&quot;maroon2&quot;))+
+  ylab(&quot;Measured NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle(&quot;1_1_1 method (1g soil, 1ml spike in, 1ml 2M KCl) 300ul \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-5-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># subtract innate nitrate in soil
+df_111_300_soil &lt;- df_111_300 %&gt;% filter(Sample_type == &quot;Spike&quot;)
+innate_no3 &lt;- df_111_300 %&gt;% filter(Sample_type== &quot;Spike&quot;, Nitrate_input == 0) %&gt;% select(NO3_mM) %&gt;% unlist()
+df_111_300_soil$Retrieved_NO3_mM &lt;- df_111_300_soil$NO3_mM - innate_no3
+
+ggplot(df_111_300_soil, aes(x=Nitrate_input, y=Retrieved_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Retrieved_NO3_mM - sd_NO3_mM, ymax=Retrieved_NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_fill_brewer(palette=&#39;Set2&#39;) +
+  scale_color_manual(values = c(&quot;brown3&quot;,&quot;deepskyblue2&quot;))+
+  ylab(&quot;Retrieved NO3 concentrations (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle(&quot;1_1_1 method (1g soil, 1ml spike in, 1ml 2M KCl) 300ul \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-5-2.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Retrieved ratio of spike ins
+df_111_300_soil$Ratio_retrieved &lt;- df_111_300_soil$Retrieved_NO3_mM / df_111_300_soil$Nitrate_input 
+
+ggplot(df_111_300_soil, aes(x=Nitrate_input, y=Ratio_retrieved)) +  ## I put fill=value which was wrong
+  geom_bar(stat=&quot;identity&quot;,position=&quot;dodge&quot;, fill=&quot;brown3&quot;)+
+  geom_line(size=0.2, color=&quot;brown&quot;)+
+  ylab(&quot;Ratio of retrieved nitrate concentraion \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle(&quot;1_1_1 method (1g soil, 1ml spike in, 1ml 2M KCl) 300ul \n&quot;) +
+  geom_text(aes(label = round(Ratio_retrieved,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-5-3.png" width="1056" style="display: block; margin: auto;" /></p>
+<p>Compare same spike in concentrations but different ul</p>
+<pre class="r"><code># (1) 1_1_1 method (1g soil, 1ml spike in, 1ml 2M KCl)
+
+# subtract innate nitrate in soil
+df_111_full &lt;- df_111 %&gt;% filter(!(Extraction_ul %in% c(50, 100, 300)))
+df_111_full_soil &lt;- df_111_full %&gt;% filter(Sample_type == &quot;Spike&quot;)
+# would have to use innate_no3 from 300ul
+df_111_full_soil$Retrieved_NO3_mM &lt;- df_111_full_soil$NO3_mM - innate_no3
+# Retrieved ratio of spike ins
+df_111_full_soil$Ratio_retrieved &lt;- df_111_full_soil$Retrieved_NO3_mM / df_111_full_soil$Nitrate_input 
+
+# import new data from 211019
+df_full_innate &lt;- openxlsx::read.xlsx(&quot;data/211020_df_full_innate.xlsx&quot;)
+df_full_innate %&lt;&gt;% select(-Trouble_shooting, -Ave_NO2NO3_mM, -Std_NO2NO3_mM, -Innate_NO3_mM) %&gt;% rename(NO2_mM = Ave_NO2_mM, NO3_mM = Ave_NO3_mM, sd_NO2_mM = Std_NO2_mM, sd_NO3_mM = Std_NO3_mM)
+
+colnames(df_111_300_soil)</code></pre>
+<pre><code> [1] &quot;Sample&quot;            &quot;Extraction_method&quot; &quot;Extraction_ul&quot;    
+ [4] &quot;Nitrate_input&quot;     &quot;Sample_type&quot;       &quot;NO2_mM&quot;           
+ [7] &quot;sd_NO2_mM&quot;         &quot;NO3_mM&quot;            &quot;sd_NO3_mM&quot;        
+[10] &quot;Retrieved_NO3_mM&quot;  &quot;Ratio_retrieved&quot;  </code></pre>
+<pre class="r"><code>colnames(df_full_innate)</code></pre>
+<pre><code> [1] &quot;Sample&quot;            &quot;Extraction_method&quot; &quot;Extraction_ul&quot;    
+ [4] &quot;Nitrate_input&quot;     &quot;Sample_type&quot;       &quot;NO2_mM&quot;           
+ [7] &quot;sd_NO2_mM&quot;         &quot;NO3_mM&quot;            &quot;sd_NO3_mM&quot;        
+[10] &quot;Retrieved_NO3_mM&quot;  &quot;Ratio_retrieved&quot;  </code></pre>
+<pre class="r"><code>df_111_full_soil &lt;- df_full_innate %&gt;% filter(Extraction_method == &quot;1_1_1&quot;)
+
+df_111_retrieved &lt;- rbind(df_111_100_soil, df_111_300_soil, df_111_full_soil)
+df_111_retrieved$Extraction_ul &lt;- factor(df_111_retrieved$Extraction_ul)
+ggplot(df_111_retrieved, aes(x=Nitrate_input, y=Retrieved_NO3_mM, color=Extraction_ul, group=Extraction_ul)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Retrieved_NO3_mM - sd_NO3_mM, ymax=Retrieved_NO3_mM + sd_NO3_mM), width=.05)+
+  scale_color_brewer(palette=&#39;Set1&#39;) +
+  # scale_color_manual(values = c(&quot;brown3&quot;,&quot;deepskyblue2&quot;))+
+  ylab(&quot;Retrieved NO3 concentrations (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle(&quot;1_1_1 method (1g soil, 1ml spike in, 1ml 2M KCl) 300ul \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-6-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Retrieved ratio of spike ins
+df_111_retrieved$Nitrate_input &lt;- factor(df_111_retrieved$Nitrate_input)
+
+ggplot(df_111_retrieved, aes(x=Nitrate_input, y=Ratio_retrieved, fill=Extraction_ul, group=Extraction_ul)) +  ## I put fill=value which was wrong
+  geom_bar(stat=&quot;identity&quot;,position=&quot;dodge&quot;)+
+  # geom_line(size=0.2, color=&quot;brown&quot;)+
+  ylab(&quot;Ratio of retrieved NO3 concentraion \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle(&quot;1_1_1 method (1g soil, 1ml spike in, 1ml 2M KCl) \n&quot;) +
+  geom_text(aes(label = round(Ratio_retrieved,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE, position = position_dodge(width = .9))+
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-6-2.png" width="1056" style="display: block; margin: auto;" /></p>
+</div>
+<div id="method-1g-soil-1ml-spike-in-4ml-2.5m-kcl" class="section level2">
+<h2>3.2. 0.5_1_1.5 method (1g soil, 1ml spike in, 4ml 2.5M KCl)</h2>
+<pre class="r"><code># (2) 1_1_4 method (1g soil, 1ml spike in, 4ml 2.5M KCl)
+df_114 &lt;- df_ave %&gt;% filter(Extraction_method == &quot;1_1_4&quot;)
+dim(df_114)</code></pre>
+<pre><code>[1] 50  9</code></pre>
+<pre class="r"><code># (2-1) 1_1_4 method (1g soil, 1ml spike in, 4ml 2.5M KCl) 50ul
+df_114_50 &lt;- df_114 %&gt;% filter(Extraction_ul == 50)
+
+ggplot(df_114_50, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  scale_color_manual(values = c(&quot;deepskyblue4&quot;,&quot;maroon2&quot;))+
+  ylab(&quot;Measured NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle(&quot;1_1_4 method (1g soil, 1ml spike in, 4ml 2.5M KCl) 50ul \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-7-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># subtract innate nitrate in soil
+df_114_50_soil &lt;- df_114_50 %&gt;% filter(Sample_type == &quot;Spike&quot;)
+innate_no3 &lt;- df_114_50 %&gt;% filter(Sample_type== &quot;Spike&quot;, Nitrate_input == 0) %&gt;% select(NO3_mM) %&gt;% unlist()
+df_114_50_soil$Retrieved_NO3_mM &lt;- df_114_50_soil$NO3_mM - innate_no3
+
+ggplot(df_114_50_soil, aes(x=Nitrate_input, y=Retrieved_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Retrieved_NO3_mM - sd_NO3_mM, ymax=Retrieved_NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_fill_brewer(palette=&#39;Set2&#39;) +
+  scale_color_manual(values = c(&quot;brown3&quot;,&quot;deepskyblue2&quot;))+
+  ylab(&quot;Retrieved NO3 concentrations (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle(&quot;1_1_4 method (1g soil, 1ml spike in, 4ml 2.5M KCl) 50ul \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-7-2.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Retrieved ratio of spike ins
+df_114_50_soil$Ratio_retrieved &lt;- df_114_50_soil$Retrieved_NO3_mM / df_114_50_soil$Nitrate_input 
+
+ggplot(df_114_50_soil, aes(x=Nitrate_input, y=Ratio_retrieved)) +  ## I put fill=value which was wrong
+  geom_bar(stat=&quot;identity&quot;,position=&quot;dodge&quot;, fill=&quot;brown3&quot;)+
+  geom_line(size=0.2, color=&quot;brown&quot;)+
+  ylab(&quot;Ratio of retrieved nitrate concentraion \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle(&quot;1_1_4 method (1g soil, 1ml spike in, 4ml 2.5M KCl) 50ul \n&quot;) +
+  geom_text(aes(label = round(Ratio_retrieved,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-7-3.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># (2-2) 1_1_4 method (1g soil, 1ml spike in, 4ml 2.5M KCl) 100ul
+df_114_100 &lt;- df_114 %&gt;% filter(Extraction_ul == 100)
+
+ggplot(df_114_100, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  scale_color_manual(values = c(&quot;deepskyblue4&quot;,&quot;maroon2&quot;))+
+  ylab(&quot;Measured NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle(&quot;1_1_4 method (1g soil, 1ml spike in, 4ml 2.5M KCl) 100ul \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-8-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># subtract innate nitrate in soil
+df_114_100_soil &lt;- df_114_100 %&gt;% filter(Sample_type == &quot;Spike&quot;)
+innate_no3 &lt;- df_114_100 %&gt;% filter(Sample_type== &quot;Spike&quot;, Nitrate_input == 0) %&gt;% select(NO3_mM) %&gt;% unlist()
+df_114_100_soil$Retrieved_NO3_mM &lt;- df_114_100_soil$NO3_mM - innate_no3
+
+ggplot(df_114_100_soil, aes(x=Nitrate_input, y=Retrieved_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Retrieved_NO3_mM - sd_NO3_mM, ymax=Retrieved_NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_fill_brewer(palette=&#39;Set2&#39;) +
+  scale_color_manual(values = c(&quot;brown3&quot;,&quot;deepskyblue2&quot;))+
+  ylab(&quot;Retrieved NO3 concentrations (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle(&quot;1_1_4 method (1g soil, 1ml spike in, 4ml 2.5M KCl) 100ul \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-8-2.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Retrieved ratio of spike ins
+df_114_100_soil$Ratio_retrieved &lt;- df_114_100_soil$Retrieved_NO3_mM / df_114_100_soil$Nitrate_input 
+
+ggplot(df_114_100_soil, aes(x=Nitrate_input, y=Ratio_retrieved)) +  ## I put fill=value which was wrong
+  geom_bar(stat=&quot;identity&quot;,position=&quot;dodge&quot;, fill=&quot;brown3&quot;)+
+  geom_line(size=0.2, color=&quot;brown&quot;)+
+  ylab(&quot;Ratio of retrieved nitrate concentraion \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle(&quot;1_1_4 method (1g soil, 1ml spike in, 4ml 2.5M KCl) 100ul \n&quot;) +
+  geom_text(aes(label = round(Ratio_retrieved,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-8-3.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># (2-3) 1_1_4 method (1g soil, 1ml spike in, 1ml 2M KCl) 300ul
+df_114_300 &lt;- df_114 %&gt;% filter(Extraction_ul == 300)
+
+ggplot(df_114_300, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  scale_color_manual(values = c(&quot;deepskyblue4&quot;,&quot;maroon2&quot;))+
+  ylab(&quot;Measured NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle(&quot;1_1_4 method (1g soil, 1ml spike in, 4ml 2.5M KCl) 300ul \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-9-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># subtract innate nitrate in soil
+df_114_300_soil &lt;- df_114_300 %&gt;% filter(Sample_type == &quot;Spike&quot;)
+innate_no3 &lt;- df_114_300 %&gt;% filter(Sample_type== &quot;Spike&quot;, Nitrate_input == 0) %&gt;% select(NO3_mM) %&gt;% unlist()
+df_114_300_soil$Retrieved_NO3_mM &lt;- df_114_300_soil$NO3_mM - innate_no3
+
+ggplot(df_114_300_soil, aes(x=Nitrate_input, y=Retrieved_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Retrieved_NO3_mM - sd_NO3_mM, ymax=Retrieved_NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_fill_brewer(palette=&#39;Set2&#39;) +
+  scale_color_manual(values = c(&quot;brown3&quot;,&quot;deepskyblue2&quot;))+
+  ylab(&quot;Retrieved NO3 concentrations (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle(&quot;1_1_4 method (1g soil, 1ml spike in, 4ml 2.5M KCl) 300ul \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-9-2.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Retrieved ratio of spike ins
+df_114_300_soil$Ratio_retrieved &lt;- df_114_300_soil$Retrieved_NO3_mM / df_114_300_soil$Nitrate_input 
+
+ggplot(df_114_300_soil, aes(x=Nitrate_input, y=Ratio_retrieved)) +  ## I put fill=value which was wrong
+  geom_bar(stat=&quot;identity&quot;,position=&quot;dodge&quot;, fill=&quot;brown3&quot;)+
+  geom_line(size=0.2, color=&quot;brown&quot;)+
+  ylab(&quot;Ratio of retrieved nitrate concentraion \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle(&quot;1_1_4 method (1g soil, 1ml spike in, 4ml 2.5M KCl) 300ul \n&quot;) +
+  geom_text(aes(label = round(Ratio_retrieved,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-9-3.png" width="1056" style="display: block; margin: auto;" /></p>
+<p>Compare same spike in concentrations but different ul</p>
+<pre class="r"><code># (2) 1_1_4 method (1g soil, 1ml spike in, 1ml 2M KCl)
+
+# subtract innate nitrate in soil
+df_114_full &lt;- df_114 %&gt;% filter(!(Extraction_ul %in% c(50, 100, 300)))
+df_114_full_soil &lt;- df_114_full %&gt;% filter(Sample_type == &quot;Spike&quot;)
+# would have to use innate_no3 from 300ul
+df_114_full_soil$Retrieved_NO3_mM &lt;- df_114_full_soil$NO3_mM - innate_no3
+# Retrieved ratio of spike ins
+df_114_full_soil$Ratio_retrieved &lt;- df_114_full_soil$Retrieved_NO3_mM / df_114_full_soil$Nitrate_input 
+
+# update with 211019 data
+df_114_full_soil &lt;- df_full_innate %&gt;% filter(Extraction_method == &quot;1_1_4&quot;)
+
+df_114_retrieved &lt;- rbind(df_114_50_soil, df_114_100_soil, df_114_300_soil, df_114_full_soil)
+df_114_retrieved$Extraction_ul &lt;- factor(df_114_retrieved$Extraction_ul)
+ggplot(df_114_retrieved, aes(x=Nitrate_input, y=Retrieved_NO3_mM, color=Extraction_ul, group=Extraction_ul)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Retrieved_NO3_mM - sd_NO3_mM, ymax=Retrieved_NO3_mM + sd_NO3_mM), width=.05)+
+  scale_color_brewer(palette=&#39;Set1&#39;) +
+  # scale_color_manual(values = c(&quot;brown3&quot;,&quot;deepskyblue2&quot;))+
+  ylab(&quot;Retrieved NO3 concentrations (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle(&quot;1_1_4 method (1g soil, 1ml spike in, 4ml 2.5M KCl) \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-10-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Retrieved ratio of spike ins
+df_114_retrieved$Nitrate_input &lt;- factor(df_114_retrieved$Nitrate_input)
+
+ggplot(df_114_retrieved, aes(x=Nitrate_input, y=Ratio_retrieved, fill=Extraction_ul, group=Extraction_ul)) +  ## I put fill=value which was wrong
+  geom_bar(stat=&quot;identity&quot;,position=&quot;dodge&quot;)+
+  # geom_line(size=0.2, color=&quot;brown&quot;)+
+  ylab(&quot;Ratio of retrieved NO3 concentraion \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle(&quot;1_1_4 method (1g soil, 1ml spike in, 4ml 2.5M KCl) \n&quot;) +
+  geom_text(aes(label = round(Ratio_retrieved,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE, position = position_dodge(width = .9))+
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-10-2.png" width="1056" style="display: block; margin: auto;" /></p>
+</div>
+<div id="method-0.5g-soil-1ml-spike-in-1.5ml-3.3m-kcl" class="section level2">
+<h2>3.3. 0.5_1_1.5 method (0.5g soil, 1ml spike in, 1.5ml 3.3M KCl)</h2>
+<pre class="r"><code># (2) 0.5_1_1.5 method (0.5g soil, 1ml spike in, 1.5ml 3.3M KCl)
+df_05115 &lt;- df_ave %&gt;% filter(Extraction_method == &quot;0.5_1_1.5&quot;)
+dim(df_05115)</code></pre>
+<pre><code>[1] 50  9</code></pre>
+<pre class="r"><code># (2-1) 0.5_1_1.5 method (0.5g soil, 1ml spike in, 1.5ml 3.3M KCl) 50ul
+df_05115_50 &lt;- df_05115 %&gt;% filter(Extraction_ul == 50)
+
+ggplot(df_05115_50, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  scale_color_manual(values = c(&quot;deepskyblue4&quot;,&quot;maroon2&quot;))+
+  ylab(&quot;Measured NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle(&quot;0.5_1_1.5 method (0.5g soil, 1ml spike in, 1.5ml 3.3M KCl) 50ul \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-11-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># subtract innate nitrate in soil
+df_05115_50_soil &lt;- df_05115_50 %&gt;% filter(Sample_type == &quot;Spike&quot;)
+innate_no3 &lt;- df_05115_50 %&gt;% filter(Sample_type== &quot;Spike&quot;, Nitrate_input == 0) %&gt;% select(NO3_mM) %&gt;% unlist()
+df_05115_50_soil$Retrieved_NO3_mM &lt;- df_05115_50_soil$NO3_mM - innate_no3
+
+ggplot(df_05115_50_soil, aes(x=Nitrate_input, y=Retrieved_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Retrieved_NO3_mM - sd_NO3_mM, ymax=Retrieved_NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_fill_brewer(palette=&#39;Set2&#39;) +
+  scale_color_manual(values = c(&quot;brown3&quot;,&quot;deepskyblue2&quot;))+
+  ylab(&quot;Retrieved NO3 concentrations (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle(&quot;0.5_1_1.5 method (0.5g soil, 1ml spike in, 1.5ml 3.3M KCl) 50ul \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-11-2.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Retrieved ratio of spike ins
+df_05115_50_soil$Ratio_retrieved &lt;- df_05115_50_soil$Retrieved_NO3_mM / df_05115_50_soil$Nitrate_input 
+
+ggplot(df_05115_50_soil, aes(x=Nitrate_input, y=Ratio_retrieved)) +  ## I put fill=value which was wrong
+  geom_bar(stat=&quot;identity&quot;,position=&quot;dodge&quot;, fill=&quot;brown3&quot;)+
+  geom_line(size=0.2, color=&quot;brown&quot;)+
+  ylab(&quot;Ratio of retrieved nitrate concentraion \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle(&quot;0.5_1_1.5 method (0.5g soil, 1ml spike in, 1.5ml 3.3M KCl) 50ul \n&quot;) +
+  geom_text(aes(label = round(Ratio_retrieved,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-11-3.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># (2-2) 0.5_1_1.5 method (0.5g soil, 1ml spike in, 1.5ml 3.3M KCl) 100ul
+df_05115_100 &lt;- df_05115 %&gt;% filter(Extraction_ul == 100)
+
+ggplot(df_05115_100, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  scale_color_manual(values = c(&quot;deepskyblue4&quot;,&quot;maroon2&quot;))+
+  ylab(&quot;Measured NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle(&quot;0.5_1_1.5 method (0.5g soil, 1ml spike in, 1.5ml 3.3M KCl) 100ul \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-12-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># subtract innate nitrate in soil
+df_05115_100_soil &lt;- df_05115_100 %&gt;% filter(Sample_type == &quot;Spike&quot;)
+innate_no3 &lt;- df_05115_100 %&gt;% filter(Sample_type== &quot;Spike&quot;, Nitrate_input == 0) %&gt;% select(NO3_mM) %&gt;% unlist()
+df_05115_100_soil$Retrieved_NO3_mM &lt;- df_05115_100_soil$NO3_mM - innate_no3
+
+ggplot(df_05115_100_soil, aes(x=Nitrate_input, y=Retrieved_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Retrieved_NO3_mM - sd_NO3_mM, ymax=Retrieved_NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_fill_brewer(palette=&#39;Set2&#39;) +
+  scale_color_manual(values = c(&quot;brown3&quot;,&quot;deepskyblue2&quot;))+
+  ylab(&quot;Retrieved NO3 concentrations (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle(&quot;0.5_1_1.5 method (0.5g soil, 1ml spike in, 1.5ml 3.3M KCl) 100ul \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-12-2.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Retrieved ratio of spike ins
+df_05115_100_soil$Ratio_retrieved &lt;- df_05115_100_soil$Retrieved_NO3_mM / df_05115_100_soil$Nitrate_input 
+
+ggplot(df_05115_100_soil, aes(x=Nitrate_input, y=Ratio_retrieved)) +  ## I put fill=value which was wrong
+  geom_bar(stat=&quot;identity&quot;,position=&quot;dodge&quot;, fill=&quot;brown3&quot;)+
+  geom_line(size=0.2, color=&quot;brown&quot;)+
+  ylab(&quot;Ratio of retrieved nitrate concentraion \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle(&quot;0.5_1_1.5 method (0.5g soil, 1ml spike in, 1.5ml 3.3M KCl) 100ul \n&quot;) +
+  geom_text(aes(label = round(Ratio_retrieved,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-12-3.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># (2-3) 0.5_1_1.5 method (1g soil, 1ml spike in, 1ml 2M KCl) 300ul
+df_05115_300 &lt;- df_05115 %&gt;% filter(Extraction_ul == 300)
+
+ggplot(df_05115_300, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  scale_color_manual(values = c(&quot;deepskyblue4&quot;,&quot;maroon2&quot;))+
+  ylab(&quot;Measured NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle(&quot;0.5_1_1.5 method (0.5g soil, 1ml spike in, 1.5ml 3.3M KCl) 300ul \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-13-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># subtract innate nitrate in soil
+df_05115_300_soil &lt;- df_05115_300 %&gt;% filter(Sample_type == &quot;Spike&quot;)
+innate_no3 &lt;- df_05115_300 %&gt;% filter(Sample_type== &quot;Spike&quot;, Nitrate_input == 0) %&gt;% select(NO3_mM) %&gt;% unlist()
+df_05115_300_soil$Retrieved_NO3_mM &lt;- df_05115_300_soil$NO3_mM - innate_no3
+
+ggplot(df_05115_300_soil, aes(x=Nitrate_input, y=Retrieved_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Retrieved_NO3_mM - sd_NO3_mM, ymax=Retrieved_NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_fill_brewer(palette=&#39;Set2&#39;) +
+  scale_color_manual(values = c(&quot;brown3&quot;,&quot;deepskyblue2&quot;))+
+  ylab(&quot;Retrieved NO3 concentrations (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle(&quot;0.5_1_1.5 method (0.5g soil, 1ml spike in, 1.5ml 3.3M KCl) 300ul \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-13-2.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Retrieved ratio of spike ins
+df_05115_300_soil$Ratio_retrieved &lt;- df_05115_300_soil$Retrieved_NO3_mM / df_05115_300_soil$Nitrate_input 
+
+ggplot(df_05115_300_soil, aes(x=Nitrate_input, y=Ratio_retrieved)) +  ## I put fill=value which was wrong
+  geom_bar(stat=&quot;identity&quot;,position=&quot;dodge&quot;, fill=&quot;brown3&quot;)+
+  geom_line(size=0.2, color=&quot;brown&quot;)+
+  ylab(&quot;Ratio of retrieved nitrate concentraion \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle(&quot;0.5_1_1.5 method (0.5g soil, 1ml spike in, 1.5ml 3.3M KCl) 300ul \n&quot;) +
+  geom_text(aes(label = round(Ratio_retrieved,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-13-3.png" width="1056" style="display: block; margin: auto;" /></p>
+<p>Compare same spike in concentrations but different ul</p>
+<pre class="r"><code># (2) 0.5_1_1.5 method (1g soil, 1ml spike in, 1ml 2M KCl)
+
+# subtract innate nitrate in soil
+df_05115_full &lt;- df_05115 %&gt;% filter(!(Extraction_ul %in% c(50, 100, 300)))
+df_05115_full_soil &lt;- df_05115_full %&gt;% filter(Sample_type == &quot;Spike&quot;)
+# would have to use innate_no3 from 300ul
+df_05115_full_soil$Retrieved_NO3_mM &lt;- df_05115_full_soil$NO3_mM - innate_no3
+# Retrieved ratio of spike ins
+df_05115_full_soil$Ratio_retrieved &lt;- df_05115_full_soil$Retrieved_NO3_mM / df_05115_full_soil$Nitrate_input 
+
+# update with 211019 data
+df_05115_full_soil &lt;- df_full_innate %&gt;% filter(Extraction_method == &quot;0.5_1_1.5&quot;)
+
+# 50ul data seems to be messed up
+df_05115_retrieved &lt;- rbind(df_05115_50_soil, df_05115_100_soil, df_05115_300_soil, df_05115_full_soil)
+df_05115_retrieved$Extraction_ul &lt;- factor(df_05115_retrieved$Extraction_ul)
+ggplot(df_05115_retrieved, aes(x=Nitrate_input, y=Retrieved_NO3_mM, color=Extraction_ul, group=Extraction_ul)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Retrieved_NO3_mM - sd_NO3_mM, ymax=Retrieved_NO3_mM + sd_NO3_mM), width=.05)+
+  scale_color_brewer(palette=&#39;Set1&#39;) +
+  # scale_color_manual(values = c(&quot;brown3&quot;,&quot;deepskyblue2&quot;))+
+  ylab(&quot;Retrieved NO3 concentrations (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle(&quot;0.5_1_1.5 method (0.5g soil, 1ml spike in, 1.5ml 3.3M KCl) \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-14-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Retrieved ratio of spike ins
+df_05115_retrieved$Nitrate_input &lt;- factor(df_05115_retrieved$Nitrate_input)
+
+ggplot(df_05115_retrieved, aes(x=Nitrate_input, y=Ratio_retrieved, fill=Extraction_ul, group=Extraction_ul)) +  ## I put fill=value which was wrong
+  geom_bar(stat=&quot;identity&quot;,position=&quot;dodge&quot;)+
+  # geom_line(size=0.2, color=&quot;brown&quot;)+
+  ylab(&quot;Ratio of retrieved NO3 concentraion \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle(&quot;0.5_1_1.5 method (0.5g soil, 1ml spike in, 1.5ml 3.3M KCl) \n&quot;) +
+  geom_text(aes(label = round(Ratio_retrieved,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE, position = position_dodge(width = .9))+
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-14-2.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot except for the 50ul
+df_05115_retrieved %&lt;&gt;% filter(!(Extraction_ul == 50))
+
+ggplot(df_05115_retrieved, aes(x=Nitrate_input, y=Ratio_retrieved, fill=Extraction_ul, group=Extraction_ul)) +  ## I put fill=value which was wrong
+  geom_bar(stat=&quot;identity&quot;,position=&quot;dodge&quot;)+
+  # geom_line(size=0.2, color=&quot;brown&quot;)+
+  ylab(&quot;Ratio of retrieved NO3 concentraion \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle(&quot;0.5_1_1.5 method (0.5g soil, 1ml spike in, 1.5ml 3.3M KCl) \n&quot;) +
+  geom_text(aes(label = round(Ratio_retrieved,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE, position = position_dodge(width = .9))+
+  mytheme_2d</code></pre>
+<p><img src="figure/211017_Griess_slurry_extraction.Rmd/unnamed-chunk-14-3.png" width="1056" style="display: block; margin: auto;" /></p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.0.3 (2020-10-10)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 10 x64 (build 19042)
+
+Matrix products: default
+
+locale:
+[1] LC_COLLATE=English_United States.1252 
+[2] LC_CTYPE=English_United States.1252   
+[3] LC_MONETARY=English_United States.1252
+[4] LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.1252    
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] ggpubr_0.4.0       ggrepel_0.9.1      ape_5.5            openxlsx_4.2.3    
+ [5] devtools_2.4.0     usethis_2.0.1      gtools_3.8.2       reshape2_1.4.4    
+ [9] readxl_1.3.1       magrittr_2.0.1     forcats_0.5.1      stringr_1.4.0     
+[13] purrr_0.3.4        readr_1.4.0        tidyr_1.1.3        tibble_3.0.4      
+[17] tidyverse_1.3.1    vegan_2.5-7        lattice_0.20-41    permute_0.9-5     
+[21] RColorBrewer_1.1-2 ggplot2_3.3.5      dplyr_1.0.5        workflowr_1.6.2   
+
+loaded via a namespace (and not attached):
+ [1] colorspace_2.0-0  ggsignif_0.6.2    ellipsis_0.3.2    rio_0.5.27       
+ [5] rprojroot_2.0.2   fs_1.5.0          rstudioapi_0.13   farver_2.1.0     
+ [9] remotes_2.4.0     fansi_0.4.2       lubridate_1.7.10  xml2_1.3.2       
+[13] splines_4.0.3     cachem_1.0.4      knitr_1.33        pkgload_1.2.1    
+[17] jsonlite_1.7.2    broom_0.7.9       cluster_2.1.0     dbplyr_2.1.1     
+[21] compiler_4.0.3    httr_1.4.2        backports_1.2.1   assertthat_0.2.1 
+[25] Matrix_1.2-18     fastmap_1.1.0     cli_3.0.1         later_1.2.0      
+[29] htmltools_0.5.1.1 prettyunits_1.1.1 tools_4.0.3       gtable_0.3.0     
+[33] glue_1.4.2        Rcpp_1.0.5        carData_3.0-4     cellranger_1.1.0 
+[37] jquerylib_0.1.4   vctrs_0.3.8       nlme_3.1-149      xfun_0.22        
+[41] ps_1.6.0          testthat_3.0.2    rvest_1.0.1       lifecycle_1.0.0  
+[45] rstatix_0.7.0     MASS_7.3-53       scales_1.1.1      hms_1.1.0        
+[49] promises_1.2.0.1  parallel_4.0.3    yaml_2.2.1        curl_4.3.2       
+[53] memoise_2.0.0     sass_0.4.0        stringi_1.5.3     highr_0.9        
+[57] desc_1.3.0        pkgbuild_1.2.0    zip_2.1.1         rlang_0.4.10     
+[61] pkgconfig_2.0.3   evaluate_0.14     labeling_0.4.2    tidyselect_1.1.1 
+[65] processx_3.5.1    plyr_1.8.6        R6_2.5.0          generics_0.1.0   
+[69] DBI_1.1.1         pillar_1.6.0      haven_2.4.1       whisker_0.4      
+[73] foreign_0.8-80    withr_2.4.2       mgcv_1.8-33       abind_1.4-5      
+[77] modelr_0.1.8      crayon_1.4.1      car_3.0-11        utf8_1.1.4       
+[81] rmarkdown_2.9     grid_4.0.3        data.table_1.14.0 callr_3.7.0      
+[85] git2r_0.28.0      reprex_2.0.0      digest_0.6.27     httpuv_1.6.0     
+[89] munsell_0.5.0     bslib_0.2.5.1     sessioninfo_1.1.1</code></pre>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
