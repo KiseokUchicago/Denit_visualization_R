@@ -1,0 +1,405 @@
+---
+title: "211020_Griess_pipet_confirm"
+author: "KiseokUchicago"
+date: "2021-10-21"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=11, fig.height=9,
+                      error=TRUE, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE)
+```
+
+## Slurry extraction pipet confirmation (Griess assay)
+Researcher: **Kiseok Lee** \
+Experiment Date: 10/20/21 \
+Analysis Date: 10/21/21
+Lab: **Seppe Kuehn**
+
+```{r}
+# libraries
+library(dplyr)
+library(ggplot2)
+library(RColorBrewer)
+library(vegan)
+library(tidyverse)
+library(magrittr)
+library(readxl)
+library(reshape2)
+library(gtools)
+library(devtools)
+library(openxlsx)
+library(ape)
+library(stringr)
+library(tidyr)
+library(ggrepel)
+library(ggpubr)
+
+## theme for ggplot
+mytheme <- theme_bw() + 
+  theme(text = element_text(family="serif")) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5, family="serif")) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13, family="serif"))+
+  theme(axis.text.y = element_text(size=10, family="serif"))+
+  theme(panel.grid.major = element_blank()) +
+  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),panel.border=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))
+
+mytheme_2d <- theme_bw() + 
+  theme(text = element_text(family="serif")) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5, family="serif")) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13, family="serif"))+
+  theme(axis.text.y = element_text(size=13, family="serif"))+
+  # theme(panel.grid.major = element_blank()) +
+  # theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))
+
+
+# color collection
+my_color_collection <- c(
+  "#CBD588", "#5F7FC7", "orange", "#AD6F3B", "#673770", 
+  "#D14285", "#652926", "#C84248", "#8569D5", "#5E738F",
+  "#D1A33D", "#8A7C64", "#599861","#616163", "#FFCDB2",
+  "#6D9F71", "#242F40",
+  "#CCA43B", "#F92A82", "#ED7B84", "#7EB77F", 
+  "#DEC4A1", "#E5D1D0", '#0E8482', '#C9DAEA', '#337357', 
+  '#95C623', '#E55812', '#04471C', '#F2D7EE', '#D3BCC0', 
+  '#A5668B', '#69306D', '#0E103D', '#1A535C', '#4ECDC4', 
+  '#F7FFF7', '#FF6B6B', '#FFE66D', '#6699CC', '#FFF275', 
+  '#FF8C42', '#FF3C38', '#A23E48', '#000000', '#CF5C36', 
+  '#EEE5E9', '#7C7C7C', '#EFC88B', '#2E5266', '#6E8898', 
+  '#9FB1BC', '#D3D0CB', '#E2C044', '#5BC0EB', '#FDE74C', 
+  '#9BC53D', '#E55934', '#FA7921', "#CD9BCD", "#508578", "#DA5724")
+
+# for git push, use this instead of using wflow_git_push()
+# git push -u origin master (in the Git app / in the working directory)
+
+```
+
+
+## 1. Import data table from python code
+```{r}
+# import file
+df_p0 <- openxlsx::read.xlsx("data/211020_Griess_plate0.xlsx")
+df_p1 <- openxlsx::read.xlsx("data/211020_Griess_plate1.xlsx")
+
+head(df_p1)
+colnames(df_p1)
+df_p1 %<>% rename(Well = X1)
+dim(df_p1)
+
+# remove wells 
+df_p1 %<>% filter(!(Well %in% c("B02","H04")))
+dim(df_p1)
+
+# bind two dataframe
+df_p <- rbind(df_p0, df_p1, df_p2, df_p3, df_p4, df_p5, df_p6, df_p7, df_p8)
+dim(df_p)
+24+96*8 -16
+
+
+# remove NA
+dim(df_p1)
+df_p1 <- na.omit(df_p1)
+dim(df_p1)
+
+df_p1
+
+# Check
+df_p1 %>% filter(Well =="B02")
+df_p1 %>% filter(Well =="H04")
+
+```
+
+## 2. Get average and standard deviation
+```{r}
+# average and standard deviation
+
+# plot to see
+ggplot(df_p1, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Without averaging \n") +
+  mytheme_2d
+
+# average technical replicate
+df_NO2NO3 <- df_p1 %>% group_by(Sample, Extraction_method, Extraction_ul, Nitrate_input, Sample_type, Trouble_shooting) %>% summarise(Ave_NO2_mM = mean(NO2_mM), Std_NO2_mM = sd(NO2_mM), Ave_NO2NO3_mM = mean(NO2NO3_mM), Std_NO2NO3_mM = sd(NO2NO3_mM), Ave_NO3_mM = mean(NO3_mM), Std_NO3_mM = sd(NO3_mM)) %>% ungroup()
+
+dim(df_NO2NO3)
+
+# plot to see
+ggplot(df_NO2NO3, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("After averaging with technical replicates \n") +
+  mytheme_2d
+
+# average biological replicates
+# standard deviation is the standard deviation of the technical replicate average
+dim(df_NO2NO3)
+head(df_NO2NO3)
+
+# Factor in orders
+# df_all$Sample_type <-  factor(df_all$Sample_type, levels = c("Soil","Blank"))
+
+```
+
+## 3. Plot per method
+
+## 3.1. Full extraction testing
+
+```{r}
+df_full <- df_NO2NO3 %>% filter((Trouble_shooting  == "Full"))
+colnames(df_full)
+
+ggplot(df_full, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Extraction_method, group=Extraction_method)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  scale_y_continuous(breaks = seq(0,1.5,0.25), limits=c(0, 1.5))+
+  scale_x_continuous(breaks = seq(0,1.5,0.25), limits=c(0, 1.5))+
+  ggtitle("Full extraction \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+# get extraction ratio
+# innate nitrate
+add_innate <- df_full %>% filter(Sample_type== "Spike", Nitrate_input == 0) %>% arrange(Extraction_method) %>% rename(Innate_NO3_mM = Ave_NO3_mM) %>% select(Extraction_method, Innate_NO3_mM)
+
+df_full_innate <- df_full %>% filter(Sample_type== "Spike", Nitrate_input != 0) %>% arrange(Extraction_method) %>%
+  left_join(add_innate, by=c("Extraction_method"="Extraction_method")) %>% 
+  mutate(Retrieved_NO3_mM = Ave_NO3_mM - Innate_NO3_mM)
+
+# Export to excel
+openxlsx::write.xlsx(df_full_innate, "211020_df_full_innate.xlsx")
+
+# plot
+ggplot(df_full_innate, aes(x=Nitrate_input, y=Retrieved_NO3_mM, color=Extraction_method, group=Extraction_method)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Retrieved_NO3_mM - Std_NO3_mM, ymax=Retrieved_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_fill_brewer(palette='Set2') +
+  # scale_color_manual(values = c("brown3","deepskyblue2"))+
+  ylab("Retrieved NO3 concentrations (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  scale_y_continuous(breaks = seq(0,1,0.25), limits=c(0, 1))+
+  scale_x_continuous(breaks = seq(0,1,0.25), limits=c(0, 1))+
+  ggtitle("Full extraction \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+# Retrieved ratio of spike ins
+df_full_innate$Ratio_retrieved <- df_full_innate$Retrieved_NO3_mM / df_full_innate$Nitrate_input 
+
+ggplot(df_full_innate, aes(x=Nitrate_input, y=Ratio_retrieved, fill=Extraction_method, group=Extraction_method)) +  ## I put fill=value which was wrong
+  geom_bar(stat="identity",position="dodge")+
+  geom_line(size=0.2, color="brown")+
+  ylab("Ratio of retrieved nitrate concentraion \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle("Full extraction \n") +
+  geom_text(aes(label = round(Ratio_retrieved,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+```
+
+## 3.2. Trouble shooting
+```{r}
+# Get the trouble shooting data
+df_ts <- df_NO2NO3 %>% filter(!(Trouble_shooting  == "Full"))
+dim(df_ts)
+
+# Trouble shooting - fast
+df_ts_fast <- df_ts %>% filter(Trouble_shooting == "Fast")
+
+ggplot(df_ts_fast, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Trouble_shooting, group=Trouble_shooting)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  scale_y_continuous(breaks = seq(0,2.3,0.25), limits=c(0, 2.3))+
+  scale_x_continuous(breaks = seq(0,2.3,0.25), limits=c(0, 2.3))+
+  ggtitle("Fast 0.5:1:1.5 (soil:water:KCl) method-100ul extraction \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+# subtract innate nitrate in soil
+df_ts_fast_soil <- df_ts_fast %>% filter(Sample_type == "Spike")
+innate_no3 <- df_ts_fast %>% filter(Sample_type== "Spike", Nitrate_input == 0) %>% select(Ave_NO3_mM) %>% unlist()
+df_ts_fast_soil$Retrieved_NO3_mM <- df_ts_fast_soil$Ave_NO3_mM - innate_no3
+
+ggplot(df_ts_fast_soil, aes(x=Nitrate_input, y=Retrieved_NO3_mM, color=Trouble_shooting, group=Trouble_shooting)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Retrieved_NO3_mM - Std_NO3_mM, ymax=Retrieved_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_fill_brewer(palette='Set2') +
+  scale_color_manual(values = c("brown3","deepskyblue2"))+
+  ylab("Retrieved NO3 concentrations (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle("Fast 0.5:1:1.5 (soil:water:KCl) method-100ul extraction \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+# Retrieved ratio of spike ins
+df_ts_fast_soil$Ratio_retrieved <- df_ts_fast_soil$Retrieved_NO3_mM / df_ts_fast_soil$Nitrate_input 
+
+ggplot(df_ts_fast_soil, aes(x=Nitrate_input, y=Ratio_retrieved)) +  ## I put fill=value which was wrong
+  geom_bar(stat="identity",position="dodge", fill="brown3")+
+  geom_line(size=0.2, color="brown")+
+  ylab("Ratio of retrieved nitrate concentraion \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle("Fast 0.5:1:1.5 (soil:water:KCl) method-100ul extraction \n") +
+  geom_text(aes(label = round(Ratio_retrieved,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+```
+
+Show all trouble shooting at once
+```{r}
+
+ggplot(df_ts, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Trouble_shooting, group=Trouble_shooting)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  scale_y_continuous(breaks = seq(0,2.3,0.25), limits=c(0, 2.3))+
+  scale_x_continuous(breaks = seq(0,2.3,0.25), limits=c(0, 2.3))+
+  ggtitle("0.5:1:1.5 (soil:water:KCl) method-100ul extraction w/ 300ul pipet \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+# subtract innate nitrate in soil
+ts_innate <- df_ts %>% filter(Sample_type== "Spike", Nitrate_input == 0) %>% arrange(Extraction_method) %>% rename(Innate_NO3_mM = Ave_NO3_mM) %>% select(Trouble_shooting, Innate_NO3_mM)
+
+df_ts_innate <- df_ts %>% filter(Sample_type== "Spike", Nitrate_input != 0) %>% arrange(Extraction_method) %>%
+  left_join(ts_innate, by=c("Trouble_shooting"="Trouble_shooting")) %>% 
+  mutate(Retrieved_NO3_mM = Ave_NO3_mM - Innate_NO3_mM) %>% 
+  mutate(Ratio_retrieved = Retrieved_NO3_mM/Nitrate_input)
+
+# Retrieved NO3
+ggplot(df_ts_innate, aes(x=Nitrate_input, y=Retrieved_NO3_mM, color=Trouble_shooting, group=Trouble_shooting)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Retrieved_NO3_mM - Std_NO3_mM, ymax=Retrieved_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_fill_brewer(palette='Set2') +
+  # scale_color_manual(values = c("brown3","deepskyblue2"))+
+  ylab("Retrieved NO3 concentrations (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle("0.5:1:1.5 (soil:water:KCl) method-100ul extraction w/ 300ul pipet \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+# Extraction ratio
+df_ts_innate$Nitrate_input <- factor(df_ts_innate$Nitrate_input)
+
+ggplot(df_ts_innate, aes(x=Nitrate_input, y=Ratio_retrieved, fill=Trouble_shooting, group=Trouble_shooting)) +  ## I put fill=value which was wrong
+  geom_bar(stat="identity",position="dodge")+
+  # geom_line(size=0.2, color="brown")+
+  ylab("Ratio of retrieved nitrate concentraion \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle("0.5:1:1.5 (soil:water:KCl) method-100ul extraction w/ 300ul pipet \n") +
+  geom_text(aes(label = round(Ratio_retrieved,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE, position = position_dodge(0.7))+
+  mytheme_2d
+```
+
+Moisture correction factor
+```{r}
+df_mcf <- data.frame(soil_g=NA, moisture_percent=NA, KCl_ml=NA,correction_factor=NA)
+colnames(df_mcf)
+dim(df_mcf)
+
+for (soil_g in seq(0,1,0.1)){
+  for (moisture_percent in seq(0,15,5)){
+    for (KCl_ml in c(1,1.5,4)){
+      correction_factor = (soil_g*(moisture_percent/100) + 1 + KCl_ml ) / (1 + KCl_ml) 
+      df_mcf <- add_row(df_mcf, soil_g, moisture_percent, KCl_ml, correction_factor)
+    }
+  }
+}
+  
+dim(df_mcf)
+df_mcf <- df_mcf[-1,]
+head(df_mcf)
+dim(df_mcf)
+
+df_mcf$moisture_percent <- factor(df_mcf$moisture_percent)
+ggplot(df_mcf, aes(x=soil_g, y=correction_factor, color=moisture_percent, group=moisture_percent)) +
+  facet_grid(. ~ KCl_ml) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  # scale_fill_brewer(palette='Set2') +
+  # scale_color_manual(values = c("brown3","deepskyblue2"))+
+  ylab("Moisture correction factor \n") +
+  xlab("\n Soil weight(g) in 1ml of water (Slurry ratio = soil g / water ml)") +
+  # scale_y_continuous(limits=c(0.9, 1))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle("KCl added to soil extract (1x, 1.5x, 4x) \n") +
+  mytheme_2d
+
+## for 100ul partial extraction
+
+df_mcf_partial <- data.frame(soil_g=NA, moisture_percent=NA, correction_factor=NA)
+colnames(df_mcf_partial)
+dim(df_mcf_partial)
+
+for (soil_g in seq(0,1,0.1)){
+  for (moisture_percent in seq(0,15,5)){
+      correction_factor = (soil_g*(moisture_percent/100) + 1)
+      df_mcf_partial <- add_row(df_mcf_partial, soil_g, moisture_percent, correction_factor)
+  }
+}
+  
+dim(df_mcf_partial)
+df_mcf_partial <- df_mcf_partial[-1,]
+head(df_mcf_partial)
+dim(df_mcf_partial)
+
+df_mcf_partial$moisture_percent <- factor(df_mcf_partial$moisture_percent)
+ggplot(df_mcf_partial, aes(x=soil_g, y=correction_factor, color=moisture_percent, group=moisture_percent)) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  # scale_fill_brewer(palette='Set2') +
+  # scale_color_manual(values = c("brown3","deepskyblue2"))+
+  ylab("Moisture correction factor \n") +
+  xlab("\n Soil weight(g) in 1ml of water (Slurry ratio = soil g / water ml)") +
+  # scale_y_continuous(limits=c(0.9, 1))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle("Moisture correction factor is not affected by KCl amount \n") +
+  mytheme_2d
+
+```
+

@@ -19,4 +19,6 @@ Welcome to Kiseok Denitrification data visualization website.
 * [Blank_extraction_2MKCl_Griess (10/7/21)](Blank_extraction_2MKCl_Griess_211007.html)
 * [Testing_controls_vortex_procedures (10/8/21)](Testing_controls_vortex_procedures_211008.html)
 * [211014_TOC_sample_size_test (10/13/21)](211014_TOC_sample_size_test.html)
-
+* [211017_Griess_slurry_extraction (10/18/21)](211017_Griess_slurry_extraction.html)
+* [211019_Griess_extraction_trouble_shooting (10/19/21)](211019_Griess_extraction_trouble_shooting.html)
+* [211020_Griess_pipet_confirm (10/20/21)](211020_Griess_pipet_confirm.html)

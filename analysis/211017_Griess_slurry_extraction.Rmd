@@ -1,0 +1,906 @@
+---
+title: "211017_Griess_slurry_extraction"
+author: "KiseokUchicago"
+date: "2021-10-18"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=11, fig.height=9,
+                      error=TRUE, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE)
+```
+
+## Slurry extraction condition test (Griess assay)
+Researcher: **Kiseok Lee** \
+Experiment Date: 10/17/21 \
+Analysis Date: 10/18/21
+Lab: **Seppe Kuehn**
+
+```{r}
+# libraries
+library(dplyr)
+library(ggplot2)
+library(RColorBrewer)
+library(vegan)
+library(tidyverse)
+library(magrittr)
+library(readxl)
+library(reshape2)
+library(gtools)
+library(devtools)
+library(openxlsx)
+library(ape)
+library(stringr)
+library(tidyr)
+library(ggrepel)
+library(ggpubr)
+
+## theme for ggplot
+mytheme <- theme_bw() + 
+  theme(text = element_text(family="serif")) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5, family="serif")) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13, family="serif"))+
+  theme(axis.text.y = element_text(size=10, family="serif"))+
+  theme(panel.grid.major = element_blank()) +
+  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),panel.border=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))
+
+mytheme_2d <- theme_bw() + 
+  theme(text = element_text(family="serif")) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5, family="serif")) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13, family="serif"))+
+  theme(axis.text.y = element_text(size=13, family="serif"))+
+  # theme(panel.grid.major = element_blank()) +
+  # theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))
+
+
+# color collection
+my_color_collection <- c(
+  "#CBD588", "#5F7FC7", "orange", "#AD6F3B", "#673770", 
+  "#D14285", "#652926", "#C84248", "#8569D5", "#5E738F",
+  "#D1A33D", "#8A7C64", "#599861","#616163", "#FFCDB2",
+  "#6D9F71", "#242F40",
+  "#CCA43B", "#F92A82", "#ED7B84", "#7EB77F", 
+  "#DEC4A1", "#E5D1D0", '#0E8482', '#C9DAEA', '#337357', 
+  '#95C623', '#E55812', '#04471C', '#F2D7EE', '#D3BCC0', 
+  '#A5668B', '#69306D', '#0E103D', '#1A535C', '#4ECDC4', 
+  '#F7FFF7', '#FF6B6B', '#FFE66D', '#6699CC', '#FFF275', 
+  '#FF8C42', '#FF3C38', '#A23E48', '#000000', '#CF5C36', 
+  '#EEE5E9', '#7C7C7C', '#EFC88B', '#2E5266', '#6E8898', 
+  '#9FB1BC', '#D3D0CB', '#E2C044', '#5BC0EB', '#FDE74C', 
+  '#9BC53D', '#E55934', '#FA7921', "#CD9BCD", "#508578", "#DA5724")
+
+# for git push, use this instead of using wflow_git_push()
+# git push -u origin master (in the Git app / in the working directory)
+
+```
+
+
+## 1. Import data table from python code
+```{r}
+# import file
+df_p0 <- openxlsx::read.xlsx("data/211017_Griess_plate0.xlsx")
+df_p1 <- openxlsx::read.xlsx("data/211017_Griess_plate1.xlsx")
+df_p2 <- openxlsx::read.xlsx("data/211017_Griess_plate2.xlsx")
+df_p3 <- openxlsx::read.xlsx("data/211017_Griess_plate3.xlsx")
+df_p4 <- openxlsx::read.xlsx("data/211017_Griess_plate4.xlsx")
+df_p5 <- openxlsx::read.xlsx("data/211017_Griess_plate5.xlsx")
+df_p6 <- openxlsx::read.xlsx("data/211017_Griess_plate6.xlsx")
+df_p7 <- openxlsx::read.xlsx("data/211017_Griess_plate7.xlsx")
+df_p8 <- openxlsx::read.xlsx("data/211017_Griess_plate8.xlsx")
+
+head(df_p0)
+head(df_p1)
+colnames(df_p0)
+colnames(df_p1)
+dim(df_p0)
+dim(df_p1)
+
+# remove wells H06, H09
+df_p1 %<>% filter(!(Well %in% c("E03")))
+dim(df_p1)
+df_p2 %<>% filter(!(Well %in% c("E03")))
+dim(df_p2)
+df_p3 %<>% filter(!(Well %in% c("A03","A04","A09","A10","H03","H09"))) # leaked during vortexing
+dim(df_p3)
+
+df_p4 %<>% filter(!(Well %in% c("A03","A04","A09","A10"))) # leaked during vortexing
+dim(df_p4)
+df_p5 %<>% filter(!(Well %in% c("A03","A04","A09","A10"))) # leaked during vortexing
+dim(df_p5)
+
+# bind two dataframe
+df_p <- rbind(df_p0, df_p1, df_p2, df_p3, df_p4, df_p5, df_p6, df_p7, df_p8)
+dim(df_p)
+24+96*8 -16
+
+colnames(df_p)
+
+# remove NA
+dim(df_p)
+df_p <- na.omit(df_p)
+dim(df_p)
+
+# Check
+# df_p %>% filter(Well =="H06")
+```
+
+## 2. Get average and standard deviation
+```{r}
+# average and standard deviation
+head(df_p)
+dim(df_p)
+
+# plot to see
+
+
+ggplot(df_p1, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Without averaging \n") +
+  mytheme_2d
+
+ggplot(df_p2, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Without averaging \n") +
+  mytheme_2d
+
+ggplot(df_p3, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Without averaging \n") +
+  mytheme_2d
+
+ggplot(df_p4, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Without averaging \n") +
+  mytheme_2d
+
+df_p4_1 <- df_p4 %>% filter(Sample_type == "Spike", Extraction_ul ==100) 
+
+ggplot(df_p4_1, aes(x=Nitrate_input, y=NO3_mM, color=Replicate, group=Replicate)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Without averaging \n") +
+  mytheme_2d
+
+ggplot(df_p5, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Without averaging \n") +
+  mytheme_2d
+
+ggplot(df_p6, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Without averaging \n") +
+  mytheme_2d
+
+ggplot(df_p7, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Without averaging \n") +
+  mytheme_2d
+
+ggplot(df_p8, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Without averaging \n") +
+  mytheme_2d
+
+df_p8_1 <- df_p8 %>% filter(Sample_type == "Spike")
+  
+  
+ggplot(df_p8_1, aes(x=Nitrate_input, y=NO3_mM, color=Extraction_ul, group=Extraction_ul)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Without averaging \n") +
+  mytheme_2d
+
+# average technical replicate
+df_NO2NO3 <- df_p %>% group_by(Sample, Extraction_method, Extraction_ul, Nitrate_input, Sample_type, Replicate) %>% summarise(Ave_NO2_mM = mean(NO2_mM), Std_NO2_mM = sd(NO2_mM), Ave_NO2NO3_mM = mean(NO2NO3_mM), Std_NO2NO3_mM = sd(NO2NO3_mM), Ave_NO3_mM = mean(NO3_mM), Std_NO3_mM = sd(NO3_mM)) %>% ungroup()
+
+dim(df_NO2NO3)
+
+# plot to see
+ggplot(df_NO2NO3, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("After averaging with technical replicates \n") +
+  mytheme_2d
+
+# average biological replicates
+# standard deviation is the standard deviation of the technical replicate average
+dim(df_NO2NO3)
+head(df_NO2NO3)
+
+df_ave <- df_NO2NO3 %>% group_by(Sample, Extraction_method, Extraction_ul, Nitrate_input, Sample_type) %>% summarise(NO2_mM = mean(Ave_NO2_mM), sd_NO2_mM = sd(Ave_NO2_mM), NO3_mM = mean(Ave_NO3_mM), sd_NO3_mM = sd(Ave_NO3_mM)) %>% ungroup()
+
+dim(df_ave)
+
+# plot to see
+ggplot(df_ave, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Ploting nitrate concentration \n") +
+  mytheme_2d
+
+# Factor in orders
+# df_all$Sample_type <-  factor(df_all$Sample_type, levels = c("Soil","Blank"))
+
+```
+
+## 3. Plot per method
+
+## 3.1. 1_1_1 method (1g soil, 1ml spike in, 1ml 2M KCl)
+```{r}
+# (1) 1_1_1 method (1g soil, 1ml spike in, 1ml 2M KCl)
+df_111 <- df_ave %>% filter(Extraction_method == "1_1_1")
+dim(df_111)
+
+# (1-1) 1_1_1 method (1g soil, 1ml spike in, 1ml 2M KCl) 100ul
+df_111_100 <- df_111 %>% filter(Extraction_ul == 100)
+
+ggplot(df_111_100, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle("1_1_1 method (1g soil, 1ml spike in, 1ml 2M KCl) 100ul \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+# subtract innate nitrate in soil
+df_111_100_soil <- df_111_100 %>% filter(Sample_type == "Spike")
+innate_no3 <- df_111_100 %>% filter(Sample_type== "Spike", Nitrate_input == 0) %>% select(NO3_mM) %>% unlist()
+df_111_100_soil$Retrieved_NO3_mM <- df_111_100_soil$NO3_mM - innate_no3
+
+ggplot(df_111_100_soil, aes(x=Nitrate_input, y=Retrieved_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Retrieved_NO3_mM - sd_NO3_mM, ymax=Retrieved_NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_fill_brewer(palette='Set2') +
+  scale_color_manual(values = c("brown3","deepskyblue2"))+
+  ylab("Retrieved NO3 concentrations (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle("1_1_1 method (1g soil, 1ml spike in, 1ml 2M KCl) 100ul \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+# Retrieved ratio of spike ins
+df_111_100_soil$Ratio_retrieved <- df_111_100_soil$Retrieved_NO3_mM / df_111_100_soil$Nitrate_input 
+
+ggplot(df_111_100_soil, aes(x=Nitrate_input, y=Ratio_retrieved)) +  ## I put fill=value which was wrong
+  geom_bar(stat="identity",position="dodge", fill="brown3")+
+  geom_line(size=0.2, color="brown")+
+  ylab("Ratio of retrieved nitrate concentraion \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle("1_1_1 method (1g soil, 1ml spike in, 1ml 2M KCl) 100ul \n") +
+  geom_text(aes(label = round(Ratio_retrieved,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+```
+
+```{r}
+# (1) 1_1_1 method (1g soil, 1ml spike in, 1ml 2M KCl)
+df_111 <- df_ave %>% filter(Extraction_method == "1_1_1")
+dim(df_111)
+
+# (1-2) 1_1_1 method (1g soil, 1ml spike in, 1ml 2M KCl) 300ul
+df_111_300 <- df_111 %>% filter(Extraction_ul == 300)
+
+ggplot(df_111_300, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle("1_1_1 method (1g soil, 1ml spike in, 1ml 2M KCl) 300ul \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+# subtract innate nitrate in soil
+df_111_300_soil <- df_111_300 %>% filter(Sample_type == "Spike")
+innate_no3 <- df_111_300 %>% filter(Sample_type== "Spike", Nitrate_input == 0) %>% select(NO3_mM) %>% unlist()
+df_111_300_soil$Retrieved_NO3_mM <- df_111_300_soil$NO3_mM - innate_no3
+
+ggplot(df_111_300_soil, aes(x=Nitrate_input, y=Retrieved_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Retrieved_NO3_mM - sd_NO3_mM, ymax=Retrieved_NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_fill_brewer(palette='Set2') +
+  scale_color_manual(values = c("brown3","deepskyblue2"))+
+  ylab("Retrieved NO3 concentrations (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle("1_1_1 method (1g soil, 1ml spike in, 1ml 2M KCl) 300ul \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+# Retrieved ratio of spike ins
+df_111_300_soil$Ratio_retrieved <- df_111_300_soil$Retrieved_NO3_mM / df_111_300_soil$Nitrate_input 
+
+ggplot(df_111_300_soil, aes(x=Nitrate_input, y=Ratio_retrieved)) +  ## I put fill=value which was wrong
+  geom_bar(stat="identity",position="dodge", fill="brown3")+
+  geom_line(size=0.2, color="brown")+
+  ylab("Ratio of retrieved nitrate concentraion \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle("1_1_1 method (1g soil, 1ml spike in, 1ml 2M KCl) 300ul \n") +
+  geom_text(aes(label = round(Ratio_retrieved,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+```
+
+Compare same spike in concentrations but different ul
+```{r}
+# (1) 1_1_1 method (1g soil, 1ml spike in, 1ml 2M KCl)
+
+# subtract innate nitrate in soil
+df_111_full <- df_111 %>% filter(!(Extraction_ul %in% c(50, 100, 300)))
+df_111_full_soil <- df_111_full %>% filter(Sample_type == "Spike")
+# would have to use innate_no3 from 300ul
+df_111_full_soil$Retrieved_NO3_mM <- df_111_full_soil$NO3_mM - innate_no3
+# Retrieved ratio of spike ins
+df_111_full_soil$Ratio_retrieved <- df_111_full_soil$Retrieved_NO3_mM / df_111_full_soil$Nitrate_input 
+
+# import new data from 211019
+df_full_innate <- openxlsx::read.xlsx("data/211020_df_full_innate.xlsx")
+df_full_innate %<>% select(-Trouble_shooting, -Ave_NO2NO3_mM, -Std_NO2NO3_mM, -Innate_NO3_mM) %>% rename(NO2_mM = Ave_NO2_mM, NO3_mM = Ave_NO3_mM, sd_NO2_mM = Std_NO2_mM, sd_NO3_mM = Std_NO3_mM)
+
+colnames(df_111_300_soil)
+colnames(df_full_innate)
+
+df_111_full_soil <- df_full_innate %>% filter(Extraction_method == "1_1_1")
+
+df_111_retrieved <- rbind(df_111_100_soil, df_111_300_soil, df_111_full_soil)
+df_111_retrieved$Extraction_ul <- factor(df_111_retrieved$Extraction_ul)
+ggplot(df_111_retrieved, aes(x=Nitrate_input, y=Retrieved_NO3_mM, color=Extraction_ul, group=Extraction_ul)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Retrieved_NO3_mM - sd_NO3_mM, ymax=Retrieved_NO3_mM + sd_NO3_mM), width=.05)+
+  scale_color_brewer(palette='Set1') +
+  # scale_color_manual(values = c("brown3","deepskyblue2"))+
+  ylab("Retrieved NO3 concentrations (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle("1_1_1 method (1g soil, 1ml spike in, 1ml 2M KCl) 300ul \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+# Retrieved ratio of spike ins
+df_111_retrieved$Nitrate_input <- factor(df_111_retrieved$Nitrate_input)
+
+ggplot(df_111_retrieved, aes(x=Nitrate_input, y=Ratio_retrieved, fill=Extraction_ul, group=Extraction_ul)) +  ## I put fill=value which was wrong
+  geom_bar(stat="identity",position="dodge")+
+  # geom_line(size=0.2, color="brown")+
+  ylab("Ratio of retrieved NO3 concentraion \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle("1_1_1 method (1g soil, 1ml spike in, 1ml 2M KCl) \n") +
+  geom_text(aes(label = round(Ratio_retrieved,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE, position = position_dodge(width = .9))+
+  mytheme_2d
+
+```
+
+
+## 3.2. 0.5_1_1.5 method (1g soil, 1ml spike in, 4ml 2.5M KCl)
+
+```{r}
+# (2) 1_1_4 method (1g soil, 1ml spike in, 4ml 2.5M KCl)
+df_114 <- df_ave %>% filter(Extraction_method == "1_1_4")
+dim(df_114)
+
+# (2-1) 1_1_4 method (1g soil, 1ml spike in, 4ml 2.5M KCl) 50ul
+df_114_50 <- df_114 %>% filter(Extraction_ul == 50)
+
+ggplot(df_114_50, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle("1_1_4 method (1g soil, 1ml spike in, 4ml 2.5M KCl) 50ul \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+# subtract innate nitrate in soil
+df_114_50_soil <- df_114_50 %>% filter(Sample_type == "Spike")
+innate_no3 <- df_114_50 %>% filter(Sample_type== "Spike", Nitrate_input == 0) %>% select(NO3_mM) %>% unlist()
+df_114_50_soil$Retrieved_NO3_mM <- df_114_50_soil$NO3_mM - innate_no3
+
+ggplot(df_114_50_soil, aes(x=Nitrate_input, y=Retrieved_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Retrieved_NO3_mM - sd_NO3_mM, ymax=Retrieved_NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_fill_brewer(palette='Set2') +
+  scale_color_manual(values = c("brown3","deepskyblue2"))+
+  ylab("Retrieved NO3 concentrations (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle("1_1_4 method (1g soil, 1ml spike in, 4ml 2.5M KCl) 50ul \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+# Retrieved ratio of spike ins
+df_114_50_soil$Ratio_retrieved <- df_114_50_soil$Retrieved_NO3_mM / df_114_50_soil$Nitrate_input 
+
+ggplot(df_114_50_soil, aes(x=Nitrate_input, y=Ratio_retrieved)) +  ## I put fill=value which was wrong
+  geom_bar(stat="identity",position="dodge", fill="brown3")+
+  geom_line(size=0.2, color="brown")+
+  ylab("Ratio of retrieved nitrate concentraion \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle("1_1_4 method (1g soil, 1ml spike in, 4ml 2.5M KCl) 50ul \n") +
+  geom_text(aes(label = round(Ratio_retrieved,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+```
+
+
+
+```{r}
+# (2-2) 1_1_4 method (1g soil, 1ml spike in, 4ml 2.5M KCl) 100ul
+df_114_100 <- df_114 %>% filter(Extraction_ul == 100)
+
+ggplot(df_114_100, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle("1_1_4 method (1g soil, 1ml spike in, 4ml 2.5M KCl) 100ul \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+# subtract innate nitrate in soil
+df_114_100_soil <- df_114_100 %>% filter(Sample_type == "Spike")
+innate_no3 <- df_114_100 %>% filter(Sample_type== "Spike", Nitrate_input == 0) %>% select(NO3_mM) %>% unlist()
+df_114_100_soil$Retrieved_NO3_mM <- df_114_100_soil$NO3_mM - innate_no3
+
+ggplot(df_114_100_soil, aes(x=Nitrate_input, y=Retrieved_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Retrieved_NO3_mM - sd_NO3_mM, ymax=Retrieved_NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_fill_brewer(palette='Set2') +
+  scale_color_manual(values = c("brown3","deepskyblue2"))+
+  ylab("Retrieved NO3 concentrations (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle("1_1_4 method (1g soil, 1ml spike in, 4ml 2.5M KCl) 100ul \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+# Retrieved ratio of spike ins
+df_114_100_soil$Ratio_retrieved <- df_114_100_soil$Retrieved_NO3_mM / df_114_100_soil$Nitrate_input 
+
+ggplot(df_114_100_soil, aes(x=Nitrate_input, y=Ratio_retrieved)) +  ## I put fill=value which was wrong
+  geom_bar(stat="identity",position="dodge", fill="brown3")+
+  geom_line(size=0.2, color="brown")+
+  ylab("Ratio of retrieved nitrate concentraion \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle("1_1_4 method (1g soil, 1ml spike in, 4ml 2.5M KCl) 100ul \n") +
+  geom_text(aes(label = round(Ratio_retrieved,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+```
+
+```{r}
+# (2-3) 1_1_4 method (1g soil, 1ml spike in, 1ml 2M KCl) 300ul
+df_114_300 <- df_114 %>% filter(Extraction_ul == 300)
+
+ggplot(df_114_300, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle("1_1_4 method (1g soil, 1ml spike in, 4ml 2.5M KCl) 300ul \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+# subtract innate nitrate in soil
+df_114_300_soil <- df_114_300 %>% filter(Sample_type == "Spike")
+innate_no3 <- df_114_300 %>% filter(Sample_type== "Spike", Nitrate_input == 0) %>% select(NO3_mM) %>% unlist()
+df_114_300_soil$Retrieved_NO3_mM <- df_114_300_soil$NO3_mM - innate_no3
+
+ggplot(df_114_300_soil, aes(x=Nitrate_input, y=Retrieved_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Retrieved_NO3_mM - sd_NO3_mM, ymax=Retrieved_NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_fill_brewer(palette='Set2') +
+  scale_color_manual(values = c("brown3","deepskyblue2"))+
+  ylab("Retrieved NO3 concentrations (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle("1_1_4 method (1g soil, 1ml spike in, 4ml 2.5M KCl) 300ul \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+# Retrieved ratio of spike ins
+df_114_300_soil$Ratio_retrieved <- df_114_300_soil$Retrieved_NO3_mM / df_114_300_soil$Nitrate_input 
+
+ggplot(df_114_300_soil, aes(x=Nitrate_input, y=Ratio_retrieved)) +  ## I put fill=value which was wrong
+  geom_bar(stat="identity",position="dodge", fill="brown3")+
+  geom_line(size=0.2, color="brown")+
+  ylab("Ratio of retrieved nitrate concentraion \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle("1_1_4 method (1g soil, 1ml spike in, 4ml 2.5M KCl) 300ul \n") +
+  geom_text(aes(label = round(Ratio_retrieved,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+```
+
+Compare same spike in concentrations but different ul
+```{r}
+# (2) 1_1_4 method (1g soil, 1ml spike in, 1ml 2M KCl)
+
+# subtract innate nitrate in soil
+df_114_full <- df_114 %>% filter(!(Extraction_ul %in% c(50, 100, 300)))
+df_114_full_soil <- df_114_full %>% filter(Sample_type == "Spike")
+# would have to use innate_no3 from 300ul
+df_114_full_soil$Retrieved_NO3_mM <- df_114_full_soil$NO3_mM - innate_no3
+# Retrieved ratio of spike ins
+df_114_full_soil$Ratio_retrieved <- df_114_full_soil$Retrieved_NO3_mM / df_114_full_soil$Nitrate_input 
+
+# update with 211019 data
+df_114_full_soil <- df_full_innate %>% filter(Extraction_method == "1_1_4")
+
+df_114_retrieved <- rbind(df_114_50_soil, df_114_100_soil, df_114_300_soil, df_114_full_soil)
+df_114_retrieved$Extraction_ul <- factor(df_114_retrieved$Extraction_ul)
+ggplot(df_114_retrieved, aes(x=Nitrate_input, y=Retrieved_NO3_mM, color=Extraction_ul, group=Extraction_ul)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Retrieved_NO3_mM - sd_NO3_mM, ymax=Retrieved_NO3_mM + sd_NO3_mM), width=.05)+
+  scale_color_brewer(palette='Set1') +
+  # scale_color_manual(values = c("brown3","deepskyblue2"))+
+  ylab("Retrieved NO3 concentrations (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle("1_1_4 method (1g soil, 1ml spike in, 4ml 2.5M KCl) \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+# Retrieved ratio of spike ins
+df_114_retrieved$Nitrate_input <- factor(df_114_retrieved$Nitrate_input)
+
+ggplot(df_114_retrieved, aes(x=Nitrate_input, y=Ratio_retrieved, fill=Extraction_ul, group=Extraction_ul)) +  ## I put fill=value which was wrong
+  geom_bar(stat="identity",position="dodge")+
+  # geom_line(size=0.2, color="brown")+
+  ylab("Ratio of retrieved NO3 concentraion \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle("1_1_4 method (1g soil, 1ml spike in, 4ml 2.5M KCl) \n") +
+  geom_text(aes(label = round(Ratio_retrieved,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE, position = position_dodge(width = .9))+
+  mytheme_2d
+
+```
+
+## 3.3. 0.5_1_1.5 method (0.5g soil, 1ml spike in, 1.5ml 3.3M KCl)
+
+```{r}
+# (2) 0.5_1_1.5 method (0.5g soil, 1ml spike in, 1.5ml 3.3M KCl)
+df_05115 <- df_ave %>% filter(Extraction_method == "0.5_1_1.5")
+dim(df_05115)
+
+# (2-1) 0.5_1_1.5 method (0.5g soil, 1ml spike in, 1.5ml 3.3M KCl) 50ul
+df_05115_50 <- df_05115 %>% filter(Extraction_ul == 50)
+
+ggplot(df_05115_50, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle("0.5_1_1.5 method (0.5g soil, 1ml spike in, 1.5ml 3.3M KCl) 50ul \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+# subtract innate nitrate in soil
+df_05115_50_soil <- df_05115_50 %>% filter(Sample_type == "Spike")
+innate_no3 <- df_05115_50 %>% filter(Sample_type== "Spike", Nitrate_input == 0) %>% select(NO3_mM) %>% unlist()
+df_05115_50_soil$Retrieved_NO3_mM <- df_05115_50_soil$NO3_mM - innate_no3
+
+ggplot(df_05115_50_soil, aes(x=Nitrate_input, y=Retrieved_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Retrieved_NO3_mM - sd_NO3_mM, ymax=Retrieved_NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_fill_brewer(palette='Set2') +
+  scale_color_manual(values = c("brown3","deepskyblue2"))+
+  ylab("Retrieved NO3 concentrations (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle("0.5_1_1.5 method (0.5g soil, 1ml spike in, 1.5ml 3.3M KCl) 50ul \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+# Retrieved ratio of spike ins
+df_05115_50_soil$Ratio_retrieved <- df_05115_50_soil$Retrieved_NO3_mM / df_05115_50_soil$Nitrate_input 
+
+ggplot(df_05115_50_soil, aes(x=Nitrate_input, y=Ratio_retrieved)) +  ## I put fill=value which was wrong
+  geom_bar(stat="identity",position="dodge", fill="brown3")+
+  geom_line(size=0.2, color="brown")+
+  ylab("Ratio of retrieved nitrate concentraion \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle("0.5_1_1.5 method (0.5g soil, 1ml spike in, 1.5ml 3.3M KCl) 50ul \n") +
+  geom_text(aes(label = round(Ratio_retrieved,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+```
+
+
+
+```{r}
+# (2-2) 0.5_1_1.5 method (0.5g soil, 1ml spike in, 1.5ml 3.3M KCl) 100ul
+df_05115_100 <- df_05115 %>% filter(Extraction_ul == 100)
+
+ggplot(df_05115_100, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle("0.5_1_1.5 method (0.5g soil, 1ml spike in, 1.5ml 3.3M KCl) 100ul \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+# subtract innate nitrate in soil
+df_05115_100_soil <- df_05115_100 %>% filter(Sample_type == "Spike")
+innate_no3 <- df_05115_100 %>% filter(Sample_type== "Spike", Nitrate_input == 0) %>% select(NO3_mM) %>% unlist()
+df_05115_100_soil$Retrieved_NO3_mM <- df_05115_100_soil$NO3_mM - innate_no3
+
+ggplot(df_05115_100_soil, aes(x=Nitrate_input, y=Retrieved_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Retrieved_NO3_mM - sd_NO3_mM, ymax=Retrieved_NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_fill_brewer(palette='Set2') +
+  scale_color_manual(values = c("brown3","deepskyblue2"))+
+  ylab("Retrieved NO3 concentrations (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle("0.5_1_1.5 method (0.5g soil, 1ml spike in, 1.5ml 3.3M KCl) 100ul \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+# Retrieved ratio of spike ins
+df_05115_100_soil$Ratio_retrieved <- df_05115_100_soil$Retrieved_NO3_mM / df_05115_100_soil$Nitrate_input 
+
+ggplot(df_05115_100_soil, aes(x=Nitrate_input, y=Ratio_retrieved)) +  ## I put fill=value which was wrong
+  geom_bar(stat="identity",position="dodge", fill="brown3")+
+  geom_line(size=0.2, color="brown")+
+  ylab("Ratio of retrieved nitrate concentraion \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle("0.5_1_1.5 method (0.5g soil, 1ml spike in, 1.5ml 3.3M KCl) 100ul \n") +
+  geom_text(aes(label = round(Ratio_retrieved,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+```
+
+```{r}
+# (2-3) 0.5_1_1.5 method (1g soil, 1ml spike in, 1ml 2M KCl) 300ul
+df_05115_300 <- df_05115 %>% filter(Extraction_ul == 300)
+
+ggplot(df_05115_300, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle("0.5_1_1.5 method (0.5g soil, 1ml spike in, 1.5ml 3.3M KCl) 300ul \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+# subtract innate nitrate in soil
+df_05115_300_soil <- df_05115_300 %>% filter(Sample_type == "Spike")
+innate_no3 <- df_05115_300 %>% filter(Sample_type== "Spike", Nitrate_input == 0) %>% select(NO3_mM) %>% unlist()
+df_05115_300_soil$Retrieved_NO3_mM <- df_05115_300_soil$NO3_mM - innate_no3
+
+ggplot(df_05115_300_soil, aes(x=Nitrate_input, y=Retrieved_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Retrieved_NO3_mM - sd_NO3_mM, ymax=Retrieved_NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_fill_brewer(palette='Set2') +
+  scale_color_manual(values = c("brown3","deepskyblue2"))+
+  ylab("Retrieved NO3 concentrations (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle("0.5_1_1.5 method (0.5g soil, 1ml spike in, 1.5ml 3.3M KCl) 300ul \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+# Retrieved ratio of spike ins
+df_05115_300_soil$Ratio_retrieved <- df_05115_300_soil$Retrieved_NO3_mM / df_05115_300_soil$Nitrate_input 
+
+ggplot(df_05115_300_soil, aes(x=Nitrate_input, y=Ratio_retrieved)) +  ## I put fill=value which was wrong
+  geom_bar(stat="identity",position="dodge", fill="brown3")+
+  geom_line(size=0.2, color="brown")+
+  ylab("Ratio of retrieved nitrate concentraion \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle("0.5_1_1.5 method (0.5g soil, 1ml spike in, 1.5ml 3.3M KCl) 300ul \n") +
+  geom_text(aes(label = round(Ratio_retrieved,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+```
+
+Compare same spike in concentrations but different ul
+```{r}
+# (2) 0.5_1_1.5 method (1g soil, 1ml spike in, 1ml 2M KCl)
+
+# subtract innate nitrate in soil
+df_05115_full <- df_05115 %>% filter(!(Extraction_ul %in% c(50, 100, 300)))
+df_05115_full_soil <- df_05115_full %>% filter(Sample_type == "Spike")
+# would have to use innate_no3 from 300ul
+df_05115_full_soil$Retrieved_NO3_mM <- df_05115_full_soil$NO3_mM - innate_no3
+# Retrieved ratio of spike ins
+df_05115_full_soil$Ratio_retrieved <- df_05115_full_soil$Retrieved_NO3_mM / df_05115_full_soil$Nitrate_input 
+
+# update with 211019 data
+df_05115_full_soil <- df_full_innate %>% filter(Extraction_method == "0.5_1_1.5")
+
+# 50ul data seems to be messed up
+df_05115_retrieved <- rbind(df_05115_50_soil, df_05115_100_soil, df_05115_300_soil, df_05115_full_soil)
+df_05115_retrieved$Extraction_ul <- factor(df_05115_retrieved$Extraction_ul)
+ggplot(df_05115_retrieved, aes(x=Nitrate_input, y=Retrieved_NO3_mM, color=Extraction_ul, group=Extraction_ul)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Retrieved_NO3_mM - sd_NO3_mM, ymax=Retrieved_NO3_mM + sd_NO3_mM), width=.05)+
+  scale_color_brewer(palette='Set1') +
+  # scale_color_manual(values = c("brown3","deepskyblue2"))+
+  ylab("Retrieved NO3 concentrations (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2))+
+  ggtitle("0.5_1_1.5 method (0.5g soil, 1ml spike in, 1.5ml 3.3M KCl) \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+# Retrieved ratio of spike ins
+df_05115_retrieved$Nitrate_input <- factor(df_05115_retrieved$Nitrate_input)
+
+ggplot(df_05115_retrieved, aes(x=Nitrate_input, y=Ratio_retrieved, fill=Extraction_ul, group=Extraction_ul)) +  ## I put fill=value which was wrong
+  geom_bar(stat="identity",position="dodge")+
+  # geom_line(size=0.2, color="brown")+
+  ylab("Ratio of retrieved NO3 concentraion \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle("0.5_1_1.5 method (0.5g soil, 1ml spike in, 1.5ml 3.3M KCl) \n") +
+  geom_text(aes(label = round(Ratio_retrieved,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE, position = position_dodge(width = .9))+
+  mytheme_2d
+
+# plot except for the 50ul
+df_05115_retrieved %<>% filter(!(Extraction_ul == 50))
+
+ggplot(df_05115_retrieved, aes(x=Nitrate_input, y=Ratio_retrieved, fill=Extraction_ul, group=Extraction_ul)) +  ## I put fill=value which was wrong
+  geom_bar(stat="identity",position="dodge")+
+  # geom_line(size=0.2, color="brown")+
+  ylab("Ratio of retrieved NO3 concentraion \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle("0.5_1_1.5 method (0.5g soil, 1ml spike in, 1.5ml 3.3M KCl) \n") +
+  geom_text(aes(label = round(Ratio_retrieved,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE, position = position_dodge(width = .9))+
+  mytheme_2d
+
+```
+
+
+
+
+
+
+

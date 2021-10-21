@@ -86,9 +86,18 @@ my_color_collection <- c(
 ## 1. Import data table from python code
 ```{r}
 # import file
-df_p1 <- openxlsx::read.xlsx("data/210911_TOC_sample_plate1.xlsx")
+# 10ul
+df_10ul <- openxlsx::read.xlsx("data/210927_TOC_sample_plate1_10ul.xlsx")
+df_100ul <- openxlsx::read.xlsx("data/210927_TOC_sample_plate1_100ul.xlsx")
+dim(df_10ul)
+dim(df_100ul)
 
-class(df_p1)
+df_10ul <- df_10ul %>% filter(Sample_ml == 0.01)
+df_100ul <- df_100ul %>% filter(Sample_ml == 0.1)
+dim(df_10ul)
+dim(df_100ul)
+
+df_p1 <- rbind(df_10ul, df_100ul)
 head(df_p1)
 colnames(df_p1)
 dim(df_p1)
@@ -97,10 +106,6 @@ dim(df_p1)
 dim(df_p1)
 df_p1 <- na.omit(df_p1)
 dim(df_p1)
-
-# Check
-df_p1 %>% filter(Well =="H06")
-df_p1 %>% filter(Well =="H09")
 
 # remove wells H06, H09
 # df_p %<>% filter(!(Well %in% c("H06","H09")))
@@ -111,30 +116,125 @@ df_p1 %>% filter(Well =="H09")
 ## 2. Preprocess data and select datapoints to visualize
 ```{r}
 ## convert TOC according to dilutions (mg to percent TOC)
+df_percent <- df_p1 %>% mutate(TOC_percent = (TOC_ppm * Buffer_ml * 0.001 * 100) / (Soil_weight))
 
-df_percent <- df_p1 %>% mutate(TOC_percent = (TOC_mg * 0.001 * 100) / (Soil_weight * Preprocess_dilution * Serial_dilution))
+colnames(df_percent)
+# average technical replicate
+df_ave <- df_percent %>% group_by(Sample, Sample_type, Buffer) %>% summarise(Ave_TOC_percent = mean(TOC_percent), Std_TOC_percent = sd(TOC_percent)) %>% ungroup()
 
-## need only 3 wells
-head(df_percent)
-df_3 <- df_percent %>% filter(Well %in% c("A01","A12","B01"))
+```
 
-# set factor for plot order
-df_3$Sample <- factor(df_3$Sample, levels = c("Soil0.1g", "WSC","H2O"))
+## 3.1. Filter and buffer testing
+```{r}
+# (1) Compare Just the Original samples
+df_method <- df_ave %>% filter(Sample_type %in% c("Filtered","Whatman")) 
+
+ggplot(df_method, aes(x=Buffer, y=Ave_TOC_percent, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_TOC_percent - Std_TOC_percent, ymax=Ave_TOC_percent + Std_TOC_percent), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("TOC (% weight) \n") +
+  xlab("\n Extraction buffer") +
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Effect of Filter method, and Extraction buffer (TOC) \n") +
+  # label
+  geom_text(aes(label = round(Ave_TOC_percent,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+```
+
+## 3.2. Used sample amount
+```{r}
+df_spike <- df_ave %>% filter(Sample_type %in% c("Control","Spike_in")) 
+
+# df_spike$Sample <- str_replace(df_spike$Sample, "Control_H2O_","")
+# df_spike$Sample <- str_replace(df_spike$Sample, "Spike_in_H2O_","")
+df_spike$Sample <- factor(df_spike$Sample, levels= c("Control_H2O_100ul","Spike_in_H2O_100ul", "Control_H2O_10ul", "Spike_in_H2O_10ul"))
+
+df_spike$Sample_ml <- df_spike$Sample
+df_spike$Sample_ml <- str_replace(df_spike$Sample_ml, "Control_H2O_","")
+df_spike$Sample_ml <- str_replace(df_spike$Sample_ml, "Spike_in_H2O_","")
+
+ggplot(df_spike, aes(x=Sample, y=Ave_TOC_percent, color=Sample_ml, group=Sample_ml)) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_TOC_percent - Std_TOC_percent, ymax=Ave_TOC_percent + Std_TOC_percent), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("TOC (% weight) \n") +
+  xlab("\n Sample") +
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Effect of Sample amount and digestion platform (TOC) \n") +
+  # label
+  geom_text(aes(label = round(Ave_TOC_percent,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
 
 
-# plot to see
-ggplot(df_3, aes(x=Sample, y=TOC_percent, fill=Sample)) +
-  # geom_point(size=2.5, shape=21) +
-  geom_bar(stat="identity")+
+```
+
+
+## 4. UMN (Minnesota) data 
+
+```{r}
+
+df_ext <- openxlsx::read.xlsx("data/TOC_TN_measurement_2_labs_211014.xlsx")
+
+## (1) TOC drying temperature effect
+df_temp <- df_ext %>% filter(Lab == "UMN") %>% select(-TN_percent)
+df_temp <- na.omit(df_temp)
+dim(df_temp)
+
+df_temp$Dry_temp <- factor(df_temp$Dry_temp)
+
+
+ggplot(df_temp, aes(x=Dry_temp, y=TOC_percent)) +
+  geom_point(size=2.5, shape=16, color="maroon2") +
   # geom_line(size=1)+
   # geom_errorbar(aes(ymin=Ave_TOC_percent - Std_TOC_percent, ymax=Ave_TOC_percent + Std_TOC_percent), width=.05)+
   scale_fill_brewer(palette='Set2') +
   ylab("TOC (% weight) \n") +
-  xlab("\n Sample") +
-  # scale_y_continuous(breaks = seq(0,0.12,0.05), limits=c(0, 0.12))+
-  ggtitle("Total organic carbon \n") +
+  xlab("\n Drying oven temperature") +
+  scale_y_continuous(breaks = seq(3.5,4.5,0.25), limits=c(3.5, 4.5))+
+  ggtitle("Effect of drying oven temperature \n") +
+  # label
   geom_text(aes(label = round(TOC_percent,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
   mytheme_2d
+
+## (2) TOC between labs
+df_toc_lab <- df_ext %>% select(-TN_percent) %>% filter(Dry_temp == 105)
+
+ggplot(df_toc_lab, aes(x=Lab, y=TOC_percent)) +
+  geom_point(size=2.5, shape=16, color="maroon2") +
+  # geom_line(size=1)+
+  # geom_errorbar(aes(ymin=Ave_TOC_percent - Std_TOC_percent, ymax=Ave_TOC_percent + Std_TOC_percent), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("TOC (% weight) \n") +
+  xlab("\n Analysis lab") +
+  scale_y_continuous(breaks = seq(3.5,4.5,0.25), limits=c(3.5, 4.5))+
+  ggtitle("Comparison between labs (Identical 105C dried, 150um sieved soil) \n") +
+  # label
+  geom_text(aes(label = round(TOC_percent,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+
+## (3) TN between labs
+df_tn_lab <- df_ext %>% select(-TOC_percent)
+df_tn_lab <- na.omit(df_tn_lab)
+
+ggplot(df_tn_lab, aes(x=Lab, y=TN_percent)) +
+  geom_point(size=2.5, shape=16, color="red") +
+  # geom_line(size=1)+
+  # geom_errorbar(aes(ymin=Ave_TOC_percent - Std_TOC_percent, ymax=Ave_TOC_percent + Std_TOC_percent), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("Total Nitrogen (% weight) \n") +
+  xlab("\n Analysis lab") +
+  scale_y_continuous(breaks = seq(0.3,0.4,0.05), limits=c(0.3, 0.4))+
+  ggtitle("Comparison between labs (Identical 105C dried, 150um sieved soil) \n") +
+  # label
+  geom_text(aes(label = round(TN_percent,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
 ```
+
+
 
 

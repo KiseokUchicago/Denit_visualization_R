@@ -112,7 +112,7 @@ df_p1 %>% filter(Well =="H09")
 ```{r}
 ## convert TOC according to dilutions (mg to percent TOC)
 
-df_percent <- df_p1 %>% mutate(TOC_percent = (TOC_mg * 0.001 * 100) / (Soil_weight * Preprocess_dilution * Serial_dilution))
+df_percent <- df_p1 %>% mutate(TOC_percent = (TOC_ppm * Sample_ml * 0.001 * 100) / (Soil_weight * Preprocess_dilution * Serial_dilution))
 
 ## need only 3 wells
 head(df_percent)
