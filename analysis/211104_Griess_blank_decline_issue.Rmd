@@ -1,0 +1,584 @@
+---
+title: "211104_Griess_blank_decline_issue"
+author: "KiseokUchicago"
+date: "2021-11-04"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=11, fig.height=9,
+                      error=TRUE, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE)
+```
+
+## Griess blank slope decline issue (Griess assay)
+Researcher: **Kiseok Lee** \
+Experiment Date: 10/25/21 \
+Analysis Date: 11/2/21
+Lab: **Seppe Kuehn**
+
+```{r}
+# libraries
+library(dplyr)
+library(ggplot2)
+library(RColorBrewer)
+library(vegan)
+library(tidyverse)
+library(magrittr)
+library(readxl)
+library(reshape2)
+library(gtools)
+library(devtools)
+library(openxlsx)
+library(ape)
+library(stringr)
+library(tidyr)
+library(ggrepel)
+library(ggpubr)
+
+## theme for ggplot
+mytheme <- theme_bw() + 
+  theme(text = element_text(family="serif")) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5, family="serif")) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13, family="serif"))+
+  theme(axis.text.y = element_text(size=10, family="serif"))+
+  theme(panel.grid.major = element_blank()) +
+  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),panel.border=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))
+
+mytheme_2d <- theme_bw() + 
+  theme(text = element_text(family="serif")) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5, family="serif")) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13, family="serif"))+
+  theme(axis.text.y = element_text(size=13, family="serif"))+
+  # theme(panel.grid.major = element_blank()) +
+  # theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))
+
+
+# color collection
+my_color_collection <- c(
+  "#CBD588", "#5F7FC7", "orange", "#AD6F3B", "#673770", 
+  "#D14285", "#652926", "#C84248", "#8569D5", "#5E738F",
+  "#D1A33D", "#8A7C64", "#599861","#616163", "#FFCDB2",
+  "#6D9F71", "#242F40",
+  "#CCA43B", "#F92A82", "#ED7B84", "#7EB77F", 
+  "#DEC4A1", "#E5D1D0", '#0E8482', '#C9DAEA', '#337357', 
+  '#95C623', '#E55812', '#04471C', '#F2D7EE', '#D3BCC0', 
+  '#A5668B', '#69306D', '#0E103D', '#1A535C', '#4ECDC4', 
+  '#F7FFF7', '#FF6B6B', '#FFE66D', '#6699CC', '#FFF275', 
+  '#FF8C42', '#FF3C38', '#A23E48', '#000000', '#CF5C36', 
+  '#EEE5E9', '#7C7C7C', '#EFC88B', '#2E5266', '#6E8898', 
+  '#9FB1BC', '#D3D0CB', '#E2C044', '#5BC0EB', '#FDE74C', 
+  '#9BC53D', '#E55934', '#FA7921', "#CD9BCD", "#508578", "#DA5724")
+
+# for git push, use this instead of using wflow_git_push()
+# git push -u origin master (in the Git app / in the working directory)
+
+```
+
+
+## 1. Import data table from python code
+```{r}
+# import file
+df_p0 <- openxlsx::read.xlsx("data/211025_Griess_no3_fit_plate0.xlsx")
+df_p1 <- openxlsx::read.xlsx("data/211025_Griess_no3_fit_plate1.xlsx")
+
+head(df_p0)
+colnames(df_p0)
+dim(df_p0)
+
+head(df_p1)
+colnames(df_p1)
+dim(df_p1)
+
+# remove wells 
+df_p1 %<>% filter(!(Well %in% c("G03","H03")))
+dim(df_p1)
+
+# bind two dataframe
+df_p <- rbind(df_p0, df_p1)
+dim(df_p)
+
+# remove NA
+dim(df_p)
+df_p <- na.omit(df_p)
+dim(df_p)
+
+df_p
+
+# remove 4mM spike ins because it is out of standard curve range
+# df_p %<>% filter(!(Nitrate_input == 4))
+# dim(df_p)
+
+# Check
+# df_p1 %>% filter(Well =="B02")
+# df_p1 %>% filter(Well =="H04")
+
+```
+
+## 2. Get average and standard deviation
+```{r}
+# average and standard deviation
+
+# plot to see
+ggplot(df_p, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Without averaging \n") +
+  mytheme_2d
+
+# plot to see
+ggplot(df_p0, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Without averaging \n") +
+  mytheme_2d
+
+# plot to see
+ggplot(df_p1, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Without averaging \n") +
+  mytheme_2d
+
+# average Biological replicate
+df_NO2NO3 <- df_p %>% group_by(Sample, Extraction_method, Extraction_ul, Nitrite_input, Nitrate_input, Sample_type) %>% summarise(Ave_NO2_mM = mean(NO2_mM), Std_NO2_mM = sd(NO2_mM), Ave_NO3_mM = mean(NO3_mM), Std_NO3_mM = sd(NO3_mM)) %>% ungroup()
+
+dim(df_NO2NO3)
+
+# Factor in orders
+# df_NO2NO3$Sample_type <-  factor(df_NO2NO3$Sample_type, levels = c("Soil","Blank"))
+# df_NO2NO3$Pipet <-  factor(df_NO2NO3$Pipet, levels = c("300pipet","1200pipet"))
+
+# Testing negative samples
+# df_neg <- df_NO2NO3 %>% filter(Sample_type == "Blank", Nitrate_input == 0)
+# df_neg
+# close to zero
+
+# plot to see
+ggplot(df_NO2NO3, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("After averaging with technical replicates \n") +
+  mytheme_2d
+
+# average biological replicates
+# standard deviation is the standard deviation of the technical replicate average
+dim(df_NO2NO3)
+head(df_NO2NO3)
+
+
+```
+
+## 3. Plot per method
+
+## 3.1. Scatter plots for blanks and spike ins
+(1) filtered standard - nitrite
+(2) filtered standard - nitrate
+(3) blank not filtered
+(4) blank filtered
+(5) blank filtered - spaced
+
+```{r}
+# (1) filtered standard - nitrite
+
+df_std_filt_no2 <- df_NO2NO3 %>% filter(Sample_type  == "Nitrite_filtered")
+colnames(df_std_filt_no2)
+dim(df_std_filt_no2)
+
+ggplot(df_std_filt_no2, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle("Filtered nitrite standards \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+ggplot(df_std_filt_no2, aes(x=Nitrite_input, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrite_spike_in (mM)") +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle("Filtered nitrite standards \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+ggplot(df_std_filt_no2, aes(x=Nitrite_input, y=Ave_NO2_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO2- (mM) \n") +
+  xlab("\n Nitrite_spike_in (mM)") +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle("Filtered nitrite standards \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+# Get regression line on raw data (not averaged)
+df_no2_filt <- df_p %>% filter(Sample_type  == "Nitrite_filtered")
+dim(df_no2_filt)
+
+fit.no2_filt <- lm(NO2_mM ~ Nitrite_input, df_no2_filt)
+
+# Plot fitted linear regression line
+ggplot(df_no2_filt, aes(x=Nitrite_input, y=NO2_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  ylab("Measured NO2- (mM) \n") +
+  xlab("\n Nitrite_spike_in (mM)") +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,family="serif", show.legend = FALSE)+
+  ggtitle("Filtered nitrite standards \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  geom_abline(slope = coef(fit.no2_filt)[[2]], intercept = coef(fit.no2_filt)[[1]],
+              color = "maroon2") +
+  # show equation
+  # stat_cor(aes(label = paste(..rr.label.., ..p.label.., sep = "~`,`~"))) +
+  annotate("text",x=1,y=2, label= paste0("y = ", round(coef(fit.no2_filt)[[1]],3),"+",round(coef(fit.no2_filt)[[2]],3),"x"), color = "maroon2") +
+  mytheme_2d
+
+## overlay plots
+plot(df_no2_filt$Nitrite_input, df_no2_filt$NO2NO3_mM, col='orange', pch=19, xlab=NA,ylab=NA)
+points(df_no2_filt$Nitrite_input, df_no2_filt$NO2_mM, col='blue', pch=19)
+points(df_no2_filt$Nitrite_input, df_no2_filt$NO3_mM, col='green', pch=19)
+legend(0, 2, legend=c('NO2NO3', 'NO2', 'NO3'), pch=c(19, 19), col=c('orange', 'blue','green'), bty = "n")
+abline(0,1, lty='dashed', col = "gray60")
+title(main="Concentration prediction of filtered nitrite standards",
+   xlab="Known nitrite concentration (mM)", ylab="Predicted NO2,NO3 concentration (mM)")
+
+# wow... it's pretty weird... let's see if it is different for nitrate
+# (2) filtered standard - nitrate
+
+df_std_filt_no3 <- df_NO2NO3 %>% filter(Sample_type  == "Nitrate_filtered")
+colnames(df_std_filt_no3)
+dim(df_std_filt_no3)
+
+ggplot(df_std_filt_no3, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle("Filtered nitrate standards \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+# Get regression line on raw data (not averaged)
+df_no3_filt <- df_p %>% filter(Sample_type  == "Nitrate_filtered")
+dim(df_no3_filt)
+fit.no3_filt <- lm(NO3_mM ~ Nitrate_input, df_no3_filt)
+
+
+# Plot fitted linear regression line
+ggplot(df_no3_filt, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,family="serif", show.legend = FALSE)+
+  ggtitle("Filtered nitrate standards \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  geom_abline(slope = coef(fit.no3_filt)[[2]], intercept = coef(fit.no3_filt)[[1]],
+              color = "maroon2") +
+  # show equation
+  # stat_cor(aes(label = paste(..rr.label.., ..p.label.., sep = "~`,`~"))) +
+  annotate("text",x=1,y=2, label= paste0("y = ", round(coef(fit.no3_filt)[[1]],3),"+",round(coef(fit.no3_filt)[[2]],3),"x"), color = "maroon2") +
+  mytheme_2d
+
+
+ggplot(df_std_filt_no3, aes(x=Nitrate_input, y=Ave_NO2_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO2- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle("Filtered nitrate standards \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+## overlay plots
+plot(df_no3_filt$Nitrate_input, df_no3_filt$NO2NO3_mM, col='orange', pch=19, xlab=NA,ylab=NA)
+points(df_no3_filt$Nitrate_input, df_no3_filt$NO2_mM, col='blue', pch=19)
+points(df_no3_filt$Nitrate_input, df_no3_filt$NO3_mM, col='green', pch=19)
+legend(0, 2, legend=c('NO2NO3', 'NO2', 'NO3'), pch=c(19, 19), col=c('orange', 'blue','green'), bty = "n")
+abline(0,1, lty='dashed', col = "gray60")
+title(main="Concentration prediction of filtered nitrate standards",
+   xlab="Known nitrate concentration (mM)", ylab="Predicted NO2,NO3 concentration (mM)")
+
+
+
+
+# (3) blank not filtered
+df_blank_no_filt <- df_NO2NO3 %>% filter(Sample_type  == "No_filter")
+colnames(df_blank_no_filt)
+dim(df_blank_no_filt)
+
+ggplot(df_blank_no_filt, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle("Blank (without soil) Spike in - not filtered \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+
+# Get regression line on raw data (not averaged)
+df_no_filt <- df_p %>% filter(Sample_type  == "No_filter")
+dim(df_no_filt)
+fit.no_filt <- lm(NO3_mM ~ Nitrate_input, df_no_filt)
+
+
+# Plot fitted linear regression line
+ggplot(df_no_filt, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,family="serif", show.legend = FALSE)+
+  ggtitle("Blank (without soil) Spike in - not filtered \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  geom_abline(slope = coef(fit.no_filt)[[2]], intercept = coef(fit.no_filt)[[1]],
+              color = "maroon2") +
+  # show equation
+  # stat_cor(aes(label = paste(..rr.label.., ..p.label.., sep = "~`,`~"))) +
+  annotate("text",x=1,y=2, label= paste0("y = ", round(coef(fit.no_filt)[[1]],3),"+",round(coef(fit.no_filt)[[2]],3),"x"), color = "maroon2") +
+  mytheme_2d
+
+
+ggplot(df_blank_no_filt, aes(x=Nitrate_input, y=Ave_NO2_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO2- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle("Blank (without soil) Spike in - not filtered \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+## overlay plots
+plot(df_no_filt$Nitrate_input, df_no_filt$NO2NO3_mM, col='orange', pch=19, xlab=NA,ylab=NA, ylim = c(0, 2))
+points(df_no_filt$Nitrate_input, df_no_filt$NO2_mM, col='blue', pch=19)
+points(df_no_filt$Nitrate_input, df_no_filt$NO3_mM, col='green', pch=19)
+legend(0, 2, legend=c('NO2NO3', 'NO2', 'NO3'), pch=c(19, 19), col=c('orange', 'blue','green'), bty = "n")
+abline(0,1, lty='dashed', col = "gray60")
+title(main="Concentration prediction of blanks without filtering",
+   xlab="Known nitrate concentration (mM)", ylab="Predicted NO2,NO3 concentration (mM)")
+
+
+# (4) blank filtered
+df_blank_filt <- df_NO2NO3 %>% filter(Sample_type  == "Filter_normal")
+colnames(df_blank_filt)
+dim(df_blank_filt)
+
+ggplot(df_blank_filt, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle("Blank (without soil) Spike in - normally filtered \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+ggplot(df_blank_filt, aes(x=Nitrate_input, y=Ave_NO2_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle("Blank (without soil) Spike in - normally filtered \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+
+# Get regression line on raw data (not averaged)
+df_filt_normal <- df_p %>% filter(Sample_type  == "Filter_normal")
+dim(df_filt_normal)
+fit.filt_normal <- lm(NO3_mM ~ Nitrate_input, df_filt_normal)
+
+
+# Plot fitted linear regression line
+ggplot(df_filt_normal, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,family="serif", show.legend = FALSE)+
+  ggtitle("Blank (without soil) Spike in - normally filtered \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  geom_abline(slope = coef(fit.filt_normal)[[2]], intercept = coef(fit.filt_normal)[[1]],
+              color = "maroon2") +
+  # show equation
+  # stat_cor(aes(label = paste(..rr.label.., ..p.label.., sep = "~`,`~"))) +
+  annotate("text",x=1,y=2, label= paste0("y = ", round(coef(fit.filt_normal)[[1]],3),"+",round(coef(fit.filt_normal)[[2]],3),"x"), color = "maroon2") +
+  mytheme_2d
+
+## overlay plots
+plot(df_filt_normal$Nitrate_input, df_filt_normal$NO2NO3_mM, col='orange', pch=19, xlab=NA,ylab=NA, ylim = c(0, 2))
+points(df_filt_normal$Nitrate_input, df_filt_normal$NO2_mM, col='blue', pch=19)
+points(df_filt_normal$Nitrate_input, df_filt_normal$NO3_mM, col='green', pch=19)
+legend(0, 2, legend=c('NO2NO3', 'NO2', 'NO3'), pch=c(19, 19), col=c('orange', 'blue','green'), bty = "n")
+abline(0,1, lty='dashed', col = "gray60")
+title(main="Concentration prediction of blanks after filtering",
+   xlab="Known nitrate concentration (mM)", ylab="Predicted NO2,NO3 concentration (mM)")
+
+
+# (5) blank filtered spaced
+df_blank_spaced <- df_NO2NO3 %>% filter(Sample_type  == "Filter_spaced")
+colnames(df_blank_spaced)
+dim(df_blank_spaced)
+
+ggplot(df_blank_spaced, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle("Blank (without soil) Spike in - filtered spaced \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+ggplot(df_blank_spaced, aes(x=Nitrate_input, y=Ave_NO2_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle("Blank (without soil) Spike in - filtered spaced \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+# Get regression line on raw data (not averaged)
+df_filt_spaced <- df_p %>% filter(Sample_type  == "Filter_spaced")
+dim(df_filt_spaced)
+fit.filt_spaced <- lm(NO3_mM ~ Nitrate_input, df_filt_spaced)
+
+# Plot fitted linear regression line
+ggplot(df_filt_spaced, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,family="serif", show.legend = FALSE)+
+  ggtitle("Blank (without soil) Spike in - filtered spaced \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  geom_abline(slope = coef(fit.filt_spaced)[[2]], intercept = coef(fit.filt_spaced)[[1]],
+              color = "maroon2") +
+  # show equation
+  # stat_cor(aes(label = paste(..rr.label.., ..p.label.., sep = "~`,`~"))) +
+  annotate("text",x=1,y=2, label= paste0("y = ", round(coef(fit.filt_spaced)[[1]],3),"+",round(coef(fit.filt_spaced)[[2]],3),"x"), color = "maroon2") +
+  mytheme_2d
+
+## overlay plots
+plot(df_filt_spaced$Nitrate_input, df_filt_spaced$NO2NO3_mM, col='orange', pch=19, xlab=NA,ylab=NA, ylim = c(0, 2))
+points(df_filt_spaced$Nitrate_input, df_filt_spaced$NO2_mM, col='blue', pch=19)
+points(df_filt_spaced$Nitrate_input, df_filt_spaced$NO3_mM, col='green', pch=19)
+legend(0, 2, legend=c('NO2NO3', 'NO2', 'NO3'), pch=c(19, 19), col=c('orange', 'blue','green'), bty = "n")
+abline(0,1, lty='dashed', col = "gray60")
+title(main="Concentration prediction of blanks after spaced filtering",
+   xlab="Known nitrate concentration (mM)", ylab="Predicted NO2,NO3 concentration (mM)")
+
+
+```
+
+

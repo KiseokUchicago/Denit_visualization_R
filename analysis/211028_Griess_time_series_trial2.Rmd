@@ -1,11 +1,12 @@
 ---
-title: "211020_Griess_pipet_confirm"
+title: "211028_Griess_time_series_trial2"
 author: "KiseokUchicago"
-date: "2021-10-21"
+date: "2021-11-05"
 output: workflowr::wflow_html
 editor_options:
   chunk_output_type: console
 ---
+
 
 ```{r global_options, include=FALSE}
 knitr::opts_chunk$set(fig.width=11, fig.height=9,
@@ -14,8 +15,8 @@ knitr::opts_chunk$set(fig.width=11, fig.height=9,
 
 ## Slurry extraction pipet confirmation (Griess assay)
 Researcher: **Kiseok Lee** \
-Experiment Date: 10/20/21 \
-Analysis Date: 10/21/21
+Experiment Date: 10/28/21 \
+Analysis Date: 11/5/21
 Lab: **Seppe Kuehn**
 
 ```{r}
@@ -532,4 +533,5 @@ ggplot(df_ratio_correction, aes(x=Nitrate_input, y=Ratio_retrieved, fill=Correct
   mytheme_2d
 
 ```
+
 
