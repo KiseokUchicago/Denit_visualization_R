@@ -385,7 +385,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2021-10-21
+<strong>Last updated:</strong> 2021-11-05
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -476,16 +476,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomKiseokUchicagoDenitvisualizationRtree1015537731d6fe1a2197817ecc1bd15c9bb36e03targetblank1015537a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/KiseokUchicago/Denit_visualization_R/tree/1015537731d6fe1a2197817ecc1bd15c9bb36e03" target="_blank">1015537</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomKiseokUchicagoDenitvisualizationRtree924beb71fc7f3c0fd4b1e611aeb7306fd38316b9targetblank924beb7a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/KiseokUchicago/Denit_visualization_R/tree/924beb71fc7f3c0fd4b1e611aeb7306fd38316b9" target="_blank">924beb7</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomKiseokUchicagoDenitvisualizationRtree1015537731d6fe1a2197817ecc1bd15c9bb36e03targetblank1015537a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomKiseokUchicagoDenitvisualizationRtree924beb71fc7f3c0fd4b1e611aeb7306fd38316b9targetblank924beb7a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/KiseokUchicago/Denit_visualization_R/tree/1015537731d6fe1a2197817ecc1bd15c9bb36e03" target="_blank">1015537</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/KiseokUchicago/Denit_visualization_R/tree/924beb71fc7f3c0fd4b1e611aeb7306fd38316b9" target="_blank">924beb7</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -534,6 +534,18 @@ Untracked files:
     Untracked:  data/211020_Griess_plate0.xlsx
     Untracked:  data/211020_Griess_plate1.xlsx
     Untracked:  data/211020_df_full_innate.xlsx
+    Untracked:  data/211025_Griess_no3_fit_plate0.xlsx
+    Untracked:  data/211025_Griess_no3_fit_plate1.xlsx
+    Untracked:  data/211025_Griess_plate0.xlsx
+    Untracked:  data/211025_Griess_plate1.xlsx
+    Untracked:  data/211028_Griess_plate1.xlsx
+    Untracked:  data/211028_Griess_plate1_no3_fit.xlsx
+    Untracked:  data/211028_Griess_plate2.xlsx
+    Untracked:  data/211028_Griess_plate2_no3_fit.xlsx
+    Untracked:  data/211028_Griess_plate3.xlsx
+    Untracked:  data/211028_Griess_plate3_no3_fit.xlsx
+    Untracked:  data/211028_Griess_plate4.xlsx
+    Untracked:  data/211028_Griess_plate4_no3_fit.xlsx
     Untracked:  data/TOC_TN_measurement_2_labs_211014.xlsx
     Untracked:  data/dry_weight_curve(9.5.21).xlsx
     Untracked:  data/pH_data(9.14.21).xlsx
@@ -577,6 +589,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/KiseokUchicago/Denit_visualization_R/blob/924beb71fc7f3c0fd4b1e611aeb7306fd38316b9/analysis/211020_Griess_pipet_confirm.Rmd" target="_blank">924beb7</a>
+</td>
+<td>
+KiseokUchicago
+</td>
+<td>
+2021-11-05
+</td>
+<td>
+wflow_publish("analysis/*.Rmd")
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/KiseokUchicago/Denit_visualization_R/3032cf3f4788347191767d62630b12090babe18c/docs/211020_Griess_pipet_confirm.html" target="_blank">3032cf3</a>
+</td>
+<td>
+KiseokUchicago
+</td>
+<td>
+2021-10-21
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1552,6 +1598,29 @@ ggplot(df_b100, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_t
   annotate(&quot;text&quot;,x=1,y=2, label= paste0(&quot;y = &quot;, round(coef(fit.b100)[[1]],3),&quot;+&quot;,round(coef(fit.b100)[[2]],3),&quot;x&quot;), color = &quot;maroon2&quot;) +
   mytheme_2d</code></pre>
 <p><img src="figure/211020_Griess_pipet_confirm.Rmd/unnamed-chunk-8-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># nitrite
+# Plot fitted linear regression line
+ggplot(df_b100, aes(x=Nitrate_input, y=NO2_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  scale_color_manual(values = c(&quot;maroon2&quot;,&quot;deepskyblue4&quot;))+
+  ylab(&quot;Measured NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  scale_y_continuous(breaks = seq(0,2.5,0.25), limits=c(0, 2.5))+
+  scale_x_continuous(breaks = seq(0,2.1,0.1), limits=c(0, 2.1))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,family=&quot;serif&quot;, show.legend = FALSE)+
+  ggtitle(&quot;Blank spike in \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  # regression line
+  # geom_abline(slope = coef(fit.b100)[[2]], intercept = coef(fit.b100)[[1]],
+              # color = &quot;maroon2&quot;) +
+  # show equation
+  # stat_cor(aes(label = paste(..rr.label.., ..p.label.., sep = &quot;~`,`~&quot;))) +
+  # annotate(&quot;text&quot;,x=1,y=2, label= paste0(&quot;y = &quot;, round(coef(fit.b100)[[1]],3),&quot;+&quot;,round(coef(fit.b100)[[2]],3),&quot;x&quot;), color = &quot;maroon2&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211020_Griess_pipet_confirm.Rmd/unnamed-chunk-8-2.png" width="1056" style="display: block; margin: auto;" /></p>
 <pre class="r"><code># correction factor... is it reasonable to include correction factor with blanks?
 # use the regression equation for correction
 # starting from df_NO2NO3_mcf (moisture corrected)
@@ -1597,7 +1666,7 @@ ggplot(df_100_300_innate_mcf_bcf, aes(x=Nitrate_input, y=Ratio_retrieved_mcf_bcf
   ggtitle(&quot;(After blank correction) 0.5:1:1.5 (soil:water:KCl) method-100ul extraction-300ulPipet \n&quot;) +
   geom_text(aes(label = round(Ratio_retrieved_mcf_bcf,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
   mytheme_2d</code></pre>
-<p><img src="figure/211020_Griess_pipet_confirm.Rmd/unnamed-chunk-8-2.png" width="1056" style="display: block; margin: auto;" /></p>
+<p><img src="figure/211020_Griess_pipet_confirm.Rmd/unnamed-chunk-8-3.png" width="1056" style="display: block; margin: auto;" /></p>
 <pre class="r"><code># plot all corrected ratios in one plate
 df_none &lt;- df_100ul_300pipet_innate %&gt;% mutate(Correction = &quot;None&quot;) %&gt;% select(Nitrate_input, Ratio_retrieved, Std_Ratio_retrieved, Correction)
 df_mcf &lt;- df_100_300_innate_mcf %&gt;% mutate(Correction = &quot;Moisture&quot;) %&gt;% select(Nitrate_input, Ratio_retrieved_mcf, Std_Ratio_retrieved_mcf, Correction) %&gt;% rename(Ratio_retrieved= Ratio_retrieved_mcf, Std_Ratio_retrieved=Std_Ratio_retrieved_mcf)
@@ -1621,7 +1690,7 @@ ggplot(df_ratio_correction, aes(x=Nitrate_input, y=Ratio_retrieved, fill=Correct
   ggtitle(&quot;Effect of concentration correction (all 100ul extraction w/ 300pipet) \n&quot;) +
   geom_text(aes(label = round(Ratio_retrieved,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE, position = position_dodge(0.8))+
   mytheme_2d</code></pre>
-<p><img src="figure/211020_Griess_pipet_confirm.Rmd/unnamed-chunk-8-3.png" width="1056" style="display: block; margin: auto;" /></p>
+<p><img src="figure/211020_Griess_pipet_confirm.Rmd/unnamed-chunk-8-4.png" width="1056" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">

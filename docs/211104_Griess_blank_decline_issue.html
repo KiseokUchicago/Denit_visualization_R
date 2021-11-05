@@ -1,0 +1,1757 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="KiseokUchicago" />
+
+<meta name="date" content="2021-11-04" />
+
+<title>211104_Griess_blank_decline_issue</title>
+
+<script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/master/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Denit_visualization_R</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/KiseokUchicago/Denit_visualization_R">
+    <span class="fa fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">211104_Griess_blank_decline_issue</h1>
+<h4 class="author">KiseokUchicago</h4>
+<h4 class="date">2021-11-04</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2021-11-05
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>Denit_visualization_R/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.2). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20210924code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20210924)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20210924code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20210924)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomKiseokUchicagoDenitvisualizationRtree924beb71fc7f3c0fd4b1e611aeb7306fd38316b9targetblank924beb7a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/KiseokUchicago/Denit_visualization_R/tree/924beb71fc7f3c0fd4b1e611aeb7306fd38316b9" target="_blank">924beb7</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomKiseokUchicagoDenitvisualizationRtree924beb71fc7f3c0fd4b1e611aeb7306fd38316b9targetblank924beb7a" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://github.com/KiseokUchicago/Denit_visualization_R/tree/924beb71fc7f3c0fd4b1e611aeb7306fd38316b9" target="_blank">924beb7</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    Figure_211014_external_lab/
+
+Untracked files:
+    Untracked:  210928_pH.pdf
+    Untracked:  211014_TN.pdf
+    Untracked:  211014_drying_oven_TOC.pdf
+    Untracked:  211014_toc_lab.pdf
+    Untracked:  211020_df_full_innate.xlsx
+    Untracked:  Figure_210911_TOC/
+    Untracked:  Figure_210924/
+    Untracked:  Figure_210927_TOC/
+    Untracked:  Figure_210929/
+    Untracked:  Figure_211006/
+    Untracked:  Figure_211007/
+    Untracked:  Figure_211008/
+    Untracked:  Figure_211013/
+    Untracked:  data/210911_TOC_sample_plate1.xlsx
+    Untracked:  data/210922_Griess_sample_plate1-investigating.xlsx
+    Untracked:  data/210922_Griess_sample_plate1.xlsx
+    Untracked:  data/210927_TOC_sample_plate1_100ul.xlsx
+    Untracked:  data/210927_TOC_sample_plate1_10ul.xlsx
+    Untracked:  data/210928_Griess_sample_plate1.xlsx
+    Untracked:  data/211005_Griess_sample_plate1.xlsx
+    Untracked:  data/211007_Griess_blank_plate1.xlsx
+    Untracked:  data/211007_Griess_blank_plate2.xlsx
+    Untracked:  data/211008_Griess_blank_plate0.xlsx
+    Untracked:  data/211008_Griess_blank_plate1.xlsx
+    Untracked:  data/211017_Griess_plate0.xlsx
+    Untracked:  data/211017_Griess_plate1.xlsx
+    Untracked:  data/211017_Griess_plate2.xlsx
+    Untracked:  data/211017_Griess_plate3.xlsx
+    Untracked:  data/211017_Griess_plate4.xlsx
+    Untracked:  data/211017_Griess_plate5.xlsx
+    Untracked:  data/211017_Griess_plate6.xlsx
+    Untracked:  data/211017_Griess_plate7.xlsx
+    Untracked:  data/211017_Griess_plate8.xlsx
+    Untracked:  data/211019_Griess_plate1.xlsx
+    Untracked:  data/211020_Griess_plate0.xlsx
+    Untracked:  data/211020_Griess_plate1.xlsx
+    Untracked:  data/211020_df_full_innate.xlsx
+    Untracked:  data/211025_Griess_no3_fit_plate0.xlsx
+    Untracked:  data/211025_Griess_no3_fit_plate1.xlsx
+    Untracked:  data/211025_Griess_plate0.xlsx
+    Untracked:  data/211025_Griess_plate1.xlsx
+    Untracked:  data/211028_Griess_plate1.xlsx
+    Untracked:  data/211028_Griess_plate1_no3_fit.xlsx
+    Untracked:  data/211028_Griess_plate2.xlsx
+    Untracked:  data/211028_Griess_plate2_no3_fit.xlsx
+    Untracked:  data/211028_Griess_plate3.xlsx
+    Untracked:  data/211028_Griess_plate3_no3_fit.xlsx
+    Untracked:  data/211028_Griess_plate4.xlsx
+    Untracked:  data/211028_Griess_plate4_no3_fit.xlsx
+    Untracked:  data/TOC_TN_measurement_2_labs_211014.xlsx
+    Untracked:  data/dry_weight_curve(9.5.21).xlsx
+    Untracked:  data/pH_data(9.14.21).xlsx
+    Untracked:  data/pH_data(9.28.21).xlsx
+    Untracked:  df_NO2NO3.xlsx
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/211104_Griess_blank_decline_issue.Rmd</code>) and HTML (<code>docs/211104_Griess_blank_decline_issue.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/KiseokUchicago/Denit_visualization_R/blob/924beb71fc7f3c0fd4b1e611aeb7306fd38316b9/analysis/211104_Griess_blank_decline_issue.Rmd" target="_blank">924beb7</a>
+</td>
+<td>
+KiseokUchicago
+</td>
+<td>
+2021-11-05
+</td>
+<td>
+wflow_publish("analysis/*.Rmd")
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="griess-blank-slope-decline-issue-griess-assay" class="section level2">
+<h2>Griess blank slope decline issue (Griess assay)</h2>
+<p>Researcher: <strong>Kiseok Lee</strong><br />
+Experiment Date: 10/25/21<br />
+Analysis Date: 11/2/21 Lab: <strong>Seppe Kuehn</strong></p>
+<pre class="r"><code># libraries
+library(dplyr)
+library(ggplot2)
+library(RColorBrewer)
+library(vegan)
+library(tidyverse)
+library(magrittr)
+library(readxl)
+library(reshape2)
+library(gtools)
+library(devtools)
+library(openxlsx)
+library(ape)
+library(stringr)
+library(tidyr)
+library(ggrepel)
+library(ggpubr)
+
+## theme for ggplot
+mytheme &lt;- theme_bw() + 
+  theme(text = element_text(family=&quot;serif&quot;)) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5, family=&quot;serif&quot;)) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5, family=&quot;serif&quot;)) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5, family=&quot;serif&quot;)) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13, family=&quot;serif&quot;))+
+  theme(axis.text.y = element_text(size=10, family=&quot;serif&quot;))+
+  theme(panel.grid.major = element_blank()) +
+  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),panel.border=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))
+
+mytheme_2d &lt;- theme_bw() + 
+  theme(text = element_text(family=&quot;serif&quot;)) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5, family=&quot;serif&quot;)) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5, family=&quot;serif&quot;)) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5, family=&quot;serif&quot;)) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13, family=&quot;serif&quot;))+
+  theme(axis.text.y = element_text(size=13, family=&quot;serif&quot;))+
+  # theme(panel.grid.major = element_blank()) +
+  # theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))
+
+
+# color collection
+my_color_collection &lt;- c(
+  &quot;#CBD588&quot;, &quot;#5F7FC7&quot;, &quot;orange&quot;, &quot;#AD6F3B&quot;, &quot;#673770&quot;, 
+  &quot;#D14285&quot;, &quot;#652926&quot;, &quot;#C84248&quot;, &quot;#8569D5&quot;, &quot;#5E738F&quot;,
+  &quot;#D1A33D&quot;, &quot;#8A7C64&quot;, &quot;#599861&quot;,&quot;#616163&quot;, &quot;#FFCDB2&quot;,
+  &quot;#6D9F71&quot;, &quot;#242F40&quot;,
+  &quot;#CCA43B&quot;, &quot;#F92A82&quot;, &quot;#ED7B84&quot;, &quot;#7EB77F&quot;, 
+  &quot;#DEC4A1&quot;, &quot;#E5D1D0&quot;, &#39;#0E8482&#39;, &#39;#C9DAEA&#39;, &#39;#337357&#39;, 
+  &#39;#95C623&#39;, &#39;#E55812&#39;, &#39;#04471C&#39;, &#39;#F2D7EE&#39;, &#39;#D3BCC0&#39;, 
+  &#39;#A5668B&#39;, &#39;#69306D&#39;, &#39;#0E103D&#39;, &#39;#1A535C&#39;, &#39;#4ECDC4&#39;, 
+  &#39;#F7FFF7&#39;, &#39;#FF6B6B&#39;, &#39;#FFE66D&#39;, &#39;#6699CC&#39;, &#39;#FFF275&#39;, 
+  &#39;#FF8C42&#39;, &#39;#FF3C38&#39;, &#39;#A23E48&#39;, &#39;#000000&#39;, &#39;#CF5C36&#39;, 
+  &#39;#EEE5E9&#39;, &#39;#7C7C7C&#39;, &#39;#EFC88B&#39;, &#39;#2E5266&#39;, &#39;#6E8898&#39;, 
+  &#39;#9FB1BC&#39;, &#39;#D3D0CB&#39;, &#39;#E2C044&#39;, &#39;#5BC0EB&#39;, &#39;#FDE74C&#39;, 
+  &#39;#9BC53D&#39;, &#39;#E55934&#39;, &#39;#FA7921&#39;, &quot;#CD9BCD&quot;, &quot;#508578&quot;, &quot;#DA5724&quot;)
+
+# for git push, use this instead of using wflow_git_push()
+# git push -u origin master (in the Git app / in the working directory)</code></pre>
+</div>
+<div id="import-data-table-from-python-code" class="section level2">
+<h2>1. Import data table from python code</h2>
+<pre class="r"><code># import file
+df_p0 &lt;- openxlsx::read.xlsx(&quot;data/211025_Griess_no3_fit_plate0.xlsx&quot;)
+df_p1 &lt;- openxlsx::read.xlsx(&quot;data/211025_Griess_no3_fit_plate1.xlsx&quot;)
+
+head(df_p0)</code></pre>
+<pre><code>  Well                       Sample Extraction_method Extraction_ul
+1  A10 Nitrite_filtered_Nitrite_2mM              None           100
+2  A11 Nitrite_filtered_Nitrite_2mM              None           100
+3  A12 Nitrite_filtered_Nitrite_2mM              None           100
+4  B10 Nitrite_filtered_Nitrite_1mM              None           100
+5  B11 Nitrite_filtered_Nitrite_1mM              None           100
+6  B12 Nitrite_filtered_Nitrite_1mM              None           100
+  Nitrite_input Nitrate_input      Sample_type Plate NO2_OD540 NO2NO3_OD540
+1             2             0 Nitrite_filtered    P0   3.30080      2.07625
+2             2             0 Nitrite_filtered    P0   3.30815      2.02445
+3             2             0 Nitrite_filtered    P0   3.28735      2.01140
+4             1             0 Nitrite_filtered    P0   1.85520      1.10915
+5             1             0 Nitrite_filtered    P0   1.81435           NA
+6             1             0 Nitrite_filtered    P0   1.79155      1.07165
+     NO2_mM NO2NO3_mM      NO3_mM
+1 1.8642601 2.0646101 0.200349996
+2 1.8692742 1.9964559 0.127181705
+3 1.8550992 1.9795201 0.124420840
+4 0.9692114 0.9735714 0.004359977
+5 0.9460979        NA          NA
+6 0.9332408 0.9370110 0.003770245</code></pre>
+<pre class="r"><code>colnames(df_p0)</code></pre>
+<pre><code> [1] &quot;Well&quot;              &quot;Sample&quot;            &quot;Extraction_method&quot;
+ [4] &quot;Extraction_ul&quot;     &quot;Nitrite_input&quot;     &quot;Nitrate_input&quot;    
+ [7] &quot;Sample_type&quot;       &quot;Plate&quot;             &quot;NO2_OD540&quot;        
+[10] &quot;NO2NO3_OD540&quot;      &quot;NO2_mM&quot;            &quot;NO2NO3_mM&quot;        
+[13] &quot;NO3_mM&quot;           </code></pre>
+<pre class="r"><code>dim(df_p0)</code></pre>
+<pre><code>[1] 24 13</code></pre>
+<pre class="r"><code>head(df_p1)</code></pre>
+<pre><code>  Well                       Sample Extraction_method Extraction_ul
+1  A01 Nitrate_filtered_Nitrate_2mM              None           100
+2  A02 Nitrate_filtered_Nitrate_2mM              None           100
+3  A03 Nitrate_filtered_Nitrate_2mM              None           100
+4  A04        No_filter_Nitrate_2mM         0.5_1_1.5           100
+5  A05        No_filter_Nitrate_2mM         0.5_1_1.5           100
+6  A06        No_filter_Nitrate_2mM         0.5_1_1.5           100
+  Nitrite_input Nitrate_input      Sample_type Plate NO2_OD540 NO2NO3_OD540
+1             0             2 Nitrate_filtered    P1   0.00410      2.01605
+2             0             2 Nitrate_filtered    P1   0.00555      1.98680
+3             0             2 Nitrate_filtered    P1   0.01030      2.00385
+4             0             2        No_filter    P1   0.00675      1.90945
+5             0             2        No_filter    P1   0.00655      1.94100
+6             0             2        No_filter    P1   0.00500      1.93940
+       NO2_mM NO2NO3_mM   NO3_mM
+1 0.006675366  1.985544 1.978869
+2 0.007371595  1.947842 1.940470
+3 0.009652884  1.969764 1.960111
+4 0.007947842  1.850243 1.842295
+5 0.007851797  1.889695 1.881843
+6 0.007107499  1.887682 1.880575</code></pre>
+<pre class="r"><code>colnames(df_p1)</code></pre>
+<pre><code> [1] &quot;Well&quot;              &quot;Sample&quot;            &quot;Extraction_method&quot;
+ [4] &quot;Extraction_ul&quot;     &quot;Nitrite_input&quot;     &quot;Nitrate_input&quot;    
+ [7] &quot;Sample_type&quot;       &quot;Plate&quot;             &quot;NO2_OD540&quot;        
+[10] &quot;NO2NO3_OD540&quot;      &quot;NO2_mM&quot;            &quot;NO2NO3_mM&quot;        
+[13] &quot;NO3_mM&quot;           </code></pre>
+<pre class="r"><code>dim(df_p1)</code></pre>
+<pre><code>[1] 96 13</code></pre>
+<pre class="r"><code># remove wells 
+df_p1 %&lt;&gt;% filter(!(Well %in% c(&quot;G03&quot;,&quot;H03&quot;)))
+dim(df_p1)</code></pre>
+<pre><code>[1] 94 13</code></pre>
+<pre class="r"><code># bind two dataframe
+df_p &lt;- rbind(df_p0, df_p1)
+dim(df_p)</code></pre>
+<pre><code>[1] 118  13</code></pre>
+<pre class="r"><code># remove NA
+dim(df_p)</code></pre>
+<pre><code>[1] 118  13</code></pre>
+<pre class="r"><code>df_p &lt;- na.omit(df_p)
+dim(df_p)</code></pre>
+<pre><code>[1] 117  13</code></pre>
+<pre class="r"><code>df_p</code></pre>
+<pre><code>    Well                             Sample Extraction_method Extraction_ul
+1    A10       Nitrite_filtered_Nitrite_2mM              None           100
+2    A11       Nitrite_filtered_Nitrite_2mM              None           100
+3    A12       Nitrite_filtered_Nitrite_2mM              None           100
+4    B10       Nitrite_filtered_Nitrite_1mM              None           100
+6    B12       Nitrite_filtered_Nitrite_1mM              None           100
+7    C10     Nitrite_filtered_Nitrite_0.5mM              None           100
+8    C11     Nitrite_filtered_Nitrite_0.5mM              None           100
+9    C12     Nitrite_filtered_Nitrite_0.5mM              None           100
+10   D10    Nitrite_filtered_Nitrite_0.25mM              None           100
+11   D11    Nitrite_filtered_Nitrite_0.25mM              None           100
+12   D12    Nitrite_filtered_Nitrite_0.25mM              None           100
+13   E10   Nitrite_filtered_Nitrite_0.125mM              None           100
+14   E11   Nitrite_filtered_Nitrite_0.125mM              None           100
+15   E12   Nitrite_filtered_Nitrite_0.125mM              None           100
+16   F10  Nitrite_filtered_Nitrite_0.0625mM              None           100
+17   F11  Nitrite_filtered_Nitrite_0.0625mM              None           100
+18   F12  Nitrite_filtered_Nitrite_0.0625mM              None           100
+19   G10 Nitrite_filtered_Nitrite_0.03125mM              None           100
+20   G11 Nitrite_filtered_Nitrite_0.03125mM              None           100
+21   G12 Nitrite_filtered_Nitrite_0.03125mM              None           100
+22   H10       Nitrite_filtered_Nitrite_0mM              None           100
+23   H11       Nitrite_filtered_Nitrite_0mM              None           100
+24   H12       Nitrite_filtered_Nitrite_0mM              None           100
+25   A01       Nitrate_filtered_Nitrate_2mM              None           100
+26   A02       Nitrate_filtered_Nitrate_2mM              None           100
+27   A03       Nitrate_filtered_Nitrate_2mM              None           100
+28   A04              No_filter_Nitrate_2mM         0.5_1_1.5           100
+29   A05              No_filter_Nitrate_2mM         0.5_1_1.5           100
+30   A06              No_filter_Nitrate_2mM         0.5_1_1.5           100
+31   A07          Filter_normal_Nitrate_2mM         0.5_1_1.5           100
+32   A08          Filter_normal_Nitrate_2mM         0.5_1_1.5           100
+33   A09          Filter_normal_Nitrate_2mM         0.5_1_1.5           100
+34   A10          Filter_spaced_Nitrate_2mM         0.5_1_1.5           100
+35   A11          Filter_spaced_Nitrate_2mM         0.5_1_1.5           100
+36   A12          Filter_spaced_Nitrate_2mM         0.5_1_1.5           100
+37   B01       Nitrate_filtered_Nitrate_1mM              None           100
+38   B02       Nitrate_filtered_Nitrate_1mM              None           100
+39   B03       Nitrate_filtered_Nitrate_1mM              None           100
+40   B04              No_filter_Nitrate_1mM         0.5_1_1.5           100
+41   B05              No_filter_Nitrate_1mM         0.5_1_1.5           100
+42   B06              No_filter_Nitrate_1mM         0.5_1_1.5           100
+43   B07          Filter_normal_Nitrate_1mM         0.5_1_1.5           100
+44   B08          Filter_normal_Nitrate_1mM         0.5_1_1.5           100
+45   B09          Filter_normal_Nitrate_1mM         0.5_1_1.5           100
+46   B10          Filter_spaced_Nitrate_1mM         0.5_1_1.5           100
+47   B11          Filter_spaced_Nitrate_1mM         0.5_1_1.5           100
+48   B12          Filter_spaced_Nitrate_1mM         0.5_1_1.5           100
+49   C01     Nitrate_filtered_Nitrate_0.5mM              None           100
+50   C02     Nitrate_filtered_Nitrate_0.5mM              None           100
+51   C03     Nitrate_filtered_Nitrate_0.5mM              None           100
+52   C04            No_filter_Nitrate_0.5mM         0.5_1_1.5           100
+53   C05            No_filter_Nitrate_0.5mM         0.5_1_1.5           100
+54   C06            No_filter_Nitrate_0.5mM         0.5_1_1.5           100
+55   C07        Filter_normal_Nitrate_0.5mM         0.5_1_1.5           100
+56   C08        Filter_normal_Nitrate_0.5mM         0.5_1_1.5           100
+57   C09        Filter_normal_Nitrate_0.5mM         0.5_1_1.5           100
+58   C10        Filter_spaced_Nitrate_0.5mM         0.5_1_1.5           100
+59   C11        Filter_spaced_Nitrate_0.5mM         0.5_1_1.5           100
+60   C12        Filter_spaced_Nitrate_0.5mM         0.5_1_1.5           100
+61   D01    Nitrate_filtered_Nitrate_0.25mM              None           100
+62   D02    Nitrate_filtered_Nitrate_0.25mM              None           100
+63   D03    Nitrate_filtered_Nitrate_0.25mM              None           100
+64   D04           No_filter_Nitrate_0.25mM         0.5_1_1.5           100
+65   D05           No_filter_Nitrate_0.25mM         0.5_1_1.5           100
+66   D06           No_filter_Nitrate_0.25mM         0.5_1_1.5           100
+67   D07       Filter_normal_Nitrate_0.25mM         0.5_1_1.5           100
+68   D08       Filter_normal_Nitrate_0.25mM         0.5_1_1.5           100
+69   D09       Filter_normal_Nitrate_0.25mM         0.5_1_1.5           100
+70   D10       Filter_spaced_Nitrate_0.25mM         0.5_1_1.5           100
+71   D11       Filter_spaced_Nitrate_0.25mM         0.5_1_1.5           100
+72   D12       Filter_spaced_Nitrate_0.25mM         0.5_1_1.5           100
+73   E01   Nitrate_filtered_Nitrate_0.125mM              None           100
+74   E02   Nitrate_filtered_Nitrate_0.125mM              None           100
+75   E03   Nitrate_filtered_Nitrate_0.125mM              None           100
+76   E04          No_filter_Nitrate_0.125mM         0.5_1_1.5           100
+77   E05          No_filter_Nitrate_0.125mM         0.5_1_1.5           100
+78   E06          No_filter_Nitrate_0.125mM         0.5_1_1.5           100
+79   E07      Filter_normal_Nitrate_0.125mM         0.5_1_1.5           100
+80   E08      Filter_normal_Nitrate_0.125mM         0.5_1_1.5           100
+81   E09      Filter_normal_Nitrate_0.125mM         0.5_1_1.5           100
+82   E10      Filter_spaced_Nitrate_0.125mM         0.5_1_1.5           100
+83   E11      Filter_spaced_Nitrate_0.125mM         0.5_1_1.5           100
+84   E12      Filter_spaced_Nitrate_0.125mM         0.5_1_1.5           100
+85   F01  Nitrate_filtered_Nitrate_0.0625mM              None           100
+86   F02  Nitrate_filtered_Nitrate_0.0625mM              None           100
+87   F03  Nitrate_filtered_Nitrate_0.0625mM              None           100
+88   F04         No_filter_Nitrate_0.0625mM         0.5_1_1.5           100
+89   F05         No_filter_Nitrate_0.0625mM         0.5_1_1.5           100
+90   F06         No_filter_Nitrate_0.0625mM         0.5_1_1.5           100
+91   F07     Filter_normal_Nitrate_0.0625mM         0.5_1_1.5           100
+92   F08     Filter_normal_Nitrate_0.0625mM         0.5_1_1.5           100
+93   F09     Filter_normal_Nitrate_0.0625mM         0.5_1_1.5           100
+94   F10     Filter_spaced_Nitrate_0.0625mM         0.5_1_1.5           100
+95   F11     Filter_spaced_Nitrate_0.0625mM         0.5_1_1.5           100
+96   F12     Filter_spaced_Nitrate_0.0625mM         0.5_1_1.5           100
+97   G01 Nitrate_filtered_Nitrate_0.03125mM              None           100
+98   G02 Nitrate_filtered_Nitrate_0.03125mM              None           100
+99   G04        No_filter_Nitrate_0.03125mM         0.5_1_1.5           100
+100  G05        No_filter_Nitrate_0.03125mM         0.5_1_1.5           100
+101  G06        No_filter_Nitrate_0.03125mM         0.5_1_1.5           100
+102  G07    Filter_normal_Nitrate_0.03125mM         0.5_1_1.5           100
+103  G08    Filter_normal_Nitrate_0.03125mM         0.5_1_1.5           100
+104  G09    Filter_normal_Nitrate_0.03125mM         0.5_1_1.5           100
+105  G10    Filter_spaced_Nitrate_0.03125mM         0.5_1_1.5           100
+106  G11    Filter_spaced_Nitrate_0.03125mM         0.5_1_1.5           100
+107  G12    Filter_spaced_Nitrate_0.03125mM         0.5_1_1.5           100
+108  H01       Nitrate_filtered_Nitrate_0mM              None           100
+109  H02       Nitrate_filtered_Nitrate_0mM              None           100
+110  H04              No_filter_Nitrate_0mM         0.5_1_1.5           100
+111  H05              No_filter_Nitrate_0mM         0.5_1_1.5           100
+112  H06              No_filter_Nitrate_0mM         0.5_1_1.5           100
+113  H07          Filter_normal_Nitrate_0mM         0.5_1_1.5           100
+114  H08          Filter_normal_Nitrate_0mM         0.5_1_1.5           100
+115  H09          Filter_normal_Nitrate_0mM         0.5_1_1.5           100
+116  H10          Filter_spaced_Nitrate_0mM         0.5_1_1.5           100
+117  H11          Filter_spaced_Nitrate_0mM         0.5_1_1.5           100
+118  H12          Filter_spaced_Nitrate_0mM         0.5_1_1.5           100
+    Nitrite_input Nitrate_input      Sample_type Plate NO2_OD540 NO2NO3_OD540
+1         2.00000       0.00000 Nitrite_filtered    P0   3.30080      2.07625
+2         2.00000       0.00000 Nitrite_filtered    P0   3.30815      2.02445
+3         2.00000       0.00000 Nitrite_filtered    P0   3.28735      2.01140
+4         1.00000       0.00000 Nitrite_filtered    P0   1.85520      1.10915
+6         1.00000       0.00000 Nitrite_filtered    P0   1.79155      1.07165
+7         0.50000       0.00000 Nitrite_filtered    P0   0.92735      0.53755
+8         0.50000       0.00000 Nitrite_filtered    P0   0.92245      0.53365
+9         0.50000       0.00000 Nitrite_filtered    P0   0.92025      0.54495
+10        0.25000       0.00000 Nitrite_filtered    P0   0.45900      0.26305
+11        0.25000       0.00000 Nitrite_filtered    P0   0.45495      0.26295
+12        0.25000       0.00000 Nitrite_filtered    P0   0.46650      0.26680
+13        0.12500       0.00000 Nitrite_filtered    P0   0.23060      0.12965
+14        0.12500       0.00000 Nitrite_filtered    P0   0.22495      0.12385
+15        0.12500       0.00000 Nitrite_filtered    P0   0.23025      0.12880
+16        0.06250       0.00000 Nitrite_filtered    P0   0.11570      0.06340
+17        0.06250       0.00000 Nitrite_filtered    P0   0.11485      0.06155
+18        0.06250       0.00000 Nitrite_filtered    P0   0.11765      0.06665
+19        0.03125       0.00000 Nitrite_filtered    P0   0.06050      0.03055
+20        0.03125       0.00000 Nitrite_filtered    P0   0.05915      0.02955
+21        0.03125       0.00000 Nitrite_filtered    P0   0.05905      0.03325
+22        0.00000       0.00000 Nitrite_filtered    P0   0.00920      0.00065
+23        0.00000       0.00000 Nitrite_filtered    P0   0.00975      0.00000
+24        0.00000       0.00000 Nitrite_filtered    P0   0.00990      0.00375
+25        0.00000       2.00000 Nitrate_filtered    P1   0.00410      2.01605
+26        0.00000       2.00000 Nitrate_filtered    P1   0.00555      1.98680
+27        0.00000       2.00000 Nitrate_filtered    P1   0.01030      2.00385
+28        0.00000       2.00000        No_filter    P1   0.00675      1.90945
+29        0.00000       2.00000        No_filter    P1   0.00655      1.94100
+30        0.00000       2.00000        No_filter    P1   0.00500      1.93940
+31        0.00000       2.00000    Filter_normal    P1   0.00695      1.97155
+32        0.00000       2.00000    Filter_normal    P1   0.00475      1.95075
+33        0.00000       2.00000    Filter_normal    P1   0.00475      1.99695
+34        0.00000       2.00000    Filter_spaced    P1   0.00840      1.99060
+35        0.00000       2.00000    Filter_spaced    P1   0.00525      1.95495
+36        0.00000       2.00000    Filter_spaced    P1   0.00635      1.99645
+37        0.00000       1.00000 Nitrate_filtered    P1   0.00340      1.09875
+38        0.00000       1.00000 Nitrate_filtered    P1   0.00820      1.09315
+39        0.00000       1.00000 Nitrate_filtered    P1   0.01640      1.10025
+40        0.00000       1.00000        No_filter    P1   0.00430      1.06770
+41        0.00000       1.00000        No_filter    P1   0.00430      1.07115
+42        0.00000       1.00000        No_filter    P1   0.00375      1.07230
+43        0.00000       1.00000    Filter_normal    P1   0.00410      1.09175
+44        0.00000       1.00000    Filter_normal    P1   0.00465      1.06615
+45        0.00000       1.00000    Filter_normal    P1   0.00305      1.08615
+46        0.00000       1.00000    Filter_spaced    P1   0.00420      1.10065
+47        0.00000       1.00000    Filter_spaced    P1   0.00395      1.08815
+48        0.00000       1.00000    Filter_spaced    P1   0.00350      1.06765
+49        0.00000       0.50000 Nitrate_filtered    P1   0.00865      0.57395
+50        0.00000       0.50000 Nitrate_filtered    P1   0.00995      0.57180
+51        0.00000       0.50000 Nitrate_filtered    P1   0.01470      0.58300
+52        0.00000       0.50000        No_filter    P1   0.00605      0.55855
+53        0.00000       0.50000        No_filter    P1   0.00720      0.56820
+54        0.00000       0.50000        No_filter    P1   0.00605      0.56850
+55        0.00000       0.50000    Filter_normal    P1   0.00375      0.57400
+56        0.00000       0.50000    Filter_normal    P1   0.00585      0.56605
+57        0.00000       0.50000    Filter_normal    P1   0.00745      0.57085
+58        0.00000       0.50000    Filter_spaced    P1   0.00685      0.57935
+59        0.00000       0.50000    Filter_spaced    P1   0.00695      0.58440
+60        0.00000       0.50000    Filter_spaced    P1   0.00805      0.58780
+61        0.00000       0.25000 Nitrate_filtered    P1   0.00810      0.30175
+62        0.00000       0.25000 Nitrate_filtered    P1   0.00975      0.29535
+63        0.00000       0.25000 Nitrate_filtered    P1   0.01520      0.29860
+64        0.00000       0.25000        No_filter    P1   0.00610      0.28625
+65        0.00000       0.25000        No_filter    P1   0.00515      0.29305
+66        0.00000       0.25000        No_filter    P1   0.00670      0.29000
+67        0.00000       0.25000    Filter_normal    P1   0.00560      0.30220
+68        0.00000       0.25000    Filter_normal    P1   0.00735      0.29520
+69        0.00000       0.25000    Filter_normal    P1   0.00580      0.30170
+70        0.00000       0.25000    Filter_spaced    P1   0.00775      0.31035
+71        0.00000       0.25000    Filter_spaced    P1   0.00755      0.30920
+72        0.00000       0.25000    Filter_spaced    P1   0.00700      0.31235
+73        0.00000       0.12500 Nitrate_filtered    P1   0.00875      0.15510
+74        0.00000       0.12500 Nitrate_filtered    P1   0.00875      0.15030
+75        0.00000       0.12500 Nitrate_filtered    P1   0.01735      0.19880
+76        0.00000       0.12500        No_filter    P1   0.00730      0.15075
+77        0.00000       0.12500        No_filter    P1   0.00610      0.15055
+78        0.00000       0.12500        No_filter    P1   0.00525      0.15200
+79        0.00000       0.12500    Filter_normal    P1   0.00580      0.15410
+80        0.00000       0.12500    Filter_normal    P1   0.00510      0.15445
+81        0.00000       0.12500    Filter_normal    P1   0.00590      0.15940
+82        0.00000       0.12500    Filter_spaced    P1   0.00795      0.16495
+83        0.00000       0.12500    Filter_spaced    P1   0.00565      0.16335
+84        0.00000       0.12500    Filter_spaced    P1   0.00670      0.16985
+85        0.00000       0.06250 Nitrate_filtered    P1   0.00865      0.07920
+86        0.00000       0.06250 Nitrate_filtered    P1   0.00855      0.07510
+87        0.00000       0.06250 Nitrate_filtered    P1   0.01350      0.12890
+88        0.00000       0.06250        No_filter    P1   0.00725      0.08055
+89        0.00000       0.06250        No_filter    P1   0.00605      0.07995
+90        0.00000       0.06250        No_filter    P1   0.00570      0.07990
+91        0.00000       0.06250    Filter_normal    P1   0.00590      0.07905
+92        0.00000       0.06250    Filter_normal    P1   0.00630      0.08380
+93        0.00000       0.06250    Filter_normal    P1   0.00685      0.08335
+94        0.00000       0.06250    Filter_spaced    P1   0.00735      0.08805
+95        0.00000       0.06250    Filter_spaced    P1   0.00595      0.08900
+96        0.00000       0.06250    Filter_spaced    P1   0.00645      0.09910
+97        0.00000       0.03125 Nitrate_filtered    P1   0.00955      0.03725
+98        0.00000       0.03125 Nitrate_filtered    P1   0.01070      0.03885
+99        0.00000       0.03125        No_filter    P1   0.00855      0.04345
+100       0.00000       0.03125        No_filter    P1   0.00765      0.04415
+101       0.00000       0.03125        No_filter    P1   0.00740      0.04495
+102       0.00000       0.03125    Filter_normal    P1   0.00735      0.04365
+103       0.00000       0.03125    Filter_normal    P1   0.00610      0.04775
+104       0.00000       0.03125    Filter_normal    P1   0.00955      0.04915
+105       0.00000       0.03125    Filter_spaced    P1   0.00840      0.05290
+106       0.00000       0.03125    Filter_spaced    P1   0.00670      0.05290
+107       0.00000       0.03125    Filter_spaced    P1   0.00690      0.06080
+108       0.00000       0.00000 Nitrate_filtered    P1   0.01365      0.00950
+109       0.00000       0.00000 Nitrate_filtered    P1   0.01020      0.01580
+110       0.00000       0.00000        No_filter    P1   0.00645      0.00595
+111       0.00000       0.00000        No_filter    P1   0.00710      0.00610
+112       0.00000       0.00000        No_filter    P1   0.00760      0.00645
+113       0.00000       0.00000    Filter_normal    P1   0.00875      0.01045
+114       0.00000       0.00000    Filter_normal    P1   0.01085      0.00995
+115       0.00000       0.00000    Filter_normal    P1   0.00890      0.00925
+116       0.00000       0.00000    Filter_spaced    P1   0.01265      0.01375
+117       0.00000       0.00000    Filter_spaced    P1   0.00780      0.01305
+118       0.00000       0.00000    Filter_spaced    P1   0.01125      0.01845
+         NO2_mM   NO2NO3_mM       NO3_mM
+1   1.864260088 2.064610084 2.003500e-01
+2   1.869274239 1.996455944 1.271817e-01
+3   1.855099224 1.979520064 1.244208e-01
+4   0.969211440 0.973571417 4.359977e-03
+6   0.933240776 0.937011021 3.770245e-03
+7   0.466813969 0.447329493 0.000000e+00
+8   0.464275868 0.443942958 0.000000e+00
+9   0.463136673 0.453762001 0.000000e+00
+10  0.229023240 0.214690574 0.000000e+00
+11  0.227007668 0.214607839 0.000000e+00
+12  0.232757551 0.217794119 0.000000e+00
+13  0.116383328 0.105539816 0.000000e+00
+14  0.113622971 0.100848119 0.000000e+00
+15  0.116212296 0.104851965 0.000000e+00
+16  0.060488554 0.052208519 0.000000e+00
+17  0.060076929 0.050727342 0.000000e+00
+18  0.061432973 0.054811640 0.000000e+00
+19  0.033813393 0.025971847 0.000000e+00
+20  0.033162436 0.025175291 0.000000e+00
+21  0.033114220 0.028123174 0.000000e+00
+22  0.009124512 0.002208514 0.000000e+00
+23  0.009388692 0.001693148 0.000000e+00
+24  0.009460744 0.004667128 0.000000e+00
+25  0.006675366 1.985544150 1.978869e+00
+26  0.007371595 1.947841848 1.940470e+00
+27  0.009652884 1.969763661 1.960111e+00
+28  0.007947842 1.850242901 1.842295e+00
+29  0.007851797 1.889694593 1.881843e+00
+30  0.007107499 1.887682235 1.880575e+00
+31  0.008043888 1.928362456 1.920319e+00
+32  0.006987459 1.901984711 1.894997e+00
+33  0.006987459 1.960873676 1.953886e+00
+34  0.008740269 1.952714454 1.943974e+00
+35  0.007227541 1.907293464 1.900066e+00
+36  0.007755754 1.960230450 1.952475e+00
+37  0.006339283 0.963399672 9.570604e-01
+38  0.008644212 0.957932909 9.492887e-01
+39  0.012583757 0.964865209 9.522815e-01
+40  0.006771393 0.933178636 9.264072e-01
+41  0.006771393 0.936525714 9.297543e-01
+42  0.006507322 0.937642004 9.311347e-01
+43  0.006675366 0.956567343 9.498920e-01
+44  0.006939444 0.931675750 9.247363e-01
+45  0.006171249 0.951109567 9.449383e-01
+46  0.006723379 0.965256107 9.585327e-01
+47  0.006603347 0.953057949 9.464546e-01
+48  0.006387294 0.933130148 9.267429e-01
+49  0.008860342 0.479056656 4.701963e-01
+50  0.009484761 0.477176619 4.676919e-01
+51  0.011766819 0.486978686 4.752119e-01
+52  0.007611691 0.465607156 4.579955e-01
+53  0.008163949 0.474030359 4.658664e-01
+54  0.007611691 0.474292466 4.666808e-01
+55  0.006507322 0.479100387 4.725931e-01
+56  0.007515651 0.472152362 4.646367e-01
+57  0.008284011 0.476346149 4.680621e-01
+58  0.007995865 0.483781980 4.757861e-01
+59  0.008043888 0.488205408 4.801615e-01
+60  0.008572170 0.491185945 4.826138e-01
+61  0.008596184 0.246814471 2.382183e-01
+62  0.009388692 0.241487354 2.320987e-01
+63  0.012007084 0.244191802 2.321847e-01
+64  0.007635701 0.233922887 2.262872e-01
+65  0.007179524 0.239574346 2.323948e-01
+66  0.007923831 0.237038689 2.291149e-01
+67  0.007395604 0.247189254 2.397937e-01
+68  0.008235986 0.241362570 2.331266e-01
+69  0.007491642 0.246772831 2.392812e-01
+70  0.008428089 0.253981994 2.455539e-01
+71  0.008332036 0.253022933 2.446909e-01
+72  0.008067900 0.255650377 2.475825e-01
+73  0.008908372 0.126178905 1.172705e-01
+74  0.008908372 0.122279729 1.133714e-01
+75  0.013040327 0.161819072 1.487787e-01
+76  0.008211973 0.122645147 1.144332e-01
+77  0.007635701 0.122482736 1.148470e-01
+78  0.007227541 0.123660338 1.164328e-01
+79  0.007491642 0.125366325 1.178747e-01
+80  0.007155515 0.125650713 1.184952e-01
+81  0.007539661 0.129674512 1.221349e-01
+82  0.008524142 0.134189916 1.256658e-01
+83  0.007419613 0.132887757 1.254681e-01
+84  0.007923831 0.138179899 1.302561e-01
+85  0.008860342 0.064876305 5.601596e-02
+86  0.008812313 0.061586039 5.277373e-02
+87  0.011190220 0.104932884 9.374266e-02
+88  0.008187961 0.065960155 5.777219e-02
+89  0.007611691 0.065478415 5.786672e-02
+90  0.007443623 0.065438272 5.799465e-02
+91  0.007539661 0.064755891 5.721623e-02
+92  0.007731743 0.068570381 6.083864e-02
+93  0.007995865 0.068208884 6.021302e-02
+94  0.008235986 0.071985794 6.374981e-02
+95  0.007563671 0.072749557 6.518589e-02
+96  0.007803775 0.080876732 7.307296e-02
+97  0.009292625 0.031312000 2.201937e-02
+98  0.009845031 0.032588092 2.274306e-02
+99  0.008812313 0.036258645 2.744633e-02
+100 0.008380062 0.036817440 2.843738e-02
+101 0.008259998 0.037456138 2.919614e-02
+102 0.008235986 0.036418294 2.818231e-02
+103 0.007635701 0.039692218 3.205652e-02
+104 0.009292625 0.040810627 3.151800e-02
+105 0.008740269 0.043807585 3.506732e-02
+106 0.007923831 0.043807585 3.588375e-02
+107 0.008019877 0.050126988 4.210711e-02
+108 0.011262292 0.009230601 0.000000e+00
+109 0.009604848 0.014235274 4.630426e-03
+110 0.007803775 0.006412671 0.000000e+00
+111 0.008115924 0.006531706 0.000000e+00
+112 0.008356049 0.006809468 0.000000e+00
+113 0.008908372 0.009984959 1.076587e-03
+114 0.009917087 0.009587915 0.000000e+00
+115 0.008980418 0.009032104 5.168637e-05
+116 0.010781829 0.012606230 1.824401e-03
+117 0.008452102 0.012050090 3.597988e-03
+118 0.010109242 0.016341885 6.232643e-03</code></pre>
+<pre class="r"><code># remove 4mM spike ins because it is out of standard curve range
+# df_p %&lt;&gt;% filter(!(Nitrate_input == 4))
+# dim(df_p)
+
+# Check
+# df_p1 %&gt;% filter(Well ==&quot;B02&quot;)
+# df_p1 %&gt;% filter(Well ==&quot;H04&quot;)</code></pre>
+</div>
+<div id="get-average-and-standard-deviation" class="section level2">
+<h2>2. Get average and standard deviation</h2>
+<pre class="r"><code># average and standard deviation
+
+# plot to see
+ggplot(df_p, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211104_Griess_blank_decline_issue.Rmd/unnamed-chunk-3-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot to see
+ggplot(df_p0, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211104_Griess_blank_decline_issue.Rmd/unnamed-chunk-3-2.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot to see
+ggplot(df_p1, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211104_Griess_blank_decline_issue.Rmd/unnamed-chunk-3-3.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># average Biological replicate
+df_NO2NO3 &lt;- df_p %&gt;% group_by(Sample, Extraction_method, Extraction_ul, Nitrite_input, Nitrate_input, Sample_type) %&gt;% summarise(Ave_NO2_mM = mean(NO2_mM), Std_NO2_mM = sd(NO2_mM), Ave_NO3_mM = mean(NO3_mM), Std_NO3_mM = sd(NO3_mM)) %&gt;% ungroup()
+
+dim(df_NO2NO3)</code></pre>
+<pre><code>[1] 40 10</code></pre>
+<pre class="r"><code># Factor in orders
+# df_NO2NO3$Sample_type &lt;-  factor(df_NO2NO3$Sample_type, levels = c(&quot;Soil&quot;,&quot;Blank&quot;))
+# df_NO2NO3$Pipet &lt;-  factor(df_NO2NO3$Pipet, levels = c(&quot;300pipet&quot;,&quot;1200pipet&quot;))
+
+# Testing negative samples
+# df_neg &lt;- df_NO2NO3 %&gt;% filter(Sample_type == &quot;Blank&quot;, Nitrate_input == 0)
+# df_neg
+# close to zero
+
+# plot to see
+ggplot(df_NO2NO3, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;After averaging with technical replicates \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211104_Griess_blank_decline_issue.Rmd/unnamed-chunk-3-4.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># average biological replicates
+# standard deviation is the standard deviation of the technical replicate average
+dim(df_NO2NO3)</code></pre>
+<pre><code>[1] 40 10</code></pre>
+<pre class="r"><code>head(df_NO2NO3)</code></pre>
+<pre><code># A tibble: 6 x 10
+  Sample  Extraction_meth~ Extraction_ul Nitrite_input Nitrate_input Sample_type
+  &lt;chr&gt;   &lt;chr&gt;                    &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;      
+1 Filter~ 0.5_1_1.5                  100             0        0.0312 Filter_nor~
+2 Filter~ 0.5_1_1.5                  100             0        0.0625 Filter_nor~
+3 Filter~ 0.5_1_1.5                  100             0        0.125  Filter_nor~
+4 Filter~ 0.5_1_1.5                  100             0        0.25   Filter_nor~
+5 Filter~ 0.5_1_1.5                  100             0        0.5    Filter_nor~
+6 Filter~ 0.5_1_1.5                  100             0        0      Filter_nor~
+# ... with 4 more variables: Ave_NO2_mM &lt;dbl&gt;, Std_NO2_mM &lt;dbl&gt;,
+#   Ave_NO3_mM &lt;dbl&gt;, Std_NO3_mM &lt;dbl&gt;</code></pre>
+</div>
+<div id="plot-per-method" class="section level2">
+<h2>3. Plot per method</h2>
+</div>
+<div id="scatter-plots-for-blanks-and-spike-ins" class="section level2">
+<h2>3.1. Scatter plots for blanks and spike ins</h2>
+<ol style="list-style-type: decimal">
+<li>filtered standard - nitrite</li>
+<li>filtered standard - nitrate</li>
+<li>blank not filtered</li>
+<li>blank filtered</li>
+<li>blank filtered - spaced</li>
+</ol>
+<pre class="r"><code># (1) filtered standard - nitrite
+
+df_std_filt_no2 &lt;- df_NO2NO3 %&gt;% filter(Sample_type  == &quot;Nitrite_filtered&quot;)
+colnames(df_std_filt_no2)</code></pre>
+<pre><code> [1] &quot;Sample&quot;            &quot;Extraction_method&quot; &quot;Extraction_ul&quot;    
+ [4] &quot;Nitrite_input&quot;     &quot;Nitrate_input&quot;     &quot;Sample_type&quot;      
+ [7] &quot;Ave_NO2_mM&quot;        &quot;Std_NO2_mM&quot;        &quot;Ave_NO3_mM&quot;       
+[10] &quot;Std_NO3_mM&quot;       </code></pre>
+<pre class="r"><code>dim(df_std_filt_no2)</code></pre>
+<pre><code>[1]  8 10</code></pre>
+<pre class="r"><code>ggplot(df_std_filt_no2, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  # scale_color_manual(values = c(&quot;deepskyblue4&quot;,&quot;maroon2&quot;))+
+  ylab(&quot;Measured NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle(&quot;Filtered nitrite standards \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211104_Griess_blank_decline_issue.Rmd/unnamed-chunk-4-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(df_std_filt_no2, aes(x=Nitrite_input, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  # scale_color_manual(values = c(&quot;deepskyblue4&quot;,&quot;maroon2&quot;))+
+  ylab(&quot;Measured NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrite_spike_in (mM)&quot;) +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle(&quot;Filtered nitrite standards \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211104_Griess_blank_decline_issue.Rmd/unnamed-chunk-4-2.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(df_std_filt_no2, aes(x=Nitrite_input, y=Ave_NO2_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  # scale_color_manual(values = c(&quot;deepskyblue4&quot;,&quot;maroon2&quot;))+
+  ylab(&quot;Measured NO2- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrite_spike_in (mM)&quot;) +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle(&quot;Filtered nitrite standards \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211104_Griess_blank_decline_issue.Rmd/unnamed-chunk-4-3.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Get regression line on raw data (not averaged)
+df_no2_filt &lt;- df_p %&gt;% filter(Sample_type  == &quot;Nitrite_filtered&quot;)
+dim(df_no2_filt)</code></pre>
+<pre><code>[1] 23 13</code></pre>
+<pre class="r"><code>fit.no2_filt &lt;- lm(NO2_mM ~ Nitrite_input, df_no2_filt)
+
+# Plot fitted linear regression line
+ggplot(df_no2_filt, aes(x=Nitrite_input, y=NO2_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  scale_color_manual(values = c(&quot;maroon2&quot;,&quot;deepskyblue4&quot;))+
+  ylab(&quot;Measured NO2- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrite_spike_in (mM)&quot;) +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,family=&quot;serif&quot;, show.legend = FALSE)+
+  ggtitle(&quot;Filtered nitrite standards \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  # regression line
+  geom_abline(slope = coef(fit.no2_filt)[[2]], intercept = coef(fit.no2_filt)[[1]],
+              color = &quot;maroon2&quot;) +
+  # show equation
+  # stat_cor(aes(label = paste(..rr.label.., ..p.label.., sep = &quot;~`,`~&quot;))) +
+  annotate(&quot;text&quot;,x=1,y=2, label= paste0(&quot;y = &quot;, round(coef(fit.no2_filt)[[1]],3),&quot;+&quot;,round(coef(fit.no2_filt)[[2]],3),&quot;x&quot;), color = &quot;maroon2&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211104_Griess_blank_decline_issue.Rmd/unnamed-chunk-4-4.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>## overlay plots
+plot(df_no2_filt$Nitrite_input, df_no2_filt$NO2NO3_mM, col=&#39;orange&#39;, pch=19, xlab=NA,ylab=NA)
+points(df_no2_filt$Nitrite_input, df_no2_filt$NO2_mM, col=&#39;blue&#39;, pch=19)
+points(df_no2_filt$Nitrite_input, df_no2_filt$NO3_mM, col=&#39;green&#39;, pch=19)
+legend(0, 2, legend=c(&#39;NO2NO3&#39;, &#39;NO2&#39;, &#39;NO3&#39;), pch=c(19, 19), col=c(&#39;orange&#39;, &#39;blue&#39;,&#39;green&#39;), bty = &quot;n&quot;)
+abline(0,1, lty=&#39;dashed&#39;, col = &quot;gray60&quot;)
+title(main=&quot;Concentration prediction of filtered nitrite standards&quot;,
+   xlab=&quot;Known nitrite concentration (mM)&quot;, ylab=&quot;Predicted NO2,NO3 concentration (mM)&quot;)</code></pre>
+<p><img src="figure/211104_Griess_blank_decline_issue.Rmd/unnamed-chunk-4-5.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># wow... it&#39;s pretty weird... let&#39;s see if it is different for nitrate
+# (2) filtered standard - nitrate
+
+df_std_filt_no3 &lt;- df_NO2NO3 %&gt;% filter(Sample_type  == &quot;Nitrate_filtered&quot;)
+colnames(df_std_filt_no3)</code></pre>
+<pre><code> [1] &quot;Sample&quot;            &quot;Extraction_method&quot; &quot;Extraction_ul&quot;    
+ [4] &quot;Nitrite_input&quot;     &quot;Nitrate_input&quot;     &quot;Sample_type&quot;      
+ [7] &quot;Ave_NO2_mM&quot;        &quot;Std_NO2_mM&quot;        &quot;Ave_NO3_mM&quot;       
+[10] &quot;Std_NO3_mM&quot;       </code></pre>
+<pre class="r"><code>dim(df_std_filt_no3)</code></pre>
+<pre><code>[1]  8 10</code></pre>
+<pre class="r"><code>ggplot(df_std_filt_no3, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  # scale_color_manual(values = c(&quot;deepskyblue4&quot;,&quot;maroon2&quot;))+
+  ylab(&quot;Measured NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle(&quot;Filtered nitrate standards \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211104_Griess_blank_decline_issue.Rmd/unnamed-chunk-4-6.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Get regression line on raw data (not averaged)
+df_no3_filt &lt;- df_p %&gt;% filter(Sample_type  == &quot;Nitrate_filtered&quot;)
+dim(df_no3_filt)</code></pre>
+<pre><code>[1] 22 13</code></pre>
+<pre class="r"><code>fit.no3_filt &lt;- lm(NO3_mM ~ Nitrate_input, df_no3_filt)
+
+
+# Plot fitted linear regression line
+ggplot(df_no3_filt, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  scale_color_manual(values = c(&quot;maroon2&quot;,&quot;deepskyblue4&quot;))+
+  ylab(&quot;Measured NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,family=&quot;serif&quot;, show.legend = FALSE)+
+  ggtitle(&quot;Filtered nitrate standards \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  # regression line
+  geom_abline(slope = coef(fit.no3_filt)[[2]], intercept = coef(fit.no3_filt)[[1]],
+              color = &quot;maroon2&quot;) +
+  # show equation
+  # stat_cor(aes(label = paste(..rr.label.., ..p.label.., sep = &quot;~`,`~&quot;))) +
+  annotate(&quot;text&quot;,x=1,y=2, label= paste0(&quot;y = &quot;, round(coef(fit.no3_filt)[[1]],3),&quot;+&quot;,round(coef(fit.no3_filt)[[2]],3),&quot;x&quot;), color = &quot;maroon2&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211104_Griess_blank_decline_issue.Rmd/unnamed-chunk-4-7.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(df_std_filt_no3, aes(x=Nitrate_input, y=Ave_NO2_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  # scale_color_manual(values = c(&quot;deepskyblue4&quot;,&quot;maroon2&quot;))+
+  ylab(&quot;Measured NO2- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle(&quot;Filtered nitrate standards \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211104_Griess_blank_decline_issue.Rmd/unnamed-chunk-4-8.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>## overlay plots
+plot(df_no3_filt$Nitrate_input, df_no3_filt$NO2NO3_mM, col=&#39;orange&#39;, pch=19, xlab=NA,ylab=NA)
+points(df_no3_filt$Nitrate_input, df_no3_filt$NO2_mM, col=&#39;blue&#39;, pch=19)
+points(df_no3_filt$Nitrate_input, df_no3_filt$NO3_mM, col=&#39;green&#39;, pch=19)
+legend(0, 2, legend=c(&#39;NO2NO3&#39;, &#39;NO2&#39;, &#39;NO3&#39;), pch=c(19, 19), col=c(&#39;orange&#39;, &#39;blue&#39;,&#39;green&#39;), bty = &quot;n&quot;)
+abline(0,1, lty=&#39;dashed&#39;, col = &quot;gray60&quot;)
+title(main=&quot;Concentration prediction of filtered nitrate standards&quot;,
+   xlab=&quot;Known nitrate concentration (mM)&quot;, ylab=&quot;Predicted NO2,NO3 concentration (mM)&quot;)</code></pre>
+<p><img src="figure/211104_Griess_blank_decline_issue.Rmd/unnamed-chunk-4-9.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># (3) blank not filtered
+df_blank_no_filt &lt;- df_NO2NO3 %&gt;% filter(Sample_type  == &quot;No_filter&quot;)
+colnames(df_blank_no_filt)</code></pre>
+<pre><code> [1] &quot;Sample&quot;            &quot;Extraction_method&quot; &quot;Extraction_ul&quot;    
+ [4] &quot;Nitrite_input&quot;     &quot;Nitrate_input&quot;     &quot;Sample_type&quot;      
+ [7] &quot;Ave_NO2_mM&quot;        &quot;Std_NO2_mM&quot;        &quot;Ave_NO3_mM&quot;       
+[10] &quot;Std_NO3_mM&quot;       </code></pre>
+<pre class="r"><code>dim(df_blank_no_filt)</code></pre>
+<pre><code>[1]  8 10</code></pre>
+<pre class="r"><code>ggplot(df_blank_no_filt, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  # scale_color_manual(values = c(&quot;deepskyblue4&quot;,&quot;maroon2&quot;))+
+  ylab(&quot;Measured NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle(&quot;Blank (without soil) Spike in - not filtered \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211104_Griess_blank_decline_issue.Rmd/unnamed-chunk-4-10.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Get regression line on raw data (not averaged)
+df_no_filt &lt;- df_p %&gt;% filter(Sample_type  == &quot;No_filter&quot;)
+dim(df_no_filt)</code></pre>
+<pre><code>[1] 24 13</code></pre>
+<pre class="r"><code>fit.no_filt &lt;- lm(NO3_mM ~ Nitrate_input, df_no_filt)
+
+
+# Plot fitted linear regression line
+ggplot(df_no_filt, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  scale_color_manual(values = c(&quot;maroon2&quot;,&quot;deepskyblue4&quot;))+
+  ylab(&quot;Measured NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,family=&quot;serif&quot;, show.legend = FALSE)+
+  ggtitle(&quot;Blank (without soil) Spike in - not filtered \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  # regression line
+  geom_abline(slope = coef(fit.no_filt)[[2]], intercept = coef(fit.no_filt)[[1]],
+              color = &quot;maroon2&quot;) +
+  # show equation
+  # stat_cor(aes(label = paste(..rr.label.., ..p.label.., sep = &quot;~`,`~&quot;))) +
+  annotate(&quot;text&quot;,x=1,y=2, label= paste0(&quot;y = &quot;, round(coef(fit.no_filt)[[1]],3),&quot;+&quot;,round(coef(fit.no_filt)[[2]],3),&quot;x&quot;), color = &quot;maroon2&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211104_Griess_blank_decline_issue.Rmd/unnamed-chunk-4-11.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(df_blank_no_filt, aes(x=Nitrate_input, y=Ave_NO2_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  # scale_color_manual(values = c(&quot;deepskyblue4&quot;,&quot;maroon2&quot;))+
+  ylab(&quot;Measured NO2- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle(&quot;Blank (without soil) Spike in - not filtered \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211104_Griess_blank_decline_issue.Rmd/unnamed-chunk-4-12.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>## overlay plots
+plot(df_no_filt$Nitrate_input, df_no_filt$NO2NO3_mM, col=&#39;orange&#39;, pch=19, xlab=NA,ylab=NA, ylim = c(0, 2))
+points(df_no_filt$Nitrate_input, df_no_filt$NO2_mM, col=&#39;blue&#39;, pch=19)
+points(df_no_filt$Nitrate_input, df_no_filt$NO3_mM, col=&#39;green&#39;, pch=19)
+legend(0, 2, legend=c(&#39;NO2NO3&#39;, &#39;NO2&#39;, &#39;NO3&#39;), pch=c(19, 19), col=c(&#39;orange&#39;, &#39;blue&#39;,&#39;green&#39;), bty = &quot;n&quot;)
+abline(0,1, lty=&#39;dashed&#39;, col = &quot;gray60&quot;)
+title(main=&quot;Concentration prediction of blanks without filtering&quot;,
+   xlab=&quot;Known nitrate concentration (mM)&quot;, ylab=&quot;Predicted NO2,NO3 concentration (mM)&quot;)</code></pre>
+<p><img src="figure/211104_Griess_blank_decline_issue.Rmd/unnamed-chunk-4-13.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># (4) blank filtered
+df_blank_filt &lt;- df_NO2NO3 %&gt;% filter(Sample_type  == &quot;Filter_normal&quot;)
+colnames(df_blank_filt)</code></pre>
+<pre><code> [1] &quot;Sample&quot;            &quot;Extraction_method&quot; &quot;Extraction_ul&quot;    
+ [4] &quot;Nitrite_input&quot;     &quot;Nitrate_input&quot;     &quot;Sample_type&quot;      
+ [7] &quot;Ave_NO2_mM&quot;        &quot;Std_NO2_mM&quot;        &quot;Ave_NO3_mM&quot;       
+[10] &quot;Std_NO3_mM&quot;       </code></pre>
+<pre class="r"><code>dim(df_blank_filt)</code></pre>
+<pre><code>[1]  8 10</code></pre>
+<pre class="r"><code>ggplot(df_blank_filt, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  # scale_color_manual(values = c(&quot;deepskyblue4&quot;,&quot;maroon2&quot;))+
+  ylab(&quot;Measured NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle(&quot;Blank (without soil) Spike in - normally filtered \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211104_Griess_blank_decline_issue.Rmd/unnamed-chunk-4-14.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(df_blank_filt, aes(x=Nitrate_input, y=Ave_NO2_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  # scale_color_manual(values = c(&quot;deepskyblue4&quot;,&quot;maroon2&quot;))+
+  ylab(&quot;Measured NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle(&quot;Blank (without soil) Spike in - normally filtered \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211104_Griess_blank_decline_issue.Rmd/unnamed-chunk-4-15.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Get regression line on raw data (not averaged)
+df_filt_normal &lt;- df_p %&gt;% filter(Sample_type  == &quot;Filter_normal&quot;)
+dim(df_filt_normal)</code></pre>
+<pre><code>[1] 24 13</code></pre>
+<pre class="r"><code>fit.filt_normal &lt;- lm(NO3_mM ~ Nitrate_input, df_filt_normal)
+
+
+# Plot fitted linear regression line
+ggplot(df_filt_normal, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  scale_color_manual(values = c(&quot;maroon2&quot;,&quot;deepskyblue4&quot;))+
+  ylab(&quot;Measured NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,family=&quot;serif&quot;, show.legend = FALSE)+
+  ggtitle(&quot;Blank (without soil) Spike in - normally filtered \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  # regression line
+  geom_abline(slope = coef(fit.filt_normal)[[2]], intercept = coef(fit.filt_normal)[[1]],
+              color = &quot;maroon2&quot;) +
+  # show equation
+  # stat_cor(aes(label = paste(..rr.label.., ..p.label.., sep = &quot;~`,`~&quot;))) +
+  annotate(&quot;text&quot;,x=1,y=2, label= paste0(&quot;y = &quot;, round(coef(fit.filt_normal)[[1]],3),&quot;+&quot;,round(coef(fit.filt_normal)[[2]],3),&quot;x&quot;), color = &quot;maroon2&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211104_Griess_blank_decline_issue.Rmd/unnamed-chunk-4-16.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>## overlay plots
+plot(df_filt_normal$Nitrate_input, df_filt_normal$NO2NO3_mM, col=&#39;orange&#39;, pch=19, xlab=NA,ylab=NA, ylim = c(0, 2))
+points(df_filt_normal$Nitrate_input, df_filt_normal$NO2_mM, col=&#39;blue&#39;, pch=19)
+points(df_filt_normal$Nitrate_input, df_filt_normal$NO3_mM, col=&#39;green&#39;, pch=19)
+legend(0, 2, legend=c(&#39;NO2NO3&#39;, &#39;NO2&#39;, &#39;NO3&#39;), pch=c(19, 19), col=c(&#39;orange&#39;, &#39;blue&#39;,&#39;green&#39;), bty = &quot;n&quot;)
+abline(0,1, lty=&#39;dashed&#39;, col = &quot;gray60&quot;)
+title(main=&quot;Concentration prediction of blanks after filtering&quot;,
+   xlab=&quot;Known nitrate concentration (mM)&quot;, ylab=&quot;Predicted NO2,NO3 concentration (mM)&quot;)</code></pre>
+<p><img src="figure/211104_Griess_blank_decline_issue.Rmd/unnamed-chunk-4-17.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># (5) blank filtered spaced
+df_blank_spaced &lt;- df_NO2NO3 %&gt;% filter(Sample_type  == &quot;Filter_spaced&quot;)
+colnames(df_blank_spaced)</code></pre>
+<pre><code> [1] &quot;Sample&quot;            &quot;Extraction_method&quot; &quot;Extraction_ul&quot;    
+ [4] &quot;Nitrite_input&quot;     &quot;Nitrate_input&quot;     &quot;Sample_type&quot;      
+ [7] &quot;Ave_NO2_mM&quot;        &quot;Std_NO2_mM&quot;        &quot;Ave_NO3_mM&quot;       
+[10] &quot;Std_NO3_mM&quot;       </code></pre>
+<pre class="r"><code>dim(df_blank_spaced)</code></pre>
+<pre><code>[1]  8 10</code></pre>
+<pre class="r"><code>ggplot(df_blank_spaced, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  # scale_color_manual(values = c(&quot;deepskyblue4&quot;,&quot;maroon2&quot;))+
+  ylab(&quot;Measured NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle(&quot;Blank (without soil) Spike in - filtered spaced \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211104_Griess_blank_decline_issue.Rmd/unnamed-chunk-4-18.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(df_blank_spaced, aes(x=Nitrate_input, y=Ave_NO2_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  # scale_color_manual(values = c(&quot;deepskyblue4&quot;,&quot;maroon2&quot;))+
+  ylab(&quot;Measured NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle(&quot;Blank (without soil) Spike in - filtered spaced \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  mytheme_2d</code></pre>
+<p><img src="figure/211104_Griess_blank_decline_issue.Rmd/unnamed-chunk-4-19.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Get regression line on raw data (not averaged)
+df_filt_spaced &lt;- df_p %&gt;% filter(Sample_type  == &quot;Filter_spaced&quot;)
+dim(df_filt_spaced)</code></pre>
+<pre><code>[1] 24 13</code></pre>
+<pre class="r"><code>fit.filt_spaced &lt;- lm(NO3_mM ~ Nitrate_input, df_filt_spaced)
+
+# Plot fitted linear regression line
+ggplot(df_filt_spaced, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  scale_color_manual(values = c(&quot;maroon2&quot;,&quot;deepskyblue4&quot;))+
+  ylab(&quot;Measured NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,family=&quot;serif&quot;, show.legend = FALSE)+
+  ggtitle(&quot;Blank (without soil) Spike in - filtered spaced \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  # regression line
+  geom_abline(slope = coef(fit.filt_spaced)[[2]], intercept = coef(fit.filt_spaced)[[1]],
+              color = &quot;maroon2&quot;) +
+  # show equation
+  # stat_cor(aes(label = paste(..rr.label.., ..p.label.., sep = &quot;~`,`~&quot;))) +
+  annotate(&quot;text&quot;,x=1,y=2, label= paste0(&quot;y = &quot;, round(coef(fit.filt_spaced)[[1]],3),&quot;+&quot;,round(coef(fit.filt_spaced)[[2]],3),&quot;x&quot;), color = &quot;maroon2&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211104_Griess_blank_decline_issue.Rmd/unnamed-chunk-4-20.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>## overlay plots
+plot(df_filt_spaced$Nitrate_input, df_filt_spaced$NO2NO3_mM, col=&#39;orange&#39;, pch=19, xlab=NA,ylab=NA, ylim = c(0, 2))
+points(df_filt_spaced$Nitrate_input, df_filt_spaced$NO2_mM, col=&#39;blue&#39;, pch=19)
+points(df_filt_spaced$Nitrate_input, df_filt_spaced$NO3_mM, col=&#39;green&#39;, pch=19)
+legend(0, 2, legend=c(&#39;NO2NO3&#39;, &#39;NO2&#39;, &#39;NO3&#39;), pch=c(19, 19), col=c(&#39;orange&#39;, &#39;blue&#39;,&#39;green&#39;), bty = &quot;n&quot;)
+abline(0,1, lty=&#39;dashed&#39;, col = &quot;gray60&quot;)
+title(main=&quot;Concentration prediction of blanks after spaced filtering&quot;,
+   xlab=&quot;Known nitrate concentration (mM)&quot;, ylab=&quot;Predicted NO2,NO3 concentration (mM)&quot;)</code></pre>
+<p><img src="figure/211104_Griess_blank_decline_issue.Rmd/unnamed-chunk-4-21.png" width="1056" style="display: block; margin: auto;" /></p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.0.3 (2020-10-10)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 10 x64 (build 19042)
+
+Matrix products: default
+
+locale:
+[1] LC_COLLATE=English_United States.1252 
+[2] LC_CTYPE=English_United States.1252   
+[3] LC_MONETARY=English_United States.1252
+[4] LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.1252    
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] ggpubr_0.4.0       ggrepel_0.9.1      ape_5.5            openxlsx_4.2.3    
+ [5] devtools_2.4.0     usethis_2.0.1      gtools_3.8.2       reshape2_1.4.4    
+ [9] readxl_1.3.1       magrittr_2.0.1     forcats_0.5.1      stringr_1.4.0     
+[13] purrr_0.3.4        readr_1.4.0        tidyr_1.1.3        tibble_3.0.4      
+[17] tidyverse_1.3.1    vegan_2.5-7        lattice_0.20-41    permute_0.9-5     
+[21] RColorBrewer_1.1-2 ggplot2_3.3.5      dplyr_1.0.5        workflowr_1.6.2   
+
+loaded via a namespace (and not attached):
+ [1] colorspace_2.0-0  ggsignif_0.6.2    ellipsis_0.3.2    rio_0.5.27       
+ [5] rprojroot_2.0.2   fs_1.5.0          rstudioapi_0.13   farver_2.1.0     
+ [9] remotes_2.4.0     fansi_0.4.2       lubridate_1.7.10  xml2_1.3.2       
+[13] splines_4.0.3     cachem_1.0.4      knitr_1.33        pkgload_1.2.1    
+[17] jsonlite_1.7.2    broom_0.7.9       cluster_2.1.0     dbplyr_2.1.1     
+[21] compiler_4.0.3    httr_1.4.2        backports_1.2.1   assertthat_0.2.1 
+[25] Matrix_1.2-18     fastmap_1.1.0     cli_3.0.1         later_1.2.0      
+[29] htmltools_0.5.1.1 prettyunits_1.1.1 tools_4.0.3       gtable_0.3.0     
+[33] glue_1.4.2        Rcpp_1.0.5        carData_3.0-4     cellranger_1.1.0 
+[37] jquerylib_0.1.4   vctrs_0.3.8       nlme_3.1-149      xfun_0.22        
+[41] ps_1.6.0          testthat_3.0.2    rvest_1.0.1       lifecycle_1.0.0  
+[45] rstatix_0.7.0     MASS_7.3-53       scales_1.1.1      hms_1.1.0        
+[49] promises_1.2.0.1  parallel_4.0.3    yaml_2.2.1        curl_4.3.2       
+[53] memoise_2.0.0     sass_0.4.0        stringi_1.5.3     highr_0.9        
+[57] desc_1.3.0        pkgbuild_1.2.0    zip_2.1.1         rlang_0.4.10     
+[61] pkgconfig_2.0.3   evaluate_0.14     labeling_0.4.2    tidyselect_1.1.1 
+[65] processx_3.5.1    plyr_1.8.6        R6_2.5.0          generics_0.1.0   
+[69] DBI_1.1.1         pillar_1.6.0      haven_2.4.1       whisker_0.4      
+[73] foreign_0.8-80    withr_2.4.2       mgcv_1.8-33       abind_1.4-5      
+[77] modelr_0.1.8      crayon_1.4.1      car_3.0-11        utf8_1.1.4       
+[81] rmarkdown_2.9     grid_4.0.3        data.table_1.14.0 callr_3.7.0      
+[85] git2r_0.28.0      reprex_2.0.0      digest_0.6.27     httpuv_1.6.0     
+[89] munsell_0.5.0     bslib_0.2.5.1     sessioninfo_1.1.1</code></pre>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
