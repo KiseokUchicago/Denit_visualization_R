@@ -148,5 +148,69 @@ ggplot(df_pH_gg, aes(x=Method, y=pH, color=Solution, group=Solution)) +
   mytheme_2d
 ```
 
+## Testing pH needle (non-destructive method)
+Experimental date: 11/10/21 \
+Analysis: 11/17/21 \
+
+## 1. Import data
+```{r}
+# import file
+df_pH <- openxlsx::read.xlsx("data/pH_data(11.17.21)-Midway_etc.xlsx")
+class(df_pH)
+df_pH <- df_pH %>% rename(Site = X1)
+
+df_pH_gg <- melt(df_pH ,variable.name = "Method",value.name = "pH")
+
+# Order the method
+df_pH_gg$Method <- factor(df_pH_gg$Method, levels=c("pH_meter", "pH_needle"))
+
+# remove NA
+dim(df_pH_gg)
+
+```
+
+## 2. Plot
+```{r}
+# plot
+ggplot(df_pH_gg, aes(x=Site, y=pH, color=Method, group=Method)) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("pH \n") +
+  xlab("\n Site") +
+  # scale_y_continuous(breaks = seq(5,7,0.1), limits=c(5, 7))+
+  ggtitle("pH difference by method \n") +
+  # label
+  geom_text(aes(label = pH), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d
+
+# 2d scatter plot
+fit.pH <- lm(pH_meter ~ pH_needle, df_pH)
+
+# Plot fitted linear regression line
+ggplot(df_pH, aes(x=pH_needle, y=pH_meter)) +
+  geom_point(size=3, color="deepskyblue4") +
+  # geom_line(size=1)+
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  ylab("pH measured in lab \n") +
+  xlab("\n pH measured on site by needle ") +
+  scale_y_continuous(breaks = seq(5,8,1), limits=c(5, 8))+
+  scale_x_continuous(breaks = seq(5,8,1), limits=c(5, 8))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,family="serif", show.legend = FALSE)+
+  ggtitle("pH measurement \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  geom_abline(slope = coef(fit.pH)[[2]], intercept = coef(fit.pH)[[1]],
+              color = "maroon2") +
+  # show equation
+  # stat_cor(aes(label = paste(..rr.label.., ..p.label.., sep = "~`,`~"))) +
+  annotate("text",x=6.5,y=8, label= paste0("y = ", round(coef(fit.pH)[[1]],3),"+",round(coef(fit.pH)[[2]],3),"x"), color = "maroon2") +
+  mytheme_2d
+
+
+
+```
 
 

@@ -26,4 +26,3 @@ Welcome to Kiseok Denitrification data visualization website.
 * [211104_Griess_blank_decline_issue2 (10/25/21)](211104_Griess_blank_decline_issue.html)
 * [211028_Griess_time_series_trial2 (10/28/21)](211028_Griess_time_series_trial2.html)
 
-

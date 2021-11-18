@@ -13,7 +13,7 @@ knitr::opts_chunk$set(fig.width=11, fig.height=9,
                       error=TRUE, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE)
 ```
 
-## Slurry extraction pipet confirmation (Griess assay)
+## Time series analysis trial2 (Griess assay)
 Researcher: **Kiseok Lee** \
 Experiment Date: 10/28/21 \
 Analysis Date: 11/5/21
@@ -85,25 +85,43 @@ my_color_collection <- c(
 
 
 ## 1. Import data table from python code
+We are going to use the vcl3 treated standard curve that is fitted with pure nitrate standards
 ```{r}
 # import file
-df_p0 <- openxlsx::read.xlsx("data/211020_Griess_plate0.xlsx")
-df_p1 <- openxlsx::read.xlsx("data/211020_Griess_plate1.xlsx")
+df_p1 <- openxlsx::read.xlsx("data/211028_Griess_plate1_no3_fit.xlsx")
+df_p2 <- openxlsx::read.xlsx("data/211028_Griess_plate2_no3_fit.xlsx")
+df_p3 <- openxlsx::read.xlsx("data/211028_Griess_plate3_no3_fit.xlsx")
+df_p4 <- openxlsx::read.xlsx("data/211028_Griess_plate4_no3_fit.xlsx")
 
-head(df_p0)
-colnames(df_p0)
-dim(df_p0)
 
 head(df_p1)
 colnames(df_p1)
 dim(df_p1)
 
+head(df_p2)
+colnames(df_p2)
+dim(df_p2)
+
+head(df_p3)
+colnames(df_p3)
+dim(df_p3)
+
+head(df_p4)
+colnames(df_p4)
+dim(df_p4)
+
 # remove wells 
-# df_p1 %<>% filter(!(Well %in% c("B02","H04")))
-# dim(df_p1)
+df_p2 %<>% filter(!(Well %in% c("D01","F01","D09","F09"))) # blanks contaminated with soil
+dim(df_p2)
+df_p2 %<>% filter(!(Well %in% c("A10","A11"))) # filter contamination
+dim(df_p2)
+df_p3 %<>% filter(!(Well %in% c("D05","F05"))) # blanks contaminated with soil
+dim(df_p3)
+df_p4 %<>% filter(!(Well %in% c("D01","F01"))) # blanks contaminated with soil
+dim(df_p4)
 
 # bind two dataframe
-df_p <- rbind(df_p0, df_p1)
+df_p <- rbind(df_p1, df_p2, df_p3, df_p4)
 dim(df_p)
 
 # remove NA
@@ -111,11 +129,11 @@ dim(df_p)
 df_p <- na.omit(df_p)
 dim(df_p)
 
-df_p
+# multiply dilution factor which is 5/2
+df_p %<>% select(-NO2_OD540, -NO2NO3_OD540)
+df_p %<>% mutate(NO2_mM = NO2_mM * (5/2), NO2NO3_mM = NO2NO3_mM * (5/2), NO3_mM = NO3_mM * (5/2))
 
 # remove 4mM spike ins because it is out of standard curve range
-df_p %<>% filter(!(Nitrate_input == 4))
-dim(df_p)
 
 # Check
 # df_p1 %>% filter(Well =="B02")
@@ -139,17 +157,6 @@ ggplot(df_p, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type
   mytheme_2d
 
 # plot to see
-ggplot(df_p0, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
-  geom_point(size=2.5, shape=21) +
-  # geom_line(size=1)+
-  scale_fill_brewer(palette='Set2') +
-  ylab("NO3- (mM) \n") +
-  xlab("\n Nitrate_spike_in (mM)") +
-  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
-  ggtitle("Without averaging \n") +
-  mytheme_2d
-
-# plot to see
 ggplot(df_p1, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
   geom_point(size=2.5, shape=21) +
   # geom_line(size=1)+
@@ -160,19 +167,53 @@ ggplot(df_p1, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_typ
   ggtitle("Without averaging \n") +
   mytheme_2d
 
+# plot to see
+ggplot(df_p2, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Without averaging \n") +
+  mytheme_2d
+
 # average technical replicate
-df_NO2NO3 <- df_p %>% group_by(Sample, Extraction_method, Extraction_ul, Nitrate_input, Sample_type, Pipet) %>% summarise(Ave_NO2_mM = mean(NO2_mM), Std_NO2_mM = sd(NO2_mM), Ave_NO3_mM = mean(NO3_mM), Std_NO3_mM = sd(NO3_mM)) %>% ungroup()
+df_NO2NO3 <- df_p %>% group_by(Sample, Nitrate_input, Category, Sample_type, Sampling_method, Time_point, Plate) %>% summarise(Ave_NO2_mM = mean(NO2_mM), Std_NO2_mM = sd(NO2_mM), Ave_NO3_mM = mean(NO3_mM), Std_NO3_mM = sd(NO3_mM)) %>% ungroup()
 
 dim(df_NO2NO3)
+dim(df_p)
 
+df_NO2NO3$Sample_type
 # Factor in orders
 df_NO2NO3$Sample_type <-  factor(df_NO2NO3$Sample_type, levels = c("Soil","Blank"))
-df_NO2NO3$Pipet <-  factor(df_NO2NO3$Pipet, levels = c("300pipet","1200pipet"))
 
 # Testing negative samples
 df_neg <- df_NO2NO3 %>% filter(Sample_type == "Blank", Nitrate_input == 0)
 df_neg
 # close to zero
+
+# moisture correction factor
+soil_spike_ratio = 0.5  # soil weight(0.75g) / spike in volume (1.5ml)
+moisture_percent = 26.4
+mcf = (soil_spike_ratio*(moisture_percent/100) + 1)
+mcf
+
+# apply moisture factor only in Sample_type == "soil"
+dim(df_NO2NO3)
+df_NO2NO3_soil_mcf <- df_NO2NO3 %>% filter(Sample_type == "Soil") %>% mutate(Ave_NO3_mM = Ave_NO3_mM * mcf, Ave_NO2_mM = Ave_NO2_mM * mcf, Std_NO2_mM = Std_NO2_mM * mcf, Std_NO3_mM = Std_NO3_mM * mcf)
+dim(df_NO2NO3_soil_mcf) #44
+df_NO2NO3_blank_mcf <- df_NO2NO3 %>% filter(Sample_type == "Blank") 
+dim(df_NO2NO3_blank_mcf) #44
+df_NO2NO3_mcf <- rbind(df_NO2NO3_soil_mcf, df_NO2NO3_blank_mcf)
+dim(df_NO2NO3_mcf)
+
+# Get the metadata for time point and left join
+Time_table <- openxlsx::read.xlsx("data/211028_time_table.xlsx")
+Time_table %<>% select(-Date) 
+dim(df_NO2NO3_mcf)
+df_NO2NO3_mcf <- df_NO2NO3_mcf %>% left_join(Time_table, by=("Time_point"="Time_point"))
+dim(df_NO2NO3_mcf)
 
 # plot to see
 ggplot(df_NO2NO3, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
@@ -194,198 +235,173 @@ head(df_NO2NO3)
 
 ```
 
-## 3. Plot per method
 
-## 3.1. Scatter plots for blanks and spike ins
+## 3. Sanity check: moisture correction & blank correction factor & dilution correction
 
-```{r}
-# try out 100ul 300pipet case
-df_100ul_300pipet <- df_NO2NO3 %>% filter(Extraction_ul  == 100, Pipet == "300pipet")
-colnames(df_100ul_300pipet)
-dim(df_100ul_300pipet)
-
-ggplot(df_100ul_300pipet, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
-  geom_point(size=2.5, shape=21) +
-  # geom_line(size=1)+
-  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
-  # scale_color_brewer(palette='Set2') +
-  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
-  ylab("Measured NO3- (mM) \n") +
-  xlab("\n Nitrate_spike_in (mM)") +
-  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
-  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
-  ggtitle("0.5:1:1.5 (soil:water:KCl) method-100ul extraction-300ulPipet \n") +
-  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
-  mytheme_2d
-
-# look at 100ul 1200 pipet case
-df_100ul_1200pipet <- df_NO2NO3 %>% filter(Extraction_ul  == 100, Pipet == "1200pipet")
-colnames(df_100ul_1200pipet)
-dim(df_100ul_1200pipet)
-
-ggplot(df_100ul_1200pipet, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
-  geom_point(size=2.5, shape=21) +
-  # geom_line(size=1)+
-  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
-  # scale_color_brewer(palette='Set2') +
-  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
-  ylab("Measured NO3- (mM) \n") +
-  xlab("\n Nitrate_spike_in (mM)") +
-  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
-  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
-  ggtitle("0.5:1:1.5 (soil:water:KCl) method-100ul extraction-1200ulPipet \n") +
-  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
-  mytheme_2d
-
-# look at 100ul 1200 pipet case
-df_100ul_1200pipet <- df_NO2NO3 %>% filter(Extraction_ul  == 100, Pipet == "1200pipet")
-colnames(df_100ul_1200pipet)
-dim(df_100ul_1200pipet)
-
-ggplot(df_100ul_1200pipet, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
-  geom_point(size=2.5, shape=21) +
-  # geom_line(size=1)+
-  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
-  # scale_color_brewer(palette='Set2') +
-  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
-  ylab("Measured NO3- (mM) \n") +
-  xlab("\n Nitrate_spike_in (mM)") +
-  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
-  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
-  ggtitle("0.5:1:1.5 (soil:water:KCl) method-100ul extraction-1200ulPipet \n") +
-  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
-  mytheme_2d
-
-# look at 100ul 1200 pipet case
-df_100ul_1200pipet <- df_NO2NO3 %>% filter(Extraction_ul  == 100, Pipet == "1200pipet")
-colnames(df_100ul_1200pipet)
-dim(df_100ul_1200pipet)
-
-ggplot(df_100ul_1200pipet, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
-  geom_point(size=2.5, shape=21) +
-  # geom_line(size=1)+
-  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
-  # scale_color_brewer(palette='Set2') +
-  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
-  ylab("Measured NO3- (mM) \n") +
-  xlab("\n Nitrate_spike_in (mM)") +
-  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
-  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
-  ggtitle("0.5:1:1.5 (soil:water:KCl) method-100ul extraction-1200ulPipet \n") +
-  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
-  mytheme_2d
-
-# look at 50ul 300 pipet case
-df_50ul_300pipet <- df_NO2NO3 %>% filter(Extraction_ul  == 50, Pipet == "300pipet")
-colnames(df_50ul_300pipet)
-dim(df_50ul_300pipet)
-
-ggplot(df_50ul_300pipet, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
-  geom_point(size=2.5, shape=21) +
-  # geom_line(size=1)+
-  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
-  # scale_color_brewer(palette='Set2') +
-  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
-  ylab("Measured NO3- (mM) \n") +
-  xlab("\n Nitrate_spike_in (mM)") +
-  scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
-  scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
-  ggtitle("0.5:1:1.5 (soil:water:KCl) method-50ul extraction-300ulPipet \n") +
-  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
-  mytheme_2d
-
-# get extraction ratio
-# innate nitrate
-add_innate <- df_NO2NO3 %>% filter(Sample_type== "Soil", Nitrate_input == 0) %>% rename(Innate_NO3_mM = Ave_NO3_mM) %>% select(Extraction_ul, Pipet, Innate_NO3_mM)
-
-df_NO2NO3_innate <- df_NO2NO3 %>% filter(Sample_type== "Soil", Nitrate_input != 0) %>% arrange(Sample) %>%
-  left_join(add_innate, by=c("Extraction_ul"="Extraction_ul", "Pipet"="Pipet")) %>% 
-  mutate(Retrieved_NO3_mM = Ave_NO3_mM - Innate_NO3_mM)
-
-# Retrieved ratio of spike ins
-df_NO2NO3_innate$Ratio_retrieved <- df_NO2NO3_innate$Retrieved_NO3_mM / df_NO2NO3_innate$Nitrate_input 
-df_NO2NO3_innate$Std_Ratio_retrieved <- df_NO2NO3_innate$Std_NO3_mM / df_NO2NO3_innate$Nitrate_input 
-
-```
-
-## 3.2. Pipet effect
-300ul multichannel vs 1200ul Rainin 1.2ml tip 
-```{r}
-# filter
-
-df_100 <- df_NO2NO3_innate %>% filter(Extraction_ul == 100)
-df_100$Nitrate_input <- factor(df_100$Nitrate_input)
-
-ggplot(df_100, aes(x=Nitrate_input, y=Ratio_retrieved, fill=Pipet, group=Pipet)) +
-  geom_bar(stat="identity",position="dodge")+
-  geom_errorbar(aes(ymin=Ratio_retrieved - Std_Ratio_retrieved, ymax=Ratio_retrieved + Std_Ratio_retrieved), width=.05, position = position_dodge(0.8))+
-  # geom_line(size=0.2, color="brown")+
-  scale_fill_brewer(palette='Set2') +
-  ylab("Ratio of retrieved nitrate concentraion \n") +
-  xlab("\n Nitrate_spike_in (mM)") +
-  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
-  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
-  ggtitle("Effect of different pipet (100ul extraction) \n") +
-  geom_text(aes(label = round(Ratio_retrieved,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE, position = position_dodge(0.8))+
-  mytheme_2d
-
-```
-
-## 3.3. Sampled volume (Vs) effect
-50ul vs 100ul sampling (same 300ul multichannel pipet) 
-```{r}
-# filter
-df_volume <- df_NO2NO3_innate %>% filter(Pipet == "300pipet")
-df_volume$Nitrate_input <- factor(df_volume$Nitrate_input)
-df_volume$Extraction_ul <- factor(df_volume$Extraction_ul)
-
-
-ggplot(df_volume, aes(x=Nitrate_input, y=Ratio_retrieved, fill=Extraction_ul, group=Extraction_ul)) +
-  geom_bar(stat="identity",position="dodge")+
-  geom_errorbar(aes(ymin=Ratio_retrieved - Std_Ratio_retrieved, ymax=Ratio_retrieved + Std_Ratio_retrieved), width=.05, position = position_dodge(0.8))+
-  # geom_line(size=0.2, color="brown")+
-  # scale_fill_brewer(palette='Set4') +
-  ylab("Ratio of retrieved nitrate concentraion \n") +
-  xlab("\n Nitrate_spike_in (mM)") +
-  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
-  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
-  ggtitle("Effect of sampling volume (same 300ul multichannel pipet) \n") +
-  geom_text(aes(label = round(Ratio_retrieved,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE, position = position_dodge(0.8))+
-  mytheme_2d
-
-```
-
-## 3.4. Moisture correction factor 
+## 3.1. First check the blanks
 
 ```{r}
 # without any correction
-df_100ul_300pipet_innate <- df_NO2NO3_innate %>% filter(Extraction_ul == 100, Pipet == "300pipet")
-dim(df_100ul_300pipet_innate)
-
-ggplot(df_100ul_300pipet_innate, aes(x=Nitrate_input, y=Ratio_retrieved)) +  ## I put fill=value which was wrong
-  geom_bar(stat="identity",position="dodge", fill = "brown")+
-  geom_line(size=0.2, color="brown")+
-  ylab("Ratio of retrieved nitrate concentraion \n") +
+# all blanks
+df_blank <- df_NO2NO3 %>% filter(Plate == "P1", Sample_type == "Blank")
+dim(df_blank)
+ggplot(df_blank, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
   xlab("\n Nitrate_spike_in (mM)") +
-  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
   # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
-  ggtitle("0.5:1:1.5 (soil:water:KCl) method-100ul extraction-300ulPipet \n") +
-  geom_text(aes(label = round(Ratio_retrieved,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  ggtitle("Blank test \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
   mytheme_2d
 
+# T0 sample
+df_blank <- df_NO2NO3 %>% filter(Plate == "P1", Sample_type == "Blank", Category == "Aerobic")
+ggplot(df_blank, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle("Blank test \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+# only method test
+df_blank <- df_NO2NO3 %>% filter(Plate == "P1", Sample_type == "Blank", Category == "Method_test")
+
+ggplot(df_blank, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Sampling_method, group=Sampling_method)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  scale_y_continuous(breaks = seq(0,5.5,1), limits=c(0, 5.5))+
+  scale_x_continuous(breaks = seq(0,5.5,1), limits=c(0, 5.5))+
+  ggtitle("Blank test \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+```
+
+## 3.2. Check the soil
+
+```{r}
+# without any correction
+# all soils
+df_soil <- df_NO2NO3 %>% filter(Plate == "P1", Sample_type == "Soil")
+dim(df_soil)
+ggplot(df_soil, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  scale_y_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  scale_x_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  ggtitle("Soil test \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+# T0 sample
+df_soil <- df_NO2NO3 %>% filter(Plate == "P1", Sample_type == "Soil", Category == "Aerobic")
+ggplot(df_soil, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  scale_y_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  scale_x_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  ggtitle("Soil test (t=0) \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+# only method test
+df_soil <- df_NO2NO3 %>% filter(Plate == "P1", Sample_type == "Soil", Category == "Method_test")
+
+ggplot(df_soil, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Sampling_method, group=Sampling_method)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  scale_y_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  scale_x_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  ggtitle("Soil test \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+```
+
+## 3.3. Moisture correction factor 
+
+```{r}
 # moisture correction factor
-soil_g = 0.5
-moisture_percent = 2.14
-mcf = (soil_g*(moisture_percent/100) + 1)
+soil_spike_ratio = 0.5  # soil weight(0.75g) / spike in volume (1.5ml)
+moisture_percent = 26.4
+mcf = (soil_spike_ratio*(moisture_percent/100) + 1)
+mcf
 
 df_NO2NO3_mcf <- df_NO2NO3 %>% mutate(Ave_NO3_mM = Ave_NO3_mM * mcf, Ave_NO2_mM = Ave_NO2_mM * mcf, Std_NO2_mM = Std_NO2_mM * mcf, Std_NO3_mM = Std_NO3_mM * mcf)
 
+# T0 sample
+df_soil <- df_NO2NO3_mcf %>% filter(Plate == "P1", Sample_type == "Soil", Category == "Aerobic")
+ggplot(df_soil, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  scale_y_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  scale_x_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  ggtitle("Soil test (t=0) (after moisture correction) \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+# only method test
+df_soil <- df_NO2NO3_mcf %>% filter(Plate == "P1", Sample_type == "Soil", Category == "Method_test")
+
+ggplot(df_soil, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Sampling_method, group=Sampling_method)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  scale_y_continuous(breaks = seq(0,6,1), limits=c(0, 6))+
+  scale_x_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  ggtitle("Soil test (after moisture correction) \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
 # (correction) get extraction ratio
 # innate nitrate
-add_innate_mcf <- df_NO2NO3_mcf %>% filter(Sample_type== "Soil", Nitrate_input == 0) %>% rename(Innate_NO3_mM = Ave_NO3_mM) %>% select(Extraction_ul, Pipet, Innate_NO3_mM)
+add_innate_mcf <- df_NO2NO3_mcf %>% filter(Sample_type== "Soil", Nitrate_input == 0) %>% rename(Innate_NO3_mM = Ave_NO3_mM) %>% select(Category, Sample_type, Sampling_method, Time_point, Innate_NO3_mM)
+
+dim(df_NO2NO3_mcf)
 
 df_NO2NO3_innate_mcf <- df_NO2NO3_mcf %>% filter(Sample_type== "Soil", Nitrate_input != 0) %>% arrange(Sample) %>%
-  left_join(add_innate_mcf, by=c("Extraction_ul"="Extraction_ul", "Pipet"="Pipet")) %>% 
+  left_join(add_innate_mcf, by=c("Category"="Category", "Sample_type"="Sample_type", "Sampling_method"="Sampling_method", "Time_point"="Time_point")) %>% 
   mutate(Retrieved_NO3_mM_mcf = Ave_NO3_mM - Innate_NO3_mM)
 
 # Retrieved ratio of spike ins
@@ -395,143 +411,928 @@ df_NO2NO3_innate_mcf$Std_Ratio_retrieved_mcf <- df_NO2NO3_innate_mcf$Std_NO3_mM 
 df_NO2NO3_innate_mcf
 
 # plot
-df_100_300_innate_mcf <- df_NO2NO3_innate_mcf %>% filter(Extraction_ul == 100, Pipet == "300pipet")
-dim(df_100_300_innate_mcf)
+df_soil_aerobic <- df_NO2NO3_innate_mcf %>% filter(Plate == "P1", Sample_type == "Soil", Category == "Aerobic")
 
-ggplot(df_100_300_innate_mcf, aes(x=Nitrate_input, y=Ratio_retrieved_mcf)) +  ## I put fill=value which was wrong
+df_soil_method <- df_NO2NO3_innate_mcf %>% filter(Plate == "P1", Sample_type == "Soil", Category == "Method_test")
+dim(df_soil_aerobic)
+dim(df_soil_method)
+
+# Plot for T0 soil sample
+df_soil_aerobic$Nitrate_input <- factor(df_soil_aerobic$Nitrate_input)
+
+ggplot(df_soil_aerobic, aes(x=Nitrate_input, y=Ratio_retrieved_mcf)) +  ## I put fill=value which was wrong
+  geom_errorbar(aes(ymin=Ratio_retrieved_mcf - Std_Ratio_retrieved_mcf, ymax=Ratio_retrieved_mcf + Std_Ratio_retrieved_mcf), width=.05, position = position_dodge(0.8))+
   geom_bar(stat="identity",position="dodge", fill = "brown")+
   geom_line(size=0.2, color="brown")+
   ylab("Ratio of retrieved nitrate concentraion \n") +
   xlab("\n Nitrate_spike_in (mM)") +
-  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
+  scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
   # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
-  ggtitle("(Moisture correction) 0.5:1:1.5 (soil:water:KCl) method-100ul extraction-300ulPipet \n") +
+  ggtitle("(After moisture correction) Soil extraction ratio at T0 \n") +
   geom_text(aes(label = round(Ratio_retrieved_mcf,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
   mytheme_2d
-```
 
+# Plot for filter-freeze vs freeze-filter soil sample
+df_soil_method$Nitrate_input <- factor(df_soil_method$Nitrate_input)
 
-3.5. Blank - nitrate spike correlation correction
-
-```{r}
-# fitting to blank of 100ul extraction
-df_100ul_300pipet
-
-# multiply mcf first to raw data.
-colnames(df_p)
-df_p_mcf <- df_p %>% mutate(NO3_mM = NO3_mM * mcf, NO2_mM = NO2_mM * mcf)
-
-df_b100 <- df_p_mcf %>% filter(Extraction_ul ==100, Pipet == "300pipet", Sample_type == "Blank")
-dim(df_b100)
-
-fit.b100 <- lm(NO3_mM ~ Nitrate_input, df_b100)
-
-# Plot fitted linear regression line
-ggplot(df_b100, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
-  geom_point(size=2.5, shape=21) +
-  # geom_line(size=1)+
-  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
-  # scale_color_brewer(palette='Set2') +
-  scale_color_manual(values = c("maroon2","deepskyblue4"))+
-  ylab("Measured NO3- (mM) \n") +
-  xlab("\n Nitrate_spike_in (mM)") +
-  scale_y_continuous(breaks = seq(0,2.5,0.25), limits=c(0, 2.5))+
-  scale_x_continuous(breaks = seq(0,2.1,0.1), limits=c(0, 2.1))+
-  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,family="serif", show.legend = FALSE)+
-  ggtitle("Blank spike in \n") +
-  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
-  # regression line
-  geom_abline(slope = coef(fit.b100)[[2]], intercept = coef(fit.b100)[[1]],
-              color = "maroon2") +
-  # show equation
-  # stat_cor(aes(label = paste(..rr.label.., ..p.label.., sep = "~`,`~"))) +
-  annotate("text",x=1,y=2, label= paste0("y = ", round(coef(fit.b100)[[1]],3),"+",round(coef(fit.b100)[[2]],3),"x"), color = "maroon2") +
-  mytheme_2d
-
-# nitrite
-# Plot fitted linear regression line
-ggplot(df_b100, aes(x=Nitrate_input, y=NO2_mM, color=Sample_type, group=Sample_type)) +
-  geom_point(size=2.5, shape=21) +
-  # geom_line(size=1)+
-  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
-  # scale_color_brewer(palette='Set2') +
-  scale_color_manual(values = c("maroon2","deepskyblue4"))+
-  ylab("Measured NO3- (mM) \n") +
-  xlab("\n Nitrate_spike_in (mM)") +
-  scale_y_continuous(breaks = seq(0,2.5,0.25), limits=c(0, 2.5))+
-  scale_x_continuous(breaks = seq(0,2.1,0.1), limits=c(0, 2.1))+
-  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,family="serif", show.legend = FALSE)+
-  ggtitle("Blank spike in \n") +
-  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
-  # regression line
-  # geom_abline(slope = coef(fit.b100)[[2]], intercept = coef(fit.b100)[[1]],
-              # color = "maroon2") +
-  # show equation
-  # stat_cor(aes(label = paste(..rr.label.., ..p.label.., sep = "~`,`~"))) +
-  # annotate("text",x=1,y=2, label= paste0("y = ", round(coef(fit.b100)[[1]],3),"+",round(coef(fit.b100)[[2]],3),"x"), color = "maroon2") +
-  mytheme_2d
-
-
-
-# correction factor... is it reasonable to include correction factor with blanks?
-# use the regression equation for correction
-# starting from df_NO2NO3_mcf (moisture corrected)
-# select 100ul sampling w/ 300 pipet
-df_100_300_mcf <- df_NO2NO3_mcf %>% filter(Extraction_ul == 100, Pipet == "300pipet")
-# multiplying blank correction factor
-df_100_300_mcf_bcf <- df_100_300_mcf %>% mutate(Ave_NO3_mM = (Ave_NO3_mM - coef(fit.b100)[[1]]) / coef(fit.b100)[[2]], Std_NO3_mM = Std_NO3_mM / coef(fit.b100)[[2]])
-# if negative make it 0
-df_100_300_mcf_bcf$Ave_NO3_mM <- ifelse(df_100_300_mcf_bcf$Ave_NO3_mM < 0, 0, df_100_300_mcf_bcf$Ave_NO3_mM)
-# innate nitrate
-add_innate_mcf_bcf <- df_100_300_mcf_bcf %>% filter(Sample_type== "Soil", Nitrate_input == 0) %>% rename(Innate_NO3_mM = Ave_NO3_mM) %>% select(Extraction_ul, Pipet, Innate_NO3_mM)
-
-df_100_300_innate_mcf_bcf <- df_100_300_mcf_bcf %>% filter(Sample_type== "Soil", Nitrate_input != 0) %>% arrange(Sample) %>%
-  left_join(add_innate_mcf_bcf, by=c("Extraction_ul"="Extraction_ul", "Pipet"="Pipet")) %>% 
-  mutate(Retrieved_NO3_mM_mcf_bcf = Ave_NO3_mM - Innate_NO3_mM)
-
-# Retrieved ratio of spike ins
-df_100_300_innate_mcf_bcf$Ratio_retrieved_mcf_bcf <- df_100_300_innate_mcf_bcf$Retrieved_NO3_mM_mcf_bcf / df_100_300_innate_mcf_bcf$Nitrate_input 
-df_100_300_innate_mcf_bcf$Std_Ratio_retrieved_mcf_bcf <- df_100_300_innate_mcf_bcf$Std_NO3_mM / df_100_300_innate_mcf_bcf$Nitrate_input 
-
-df_100_300_innate_mcf_bcf
-
-# plot
-ggplot(df_100_300_innate_mcf_bcf, aes(x=Nitrate_input, y=Ratio_retrieved_mcf_bcf)) +  ## I put fill=value which was wrong
-  geom_bar(stat="identity",position="dodge", fill = "brown")+
-  geom_line(size=0.2, color="brown")+
-  ylab("Ratio of retrieved nitrate concentraion \n") +
-  xlab("\n Nitrate_spike_in (mM)") +
-  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
-  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
-  ggtitle("(After blank correction) 0.5:1:1.5 (soil:water:KCl) method-100ul extraction-300ulPipet \n") +
-  geom_text(aes(label = round(Ratio_retrieved_mcf_bcf,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
-  mytheme_2d
-
-
-# plot all corrected ratios in one plate
-df_none <- df_100ul_300pipet_innate %>% mutate(Correction = "None") %>% select(Nitrate_input, Ratio_retrieved, Std_Ratio_retrieved, Correction)
-df_mcf <- df_100_300_innate_mcf %>% mutate(Correction = "Moisture") %>% select(Nitrate_input, Ratio_retrieved_mcf, Std_Ratio_retrieved_mcf, Correction) %>% rename(Ratio_retrieved= Ratio_retrieved_mcf, Std_Ratio_retrieved=Std_Ratio_retrieved_mcf)
-df_mcf_bcf <- df_100_300_innate_mcf_bcf %>% mutate(Correction = "Moisture + Blank") %>% select(Nitrate_input, Ratio_retrieved_mcf_bcf, Std_Ratio_retrieved_mcf_bcf, Correction) %>% rename(Ratio_retrieved=Ratio_retrieved_mcf_bcf, Std_Ratio_retrieved=Std_Ratio_retrieved_mcf_bcf)
-
-df_ratio_correction <- rbind(df_none, df_mcf, df_mcf_bcf)
-
-# factorize
-df_ratio_correction$Nitrate_input <- factor(df_ratio_correction$Nitrate_input)
-df_ratio_correction$Correction <- factor(df_ratio_correction$Correction, levels = c("None","Moisture","Moisture + Blank" ))
-
-ggplot(df_ratio_correction, aes(x=Nitrate_input, y=Ratio_retrieved, fill=Correction, group=Correction)) +
+ggplot(df_soil_method, aes(x=Nitrate_input, y=Ratio_retrieved_mcf, fill=Sampling_method, group=Sampling_method)) +
   geom_bar(stat="identity",position="dodge")+
-  geom_errorbar(aes(ymin=Ratio_retrieved - Std_Ratio_retrieved, ymax=Ratio_retrieved + Std_Ratio_retrieved), width=.05, position = position_dodge(0.8))+
+  geom_errorbar(aes(ymin=Ratio_retrieved_mcf - Std_Ratio_retrieved_mcf, ymax=Ratio_retrieved_mcf + Std_Ratio_retrieved_mcf), width=.05, position = position_dodge(0.8))+
   # geom_line(size=0.2, color="brown")+
   scale_fill_brewer(palette='Set2') +
   ylab("Ratio of retrieved nitrate concentraion \n") +
   xlab("\n Nitrate_spike_in (mM)") +
-  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
+  scale_y_continuous(breaks = seq(0,1.2,0.1), limits=c(0, 1.2))+
   # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
-  ggtitle("Effect of concentration correction (all 100ul extraction w/ 300pipet) \n") +
-  geom_text(aes(label = round(Ratio_retrieved,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE, position = position_dodge(0.8))+
+  ggtitle("(After moisture correction) Comparing freeze-filter vs filter-freeze \n") +
+  geom_text(aes(label = round(Ratio_retrieved_mcf,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE, position = position_dodge(0.8))+
   mytheme_2d
 
 ```
 
+
+3.4. Blank - nitrate spike correlation correction
+
+```{r}
+colnames(df_p)
+
+df_mb_aerobic <- df_p %>% filter(Plate == "P1", Sample_type == "Blank", Category == "Aerobic")
+plot(df_mb_aerobic$Nitrate_input, df_mb_aerobic$NO3_mM)
+
+df_mb_freeze <- df_p %>% filter(Plate == "P1", Sample_type == "Blank", Category == "Method_test", Sampling_method=="freeze-filter")
+plot(df_mb_freeze$Nitrate_input, df_mb_freeze$NO3_mM)
+
+df_mb_filter <- df_p %>% filter(Plate == "P1", Sample_type == "Blank", Category == "Method_test", Sampling_method=="filter-freeze")
+plot(df_mb_filter$Nitrate_input, df_mb_filter$NO3_mM)
+
+fit.mb_aerobic <- lm(NO3_mM ~ Nitrate_input, df_mb_aerobic)
+fit.mb_freeze <- lm(NO3_mM ~ Nitrate_input, df_mb_freeze)
+fit.mb_filter <- lm(NO3_mM ~ Nitrate_input, df_mb_filter)
+
+# Plot fitted linear regression line - aerobic
+ggplot(df_mb_aerobic, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,2.5,0.25), limits=c(0, 2.5))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.1), limits=c(0, 2.1))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,family="serif", show.legend = FALSE)+
+  ggtitle("Blank spike in at T0 \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  geom_abline(slope = coef(fit.mb_aerobic)[[2]], intercept = coef(fit.mb_aerobic)[[1]],
+              color = "maroon2") +
+  # show equation
+  # stat_cor(aes(label = paste(..rr.label.., ..p.label.., sep = "~`,`~"))) +
+  annotate("text",x=2.5,y=5, label= paste0("y = ", round(coef(fit.mb_aerobic)[[1]],3),"+",round(coef(fit.mb_aerobic)[[2]],3),"x"), color = "maroon2") +
+  mytheme_2d
+
+# Plot fitted linear regression line - freeze-filter samples
+ggplot(df_mb_freeze, aes(x=Nitrate_input, y=NO3_mM, color=Sampling_method, group=Sampling_method)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,2.5,0.25), limits=c(0, 2.5))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.1), limits=c(0, 2.1))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,family="serif", show.legend = FALSE)+
+  ggtitle("Blank spike in with freeze-filter method \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  geom_abline(slope = coef(fit.mb_freeze)[[2]], intercept = coef(fit.mb_freeze)[[1]],
+              color = "maroon2") +
+  # show equation
+  # stat_cor(aes(label = paste(..rr.label.., ..p.label.., sep = "~`,`~"))) +
+  annotate("text",x=2.5,y=5, label= paste0("y = ", round(coef(fit.mb_freeze)[[1]],3),"+",round(coef(fit.mb_freeze)[[2]],3),"x"), color = "maroon2") +
+  mytheme_2d
+
+# Plot fitted linear regression line - filter-freeze method
+ggplot(df_mb_filter, aes(x=Nitrate_input, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,2.5,0.25), limits=c(0, 2.5))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.1), limits=c(0, 2.1))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,family="serif", show.legend = FALSE)+
+  ggtitle("Blank spike in with filter-freeze method \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  geom_abline(slope = coef(fit.mb_filter)[[2]], intercept = coef(fit.mb_filter)[[1]],
+              color = "maroon2") +
+  # show equation
+  # stat_cor(aes(label = paste(..rr.label.., ..p.label.., sep = "~`,`~"))) +
+  annotate("text",x=2.5,y=5, label= paste0("y = ", round(coef(fit.mb_filter)[[1]],3),"+",round(coef(fit.mb_filter)[[2]],3),"x"), color = "maroon2") +
+  mytheme_2d
+
+# correction factor... is it reasonable to include correction factor with blanks?
+# use the regression equation for correction
+# starting from df_NO2NO3_mcf (moisture corrected)
+
+df_anaerobic_mcf <- df_NO2NO3_mcf %>% filter(Plate == "P1", Sample_type == "Soil", Category == "Aerobic")
+
+df_freeze_mcf <- df_NO2NO3_mcf %>% filter(Plate == "P1", Sample_type == "Soil", Category == "Method_test", Sampling_method == "freeze-filter")
+
+df_filter_mcf <- df_NO2NO3_mcf %>% filter(Plate == "P1", Sample_type == "Soil", Category == "Method_test", Sampling_method == "filter-freeze")
+
+# fit.mb_aerobic <- lm(NO3_mM ~ Nitrate_input, df_mb_aerobic)
+# fit.mb_freeze <- lm(NO3_mM ~ Nitrate_input, df_mb_freeze)
+# fit.mb_filter <- lm(NO3_mM ~ Nitrate_input, df_mb_filter)
+
+# First T0 sample
+# multiplying blank correction factor
+df_anaerobic_mcf_bcf <- df_anaerobic_mcf %>% mutate(Ave_NO3_mM = (Ave_NO3_mM - coef(fit.mb_aerobic)[[1]]) / coef(fit.mb_aerobic)[[2]], Std_NO3_mM = Std_NO3_mM / coef(fit.mb_aerobic)[[2]])
+# if negative make it 0
+df_anaerobic_mcf_bcf$Ave_NO3_mM <- ifelse(df_anaerobic_mcf_bcf$Ave_NO3_mM < 0, 0, df_anaerobic_mcf_bcf$Ave_NO3_mM)
+# innate nitrate
+add_innate_mcf_bcf <- df_anaerobic_mcf_bcf %>% filter(Sample_type== "Soil", Nitrate_input == 0) %>% rename(Innate_NO3_mM = Ave_NO3_mM) %>% select(Category, Sample_type, Sampling_method, Time_point, Innate_NO3_mM)
+
+df_anaerobic_mcf_bcf_innate <- df_anaerobic_mcf_bcf %>% filter(Sample_type== "Soil", Nitrate_input != 0) %>% arrange(Sample) %>%
+  left_join(add_innate_mcf_bcf, by=c("Category"="Category", "Sample_type"="Sample_type", "Sampling_method"="Sampling_method", "Time_point"="Time_point")) %>% 
+  mutate(Retrieved_NO3_mM_mcf_bcf = Ave_NO3_mM - Innate_NO3_mM)
+
+# Retrieved ratio of spike ins
+df_anaerobic_mcf_bcf_innate$Ratio_retrieved_mcf_bcf <- df_anaerobic_mcf_bcf_innate$Retrieved_NO3_mM_mcf_bcf / df_anaerobic_mcf_bcf_innate$Nitrate_input 
+df_anaerobic_mcf_bcf_innate$Std_Ratio_retrieved_mcf_bcf <- df_anaerobic_mcf_bcf_innate$Std_NO3_mM / df_anaerobic_mcf_bcf_innate$Nitrate_input 
+
+df_anaerobic_mcf_bcf_innate
+
+# plot
+df_anaerobic_mcf_bcf_innate$Nitrate_input <- factor(df_anaerobic_mcf_bcf_innate$Nitrate_input)
+
+ggplot(df_anaerobic_mcf_bcf_innate, aes(x=Nitrate_input, y=Ratio_retrieved_mcf_bcf)) +  ## I put fill=value which was wrong
+  geom_bar(stat="identity",position="dodge", fill = "brown")+
+  geom_line(size=0.2, color="brown")+
+  ylab("Ratio of retrieved nitrate concentraion \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle("(Moisture + blank correction) Soil extraction ratio at T0 \n") +
+  geom_text(aes(label = round(Ratio_retrieved_mcf_bcf,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+# Second freeze-filter vs filter-freeze
+df_freeze_mcf
+
+# function for calculating soil extraction ratio
+extraction_ratio <- function(df_anaerobic_mcf_bcf){
+  # innate nitrate
+  add_innate_mcf_bcf <- df_anaerobic_mcf_bcf %>% filter(Sample_type== "Soil", Nitrate_input == 0) %>% rename(Innate_NO3_mM = Ave_NO3_mM) %>% select(Category, Sample_type, Sampling_method, Time_point, Innate_NO3_mM)
+  
+  df_anaerobic_mcf_bcf_innate <- df_anaerobic_mcf_bcf %>% filter(Sample_type== "Soil", Nitrate_input != 0) %>% arrange(Sample) %>%
+    left_join(add_innate_mcf_bcf, by=c("Category"="Category", "Sample_type"="Sample_type", "Sampling_method"="Sampling_method", "Time_point"="Time_point")) %>% 
+    mutate(Retrieved_NO3_mM_mcf_bcf = Ave_NO3_mM - Innate_NO3_mM)
+  
+  # Retrieved ratio of spike ins
+  df_anaerobic_mcf_bcf_innate$Ratio_retrieved_mcf_bcf <- df_anaerobic_mcf_bcf_innate$Retrieved_NO3_mM_mcf_bcf / df_anaerobic_mcf_bcf_innate$Nitrate_input 
+  df_anaerobic_mcf_bcf_innate$Std_Ratio_retrieved_mcf_bcf <- df_anaerobic_mcf_bcf_innate$Std_NO3_mM / df_anaerobic_mcf_bcf_innate$Nitrate_input 
+  return(df_anaerobic_mcf_bcf_innate)
+}
+
+# function for blank correction
+blank_correction <- function(df_p, df_NO2NO3_mcf, cat="Aerobic", met="freeze-filter"){
+  # get Category
+  df_mb_aerobic <- df_p %>% filter(Plate == "P1", Sample_type == "Blank", Category == cat, Sampling_method==met)
+  # linear regression
+  fit.mb_aerobic <- lm(NO3_mM ~ Nitrate_input, df_mb_aerobic)
+  # moisture corrected
+  df_anaerobic_mcf <- df_NO2NO3_mcf %>% filter(Plate == "P1", Sample_type == "Soil", Category == cat, Sampling_method==met)
+
+  # multiplying blank correction factor
+  df_anaerobic_mcf_bcf <- df_anaerobic_mcf %>% mutate(Ave_NO3_mM = (Ave_NO3_mM - coef(fit.mb_aerobic)[[1]]) / coef(fit.mb_aerobic)[[2]], Std_NO3_mM = Std_NO3_mM / coef(fit.mb_aerobic)[[2]])
+  # if negative make it 0
+  df_anaerobic_mcf_bcf$Ave_NO3_mM <- ifelse(df_anaerobic_mcf_bcf$Ave_NO3_mM < 0, 0, df_anaerobic_mcf_bcf$Ave_NO3_mM)
+  return(df_anaerobic_mcf_bcf)
+}
+
+blank_correction(df_p, df_NO2NO3_mcf, cat="Aerobic", met="freeze-filter")
+
+# blank correction + calculate extraction ratio
+df_freeze_mcf_bcf_innate <- extraction_ratio(blank_correction(df_p, df_NO2NO3_mcf, cat="Method_test",met="freeze-filter"))
+
+df_filter_mcf_bcf_innate <- extraction_ratio(blank_correction(df_p, df_NO2NO3_mcf, cat="Method_test",met="filter-freeze"))
+
+colnames(df_freeze_mcf_bcf_innate)
+df_ff <- rbind(df_freeze_mcf_bcf_innate, df_filter_mcf_bcf_innate)
+
+# Plot for filter-freeze vs freeze-filter soil sample
+df_ff$Nitrate_input <- factor(df_ff$Nitrate_input)
+
+ggplot(df_ff, aes(x=Nitrate_input, y=Ratio_retrieved_mcf_bcf, fill=Sampling_method, group=Sampling_method)) +
+  geom_bar(stat="identity",position="dodge")+
+  geom_errorbar(aes(ymin=Ratio_retrieved_mcf_bcf - Std_Ratio_retrieved_mcf_bcf, ymax=Ratio_retrieved_mcf_bcf + Std_Ratio_retrieved_mcf_bcf), width=.05, position = position_dodge(0.8))+
+  # geom_line(size=0.2, color="brown")+
+  scale_fill_brewer(palette='Set2') +
+  ylab("Ratio of retrieved nitrate concentraion \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  scale_y_continuous(breaks = seq(0,1.2,0.1), limits=c(0, 1.2))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle("(Moisture + Blank correction) Comparing freeze-filter vs filter-freeze \n") +
+  geom_text(aes(label = round(Ratio_retrieved_mcf_bcf,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE, position = position_dodge(0.8))+
+  mytheme_2d
+
+
+# just plot scatter (moisture + blank correction)
+# T0 sample
+ggplot(df_anaerobic_mcf_bcf, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  scale_y_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  scale_x_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  ggtitle("Soil test (t=0) (after moisture + blank correction) \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+# only method test
+df_freeze_mcf_bcf <- blank_correction(df_p, df_NO2NO3_mcf, cat="Method_test",met="freeze-filter")
+df_filter_mcf_bcf <- blank_correction(df_p, df_NO2NO3_mcf, cat="Method_test",met="filter-freeze")
+df_ff_bcf <- rbind(df_freeze_mcf_bcf, df_filter_mcf_bcf)
+
+ggplot(df_ff_bcf, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Sampling_method, group=Sampling_method)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  scale_y_continuous(breaks = seq(0,6,1), limits=c(0, 6))+
+  scale_x_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  ggtitle("Soil test (after moisture + blank correction) \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+```
+
+
+## 4. Plot without blank correction
+
+## 4.1. Anaerobic method dynamics
+
+```{r}
+# Anaerobic method dynamics (first work with moisture corrected)
+df_anae <- df_NO2NO3_mcf %>% filter(Category == "Anaerobic", Sample_type == "Soil")
+df_T0 <- df_NO2NO3_mcf %>% filter(Plate == "P1", Category == "Aerobic", Sample_type == "Soil")
+df_anae <- rbind(df_T0, df_anae)
+dim(df_anae)
+colnames(df_anae)
+
+df_anae$Nitrate_input <- factor(df_anae$Nitrate_input)
+
+# Time point
+ggplot(df_anae, aes(x=Time_point, y=Ave_NO3_mM, color=Nitrate_input, group=Nitrate_input )) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time point") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Anaerobic NO3 dynamic - No carbon added (potential contamination in T1) \n") +
+  # label
+  geom_text(aes(label = round(Ave_NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+# Hours
+Time_table
+
+ggplot(df_anae, aes(x=Time_hours, y=Ave_NO3_mM, color=Nitrate_input, group=Nitrate_input )) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time point (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Anaerobic NO3 dynamic - No carbon added (potential contamination in T1) \n") +
+  # label
+  geom_text(aes(label = round(Ave_NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+
+# Nitrite dynamics
+ggplot(df_anae, aes(x=Time_hours, y=Ave_NO2_mM, color=Nitrate_input, group=Nitrate_input )) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO2- (mM) \n") +
+  xlab("\n Time point (hr)") +
+  scale_y_continuous(breaks = seq(0,0.05,0.01), limits=c(0, 0.05))+
+  ggtitle("Anaerobic NO2 dynamic - No carbon added (potential contamination in T1) \n") +
+  # label
+  geom_text(aes(label = round(Ave_NO2_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+
+## Are blanks changing or constant?
+# Anaerobic method dynamics
+df_anae_b <- df_NO2NO3_mcf %>% filter(Category == "Anaerobic", Sample_type == "Blank")
+df_T0 <- df_NO2NO3_mcf %>% filter(Plate == "P1", Category == "Aerobic", Sample_type == "Blank")
+df_anae_b <- rbind(df_T0, df_anae_b)
+dim(df_anae_b)
+colnames(df_anae_b)
+
+df_anae_b$Nitrate_input <- factor(df_anae_b$Nitrate_input)
+
+# Time point
+ggplot(df_anae_b, aes(x=Time_point, y=Ave_NO3_mM, color=Nitrate_input, group=Nitrate_input )) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time point") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Blank in Anaerobic - No carbon added (potential contamination in T1) \n") +
+  # label
+  geom_text(aes(label = round(Ave_NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+# Hours
+Time_table
+
+ggplot(df_anae_b, aes(x=Time_hours, y=Ave_NO3_mM, color=Nitrate_input, group=Nitrate_input )) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time point (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Blank in Anaerobic - No carbon added (potential contamination in T1) \n") +
+  # label
+  geom_text(aes(label = round(Ave_NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+# Blank nitrite
+ggplot(df_anae_b, aes(x=Time_hours, y=Ave_NO2_mM, color=Nitrate_input, group=Nitrate_input )) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO2- (mM) \n") +
+  xlab("\n Time point (hr)") +
+  scale_y_continuous(breaks = seq(0,0.1,0.05), limits=c(0, 0.1))+
+  ggtitle("Blank in Anaerobic - No carbon added (potential contamination in T1) \n") +
+  # label
+  geom_text(aes(label = round(Ave_NO2_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+# Calculate evaporation rate
+(5.964 - 4.859) / 48.16667 # 0.023mM increase per hour
+
+df_eva <- df_anae_b %>% select(Nitrate_input, Time_point, Time_hours, Ave_NO3_mM) %>% filter(Time_point =="T4")
+df_eva2 <- df_anae_b %>% filter(Time_point =="T0") %>% select(Nitrate_input, Ave_NO3_mM) %>% rename(Ini_NO3_mM = Ave_NO3_mM)
+df_eva <- df_eva %>% left_join(df_eva2, by =c("Nitrate_input"="Nitrate_input")) 
+df_eva <- df_eva %>% mutate(Delta_NO3_mM = Ave_NO3_mM - Ini_NO3_mM) %>% mutate(Concentration_change_hr = Delta_NO3_mM / Time_hours)
+
+# soil weight(0.75g) / spike in volume (1.5ml)
+moisture_percent = 26.4
+Volume_initial = 0.75*(moisture_percent/100) + 1.5
+Volume_endpoint = (Volume_initial * 4.859) / 5.964 ## 1.383397
+evaporation_rate_hr = (Volume_initial - Volume_endpoint) / 48.16667 ## 0.0065ml / hr
+
+# evaporation rate
+df_eva$Volume_initial <- Volume_initial
+df_eva <- df_eva %>% mutate(Volume_endpoint = Volume_initial * Ini_NO3_mM / Ave_NO3_mM)
+df_eva_anae <- df_eva %>% mutate(evaporation_rate_hr = (Volume_initial - Volume_endpoint) / Time_hours)
+
+get_evaporation_rate <- function(df_anae_b, moisture_percent = 26.4, soil_weight=0.75, water_input=1.5){
+  df_eva <- df_anae_b %>% select(Nitrate_input, Time_point, Time_hours, Ave_NO3_mM) %>% filter(Time_point =="T4")
+  df_eva2 <- df_anae_b %>% filter(Time_point =="T0") %>% select(Nitrate_input, Ave_NO3_mM) %>% rename(Ini_NO3_mM = Ave_NO3_mM)
+  df_eva <- df_eva %>% left_join(df_eva2, by =c("Nitrate_input"="Nitrate_input")) 
+  df_eva <- df_eva %>% mutate(Delta_NO3_mM = Ave_NO3_mM - Ini_NO3_mM) %>% mutate(Concentration_change_hr = Delta_NO3_mM / Time_hours)
+  
+  # soil weight(0.75g) / spike in volume (1.5ml)
+  Volume_initial = soil_weight*(moisture_percent/100) + water_input
+  # Volume_endpoint = (Volume_initial * 4.859) / 5.964 ## 1.383397
+  # evaporation_rate_hr = (Volume_initial - Volume_endpoint) / 48.16667 ## 0.0065ml / hr
+  
+  # evaporation rate
+  df_eva$Volume_initial <- Volume_initial
+  df_eva <- df_eva %>% mutate(Volume_endpoint = Volume_initial * Ini_NO3_mM / Ave_NO3_mM)
+  df_eva_anae <- df_eva %>% mutate(evaporation_rate_hr = (Volume_initial - Volume_endpoint) / Time_hours)
+}
+
+get_evaporation_rate_interval <- function(df_anae_b, initial="T1",end="T2", moisture_percent = 26.4, soil_weight=0.75, water_input=1.5){
+  df_eva <- df_anae_b %>% select(Nitrate_input, Time_point, Time_hours, Ave_NO3_mM) %>% filter(Time_point == end) %>% rename(End_NO3_mM = Ave_NO3_mM)
+  df_eva2 <- df_anae_b %>% filter(Time_point ==initial) %>% select(Nitrate_input, Ave_NO3_mM) %>% rename(Ini_NO3_mM = Ave_NO3_mM)
+  df_eva <- df_eva %>% left_join(df_eva2, by =c("Nitrate_input"="Nitrate_input")) 
+  df_eva <- df_eva %>% mutate(Delta_NO3_mM = End_NO3_mM - Ini_NO3_mM) %>% mutate(Concentration_change_hr = Delta_NO3_mM / Time_hours)
+  
+  # soil weight(0.75g) / spike in volume (1.5ml)
+  Volume_T0 = soil_weight*(moisture_percent/100) + water_input
+  # Add T0 Ave_NO3_mM
+  df_TO_NO3 <- df_anae_b %>% filter(Time_point == "T0") %>% select(Nitrate_input, Ave_NO3_mM) %>% rename(T0_NO3_mM = Ave_NO3_mM)
+  df_eva <- df_eva %>% left_join(df_TO_NO3, by =c("Nitrate_input"="Nitrate_input")) 
+
+  # evaporation rate
+  df_eva <- df_eva %>% mutate(Volume_initial = Volume_T0 * T0_NO3_mM / Ini_NO3_mM)
+  df_eva <- df_eva %>% mutate(Volume_endpoint = Volume_T0 * T0_NO3_mM / End_NO3_mM)
+  df_eva_anae <- df_eva %>% mutate(evaporation_rate_hr = (Volume_initial - Volume_endpoint) / Time_hours)
+  return(df_eva_anae)
+}
+
+
+# For anaerobic blanks, get evaporation rate
+df_ev_an_1 <- get_evaporation_rate_interval(df_anae_b, initial="T0",end="T1", moisture_percent = 26.4, soil_weight=0.75, water_input=1.5)
+df_ev_an_2 <- get_evaporation_rate_interval(df_anae_b, initial="T1",end="T2", moisture_percent = 26.4, soil_weight=0.75, water_input=1.5)
+df_ev_an_3 <- get_evaporation_rate_interval(df_anae_b, initial="T2",end="T3", moisture_percent = 26.4, soil_weight=0.75, water_input=1.5)
+df_ev_an_4 <- get_evaporation_rate_interval(df_anae_b, initial="T3",end="T4", moisture_percent = 26.4, soil_weight=0.75, water_input=1.5)
+
+df_ev_an <- rbind(df_ev_an_1, df_ev_an_2, df_ev_an_3, df_ev_an_4)
+df_ev_an %<>% filter(!(Nitrate_input==0)) 
+
+ggplot(df_ev_an, aes(x=Time_hours, y=evaporation_rate_hr, color=Nitrate_input, group=Nitrate_input )) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  scale_color_brewer(palette='Set2') +
+  ylab("Evaporation rate (ml / hr) \n") +
+  xlab("\n Nitrate input (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.02,0.01), limits=c(0, 0.02))+
+  ggtitle("Evaporation rate of blank in Anaerobic (ml/hr) \n") +
+  # label
+  geom_text(aes(label = round(evaporation_rate_hr,4)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+
+
+```
+
+## 4.2. Aerobic dynamics
+
+```{r}
+# Anaerobic method dynamics (first work with moisture corrected)
+df_aero <- df_NO2NO3_mcf %>% filter(Category == "Aerobic", Sample_type == "Soil")
+dim(df_aero)
+colnames(df_aero)
+
+df_aero$Nitrate_input <- factor(df_aero$Nitrate_input)
+
+# Time point
+ggplot(df_aero, aes(x=Time_point, y=Ave_NO3_mM, color=Nitrate_input, group=Nitrate_input )) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time point") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Aerobic NO3 dynamic - No carbon added (no contamination) \n") +
+  # label
+  geom_text(aes(label = round(Ave_NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+# Hours
+Time_table
+
+ggplot(df_aero, aes(x=Time_hours, y=Ave_NO3_mM, color=Nitrate_input, group=Nitrate_input )) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time point (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Aerobic NO3 dynamic - No carbon added (no contamination) \n") +
+  # label
+  geom_text(aes(label = round(Ave_NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+# Nitrite dynamics
+ggplot(df_aero, aes(x=Time_hours, y=Ave_NO2_mM, color=Nitrate_input, group=Nitrate_input )) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO2- (mM) \n") +
+  xlab("\n Time point (hr)") +
+  scale_y_continuous(breaks = seq(0,0.1,0.01), limits=c(0, 0.1))+
+  ggtitle("Aerobic NO2 dynamic - No carbon added (no contamination) \n") +
+  # label
+  geom_text(aes(label = round(Ave_NO2_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+
+
+## Are blanks changing or constant?
+# Aerobic method dynamics
+df_aero_b <- df_NO2NO3_mcf %>% filter(Category == "Aerobic", Sample_type == "Blank")
+dim(df_aero_b)
+colnames(df_aero_b)
+
+df_aero_b$Nitrate_input <- factor(df_aero_b$Nitrate_input)
+
+# Time point
+ggplot(df_aero_b, aes(x=Time_point, y=Ave_NO3_mM, color=Nitrate_input, group=Nitrate_input )) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time point") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Blank in Aerobic - No carbon added (no contamination) \n") +
+  # label
+  geom_text(aes(label = round(Ave_NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+# Hours
+Time_table
+
+ggplot(df_aero_b, aes(x=Time_hours, y=Ave_NO3_mM, color=Nitrate_input, group=Nitrate_input )) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time point (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Blank in Aerobic - No carbon added (no contamination) \n") +
+  # label
+  geom_text(aes(label = round(Ave_NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+# Blank-nitrite
+ggplot(df_aero_b, aes(x=Time_hours, y=Ave_NO2_mM, color=Nitrate_input, group=Nitrate_input )) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO2- (mM) \n") +
+  xlab("\n Time point (hr)") +
+  scale_y_continuous(breaks = seq(0,0.1,0.05), limits=c(0, 0.1))+
+  ggtitle("Blank in Aerobic - No carbon added (no contamination) \n") +
+  # label
+  geom_text(aes(label = round(Ave_NO2_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+
+df_eva_anae <- get_evaporation_rate(df_anae_b, moisture_percent = 26.4, soil_weight=0.75, water_input=1.5)
+df_eva_aero <- get_evaporation_rate(df_aero_b, moisture_percent = 26.4, soil_weight=0.75, water_input=1.5)
+
+## Plot evaporation rate (ml per hour)
+df_eva_anae$Condition <- "Anaerobic"
+df_eva_aero$Condition <- "Aerobic"
+
+df_eva_both <- rbind(df_eva_anae, df_eva_aero) %>% filter(!(Nitrate_input==0))
+
+ggplot(df_eva_both, aes(x=Nitrate_input, y=evaporation_rate_hr, color=Condition, group=Condition )) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  scale_color_brewer(palette='Set2') +
+  ylab("Evaporation rate (ml / hr) \n") +
+  xlab("\n Nitrate input (mM)") +
+  scale_y_continuous(breaks = seq(0,0.02,0.01), limits=c(0, 0.02))+
+  ggtitle("Evaporation rate of blank (ml/hr) \n") +
+  # label
+  geom_text(aes(label = round(evaporation_rate_hr,4)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+## plot concentration change rate
+ggplot(df_eva_both, aes(x=Nitrate_input, y=Rate_mM, color=Condition, group=Condition )) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  scale_color_brewer(palette='Set2') +
+  ylab("mM / hr \n") +
+  xlab("\n Nitrate input (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.02,0.01), limits=c(0, 0.02))+
+  ggtitle("Nitrate concentration increase rate of blank (mM/hr) \n") +
+  # label
+  geom_text(aes(label = round(Rate_mM,4)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+
+# For anaerobic blanks, get evaporation rate
+df_ev_an_1 <- get_evaporation_rate_interval(df_anae_b, initial="T0",end="T1", moisture_percent = 26.4, soil_weight=0.75, water_input=1.5)
+df_ev_an_2 <- get_evaporation_rate_interval(df_anae_b, initial="T1",end="T2", moisture_percent = 26.4, soil_weight=0.75, water_input=1.5)
+df_ev_an_3 <- get_evaporation_rate_interval(df_anae_b, initial="T2",end="T3", moisture_percent = 26.4, soil_weight=0.75, water_input=1.5)
+df_ev_an_4 <- get_evaporation_rate_interval(df_anae_b, initial="T3",end="T4", moisture_percent = 26.4, soil_weight=0.75, water_input=1.5)
+
+df_ev_an <- rbind(df_ev_an_1, df_ev_an_2, df_ev_an_3, df_ev_an_4)
+df_ev_an %<>% filter(!(Nitrate_input==0)) 
+
+ggplot(df_ev_an, aes(x=Time_hours, y=evaporation_rate_hr, color=Nitrate_input, group=Nitrate_input )) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  scale_color_brewer(palette='Set2') +
+  ylab("Evaporation rate (ml / hr) \n") +
+  xlab("\n Nitrate input (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.02,0.01), limits=c(0, 0.02))+
+  ggtitle("Evaporation rate of blank in Anaerobic (ml/hr) \n") +
+  # label
+  geom_text(aes(label = round(evaporation_rate_hr,4)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+
+# for aerobic
+# For anaerobic blanks, get evaporation rate
+df_ev_ae_1 <- get_evaporation_rate_interval(df_aero_b, initial="T0",end="T1", moisture_percent = 26.4, soil_weight=0.75, water_input=1.5)
+df_ev_ae_2 <- get_evaporation_rate_interval(df_aero_b, initial="T1",end="T2", moisture_percent = 26.4, soil_weight=0.75, water_input=1.5)
+df_ev_ae_3 <- get_evaporation_rate_interval(df_aero_b, initial="T2",end="T3", moisture_percent = 26.4, soil_weight=0.75, water_input=1.5)
+df_ev_ae_4 <- get_evaporation_rate_interval(df_aero_b, initial="T3",end="T4", moisture_percent = 26.4, soil_weight=0.75, water_input=1.5)
+
+df_ev_ae <- rbind(df_ev_ae_1, df_ev_ae_2, df_ev_ae_3, df_ev_ae_4)
+df_ev_ae %<>% filter(!(Nitrate_input==0)) 
+
+ggplot(df_ev_ae, aes(x=Time_hours, y=evaporation_rate_hr, color=Nitrate_input, group=Nitrate_input )) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  scale_color_brewer(palette='Set2') +
+  ylab("Evaporation rate (ml / hr) \n") +
+  xlab("\n Nitrate input (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.02,0.01), limits=c(0, 0.02))+
+  ggtitle("Evaporation rate of blank in Aerobic (ml/hr) \n") +
+  # label
+  geom_text(aes(label = round(evaporation_rate_hr,4)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+```
+
+## 4.3. After blank correction (method1)
+Use standard curves to do the correction
+
+```{r}
+# before blank correction
+df_NO2NO3_mcf %>% filter(Sample_type == "Blank")
+df_NO2NO3_blank_mcf
+
+ggplot(df_NO2NO3_blank_mcf, aes(x=Nitrate_input, y=Ave_NO3_mM, color=Time_point, group=Time_point)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  scale_y_continuous(breaks = seq(0,5.5,1), limits=c(0, 5.5))+
+  scale_x_continuous(breaks = seq(0,5.5,1), limits=c(0, 5.5))+
+  ggtitle("Blank test \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  mytheme_2d
+
+
+# function for blank correction
+blank_correction_time <- function(df_p, df_NO2NO3_mcf, cat="Aerobic", t="T1"){
+  # get Category
+  df_mb_aerobic <- df_p %>% filter(Sample_type == "Blank", Category == cat, Time_point==t)
+  # plot(df_mb_aerobic$Nitrate_input, df_mb_aerobic$NO3_mM)
+  # linear regression
+  fit.mb_aerobic <- lm(NO3_mM ~ Nitrate_input, df_mb_aerobic)
+  # moisture corrected
+  df_anaerobic_mcf <- df_NO2NO3_mcf %>% filter(Sample_type == "Soil", Category == cat, Time_point==t)
+
+  # multiplying blank correction factor
+  df_anaerobic_mcf_bcf <- df_anaerobic_mcf %>% mutate(Ave_NO3_mM = (Ave_NO3_mM - coef(fit.mb_aerobic)[[1]]) / coef(fit.mb_aerobic)[[2]], Std_NO3_mM = Std_NO3_mM / coef(fit.mb_aerobic)[[2]])
+  # if negative make it 0
+  df_anaerobic_mcf_bcf$Ave_NO3_mM <- ifelse(df_anaerobic_mcf_bcf$Ave_NO3_mM < 0, 0, df_anaerobic_mcf_bcf$Ave_NO3_mM)
+  print(dim(df_anaerobic_mcf_bcf))
+  return(df_anaerobic_mcf_bcf)
+}
+
+vec_time_point <- df_NO2NO3_mcf$Time_point %>% unique()
+
+df_anae_bcf <- blank_correction_time(df_p, df_NO2NO3_mcf, cat="Aerobic", t="T0")
+for (i in vec_time_point[2:length(vec_time_point)]){
+  print(i)
+  df_anae_bcf <- rbind(df_anae_bcf, blank_correction_time(df_p, df_NO2NO3_mcf, cat="Anaerobic", t=i))
+}
+
+dim(df_anae_bcf)
+
+df_aero_bcf <- data.frame()
+for (i in vec_time_point){
+  print(i)
+  df_aero_bcf <- rbind(df_aero_bcf, blank_correction_time(df_p, df_NO2NO3_mcf, cat="Aerobic", t=i))
+}
+
+dim(df_aero_bcf)
+
+# 1. Anaerobic Nitrate dynamics
+df_anae_bcf$Nitrate_input <- factor(df_anae_bcf$Nitrate_input)
+
+ggplot(df_anae_bcf, aes(x=Time_hours, y=Ave_NO3_mM, color=Nitrate_input, group=Nitrate_input )) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time point (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("(After blank correction) Anaerobic NO3 dynamic - No carbon added (potential contamination in T1) \n") +
+  # label
+  geom_text(aes(label = round(Ave_NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+# Nitrite dynamics??
+
+# 2. Aerobic NO3 dynamics
+df_aero_bcf$Nitrate_input <- factor(df_aero_bcf$Nitrate_input)
+
+ggplot(df_aero_bcf, aes(x=Time_hours, y=Ave_NO3_mM, color=Nitrate_input, group=Nitrate_input )) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time point (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("(After blank correction) Aerobic NO3 dynamic - No carbon added (no contamination) \n") +
+  # label
+  geom_text(aes(label = round(Ave_NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+```
+
+
+## 4.4. After blank correction (method2)
+Use the nitrate concentration of the blank and use the ratio. 
+For example, multiply to nitrate concentration x (2mM / changed [NO3])
+
+```{r}
+
+# Blank reads
+df_aero_blank <- df_aero_b
+df_aero_blank$Nitrate_input <- as.numeric(as.character(df_aero_blank$Nitrate_input))
+df_aero_blank %<>% mutate(Correction_factor = (Nitrate_input / Ave_NO3_mM)) 
+
+(t_aero_blank <- pivot_wider(df_aero_blank, id_cols=Nitrate_input ,names_from = Time_point, values_from = Correction_factor))
+t_aero_blank <- tibble::column_to_rownames(t_aero_blank, var="Nitrate_input")
+
+cat = "Aerobic"
+df_aerobic_mcf <- df_NO2NO3_mcf %>% filter(Sample_type == "Soil", Category == cat)
+
+(t_aero_Ave <- pivot_wider(df_aerobic_mcf, id_cols=Nitrate_input ,names_from = Time_point, values_from = Ave_NO3_mM))
+(t_aero_Ave <- tibble::column_to_rownames(t_aero_Ave, var="Nitrate_input"))
+
+(t_aero_Std <- pivot_wider(df_aerobic_mcf, id_cols=Nitrate_input ,names_from = Time_point, values_from = Std_NO3_mM))
+(t_aero_Std <- tibble::column_to_rownames(t_aero_Std, var="Nitrate_input"))
+
+class(t_aero_Ave)
+
+# corrected
+t_aero_Ave_c <- t_aero_Ave * t_aero_blank
+t_aero_Std_c <- t_aero_Std * t_aero_blank
+
+# row names to column
+t_aero_Ave_c <- tibble::rownames_to_column(t_aero_Ave_c, var="Nitrate_input")
+t_aero_Std_c <- tibble::rownames_to_column(t_aero_Std_c, var="Nitrate_input")
+
+# to dataframe
+df_aero_Ave_c <- pivot_longer(t_aero_Ave_c, cols=-1, names_to = "Time_point", values_to = "Ave_NO3_mM")
+df_aero_Std_c <- pivot_longer(t_aero_Std_c, cols=-1, names_to = "Time_point", values_to = "Std_NO3_mM")
+
+# set all nitrate_input to numeric
+df_aerobic_mcf$Nitrate_input <- as.numeric(as.character(df_aerobic_mcf$Nitrate_input))
+df_aero_Ave_c$Nitrate_input <- as.numeric(as.character(df_aero_Ave_c$Nitrate_input))
+df_aero_Std_c$Nitrate_input <- as.numeric(as.character(df_aero_Std_c$Nitrate_input))
+
+# join
+df_aerobic_bcf <- df_aerobic_mcf %>% select(-Ave_NO2_mM, -Ave_NO3_mM, -Std_NO2_mM, -Std_NO3_mM) %>% left_join(df_aero_Ave_c, by=c("Nitrate_input"="Nitrate_input","Time_point"="Time_point")) %>% left_join(df_aero_Std_c, by=c("Nitrate_input"="Nitrate_input","Time_point"="Time_point")) 
+
+
+
+# For anaerobic
+df_anae_blank <- df_anae_b
+df_anae_blank$Nitrate_input <- as.numeric(as.character(df_anae_blank$Nitrate_input))
+df_anae_blank %<>% mutate(Correction_factor = (Nitrate_input / Ave_NO3_mM)) 
+
+(t_anae_blank <- pivot_wider(df_anae_blank, id_cols=Nitrate_input ,names_from = Time_point, values_from = Correction_factor))
+t_anae_blank <- tibble::column_to_rownames(t_anae_blank, var="Nitrate_input")
+
+(t_anae_Ave <- pivot_wider(df_anaerobic_mcf, id_cols=Nitrate_input ,names_from = Time_point, values_from = Ave_NO3_mM))
+t_anae_Ave <- tibble::column_to_rownames(t_anae_Ave, var="Nitrate_input")
+
+(t_anae_Std <- pivot_wider(df_anaerobic_mcf, id_cols=Nitrate_input ,names_from = Time_point, values_from = Std_NO3_mM))
+t_anae_Std <- tibble::column_to_rownames(t_anae_Std, var="Nitrate_input")
+
+class(t_anae_Ave)
+
+# corrected
+t_anae_Ave_c <- t_anae_Ave * t_anae_blank
+t_anae_Std_c <- t_anae_Std * t_anae_blank
+
+# row names to column
+t_anae_Ave_c <- tibble::rownames_to_column(t_anae_Ave_c, var="Nitrate_input")
+t_anae_Std_c <- tibble::rownames_to_column(t_anae_Std_c, var="Nitrate_input")
+
+# to dataframe
+df_anae_Ave_c <- pivot_longer(t_anae_Ave_c, cols=-1, names_to = "Time_point", values_to = "Ave_NO3_mM")
+df_anae_Std_c <- pivot_longer(t_anae_Std_c, cols=-1, names_to = "Time_point", values_to = "Std_NO3_mM")
+
+# set all nitrate_input to numeric
+df_anaebic_mcf$Nitrate_input <- as.numeric(as.character(df_anaebic_mcf$Nitrate_input))
+df_anae_Ave_c$Nitrate_input <- as.numeric(as.character(df_anae_Ave_c$Nitrate_input))
+df_anae_Std_c$Nitrate_input <- as.numeric(as.character(df_anae_Std_c$Nitrate_input))
+
+# join
+df_anaebic_bcf <- df_anaebic_mcf %>% select(-Ave_NO2_mM, -Ave_NO3_mM, -Std_NO2_mM, -Std_NO3_mM) %>% left_join(df_anae_Ave_c, by=c("Nitrate_input"="Nitrate_input","Time_point"="Time_point")) %>% left_join(df_anae_Std_c, by=c("Nitrate_input"="Nitrate_input","Time_point"="Time_point")) 
+
+
+
+
+
+# create a function
+
+multiply_blank_correction <- function(df_aero_b, mcf_file){
+  # Blank reads
+  df_aero_blank <- df_aero_b
+  df_aero_blank$Nitrate_input <- as.numeric(as.character(df_aero_blank$Nitrate_input))
+  df_aero_blank %<>% mutate(Correction_factor = (Nitrate_input / Ave_NO3_mM)) 
+  
+  (t_aero_blank <- pivot_wider(df_aero_blank, id_cols=Nitrate_input ,names_from = Time_point, values_from = Correction_factor))
+  t_aero_blank <- tibble::column_to_rownames(t_aero_blank, var="Nitrate_input")
+  
+  (t_aero_Ave <- pivot_wider(mcf_file, id_cols=Nitrate_input ,names_from = Time_point, values_from = Ave_NO3_mM))
+  t_aero_Ave <- tibble::column_to_rownames(t_aero_Ave, var="Nitrate_input")
+  
+  (t_aero_Std <- pivot_wider(mcf_file, id_cols=Nitrate_input ,names_from = Time_point, values_from = Std_NO3_mM))
+  t_aero_Std <- tibble::column_to_rownames(t_aero_Std, var="Nitrate_input")
+  
+  class(t_aero_Ave)
+  
+  # corrected
+  t_aero_Ave_c <- t_aero_Ave * t_aero_blank
+  t_aero_Std_c <- t_aero_Std * t_aero_blank
+  
+  # row names to column
+  t_aero_Ave_c <- tibble::rownames_to_column(t_aero_Ave_c, var="Nitrate_input")
+  t_aero_Std_c <- tibble::rownames_to_column(t_aero_Std_c, var="Nitrate_input")
+  
+  # to dataframe
+  df_aero_Ave_c <- pivot_longer(t_aero_Ave_c, cols=-1, names_to = "Time_point", values_to = "Ave_NO3_mM")
+  df_aero_Std_c <- pivot_longer(t_aero_Std_c, cols=-1, names_to = "Time_point", values_to = "Std_NO3_mM")
+  
+  # set all nitrate_input to numeric
+  mcf_file$Nitrate_input <- as.numeric(as.character(mcf_file$Nitrate_input))
+  df_aero_Ave_c$Nitrate_input <- as.numeric(as.character(df_aero_Ave_c$Nitrate_input))
+  df_aero_Std_c$Nitrate_input <- as.numeric(as.character(df_aero_Std_c$Nitrate_input))
+  
+  # join
+  df_aerobic_bcf <- mcf_file %>% select(-Ave_NO2_mM, -Ave_NO3_mM, -Std_NO2_mM, -Std_NO3_mM) %>% left_join(df_aero_Ave_c, by=c("Nitrate_input"="Nitrate_input","Time_point"="Time_point")) %>% left_join(df_aero_Std_c, by=c("Nitrate_input"="Nitrate_input","Time_point"="Time_point")) 
+  
+  return(df_aerobic_bcf)
+}
+
+# make df_anaerobic_mcf
+df_anaerobic_mcf <- df_NO2NO3_mcf %>% filter(Sample_type == "Soil", Category == "Anaerobic")
+df_anaerobic_mcf_T0 <- df_NO2NO3_mcf %>% filter(Category=="Aerobic", Time_point=="T0", Plate=="P1", Sample_type=="Soil")
+df_anaerobic_mcf <- rbind(df_anaerobic_mcf_T0, df_anaerobic_mcf)
+
+
+df_anaerobic_bcf <- multiply_blank_correction(df_anae_b, df_anaerobic_mcf)
+
+df_aerobic_bcf <- multiply_blank_correction(df_aero_b, df_aerobic_mcf)
+
+# 1. Anaerobic Nitrate dynamics
+df_anaerobic_bcf$Nitrate_input <- factor(df_anaerobic_bcf$Nitrate_input)
+
+ggplot(df_anaerobic_bcf, aes(x=Time_hours, y=Ave_NO3_mM, color=Nitrate_input, group=Nitrate_input )) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time point (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("(After blank correction method2) Anaerobic NO3 dynamic - No carbon added (potential contamination in T1) \n") +
+  # label
+  geom_text(aes(label = round(Ave_NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+
+# 2. Aerobic Nitrate dynamics
+df_aerobic_bcf$Nitrate_input <- factor(df_aerobic_bcf$Nitrate_input)
+
+ggplot(df_aerobic_bcf, aes(x=Time_hours, y=Ave_NO3_mM, color=Nitrate_input, group=Nitrate_input )) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time point (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("(After blank correction method2) Aerobic NO3 dynamic - No carbon added \n") +
+  # label
+  geom_text(aes(label = round(Ave_NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+
+```
 
