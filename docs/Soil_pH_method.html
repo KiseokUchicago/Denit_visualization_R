@@ -385,7 +385,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2021-11-05
+<strong>Last updated:</strong> 2021-11-17
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -476,16 +476,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomKiseokUchicagoDenitvisualizationRtree924beb71fc7f3c0fd4b1e611aeb7306fd38316b9targetblank924beb7a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/KiseokUchicago/Denit_visualization_R/tree/924beb71fc7f3c0fd4b1e611aeb7306fd38316b9" target="_blank">924beb7</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomKiseokUchicagoDenitvisualizationRtree0e51c783b732718aa376c2a9f7965100e762a497targetblank0e51c78a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/KiseokUchicago/Denit_visualization_R/tree/0e51c783b732718aa376c2a9f7965100e762a497" target="_blank">0e51c78</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomKiseokUchicagoDenitvisualizationRtree924beb71fc7f3c0fd4b1e611aeb7306fd38316b9targetblank924beb7a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomKiseokUchicagoDenitvisualizationRtree0e51c783b732718aa376c2a9f7965100e762a497targetblank0e51c78a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/KiseokUchicago/Denit_visualization_R/tree/924beb71fc7f3c0fd4b1e611aeb7306fd38316b9" target="_blank">924beb7</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/KiseokUchicago/Denit_visualization_R/tree/0e51c783b732718aa376c2a9f7965100e762a497" target="_blank">0e51c78</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -546,10 +546,13 @@ Untracked files:
     Untracked:  data/211028_Griess_plate3_no3_fit.xlsx
     Untracked:  data/211028_Griess_plate4.xlsx
     Untracked:  data/211028_Griess_plate4_no3_fit.xlsx
+    Untracked:  data/211028_time_table.xlsx
     Untracked:  data/TOC_TN_measurement_2_labs_211014.xlsx
     Untracked:  data/dry_weight_curve(9.5.21).xlsx
+    Untracked:  data/pH_data(11.17.21)-Midway_etc.xlsx
     Untracked:  data/pH_data(9.14.21).xlsx
     Untracked:  data/pH_data(9.28.21).xlsx
+    Untracked:  data/~$pH_data(9.28.21).xlsx
     Untracked:  df_NO2NO3.xlsx
 
 </code></pre>
@@ -589,6 +592,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/KiseokUchicago/Denit_visualization_R/blob/0e51c783b732718aa376c2a9f7965100e762a497/analysis/Soil_pH_method.Rmd" target="_blank">0e51c78</a>
+</td>
+<td>
+KiseokUchicago
+</td>
+<td>
+2021-11-17
+</td>
+<td>
+wflow_publish("analysis/*.Rmd")
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/KiseokUchicago/Denit_visualization_R/a07efe36f88496d6be0433854b563c52d12a73f3/docs/Soil_pH_method.html" target="_blank">a07efe3</a>
+</td>
+<td>
+KiseokUchicago
+</td>
+<td>
+2021-11-05
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -902,6 +939,70 @@ ggplot(df_pH_gg, aes(x=Method, y=pH, color=Solution, group=Solution)) +
   geom_text(aes(label = pH), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend  = FALSE)+
   mytheme_2d</code></pre>
 <p><img src="figure/Soil_pH_method.Rmd/unnamed-chunk-5-1.png" width="1056" style="display: block; margin: auto;" /></p>
+</div>
+<div id="testing-ph-needle-non-destructive-method" class="section level2">
+<h2>Testing pH needle (non-destructive method)</h2>
+<p>Experimental date: 11/10/21<br />
+Analysis: 11/17/21<br />
+</p>
+</div>
+<div id="import-data-2" class="section level2">
+<h2>1. Import data</h2>
+<pre class="r"><code># import file
+df_pH &lt;- openxlsx::read.xlsx(&quot;data/pH_data(11.17.21)-Midway_etc.xlsx&quot;)
+class(df_pH)</code></pre>
+<pre><code>[1] &quot;data.frame&quot;</code></pre>
+<pre class="r"><code>df_pH &lt;- df_pH %&gt;% rename(Site = X1)
+
+df_pH_gg &lt;- melt(df_pH ,variable.name = &quot;Method&quot;,value.name = &quot;pH&quot;)
+
+# Order the method
+df_pH_gg$Method &lt;- factor(df_pH_gg$Method, levels=c(&quot;pH_meter&quot;, &quot;pH_needle&quot;))
+
+# remove NA
+dim(df_pH_gg)</code></pre>
+<pre><code>[1] 18  3</code></pre>
+</div>
+<div id="plot-2" class="section level2">
+<h2>2. Plot</h2>
+<pre class="r"><code># plot
+ggplot(df_pH_gg, aes(x=Site, y=pH, color=Method, group=Method)) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;pH \n&quot;) +
+  xlab(&quot;\n Site&quot;) +
+  # scale_y_continuous(breaks = seq(5,7,0.1), limits=c(5, 7))+
+  ggtitle(&quot;pH difference by method \n&quot;) +
+  # label
+  geom_text(aes(label = pH), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend  = FALSE)+
+  mytheme_2d</code></pre>
+<p><img src="figure/Soil_pH_method.Rmd/unnamed-chunk-7-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># 2d scatter plot
+fit.pH &lt;- lm(pH_meter ~ pH_needle, df_pH)
+
+# Plot fitted linear regression line
+ggplot(df_pH, aes(x=pH_needle, y=pH_meter)) +
+  geom_point(size=3, color=&quot;deepskyblue4&quot;) +
+  # geom_line(size=1)+
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  # scale_color_manual(values = c(&quot;maroon2&quot;,&quot;deepskyblue4&quot;))+
+  ylab(&quot;pH measured in lab \n&quot;) +
+  xlab(&quot;\n pH measured on site by needle &quot;) +
+  scale_y_continuous(breaks = seq(5,8,1), limits=c(5, 8))+
+  scale_x_continuous(breaks = seq(5,8,1), limits=c(5, 8))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,family=&quot;serif&quot;, show.legend = FALSE)+
+  ggtitle(&quot;pH measurement \n&quot;) +
+  geom_abline(slope = 1, intercept=0, show.legend = &quot;y=x&quot;)+
+  # regression line
+  geom_abline(slope = coef(fit.pH)[[2]], intercept = coef(fit.pH)[[1]],
+              color = &quot;maroon2&quot;) +
+  # show equation
+  # stat_cor(aes(label = paste(..rr.label.., ..p.label.., sep = &quot;~`,`~&quot;))) +
+  annotate(&quot;text&quot;,x=6.5,y=8, label= paste0(&quot;y = &quot;, round(coef(fit.pH)[[1]],3),&quot;+&quot;,round(coef(fit.pH)[[2]],3),&quot;x&quot;), color = &quot;maroon2&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/Soil_pH_method.Rmd/unnamed-chunk-7-2.png" width="1056" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -940,22 +1041,22 @@ loaded via a namespace (and not attached):
  [9] utf8_1.1.4        R6_2.5.0          DBI_1.1.1         mgcv_1.8-33      
 [13] colorspace_2.0-0  withr_2.4.2       prettyunits_1.1.1 processx_3.5.1   
 [17] tidyselect_1.1.1  compiler_4.0.3    git2r_0.28.0      cli_3.0.1        
-[21] rvest_1.0.1       xml2_1.3.2        desc_1.3.0        sass_0.4.0       
-[25] scales_1.1.1      callr_3.7.0       digest_0.6.27     rmarkdown_2.9    
-[29] pkgconfig_2.0.3   htmltools_0.5.1.1 sessioninfo_1.1.1 highr_0.9        
-[33] dbplyr_2.1.1      fastmap_1.1.0     rlang_0.4.10      rstudioapi_0.13  
-[37] farver_2.1.0      jquerylib_0.1.4   generics_0.1.0    jsonlite_1.7.2   
-[41] zip_2.1.1         Matrix_1.2-18     Rcpp_1.0.5        munsell_0.5.0    
-[45] fansi_0.4.2       lifecycle_1.0.0   stringi_1.5.3     whisker_0.4      
-[49] yaml_2.2.1        MASS_7.3-53       pkgbuild_1.2.0    plyr_1.8.6       
-[53] grid_4.0.3        parallel_4.0.3    promises_1.2.0.1  crayon_1.4.1     
-[57] haven_2.4.1       splines_4.0.3     hms_1.1.0         ps_1.6.0         
-[61] knitr_1.33        pillar_1.6.0      pkgload_1.2.1     reprex_2.0.0     
-[65] glue_1.4.2        evaluate_0.14     remotes_2.4.0     modelr_0.1.8     
-[69] vctrs_0.3.8       httpuv_1.6.0      testthat_3.0.2    cellranger_1.1.0 
-[73] gtable_0.3.0      assertthat_0.2.1  cachem_1.0.4      xfun_0.22        
-[77] broom_0.7.9       later_1.2.0       memoise_2.0.0     cluster_2.1.0    
-[81] ellipsis_0.3.2   </code></pre>
+[21] rvest_1.0.1       xml2_1.3.2        desc_1.3.0        labeling_0.4.2   
+[25] sass_0.4.0        scales_1.1.1      callr_3.7.0       digest_0.6.27    
+[29] rmarkdown_2.9     pkgconfig_2.0.3   htmltools_0.5.1.1 sessioninfo_1.1.1
+[33] highr_0.9         dbplyr_2.1.1      fastmap_1.1.0     rlang_0.4.10     
+[37] rstudioapi_0.13   farver_2.1.0      jquerylib_0.1.4   generics_0.1.0   
+[41] jsonlite_1.7.2    zip_2.1.1         Matrix_1.2-18     Rcpp_1.0.5       
+[45] munsell_0.5.0     fansi_0.4.2       lifecycle_1.0.0   stringi_1.5.3    
+[49] whisker_0.4       yaml_2.2.1        MASS_7.3-53       pkgbuild_1.2.0   
+[53] plyr_1.8.6        grid_4.0.3        parallel_4.0.3    promises_1.2.0.1 
+[57] crayon_1.4.1      haven_2.4.1       splines_4.0.3     hms_1.1.0        
+[61] ps_1.6.0          knitr_1.33        pillar_1.6.0      pkgload_1.2.1    
+[65] reprex_2.0.0      glue_1.4.2        evaluate_0.14     remotes_2.4.0    
+[69] modelr_0.1.8      vctrs_0.3.8       httpuv_1.6.0      testthat_3.0.2   
+[73] cellranger_1.1.0  gtable_0.3.0      assertthat_0.2.1  cachem_1.0.4     
+[77] xfun_0.22         broom_0.7.9       later_1.2.0       memoise_2.0.0    
+[81] cluster_2.1.0     ellipsis_0.3.2   </code></pre>
 </div>
 </div>
 
