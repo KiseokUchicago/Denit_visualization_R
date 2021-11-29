@@ -212,6 +212,7 @@ dim(df_NO2NO3_mcf)
 Time_table <- openxlsx::read.xlsx("data/211028_time_table.xlsx")
 Time_table %<>% select(-Date) 
 dim(df_NO2NO3_mcf)
+df_NO2NO3 <- df_NO2NO3 %>% left_join(Time_table, by=("Time_point"="Time_point"))
 df_NO2NO3_mcf <- df_NO2NO3_mcf %>% left_join(Time_table, by=("Time_point"="Time_point"))
 dim(df_NO2NO3_mcf)
 
