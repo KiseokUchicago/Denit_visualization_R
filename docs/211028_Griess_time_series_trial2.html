@@ -476,16 +476,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomKiseokUchicagoDenitvisualizationRtree65cca32991285adecf794a8b0d174313a86164bctargetblank65cca32a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/KiseokUchicago/Denit_visualization_R/tree/65cca32991285adecf794a8b0d174313a86164bc" target="_blank">65cca32</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomKiseokUchicagoDenitvisualizationRtree8bde5098cdac4c028ec528ffb42c4f8f3f7175d9targetblank8bde509a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/KiseokUchicago/Denit_visualization_R/tree/8bde5098cdac4c028ec528ffb42c4f8f3f7175d9" target="_blank">8bde509</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomKiseokUchicagoDenitvisualizationRtree65cca32991285adecf794a8b0d174313a86164bctargetblank65cca32a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomKiseokUchicagoDenitvisualizationRtree8bde5098cdac4c028ec528ffb42c4f8f3f7175d9targetblank8bde509a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/KiseokUchicago/Denit_visualization_R/tree/65cca32991285adecf794a8b0d174313a86164bc" target="_blank">65cca32</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/KiseokUchicago/Denit_visualization_R/tree/8bde5098cdac4c028ec528ffb42c4f8f3f7175d9" target="_blank">8bde509</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -510,7 +510,6 @@ Untracked files:
     Untracked:  Figure_211007/
     Untracked:  Figure_211008/
     Untracked:  Figure_211013/
-    Untracked:  analysis/211127_Griess_time_series_slurry_vs_liquid_culture.Rmd
     Untracked:  data/210911_TOC_sample_plate1.xlsx
     Untracked:  data/210922_Griess_sample_plate1-investigating.xlsx
     Untracked:  data/210922_Griess_sample_plate1.xlsx
@@ -601,6 +600,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/KiseokUchicago/Denit_visualization_R/blob/8bde5098cdac4c028ec528ffb42c4f8f3f7175d9/analysis/211028_Griess_time_series_trial2.Rmd" target="_blank">8bde509</a>
+</td>
+<td>
+KiseokUchicago
+</td>
+<td>
+2021-11-29
+</td>
+<td>
+wflow_publish(“analysis/211028_Griess_time_series_trial2.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/KiseokUchicago/Denit_visualization_R/5c7ef7f33047395b30a2d6283c9513bc467e5ee6/docs/211028_Griess_time_series_trial2.html" target="_blank">5c7ef7f</a>
+</td>
+<td>
+KiseokUchicago
+</td>
+<td>
+2021-11-29
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -2112,6 +2145,9 @@ df_aero_blank %&lt;&gt;% mutate(Correction_factor = (Nitrate_input / Ave_NO3_mM)
 4          5      0.909   0.870   0.862   0.837   0.749</code></pre>
 <pre class="r"><code>t_aero_blank &lt;- tibble::column_to_rownames(t_aero_blank, var=&quot;Nitrate_input&quot;)
 
+is.nan.data.frame &lt;- function(x) do.call(cbind, lapply(x, is.nan))
+t_aero_blank[is.nan(t_aero_blank)] &lt;- 1
+
 cat = &quot;Aerobic&quot;
 df_aerobic_mcf &lt;- df_NO2NO3_mcf %&gt;% filter(Sample_type == &quot;Soil&quot;, Category == cat)
 
@@ -2181,6 +2217,7 @@ df_anae_blank %&lt;&gt;% mutate(Correction_factor = (Nitrate_input / Ave_NO3_mM)
 3          2.5    0.898   0.882   0.867   0.858   0.802
 4          5      0.909   0.845   0.847   0.834   0.759</code></pre>
 <pre class="r"><code>t_anae_blank &lt;- tibble::column_to_rownames(t_anae_blank, var=&quot;Nitrate_input&quot;)
+t_anae_blank[is.nan(t_anae_blank)] &lt;- 1
 
 (t_anae_Ave &lt;- pivot_wider(df_anaerobic_mcf, id_cols=Nitrate_input ,names_from = Time_point, values_from = Ave_NO3_mM))</code></pre>
 <pre><code># A tibble: 4 x 2
@@ -2219,16 +2256,6 @@ df_anae_Ave_c &lt;- pivot_longer(t_anae_Ave_c, cols=-1, names_to = &quot;Time_po
 <pre><code>Error in pivot_longer(t_anae_Ave_c, cols = -1, names_to = &quot;Time_point&quot;, : object &#39;t_anae_Ave_c&#39; not found</code></pre>
 <pre class="r"><code>df_anae_Std_c &lt;- pivot_longer(t_anae_Std_c, cols=-1, names_to = &quot;Time_point&quot;, values_to = &quot;Std_NO3_mM&quot;)</code></pre>
 <pre><code>Error in pivot_longer(t_anae_Std_c, cols = -1, names_to = &quot;Time_point&quot;, : object &#39;t_anae_Std_c&#39; not found</code></pre>
-<pre class="r"><code># set all nitrate_input to numeric
-df_anaebic_mcf$Nitrate_input &lt;- as.numeric(as.character(df_anaebic_mcf$Nitrate_input))</code></pre>
-<pre><code>Error in eval(expr, envir, enclos): object &#39;df_anaebic_mcf&#39; not found</code></pre>
-<pre class="r"><code>df_anae_Ave_c$Nitrate_input &lt;- as.numeric(as.character(df_anae_Ave_c$Nitrate_input))</code></pre>
-<pre><code>Error in eval(expr, envir, enclos): object &#39;df_anae_Ave_c&#39; not found</code></pre>
-<pre class="r"><code>df_anae_Std_c$Nitrate_input &lt;- as.numeric(as.character(df_anae_Std_c$Nitrate_input))</code></pre>
-<pre><code>Error in eval(expr, envir, enclos): object &#39;df_anae_Std_c&#39; not found</code></pre>
-<pre class="r"><code># join
-df_anaebic_bcf &lt;- df_anaebic_mcf %&gt;% select(-Ave_NO2_mM, -Ave_NO3_mM, -Std_NO2_mM, -Std_NO3_mM) %&gt;% left_join(df_anae_Ave_c, by=c(&quot;Nitrate_input&quot;=&quot;Nitrate_input&quot;,&quot;Time_point&quot;=&quot;Time_point&quot;)) %&gt;% left_join(df_anae_Std_c, by=c(&quot;Nitrate_input&quot;=&quot;Nitrate_input&quot;,&quot;Time_point&quot;=&quot;Time_point&quot;)) </code></pre>
-<pre><code>Error in select(., -Ave_NO2_mM, -Ave_NO3_mM, -Std_NO2_mM, -Std_NO3_mM): object &#39;df_anaebic_mcf&#39; not found</code></pre>
 <pre class="r"><code># create a function
 
 multiply_blank_correction &lt;- function(df_aero_b, mcf_file){
@@ -2239,6 +2266,7 @@ multiply_blank_correction &lt;- function(df_aero_b, mcf_file){
   
   (t_aero_blank &lt;- pivot_wider(df_aero_blank, id_cols=Nitrate_input ,names_from = Time_point, values_from = Correction_factor))
   t_aero_blank &lt;- tibble::column_to_rownames(t_aero_blank, var=&quot;Nitrate_input&quot;)
+  t_aero_blank[is.nan(t_aero_blank)] &lt;- 1
   
   (t_aero_Ave &lt;- pivot_wider(mcf_file, id_cols=Nitrate_input ,names_from = Time_point, values_from = Ave_NO3_mM))
   t_aero_Ave &lt;- tibble::column_to_rownames(t_aero_Ave, var=&quot;Nitrate_input&quot;)
