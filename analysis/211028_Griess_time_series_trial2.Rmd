@@ -1176,6 +1176,9 @@ df_aero_blank %<>% mutate(Correction_factor = (Nitrate_input / Ave_NO3_mM))
 (t_aero_blank <- pivot_wider(df_aero_blank, id_cols=Nitrate_input ,names_from = Time_point, values_from = Correction_factor))
 t_aero_blank <- tibble::column_to_rownames(t_aero_blank, var="Nitrate_input")
 
+is.nan.data.frame <- function(x) do.call(cbind, lapply(x, is.nan))
+t_aero_blank[is.nan(t_aero_blank)] <- 1
+
 cat = "Aerobic"
 df_aerobic_mcf <- df_NO2NO3_mcf %>% filter(Sample_type == "Soil", Category == cat)
 
@@ -1216,6 +1219,7 @@ df_anae_blank %<>% mutate(Correction_factor = (Nitrate_input / Ave_NO3_mM))
 
 (t_anae_blank <- pivot_wider(df_anae_blank, id_cols=Nitrate_input ,names_from = Time_point, values_from = Correction_factor))
 t_anae_blank <- tibble::column_to_rownames(t_anae_blank, var="Nitrate_input")
+t_anae_blank[is.nan(t_anae_blank)] <- 1
 
 (t_anae_Ave <- pivot_wider(df_anaerobic_mcf, id_cols=Nitrate_input ,names_from = Time_point, values_from = Ave_NO3_mM))
 t_anae_Ave <- tibble::column_to_rownames(t_anae_Ave, var="Nitrate_input")
@@ -1237,18 +1241,6 @@ t_anae_Std_c <- tibble::rownames_to_column(t_anae_Std_c, var="Nitrate_input")
 df_anae_Ave_c <- pivot_longer(t_anae_Ave_c, cols=-1, names_to = "Time_point", values_to = "Ave_NO3_mM")
 df_anae_Std_c <- pivot_longer(t_anae_Std_c, cols=-1, names_to = "Time_point", values_to = "Std_NO3_mM")
 
-# set all nitrate_input to numeric
-df_anaebic_mcf$Nitrate_input <- as.numeric(as.character(df_anaebic_mcf$Nitrate_input))
-df_anae_Ave_c$Nitrate_input <- as.numeric(as.character(df_anae_Ave_c$Nitrate_input))
-df_anae_Std_c$Nitrate_input <- as.numeric(as.character(df_anae_Std_c$Nitrate_input))
-
-# join
-df_anaebic_bcf <- df_anaebic_mcf %>% select(-Ave_NO2_mM, -Ave_NO3_mM, -Std_NO2_mM, -Std_NO3_mM) %>% left_join(df_anae_Ave_c, by=c("Nitrate_input"="Nitrate_input","Time_point"="Time_point")) %>% left_join(df_anae_Std_c, by=c("Nitrate_input"="Nitrate_input","Time_point"="Time_point")) 
-
-
-
-
-
 # create a function
 
 multiply_blank_correction <- function(df_aero_b, mcf_file){
@@ -1259,6 +1251,7 @@ multiply_blank_correction <- function(df_aero_b, mcf_file){
   
   (t_aero_blank <- pivot_wider(df_aero_blank, id_cols=Nitrate_input ,names_from = Time_point, values_from = Correction_factor))
   t_aero_blank <- tibble::column_to_rownames(t_aero_blank, var="Nitrate_input")
+  t_aero_blank[is.nan(t_aero_blank)] <- 1
   
   (t_aero_Ave <- pivot_wider(mcf_file, id_cols=Nitrate_input ,names_from = Time_point, values_from = Ave_NO3_mM))
   t_aero_Ave <- tibble::column_to_rownames(t_aero_Ave, var="Nitrate_input")
