@@ -214,3 +214,150 @@ ggplot(df_pH, aes(x=pH_needle, y=pH_meter)) +
 ```
 
 
+## Testing pH colorimetric method
+Experimental date: 12/01/21 \
+Analysis: 12/06/21 \
+
+## 1. Import data
+```{r}
+# import file
+df_pH_color <- openxlsx::read.xlsx("data/211201_pH_colorimetric.xlsx")
+df_pH_meter <- openxlsx::read.xlsx("data/pH_data(12.6.21)-Midway_incubation_endpoint.xlsx")
+class(df_pH_color)
+colnames(df_pH_color)
+colnames(df_pH_meter)
+
+head(df_pH_color)
+dim(df_pH_color)
+
+# 
+# df_pH_gg <- melt(df_pH ,variable.name = "Method",value.name = "pH")
+# 
+# # Order the method
+# df_pH_gg$Method <- factor(df_pH_gg$Method, levels=c("pH_meter", "pH_needle"))
+# 
+# # remove NA
+# dim(df_pH_gg)
+
+```
+
+## 2. Plot
+```{r}
+# plot - Colorimetric value 
+ggplot(df_pH_color, aes(x=pH, y=pH_colorimetric, color=Soil, group=Soil)) +
+  geom_point(size=4, shape=16, alpha=0.7) +
+  # geom_line(size=1)+
+  # scale_color_brewer(palette='Set1') +
+  ylab("Colorimetric pH value (mu = 0.059) \n") +
+  xlab("\n Intended pH (without buffer)") +
+  # scale_y_continuous(breaks = seq(5,7,0.1), limits=c(5, 7))+
+  ggtitle("Colorimetric pH measurement (endpoint) \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d
+
+# plot - pH meter
+# this is not endpoint, I added nitrate and water to the soil and shook and measured the supernatant.
+
+ggplot(df_pH_meter, aes(x=pH, y=pH_meter, color=Soil, group=Soil)) +
+  geom_point(size=4, shape=17, alpha=1) +
+  # geom_line(size=1)+
+  # scale_color_brewer(palette='Set1') +
+  ylab("pH meter reads \n") +
+  xlab("\n Intended pH (without pH buffer)") +
+  # scale_y_continuous(breaks = seq(5,7,0.1), limits=c(5, 7))+
+  ggtitle("pH meter measurement (after adding nitrate to soil) \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d
+
+
+# show difference of pH meter and colorimetric pH value
+# join df
+# df_pH_merge <- df_pH_color %>% left_join(df_pH_meter, by=c("Soil"="Soil", "pH"="pH")) %>% select(Soil, pH, pH_colorimetric, pH_meter)
+
+df_pH_color2 <- df_pH_color %>% group_by(Soil, pH) %>% summarise(pH_colorimetric = mean(pH_colorimetric)) %>% ungroup() 
+df_pH_color2 <- df_pH_color2 %>% rename(pH_read = pH_colorimetric) %>% mutate(Method = "colorimetric") 
+
+df_pH_meter2 <- df_pH_meter %>% rename(pH_read = pH_meter) %>% mutate(Method = "pH_meter") %>% select(-Sample)
+
+df_pH_merge <- rbind(df_pH_color2, df_pH_meter2)
+
+
+ggplot(df_pH_merge, aes(x=pH, y=pH_read, color=Soil, shape=Method)) +
+  geom_point(size=6, alpha=1) +
+  # geom_line(size=1)+
+  # scale_color_brewer(palette='Set1') +
+  ylab("pH value \n") +
+  xlab("\n Intended pH (without pH buffer)") +
+  # scale_y_continuous(breaks = seq(5,7,0.1), limits=c(5, 7))+
+  ggtitle("Colorimetric (endpoint) VS. pH meter (after adding nitrate to soil) \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d
+
+
+```
+
+
+## Testing pH buffering capacity
+Experimental date: 12/03/21 \
+Analysis: 12/07/21 \
+
+```{r}
+df_nic <- openxlsx::read.xlsx("data/120321_soil_buffering_capacity_Nichols-B.xlsx")
+
+ggplot(df_nic, aes(x=`0.1M_HCl_ul`, y=`Nichols-B`)) +
+  geom_point(size=3, shape=16, alpha=1, color='navy') +
+  geom_line(size=1, color='navy')+
+  # scale_color_brewer(palette='Set1') +
+  ylab("pH \n") +
+  xlab("\n added 0.1M HCl (ul)") +
+  # scale_y_continuous(breaks = seq(5,7,0.1), limits=c(5, 7))+
+  ggtitle("Soil buffering capacity (after adding nitrate to soil) \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d
+
+# convert x axis to mol
+df_nic %<>% mutate(H_mol = `0.1M_HCl_ul` * 0.0001)
+
+ggplot(df_nic, aes(x=H_mol, y=`Nichols-B`)) +
+  geom_point(size=3, shape=16, alpha=1, color='navy') +
+  geom_line(size=1, color='navy')+
+  # scale_color_brewer(palette='Set1') +
+  ylab("pH \n") +
+  xlab("\n added 0.1M HCl (ul)") +
+  scale_y_continuous(breaks = seq(0,9,1), limits=c(0, 9))+
+  # scale_x_continuous(breaks = seq(0,7,0.1), limits=c(5, 7))+
+  ggtitle("Soil buffering capacity (after adding nitrate to soil) \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d
+
+
+# Washington-B sample
+ggplot(df_nic, aes(x=`0.1M_HCl_ul`, y=`Washington-A`)) +
+  geom_point(size=3, shape=16, alpha=1, color='navy') +
+  geom_line(size=1, color='navy')+
+  # scale_color_brewer(palette='Set1') +
+  ylab("pH \n") +
+  xlab("\n added 0.1M HCl (ul)") +
+  # scale_y_continuous(breaks = seq(5,7,0.1), limits=c(5, 7))+
+  ggtitle("Soil buffering capacity (Washington-A soil sample) \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d
+
+
+
+
+
+
+
+
+
+```
+
+
+
