@@ -26,4 +26,5 @@ Welcome to Kiseok Denitrification data visualization website.
 * [211104_Griess_blank_decline_issue2 (10/25/21)](211104_Griess_blank_decline_issue.html)
 * [211028_Griess_time_series_trial2 (10/28/21)](211028_Griess_time_series_trial2.html)
 * [211127_Griess_time_series_slurry_vs_liquid_culture (11/27/21)](211127_Griess_time_series_slurry_vs_liquid_culture.html)
+* [211128_Griess_time_series_3soil (11/28/21)](211128_Griess_time_series_3soil.html)
 
