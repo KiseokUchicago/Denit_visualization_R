@@ -1,0 +1,212 @@
+---
+title: "211209_OD600_last_wash"
+author: "KiseokUchicago"
+date: "2021-12-21"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=11, fig.height=9,
+                      error=TRUE, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE)
+```
+
+## OD600 - last wash OD600 measurement
+Researcher: **Kiseok Lee** \
+Experiment Date: 12/9/21 - 12/15/21 \
+Analysis Date: 12/21/21
+Lab: **Seppe Kuehn**
+
+```{r}
+# libraries
+library(dplyr)
+library(ggplot2)
+library(RColorBrewer)
+library(vegan)
+library(tidyverse)
+library(magrittr)
+library(readxl)
+library(reshape2)
+library(gtools)
+library(devtools)
+library(openxlsx)
+library(ape)
+library(stringr)
+library(tidyr)
+library(ggrepel)
+library(ggpubr)
+
+## theme for ggplot
+mytheme <- theme_bw() + 
+  theme(text = element_text(family="serif")) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5, family="serif")) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13, family="serif"))+
+  theme(axis.text.y = element_text(size=10, family="serif"))+
+  theme(panel.grid.major = element_blank()) +
+  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),panel.border=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))
+
+mytheme_2d <- theme_bw() + 
+  theme(text = element_text(family="serif")) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5, family="serif")) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13, family="serif"))+
+  theme(axis.text.y = element_text(size=13, family="serif"))+
+  # theme(panel.grid.major = element_blank()) +
+  # theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))
+
+
+# color collection
+my_color_collection <- c(
+  "#CBD588", "#5F7FC7", "orange", "#AD6F3B", "#673770", 
+  "#D14285", "#652926", "#C84248", "#8569D5", "#5E738F",
+  "#D1A33D", "#8A7C64", "#599861","#616163", "#FFCDB2",
+  "#6D9F71", "#242F40",
+  "#CCA43B", "#F92A82", "#ED7B84", "#7EB77F", 
+  "#DEC4A1", "#E5D1D0", '#0E8482', '#C9DAEA', '#337357', 
+  '#95C623', '#E55812', '#04471C', '#F2D7EE', '#D3BCC0', 
+  '#A5668B', '#69306D', '#0E103D', '#1A535C', '#4ECDC4', 
+  '#F7FFF7', '#FF6B6B', '#FFE66D', '#6699CC', '#FFF275', 
+  '#FF8C42', '#FF3C38', '#A23E48', '#000000', '#CF5C36', 
+  '#EEE5E9', '#7C7C7C', '#EFC88B', '#2E5266', '#6E8898', 
+  '#9FB1BC', '#D3D0CB', '#E2C044', '#5BC0EB', '#FDE74C', 
+  '#9BC53D', '#E55934', '#FA7921', "#CD9BCD", "#508578", "#DA5724")
+
+# for git push, use this instead of using wflow_git_push()
+# git push -u origin master (in the Git app / in the working directory)
+
+```
+
+
+## 1. Import data table from python code
+We are going to use the vcl3 treated standard curve that is fitted with pure nitrate standards
+```{r}
+# import file
+df_p1 <- openxlsx::read.xlsx("data/211209_OD600_T1.xlsx")
+df_p2 <- openxlsx::read.xlsx("data/211209_OD600_T2.xlsx")
+df_p3 <- openxlsx::read.xlsx("data/211209_OD600_T3.xlsx")
+
+
+head(df_p1)
+colnames(df_p1)
+dim(df_p1)
+
+head(df_p2)
+colnames(df_p2)
+dim(df_p2)
+
+head(df_p3)
+colnames(df_p3)
+dim(df_p3)
+
+# bind two dataframe
+df_p <- rbind(df_p1, df_p2, df_p3)
+dim(df_p)
+
+# remove NA
+dim(df_p)
+df_p <- na.omit(df_p)
+dim(df_p)
+
+# Get the metadata for time point and left join
+Time_table <- openxlsx::read.xlsx("data/211209_time_table.xlsx")
+
+Time_table %<>% select(-Date) 
+dim(df_p)
+df_p <- df_p %>% left_join(Time_table, by=("Time_point"="Time_point"))
+dim(df_p)
+colnames(df_p)
+# time_point order
+# df_p$Time_point <-  factor(df_p$Time_point, levels = paste0("T",0:10))
+
+```
+
+## 2. Get average and standard deviation & Moisture correction & Blank correction
+```{r}
+
+# average technical replicate
+colnames(df_p)
+dim(df_p)
+
+df_OD600 <- df_p %>% group_by(Sample, Time_point, Time_minutes, Time_hours, Time_days) %>% summarise(Ave_OD600 = mean(OD600), Std_OD600 = sd(OD600)) %>% ungroup()
+
+dim(df_OD600)
+dim(df_p)
+
+# plot to see
+ggplot(df_p, aes(x=Time_days, y=OD600, color=Sample, group=Sample)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  # geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_fill_brewer(palette='Set2') +
+  ylab("OD600 \n") +
+  xlab("\n Time (Day)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Raw \n") +
+  mytheme_2d
+
+# plot to see what to set as blank
+df_blank <- df_p %>% filter(Sample %in% c("Saline","Saline_inoculated","LB_10-9"))
+ggplot(df_blank, aes(x=Time_days, y=OD600, color=Sample, group=Sample)) +
+  geom_point(size=3, shape=16) +
+  # geom_line(size=1)+
+  # geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_fill_brewer(palette='Set2') +
+  ylab("OD600 \n") +
+  xlab("\n Time (Day)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Blank \n") +
+  mytheme_2d
+
+# We are going to use Saline as blank, because it had the lowest OD600 value.
+
+OD600_Blank <- df_OD600 %>% filter(Sample == "Saline") %>% select(Ave_OD600) %>% unlist() %>% mean()
+df_sample <- df_OD600 %>% filter(!(Sample == "Saline"))
+df_sample$Ave_OD600 <- df_sample$Ave_OD600 - OD600_Blank 
+df_sample$Ave_OD600[df_sample$Ave_OD600 < 0] <- 0  # make negative 0. There is only 1 sample.
+
+# plot
+ggplot(df_sample, aes(x=Time_days, y=Ave_OD600, color=Sample, group=Sample)) +
+  geom_point(size=3, shape=16) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_OD600 - Std_OD600, ymax=Ave_OD600 + Std_OD600), width=.05)+
+  # scale_fill_brewer(palette='Set2') +
+  ylab("OD600 \n") +
+  xlab("\n Time (Day)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("After subtracting blank \n") +
+  mytheme_2d
+
+```
+
+## 3. Compare with other
+
+```{r}
+df_sample$Sample <- factor(df_sample$Sample, levels = c("LB_10-1","Final_wash", "LB_10-3", "LB_10-5", "LB_10-7", "LB_10-9","Saline_inoculated"))
+df_sample$Time_days <- round(df_sample$Time_days, 1)
+
+ggplot(df_sample, aes(x=Sample, y=Ave_OD600, fill = Sample)) +
+  geom_bar(stat="identity",position="dodge") +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_OD600 - Std_OD600, ymax=Ave_OD600 + Std_OD600), width=.05)+
+  # scale_fill_brewer(palette='Set2') +
+  ylab("OD600 \n") +
+  xlab("\n Concentrations of diluted LB ") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("OD600 of inoculated last wash on day n \n") +
+  mytheme_2d +
+  facet_grid(. ~ Time_days) +
+  scale_fill_manual( values = c("Final_wash"="red"), guide = "none" ) +  # highlight
+  theme(axis.text.x = element_text(hjust = 1, vjust=0.9,size=13, family="serif", angle=40))+
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.3))
+  
+
+
+```
+
