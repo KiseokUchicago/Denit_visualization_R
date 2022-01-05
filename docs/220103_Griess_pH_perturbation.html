@@ -1,0 +1,1957 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="KiseokUchicago" />
+
+<meta name="date" content="2022-01-04" />
+
+<title>220103_Griess_pH_perturbation</title>
+
+<script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/master/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Denit_visualization_R</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/KiseokUchicago/Denit_visualization_R">
+    <span class="fa fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">220103_Griess_pH_perturbation</h1>
+<h4 class="author">KiseokUchicago</h4>
+<h4 class="date">2022-01-04</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2022-01-05
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>Denit_visualization_R/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.2). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20210924code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20210924)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20210924code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20210924)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomKiseokUchicagoDenitvisualizationRtree7899ce493f6ca4d09d9ebe1c9d70655a20a71500targetblank7899ce4a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/KiseokUchicago/Denit_visualization_R/tree/7899ce493f6ca4d09d9ebe1c9d70655a20a71500" target="_blank">7899ce4</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomKiseokUchicagoDenitvisualizationRtree7899ce493f6ca4d09d9ebe1c9d70655a20a71500targetblank7899ce4a" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://github.com/KiseokUchicago/Denit_visualization_R/tree/7899ce493f6ca4d09d9ebe1c9d70655a20a71500" target="_blank">7899ce4</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    Figure_211014_external_lab/
+
+Untracked files:
+    Untracked:  210928_pH.pdf
+    Untracked:  211014_TN.pdf
+    Untracked:  211014_drying_oven_TOC.pdf
+    Untracked:  211014_toc_lab.pdf
+    Untracked:  211020_df_full_innate.xlsx
+    Untracked:  211222_df_dry_gg.xlsx
+    Untracked:  211222_df_dry_points.xlsx
+    Untracked:  Figure_210911_TOC/
+    Untracked:  Figure_210924/
+    Untracked:  Figure_210927_TOC/
+    Untracked:  Figure_210929/
+    Untracked:  Figure_211006/
+    Untracked:  Figure_211007/
+    Untracked:  Figure_211008/
+    Untracked:  Figure_211013/
+    Untracked:  analysis/211220_Griess_slurry_vs_supernatant2.Rmd
+    Untracked:  analysis/211224_TOC_spikein_test.Rmd
+    Untracked:  data/120321_soil_buffering_capacity_Nichols-B.xlsx
+    Untracked:  data/210911_TOC_sample_plate1.xlsx
+    Untracked:  data/210922_Griess_sample_plate1-investigating.xlsx
+    Untracked:  data/210922_Griess_sample_plate1.xlsx
+    Untracked:  data/210927_TOC_sample_plate1_100ul.xlsx
+    Untracked:  data/210927_TOC_sample_plate1_10ul.xlsx
+    Untracked:  data/210928_Griess_sample_plate1.xlsx
+    Untracked:  data/211005_Griess_sample_plate1.xlsx
+    Untracked:  data/211007_Griess_blank_plate1.xlsx
+    Untracked:  data/211007_Griess_blank_plate2.xlsx
+    Untracked:  data/211008_Griess_blank_plate0.xlsx
+    Untracked:  data/211008_Griess_blank_plate1.xlsx
+    Untracked:  data/211017_Griess_plate0.xlsx
+    Untracked:  data/211017_Griess_plate1.xlsx
+    Untracked:  data/211017_Griess_plate2.xlsx
+    Untracked:  data/211017_Griess_plate3.xlsx
+    Untracked:  data/211017_Griess_plate4.xlsx
+    Untracked:  data/211017_Griess_plate5.xlsx
+    Untracked:  data/211017_Griess_plate6.xlsx
+    Untracked:  data/211017_Griess_plate7.xlsx
+    Untracked:  data/211017_Griess_plate8.xlsx
+    Untracked:  data/211019_Griess_plate1.xlsx
+    Untracked:  data/211020_Griess_plate0.xlsx
+    Untracked:  data/211020_Griess_plate1.xlsx
+    Untracked:  data/211020_df_full_innate.xlsx
+    Untracked:  data/211025_Griess_no3_fit_plate0.xlsx
+    Untracked:  data/211025_Griess_no3_fit_plate1.xlsx
+    Untracked:  data/211025_Griess_plate0.xlsx
+    Untracked:  data/211025_Griess_plate1.xlsx
+    Untracked:  data/211028_Griess_plate1.xlsx
+    Untracked:  data/211028_Griess_plate1_no3_fit.xlsx
+    Untracked:  data/211028_Griess_plate2.xlsx
+    Untracked:  data/211028_Griess_plate2_no3_fit.xlsx
+    Untracked:  data/211028_Griess_plate3.xlsx
+    Untracked:  data/211028_Griess_plate3_no3_fit.xlsx
+    Untracked:  data/211028_Griess_plate4.xlsx
+    Untracked:  data/211028_Griess_plate4_no3_fit.xlsx
+    Untracked:  data/211028_time_table.xlsx
+    Untracked:  data/211127_Griess_SUP1.xlsx
+    Untracked:  data/211127_Griess_SUP11.xlsx
+    Untracked:  data/211127_Griess_SUP3.xlsx
+    Untracked:  data/211127_Griess_SUP5.xlsx
+    Untracked:  data/211127_Griess_SUP7.xlsx
+    Untracked:  data/211127_Griess_SUP9.xlsx
+    Untracked:  data/211127_Griess_plate0.xlsx
+    Untracked:  data/211127_time_table.xlsx
+    Untracked:  data/211128_Griess_plate1.xlsx
+    Untracked:  data/211128_Griess_plate10.xlsx
+    Untracked:  data/211128_Griess_plate11.xlsx
+    Untracked:  data/211128_Griess_plate2.xlsx
+    Untracked:  data/211128_Griess_plate3.xlsx
+    Untracked:  data/211128_Griess_plate4.xlsx
+    Untracked:  data/211128_Griess_plate5.xlsx
+    Untracked:  data/211128_Griess_plate6.xlsx
+    Untracked:  data/211128_Griess_plate7.xlsx
+    Untracked:  data/211128_Griess_plate8.xlsx
+    Untracked:  data/211128_Griess_plate9.xlsx
+    Untracked:  data/211128_time_table.xlsx
+    Untracked:  data/211201_pH_colorimetric.xlsx
+    Untracked:  data/211203_slurry_vs_water_drying_table.xlsx
+    Untracked:  data/211203_slurry_vs_water_drying_time.xlsx
+    Untracked:  data/211208_pH_colorimetric_T3.xlsx
+    Untracked:  data/211208_pH_colorimetric_T4.xlsx
+    Untracked:  data/211208_pH_colorimetric_T5.xlsx
+    Untracked:  data/211208_pH_colorimetric_plate1.xlsx
+    Untracked:  data/211208_pH_colorimetric_plate2.xlsx
+    Untracked:  data/211208_pH_colorimetric_plate3.xlsx
+    Untracked:  data/211208_time_table.xlsx
+    Untracked:  data/211209_OD600_T1.xlsx
+    Untracked:  data/211209_OD600_T2.xlsx
+    Untracked:  data/211209_OD600_T3.xlsx
+    Untracked:  data/211209_time_table.xlsx
+    Untracked:  data/211210_pH_colorimetric_T0.xlsx
+    Untracked:  data/211210_pH_colorimetric_T1.xlsx
+    Untracked:  data/211210_pH_colorimetric_T2.xlsx
+    Untracked:  data/211210_pH_colorimetric_T3.xlsx
+    Untracked:  data/211210_time_table.xlsx
+    Untracked:  data/211218_pH_colorimetric_t0.xlsx
+    Untracked:  data/211218_pH_colorimetric_t1.xlsx
+    Untracked:  data/211218_pH_colorimetric_t2.xlsx
+    Untracked:  data/211218_pH_colorimetric_t3.xlsx
+    Untracked:  data/211218_pH_colorimetric_t4.xlsx
+    Untracked:  data/211218_time_table.xlsx
+    Untracked:  data/211220_Griess_plate1.xlsx
+    Untracked:  data/211220_Griess_plate10.xlsx
+    Untracked:  data/211220_Griess_plate11.xlsx
+    Untracked:  data/211220_Griess_plate2.xlsx
+    Untracked:  data/211220_Griess_plate3.xlsx
+    Untracked:  data/211220_Griess_plate4.xlsx
+    Untracked:  data/211220_Griess_plate5.xlsx
+    Untracked:  data/211220_Griess_plate6.xlsx
+    Untracked:  data/211220_Griess_plate7.xlsx
+    Untracked:  data/211220_Griess_plate8.xlsx
+    Untracked:  data/211220_Griess_plate9.xlsx
+    Untracked:  data/211220_time_table_AU.xlsx
+    Untracked:  data/211220_time_table_BN.xlsx
+    Untracked:  data/211224_TOC_sample_plate1.xlsx
+    Untracked:  data/220103_Griess_T0.xlsx
+    Untracked:  data/220103_Griess_T1.xlsx
+    Untracked:  data/220103_Griess_T11.xlsx
+    Untracked:  data/220103_Griess_T12.xlsx
+    Untracked:  data/220103_Griess_T2.xlsx
+    Untracked:  data/220103_Griess_T3.xlsx
+    Untracked:  data/220103_Griess_T4.xlsx
+    Untracked:  data/220103_Griess_T5.xlsx
+    Untracked:  data/220103_Griess_T6.xlsx
+    Untracked:  data/220103_Griess_T7.xlsx
+    Untracked:  data/220103_Griess_T8.xlsx
+    Untracked:  data/220103_Griess_T9.xlsx
+    Untracked:  data/220103_time_table.xlsx
+    Untracked:  data/TOC_TN_measurement_2_labs_211014.xlsx
+    Untracked:  data/dry_weight_curve(9.5.21).xlsx
+    Untracked:  data/pH_data(11.17.21)-Midway_etc.xlsx
+    Untracked:  data/pH_data(12.6.21)-Midway_incubation_endpoint.xlsx
+    Untracked:  data/pH_data(9.14.21).xlsx
+    Untracked:  data/pH_data(9.28.21).xlsx
+    Untracked:  df_NO2NO3.xlsx
+    Untracked:  df_pH.xlsx
+    Untracked:  ~$df_pH.xlsx
+
+Unstaged changes:
+    Modified:   analysis/Soil_drying_curve.Rmd
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/220103_Griess_pH_perturbation.Rmd</code>) and HTML (<code>docs/220103_Griess_pH_perturbation.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/KiseokUchicago/Denit_visualization_R/blob/7899ce493f6ca4d09d9ebe1c9d70655a20a71500/analysis/220103_Griess_pH_perturbation.Rmd" target="_blank">7899ce4</a>
+</td>
+<td>
+KiseokUchicago
+</td>
+<td>
+2022-01-05
+</td>
+<td>
+wflow_publish(“analysis/220103_Griess_pH_perturbation.Rmd”)
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="time-series-analysis---slurry-vs-supernatant-griess-assay" class="section level2">
+<h2>Time series analysis - Slurry vs Supernatant (Griess assay)</h2>
+<p>Researcher: <strong>Kiseok Lee</strong><br />
+Experiment Date: 12/29/21 - 1/3/22 (3 days)<br />
+Analysis Date: 1/4/21 Lab: <strong>Seppe Kuehn</strong></p>
+<pre class="r"><code># libraries
+library(dplyr)
+library(ggplot2)
+library(RColorBrewer)
+library(vegan)
+library(tidyverse)
+library(magrittr)
+library(readxl)
+library(reshape2)
+library(gtools)
+library(devtools)
+library(openxlsx)
+library(ape)
+library(stringr)
+library(tidyr)
+library(ggrepel)
+library(ggpubr)
+
+## theme for ggplot
+mytheme &lt;- theme_bw() + 
+  theme(text = element_text(family=&quot;serif&quot;)) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5, family=&quot;serif&quot;)) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5, family=&quot;serif&quot;)) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5, family=&quot;serif&quot;)) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13, family=&quot;serif&quot;))+
+  theme(axis.text.y = element_text(size=10, family=&quot;serif&quot;))+
+  theme(panel.grid.major = element_blank()) +
+  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),panel.border=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))
+
+mytheme_2d &lt;- theme_bw() + 
+  theme(text = element_text(family=&quot;serif&quot;)) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5, family=&quot;serif&quot;)) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5, family=&quot;serif&quot;)) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5, family=&quot;serif&quot;)) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13, family=&quot;serif&quot;))+
+  theme(axis.text.y = element_text(size=13, family=&quot;serif&quot;))+
+  # theme(panel.grid.major = element_blank()) +
+  # theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))
+
+
+# color collection
+my_color_collection &lt;- c(
+  &quot;#CBD588&quot;, &quot;#5F7FC7&quot;, &quot;orange&quot;, &quot;#AD6F3B&quot;, &quot;#673770&quot;, 
+  &quot;#D14285&quot;, &quot;#652926&quot;, &quot;#C84248&quot;, &quot;#8569D5&quot;, &quot;#5E738F&quot;,
+  &quot;#D1A33D&quot;, &quot;#8A7C64&quot;, &quot;#599861&quot;,&quot;#616163&quot;, &quot;#FFCDB2&quot;,
+  &quot;#6D9F71&quot;, &quot;#242F40&quot;,
+  &quot;#CCA43B&quot;, &quot;#F92A82&quot;, &quot;#ED7B84&quot;, &quot;#7EB77F&quot;, 
+  &quot;#DEC4A1&quot;, &quot;#E5D1D0&quot;, &#39;#0E8482&#39;, &#39;#C9DAEA&#39;, &#39;#337357&#39;, 
+  &#39;#95C623&#39;, &#39;#E55812&#39;, &#39;#04471C&#39;, &#39;#F2D7EE&#39;, &#39;#D3BCC0&#39;, 
+  &#39;#A5668B&#39;, &#39;#69306D&#39;, &#39;#0E103D&#39;, &#39;#1A535C&#39;, &#39;#4ECDC4&#39;, 
+  &#39;#F7FFF7&#39;, &#39;#FF6B6B&#39;, &#39;#FFE66D&#39;, &#39;#6699CC&#39;, &#39;#FFF275&#39;, 
+  &#39;#FF8C42&#39;, &#39;#FF3C38&#39;, &#39;#A23E48&#39;, &#39;#000000&#39;, &#39;#CF5C36&#39;, 
+  &#39;#EEE5E9&#39;, &#39;#7C7C7C&#39;, &#39;#EFC88B&#39;, &#39;#2E5266&#39;, &#39;#6E8898&#39;, 
+  &#39;#9FB1BC&#39;, &#39;#D3D0CB&#39;, &#39;#E2C044&#39;, &#39;#5BC0EB&#39;, &#39;#FDE74C&#39;, 
+  &#39;#9BC53D&#39;, &#39;#E55934&#39;, &#39;#FA7921&#39;, &quot;#CD9BCD&quot;, &quot;#508578&quot;, &quot;#DA5724&quot;)
+
+# for git push, use this instead of using wflow_git_push()
+# git push -u origin master (in the Git app / in the working directory)</code></pre>
+</div>
+<div id="import-data-table-from-python-code" class="section level2">
+<h2>1. Import data table from python code</h2>
+<p>We are going to use the vcl3 treated standard curve that is fitted with pure nitrate standards</p>
+<pre class="r"><code># import file
+df_T0 &lt;- openxlsx::read.xlsx(&quot;data/220103_Griess_T0.xlsx&quot;)
+df_T1 &lt;- openxlsx::read.xlsx(&quot;data/220103_Griess_T1.xlsx&quot;)
+df_T2 &lt;- openxlsx::read.xlsx(&quot;data/220103_Griess_T2.xlsx&quot;)
+df_T3 &lt;- openxlsx::read.xlsx(&quot;data/220103_Griess_T3.xlsx&quot;)
+df_T4 &lt;- openxlsx::read.xlsx(&quot;data/220103_Griess_T4.xlsx&quot;)
+df_T5 &lt;- openxlsx::read.xlsx(&quot;data/220103_Griess_T5.xlsx&quot;)
+df_T6 &lt;- openxlsx::read.xlsx(&quot;data/220103_Griess_T6.xlsx&quot;)
+df_T7 &lt;- openxlsx::read.xlsx(&quot;data/220103_Griess_T7.xlsx&quot;)
+df_T8 &lt;- openxlsx::read.xlsx(&quot;data/220103_Griess_T8.xlsx&quot;)
+df_T9 &lt;- openxlsx::read.xlsx(&quot;data/220103_Griess_T9.xlsx&quot;)
+# df_T10 &lt;- openxlsx::read.xlsx(&quot;data/220103_Griess_T10.xlsx&quot;) # is still in freezer (2M KCl treated &amp; spin down)
+df_T11 &lt;- openxlsx::read.xlsx(&quot;data/220103_Griess_T11.xlsx&quot;)
+df_T12 &lt;- openxlsx::read.xlsx(&quot;data/220103_Griess_T12.xlsx&quot;)
+
+head(df_T0)</code></pre>
+<pre><code>  Well Extraction_method Extraction_ul Nitrite_input Nitrate_input     Soil
+1  A01         0.5_1_1.5            70             0             2 NicholsC
+2  A02         0.5_1_1.5            70             0             2 NicholsC
+3  A03         0.5_1_1.5            70             0             2 NicholsC
+4  A04         0.5_1_1.5            70             0             2 NicholsC
+5  A05         0.5_1_1.5            70             0             2 NicholsC
+6  A06         0.5_1_1.5            70             0             2 NicholsC
+  Titration_type Concentration_M Added_ul Sample_type Time_point NO2_OD540
+1           NaOH          0.1500        5      Slurry         T0   0.00295
+2           NaOH          0.0500        5      Slurry         T0   0.00090
+3            HCl          0.0125        5      Slurry         T0   0.00255
+4            HCl          0.0500        5      Slurry         T0   0.00030
+5            HCl          0.1500        5      Slurry         T0   0.00330
+6            HCl          0.2500        5      Slurry         T0   0.00190
+  NO2NO3_OD540     NO2_mM NO2NO3_mM    NO3_mM
+1      1.22295 0.01248408 1.1881451 1.1756610
+2      0.99955 0.01147429 0.9526517 0.9411774
+3      1.02465 0.01228704 0.9786329 0.9663459
+4      1.02225 0.01117878 0.9761436 0.9649648
+5      0.88965 0.01265650 0.8402336 0.8275771
+6      0.93655 0.01196685 0.8879454 0.8759785</code></pre>
+<pre class="r"><code>colnames(df_T0)</code></pre>
+<pre><code> [1] &quot;Well&quot;              &quot;Extraction_method&quot; &quot;Extraction_ul&quot;    
+ [4] &quot;Nitrite_input&quot;     &quot;Nitrate_input&quot;     &quot;Soil&quot;             
+ [7] &quot;Titration_type&quot;    &quot;Concentration_M&quot;   &quot;Added_ul&quot;         
+[10] &quot;Sample_type&quot;       &quot;Time_point&quot;        &quot;NO2_OD540&quot;        
+[13] &quot;NO2NO3_OD540&quot;      &quot;NO2_mM&quot;            &quot;NO2NO3_mM&quot;        
+[16] &quot;NO3_mM&quot;           </code></pre>
+<pre class="r"><code>dim(df_T0)</code></pre>
+<pre><code>[1] 96 16</code></pre>
+<pre class="r"><code>head(df_T1)</code></pre>
+<pre><code>  Well Extraction_method Extraction_ul Nitrite_input Nitrate_input     Soil
+1  A01         0.5_1_1.5            70             0             2 NicholsC
+2  A02         0.5_1_1.5            70             0             2 NicholsC
+3  A03         0.5_1_1.5            70             0             2 NicholsC
+4  A04         0.5_1_1.5            70             0             2 NicholsC
+5  A05         0.5_1_1.5            70             0             2 NicholsC
+6  A06         0.5_1_1.5            70             0             2 NicholsC
+  Titration_type Concentration_M Added_ul Sample_type Time_point NO2_OD540
+1           NaOH          0.1500        5      Slurry         T1   0.01075
+2           NaOH          0.0500        5      Slurry         T1   0.00835
+3            HCl          0.0125        5      Slurry         T1   0.00560
+4            HCl          0.0500        5      Slurry         T1   0.00770
+5            HCl          0.1500        5      Slurry         T1   0.00040
+6            HCl          0.2500        5      Slurry         T1   0.00510
+  NO2NO3_OD540     NO2_mM   NO2NO3_mM    NO3_mM
+1      1.09105 0.01632752 1.047932885 1.0316054
+2      1.04860 0.01514470 1.003532872 0.9883882
+3      1.06705 0.01378963 1.022788259 1.0089986
+4      1.00685 0.01482438 0.960195982 0.9453716
+5      0.01015 0.01122803 0.007572522 0.0000000
+6      0.89640 0.01354328 0.847076718 0.8335334</code></pre>
+<pre class="r"><code>colnames(df_T1)</code></pre>
+<pre><code> [1] &quot;Well&quot;              &quot;Extraction_method&quot; &quot;Extraction_ul&quot;    
+ [4] &quot;Nitrite_input&quot;     &quot;Nitrate_input&quot;     &quot;Soil&quot;             
+ [7] &quot;Titration_type&quot;    &quot;Concentration_M&quot;   &quot;Added_ul&quot;         
+[10] &quot;Sample_type&quot;       &quot;Time_point&quot;        &quot;NO2_OD540&quot;        
+[13] &quot;NO2NO3_OD540&quot;      &quot;NO2_mM&quot;            &quot;NO2NO3_mM&quot;        
+[16] &quot;NO3_mM&quot;           </code></pre>
+<pre class="r"><code>dim(df_T1)</code></pre>
+<pre><code>[1] 96 16</code></pre>
+<pre class="r"><code>head(df_T2)</code></pre>
+<pre><code>  Well Extraction_method Extraction_ul Nitrite_input Nitrate_input     Soil
+1  A01         0.5_1_1.5            70             0             2 NicholsC
+2  A02         0.5_1_1.5            70             0             2 NicholsC
+3  A03         0.5_1_1.5            70             0             2 NicholsC
+4  A04         0.5_1_1.5            70             0             2 NicholsC
+5  A05         0.5_1_1.5            70             0             2 NicholsC
+6  A06         0.5_1_1.5            70             0             2 NicholsC
+  Titration_type Concentration_M Added_ul Sample_type Time_point NO2_OD540
+1           NaOH          0.1500        5      Slurry         T2   0.09415
+2           NaOH          0.0500        5      Slurry         T2   0.07985
+3            HCl          0.0125        5      Slurry         T2   0.06855
+4            HCl          0.0500        5      Slurry         T2   0.05620
+5            HCl          0.1500        5      Slurry         T2   0.06360
+6            HCl          0.2500        5      Slurry         T2   0.05550
+  NO2NO3_OD540     NO2_mM NO2NO3_mM    NO3_mM
+1      1.04985 0.05755537 1.0048354 0.9472800
+2      1.09370 0.05046900 1.0507160 1.0002470
+3      0.83310 0.04487437 0.7832104 0.7383360
+4      0.81850 0.03876502 0.7685762 0.7298112
+5      0.78190 0.04242504 0.7320465 0.6896214
+6      0.88655 0.03841890 0.8370934 0.7986745</code></pre>
+<pre class="r"><code>colnames(df_T2)</code></pre>
+<pre><code> [1] &quot;Well&quot;              &quot;Extraction_method&quot; &quot;Extraction_ul&quot;    
+ [4] &quot;Nitrite_input&quot;     &quot;Nitrate_input&quot;     &quot;Soil&quot;             
+ [7] &quot;Titration_type&quot;    &quot;Concentration_M&quot;   &quot;Added_ul&quot;         
+[10] &quot;Sample_type&quot;       &quot;Time_point&quot;        &quot;NO2_OD540&quot;        
+[13] &quot;NO2NO3_OD540&quot;      &quot;NO2_mM&quot;            &quot;NO2NO3_mM&quot;        
+[16] &quot;NO3_mM&quot;           </code></pre>
+<pre class="r"><code>dim(df_T2)</code></pre>
+<pre><code>[1] 96 16</code></pre>
+<pre class="r"><code>head(df_T3)</code></pre>
+<pre><code>  Well Extraction_method Extraction_ul Nitrite_input Nitrate_input     Soil
+1  A01         0.5_1_1.5            70             0             2 NicholsC
+2  A02         0.5_1_1.5            70             0             2 NicholsC
+3  A03         0.5_1_1.5            70             0             2 NicholsC
+4  A04         0.5_1_1.5            70             0             2 NicholsC
+5  A05         0.5_1_1.5            70             0             2 NicholsC
+6  A06         0.5_1_1.5            70             0             2 NicholsC
+  Titration_type Concentration_M Added_ul Sample_type Time_point NO2_OD540
+1           NaOH          0.1500        5      Slurry         T3   0.00795
+2           NaOH          0.0500        5      Slurry         T3   0.00685
+3            HCl          0.0125        5      Slurry         T3   0.00995
+4            HCl          0.0500        5      Slurry         T3   0.00860
+5            HCl          0.1500        5      Slurry         T3   0.00455
+6            HCl          0.2500        5      Slurry         T3   0.00710
+  NO2NO3_OD540     NO2_mM NO2NO3_mM    NO3_mM
+1      0.44800 0.01494758 0.4084662 0.3935186
+2      0.45075 0.01440553 0.4110640 0.3966584
+3      0.43795 0.01593322 0.3989816 0.3830484
+4      0.48980 0.01526790 0.4480673 0.4327994
+5      0.47650 0.01327230 0.4354401 0.4221678
+6      0.42280 0.01452872 0.3847105 0.3701818</code></pre>
+<pre class="r"><code>colnames(df_T3)</code></pre>
+<pre><code> [1] &quot;Well&quot;              &quot;Extraction_method&quot; &quot;Extraction_ul&quot;    
+ [4] &quot;Nitrite_input&quot;     &quot;Nitrate_input&quot;     &quot;Soil&quot;             
+ [7] &quot;Titration_type&quot;    &quot;Concentration_M&quot;   &quot;Added_ul&quot;         
+[10] &quot;Sample_type&quot;       &quot;Time_point&quot;        &quot;NO2_OD540&quot;        
+[13] &quot;NO2NO3_OD540&quot;      &quot;NO2_mM&quot;            &quot;NO2NO3_mM&quot;        
+[16] &quot;NO3_mM&quot;           </code></pre>
+<pre class="r"><code>dim(df_T3)</code></pre>
+<pre><code>[1] 96 16</code></pre>
+<pre class="r"><code>head(df_T4)</code></pre>
+<pre><code>  Well Extraction_method Extraction_ul Nitrite_input Nitrate_input     Soil
+1  A01         0.5_1_1.5            70             0             2 NicholsC
+2  A02         0.5_1_1.5            70             0             2 NicholsC
+3  A03         0.5_1_1.5            70             0             2 NicholsC
+4  A04         0.5_1_1.5            70             0             2 NicholsC
+5  A05         0.5_1_1.5            70             0             2 NicholsC
+6  A06         0.5_1_1.5            70             0             2 NicholsC
+  Titration_type Concentration_M Added_ul Sample_type Time_point NO2_OD540
+1           NaOH          0.1500        5      Slurry         T4   0.01275
+2           NaOH          0.0500        5      Slurry         T4   0.01065
+3            HCl          0.0125        5      Slurry         T4   0.00795
+4            HCl          0.0500        5      Slurry         T4   0.00795
+5            HCl          0.1500        5      Slurry         T4   0.00765
+6            HCl          0.2500        5      Slurry         T4   0.00790
+  NO2NO3_OD540     NO2_mM NO2NO3_mM    NO3_mM
+1      0.34215 0.01731335 0.3092700 0.2919566
+2      0.31450 0.01627823 0.2836080 0.2673297
+3      0.38075 0.01494758 0.3452661 0.3303186
+4      0.42285 0.01494758 0.3847576 0.3698100
+5      0.36460 0.01479974 0.3301811 0.3153814
+6      0.37245 0.01492294 0.3375090 0.3225861</code></pre>
+<pre class="r"><code>colnames(df_T4)</code></pre>
+<pre><code> [1] &quot;Well&quot;              &quot;Extraction_method&quot; &quot;Extraction_ul&quot;    
+ [4] &quot;Nitrite_input&quot;     &quot;Nitrate_input&quot;     &quot;Soil&quot;             
+ [7] &quot;Titration_type&quot;    &quot;Concentration_M&quot;   &quot;Added_ul&quot;         
+[10] &quot;Sample_type&quot;       &quot;Time_point&quot;        &quot;NO2_OD540&quot;        
+[13] &quot;NO2NO3_OD540&quot;      &quot;NO2_mM&quot;            &quot;NO2NO3_mM&quot;        
+[16] &quot;NO3_mM&quot;           </code></pre>
+<pre class="r"><code>dim(df_T4)</code></pre>
+<pre><code>[1] 96 16</code></pre>
+<pre class="r"><code>head(df_T5)</code></pre>
+<pre><code>  Well Extraction_method Extraction_ul Nitrite_input Nitrate_input     Soil
+1  A01         0.5_1_1.5            70             0             2 NicholsC
+2  A02         0.5_1_1.5            70             0             2 NicholsC
+3  A03         0.5_1_1.5            70             0             2 NicholsC
+4  A04         0.5_1_1.5            70             0             2 NicholsC
+5  A05         0.5_1_1.5            70             0             2 NicholsC
+6  A06         0.5_1_1.5            70             0             2 NicholsC
+  Titration_type Concentration_M Added_ul Sample_type Time_point NO2_OD540
+1           NaOH          0.1500        5      Slurry         T5   0.00255
+2           NaOH          0.0500        5      Slurry         T5   0.00335
+3            HCl          0.0125        5      Slurry         T5   0.00330
+4            HCl          0.0500        5      Slurry         T5   0.00200
+5            HCl          0.1500        5      Slurry         T5   0.00275
+6            HCl          0.2500        5      Slurry         T5   0.00210
+  NO2NO3_OD540     NO2_mM NO2NO3_mM    NO3_mM
+1      0.27345 0.01228704 0.2456955 0.2334085
+2      0.25605 0.01268113 0.2296918 0.2170107
+3      0.28245 0.01265650 0.2539888 0.2413323
+4      0.32980 0.01201611 0.2977953 0.2857792
+5      0.26500 0.01238556 0.2379187 0.2255332
+6      0.32795 0.01206537 0.2960782 0.2840129</code></pre>
+<pre class="r"><code>colnames(df_T5)</code></pre>
+<pre><code> [1] &quot;Well&quot;              &quot;Extraction_method&quot; &quot;Extraction_ul&quot;    
+ [4] &quot;Nitrite_input&quot;     &quot;Nitrate_input&quot;     &quot;Soil&quot;             
+ [7] &quot;Titration_type&quot;    &quot;Concentration_M&quot;   &quot;Added_ul&quot;         
+[10] &quot;Sample_type&quot;       &quot;Time_point&quot;        &quot;NO2_OD540&quot;        
+[13] &quot;NO2NO3_OD540&quot;      &quot;NO2_mM&quot;            &quot;NO2NO3_mM&quot;        
+[16] &quot;NO3_mM&quot;           </code></pre>
+<pre class="r"><code>dim(df_T5)</code></pre>
+<pre><code>[1] 96 16</code></pre>
+<pre class="r"><code>dim(df_T6)</code></pre>
+<pre><code>[1] 96 16</code></pre>
+<pre class="r"><code>dim(df_T7)</code></pre>
+<pre><code>[1] 96 16</code></pre>
+<pre class="r"><code>dim(df_T8)</code></pre>
+<pre><code>[1] 96 16</code></pre>
+<pre class="r"><code>dim(df_T9)</code></pre>
+<pre><code>[1] 96 16</code></pre>
+<pre class="r"><code>dim(df_T10)</code></pre>
+<pre><code>Error in eval(expr, envir, enclos): object &#39;df_T10&#39; not found</code></pre>
+<pre class="r"><code>dim(df_T11)</code></pre>
+<pre><code>[1] 96 16</code></pre>
+<pre class="r"><code>dim(df_T12)</code></pre>
+<pre><code>[1] 96 16</code></pre>
+<pre class="r"><code># X1 to Well
+# df_T0 %&lt;&gt;% rename(Well = X1)
+# df_T2 %&lt;&gt;% rename(Well = X1)
+# df_T3 %&lt;&gt;% rename(Well = X1)
+# df_T4 %&lt;&gt;% rename(Well = X1)
+# df_T5 %&lt;&gt;% rename(Well = X1)
+# df_T6 %&lt;&gt;% rename(Well = X1)
+# df_T7 %&lt;&gt;% rename(Well = X1)
+# df_T8 %&lt;&gt;% rename(Well = X1)
+# df_T9 %&lt;&gt;% rename(Well = X1)
+# df_T10 %&lt;&gt;% rename(Well = X1)
+# df_T11 %&lt;&gt;% rename(Well = X1)
+
+# remove wells that were contaminated during the experiment
+df_T1 %&lt;&gt;% filter(!(Well %in% c(&quot;B03&quot;,&quot;A05&quot;,&quot;A12&quot;,&quot;B12&quot;))) # filter burst issue
+df_T6 %&lt;&gt;% filter(!(Well %in% c(&quot;A11&quot;))) # filter burst issue
+df_T8 %&lt;&gt;% filter(!(Well %in% c(&quot;A07&quot;, &quot;A08&quot;, &quot;E08&quot;))) # filter burst issue
+df_T11 %&lt;&gt;% filter(!(Well %in% c(&quot;A01&quot;))) # filter burst issue  # G11 was removed because of abnormal value compared to other 2 replicates
+# dim(df_T4)
+
+# bind two dataframe
+df_T &lt;- rbind(df_T0, df_T1, df_T2, df_T3, df_T4, df_T5, df_T6, df_T7, df_T8, df_T9, df_T11, df_T12)
+dim(df_T)</code></pre>
+<pre><code>[1] 1143   16</code></pre>
+<pre class="r"><code># remove NA
+dim(df_T)</code></pre>
+<pre><code>[1] 1143   16</code></pre>
+<pre class="r"><code>df_T &lt;- na.omit(df_T)
+dim(df_T)</code></pre>
+<pre><code>[1] 1143   16</code></pre>
+<pre class="r"><code># multiply dilution factor which is 5/2
+df_T %&lt;&gt;% select(-NO2_OD540, -NO2NO3_OD540)
+df_T %&lt;&gt;% mutate(NO2_mM = NO2_mM * (5/2), NO2NO3_mM = NO2NO3_mM * (5/2), NO3_mM = NO3_mM * (5/2))
+
+# Get the metadata for time point and left join
+Time_table &lt;- openxlsx::read.xlsx(&quot;data/220103_time_table.xlsx&quot;)
+# Time_table_BN &lt;- openxlsx::read.xlsx(&quot;data/220103_time_table_BN.xlsx&quot;)
+# Time_table &lt;- rbind(Time_table_AU, Time_table_BN)
+
+Time_table %&lt;&gt;% select(-Date) 
+dim(df_T)</code></pre>
+<pre><code>[1] 1143   14</code></pre>
+<pre class="r"><code>df_T &lt;- df_T %&gt;% left_join(Time_table, by=(&quot;Time_point&quot;=&quot;Time_point&quot;))
+dim(df_T)</code></pre>
+<pre><code>[1] 1143   17</code></pre>
+<pre class="r"><code>colnames(df_T)</code></pre>
+<pre><code> [1] &quot;Well&quot;              &quot;Extraction_method&quot; &quot;Extraction_ul&quot;    
+ [4] &quot;Nitrite_input&quot;     &quot;Nitrate_input&quot;     &quot;Soil&quot;             
+ [7] &quot;Titration_type&quot;    &quot;Concentration_M&quot;   &quot;Added_ul&quot;         
+[10] &quot;Sample_type&quot;       &quot;Time_point&quot;        &quot;NO2_mM&quot;           
+[13] &quot;NO2NO3_mM&quot;         &quot;NO3_mM&quot;            &quot;Time_minutes&quot;     
+[16] &quot;Time_hours&quot;        &quot;Time_days&quot;        </code></pre>
+<pre class="r"><code># time_point order
+# df_T$Time_point &lt;-  factor(df_T$Time_point, levels = paste0(&quot;T&quot;,0:10))</code></pre>
+</div>
+<div id="get-average-and-standard-deviation-moisture-correction-blank-correction" class="section level2">
+<h2>2. Get average and standard deviation &amp; Moisture correction &amp; Blank correction</h2>
+<pre class="r"><code># plot to see
+ggplot(df_T, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/220103_Griess_pH_perturbation.Rmd/unnamed-chunk-3-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot to see
+ggplot(df_T0, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/220103_Griess_pH_perturbation.Rmd/unnamed-chunk-3-2.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot to see
+ggplot(df_T1, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/220103_Griess_pH_perturbation.Rmd/unnamed-chunk-3-3.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot to see
+ggplot(df_T2, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/220103_Griess_pH_perturbation.Rmd/unnamed-chunk-3-4.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot to see
+ggplot(df_T3, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/220103_Griess_pH_perturbation.Rmd/unnamed-chunk-3-5.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot to see
+ggplot(df_T4, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/220103_Griess_pH_perturbation.Rmd/unnamed-chunk-3-6.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot to see
+ggplot(df_T5, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/220103_Griess_pH_perturbation.Rmd/unnamed-chunk-3-7.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot to see
+ggplot(df_T6, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/220103_Griess_pH_perturbation.Rmd/unnamed-chunk-3-8.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot to see
+ggplot(df_T7, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/220103_Griess_pH_perturbation.Rmd/unnamed-chunk-3-9.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot to see
+ggplot(df_T8, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/220103_Griess_pH_perturbation.Rmd/unnamed-chunk-3-10.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot to see
+ggplot(df_T9, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/220103_Griess_pH_perturbation.Rmd/unnamed-chunk-3-11.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot to see
+ggplot(df_T10, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<pre><code>Error in ggplot(df_T10, aes(x = Time_point, y = NO3_mM, color = Sample_type, : object &#39;df_T10&#39; not found</code></pre>
+<pre class="r"><code># plot to see
+ggplot(df_T11, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/220103_Griess_pH_perturbation.Rmd/unnamed-chunk-3-12.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot to see
+ggplot(df_T12, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/220103_Griess_pH_perturbation.Rmd/unnamed-chunk-3-13.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># average technical replicate
+colnames(df_T)</code></pre>
+<pre><code> [1] &quot;Well&quot;              &quot;Extraction_method&quot; &quot;Extraction_ul&quot;    
+ [4] &quot;Nitrite_input&quot;     &quot;Nitrate_input&quot;     &quot;Soil&quot;             
+ [7] &quot;Titration_type&quot;    &quot;Concentration_M&quot;   &quot;Added_ul&quot;         
+[10] &quot;Sample_type&quot;       &quot;Time_point&quot;        &quot;NO2_mM&quot;           
+[13] &quot;NO2NO3_mM&quot;         &quot;NO3_mM&quot;            &quot;Time_minutes&quot;     
+[16] &quot;Time_hours&quot;        &quot;Time_days&quot;        </code></pre>
+<pre class="r"><code>dim(df_T)</code></pre>
+<pre><code>[1] 1143   17</code></pre>
+<pre class="r"><code>df_NO2NO3 &lt;- df_T %&gt;% group_by(Nitrite_input, Nitrate_input, Soil, Titration_type, Concentration_M, Added_ul, Sample_type, Time_point, Time_minutes, Time_hours, Time_days) %&gt;% summarise(Ave_NO2_mM = mean(NO2_mM), Std_NO2_mM = sd(NO2_mM), Ave_NO3_mM = mean(NO3_mM), Std_NO3_mM = sd(NO3_mM)) %&gt;% ungroup()
+
+dim(df_NO2NO3)</code></pre>
+<pre><code>[1] 384  15</code></pre>
+<pre class="r"><code>dim(df_T)</code></pre>
+<pre><code>[1] 1143   17</code></pre>
+<pre class="r"><code>df_NO2NO3$Sample_type</code></pre>
+<pre><code>  [1] &quot;Sucrose_Blank&quot; &quot;Sucrose_Blank&quot; &quot;Sucrose_Blank&quot; &quot;Sucrose_Blank&quot;
+  [5] &quot;Sucrose_Blank&quot; &quot;Sucrose_Blank&quot; &quot;Sucrose_Blank&quot; &quot;Sucrose_Blank&quot;
+  [9] &quot;Sucrose_Blank&quot; &quot;Sucrose_Blank&quot; &quot;Sucrose_Blank&quot; &quot;Sucrose_Blank&quot;
+ [13] &quot;Sucrose_Blank&quot; &quot;Sucrose_Blank&quot; &quot;Sucrose_Blank&quot; &quot;Sucrose_Blank&quot;
+ [17] &quot;Sucrose_Blank&quot; &quot;Sucrose_Blank&quot; &quot;Sucrose_Blank&quot; &quot;Sucrose_Blank&quot;
+ [21] &quot;Sucrose_Blank&quot; &quot;Sucrose_Blank&quot; &quot;Sucrose_Blank&quot; &quot;Sucrose_Blank&quot;
+ [25] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+ [29] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+ [33] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+ [37] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+ [41] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+ [45] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+ [49] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+ [53] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+ [57] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+ [61] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+ [65] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+ [69] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+ [73] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+ [77] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+ [81] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+ [85] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+ [89] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+ [93] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+ [97] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[101] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[105] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[109] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[113] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[117] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[121] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[125] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[129] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[133] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[137] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[141] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[145] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[149] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[153] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[157] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[161] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[165] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[169] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[173] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[177] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[181] &quot;Nitrate_Blank&quot; &quot;Nitrate_Blank&quot; &quot;Nitrate_Blank&quot; &quot;Nitrate_Blank&quot;
+[185] &quot;Nitrate_Blank&quot; &quot;Nitrate_Blank&quot; &quot;Nitrate_Blank&quot; &quot;Nitrate_Blank&quot;
+[189] &quot;Nitrate_Blank&quot; &quot;Nitrate_Blank&quot; &quot;Nitrate_Blank&quot; &quot;Nitrate_Blank&quot;
+[193] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[197] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[201] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[205] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[209] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[213] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[217] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[221] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[225] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[229] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[233] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[237] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[241] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[245] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[249] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[253] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[257] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[261] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[265] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[269] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[273] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[277] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[281] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[285] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[289] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[293] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[297] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[301] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[305] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[309] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[313] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[317] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[321] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[325] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[329] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[333] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[337] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[341] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[345] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[349] &quot;Nitrate_Blank&quot; &quot;Nitrate_Blank&quot; &quot;Nitrate_Blank&quot; &quot;Nitrate_Blank&quot;
+[353] &quot;Nitrate_Blank&quot; &quot;Nitrate_Blank&quot; &quot;Nitrate_Blank&quot; &quot;Nitrate_Blank&quot;
+[357] &quot;Nitrate_Blank&quot; &quot;Nitrate_Blank&quot; &quot;Nitrate_Blank&quot; &quot;Nitrate_Blank&quot;
+[361] &quot;Nitrite_Blank&quot; &quot;Nitrite_Blank&quot; &quot;Nitrite_Blank&quot; &quot;Nitrite_Blank&quot;
+[365] &quot;Nitrite_Blank&quot; &quot;Nitrite_Blank&quot; &quot;Nitrite_Blank&quot; &quot;Nitrite_Blank&quot;
+[369] &quot;Nitrite_Blank&quot; &quot;Nitrite_Blank&quot; &quot;Nitrite_Blank&quot; &quot;Nitrite_Blank&quot;
+[373] &quot;Nitrite_Blank&quot; &quot;Nitrite_Blank&quot; &quot;Nitrite_Blank&quot; &quot;Nitrite_Blank&quot;
+[377] &quot;Nitrite_Blank&quot; &quot;Nitrite_Blank&quot; &quot;Nitrite_Blank&quot; &quot;Nitrite_Blank&quot;
+[381] &quot;Nitrite_Blank&quot; &quot;Nitrite_Blank&quot; &quot;Nitrite_Blank&quot; &quot;Nitrite_Blank&quot;</code></pre>
+<pre class="r"><code># Factor in orders
+df_NO2NO3$Sample_type &lt;-  factor(df_NO2NO3$Sample_type, levels = c(&quot;Slurry&quot;, &quot;Sucrose_Blank&quot;, &quot;Nitrite_Blank&quot;, &quot;Nitrate_Blank&quot;))
+# df_NO2NO3$Time_point &lt;-  factor(df_NO2NO3$Time_point, levels = c(paste0(&quot;AU&quot;,0:11),paste0(&quot;BN&quot;,0:9)))
+# Change name
+df_NO2NO3$Soil &lt;- str_replace(df_NO2NO3$Soil,&quot;NicholsC&quot;,&quot;NicholsC_pH7&quot;)
+df_NO2NO3$Soil &lt;- str_replace(df_NO2NO3$Soil,&quot;Allandale&quot;,&quot;Allandale_pH4&quot;)
+df_NO2NO3$Soil &lt;-  factor(df_NO2NO3$Soil, levels = c(&quot;NicholsC_pH7&quot;, &quot;Allandale_pH4&quot;))
+# Remove sucrose blank
+df_NO2NO3 %&lt;&gt;% filter(!(Sample_type == &quot;Sucrose_Blank&quot;)) 
+dim(df_NO2NO3) #360</code></pre>
+<pre><code>[1] 360  15</code></pre>
+<pre class="r"><code># Testing negative samples
+df_no3_blank &lt;- df_NO2NO3 %&gt;% filter(Sample_type == &quot;Nitrate_Blank&quot;)
+df_no3_blank # 24</code></pre>
+<pre><code># A tibble: 24 x 15
+   Nitrite_input Nitrate_input Soil      Titration_type Concentration_M Added_ul
+           &lt;dbl&gt;         &lt;dbl&gt; &lt;fct&gt;     &lt;chr&gt;                    &lt;dbl&gt;    &lt;dbl&gt;
+ 1             0             2 Allandal~ Nitrate                      0        0
+ 2             0             2 Allandal~ Nitrate                      0        0
+ 3             0             2 Allandal~ Nitrate                      0        0
+ 4             0             2 Allandal~ Nitrate                      0        0
+ 5             0             2 Allandal~ Nitrate                      0        0
+ 6             0             2 Allandal~ Nitrate                      0        0
+ 7             0             2 Allandal~ Nitrate                      0        0
+ 8             0             2 Allandal~ Nitrate                      0        0
+ 9             0             2 Allandal~ Nitrate                      0        0
+10             0             2 Allandal~ Nitrate                      0        0
+# ... with 14 more rows, and 9 more variables: Sample_type &lt;fct&gt;,
+#   Time_point &lt;chr&gt;, Time_minutes &lt;chr&gt;, Time_hours &lt;dbl&gt;, Time_days &lt;dbl&gt;,
+#   Ave_NO2_mM &lt;dbl&gt;, Std_NO2_mM &lt;dbl&gt;, Ave_NO3_mM &lt;dbl&gt;, Std_NO3_mM &lt;dbl&gt;</code></pre>
+<pre class="r"><code>df_no2_blank &lt;- df_NO2NO3 %&gt;% filter(Sample_type == &quot;Nitrite_Blank&quot;)
+df_no2_blank # 24</code></pre>
+<pre><code># A tibble: 24 x 15
+   Nitrite_input Nitrate_input Soil      Titration_type Concentration_M Added_ul
+           &lt;dbl&gt;         &lt;dbl&gt; &lt;fct&gt;     &lt;chr&gt;                    &lt;dbl&gt;    &lt;dbl&gt;
+ 1             2             0 Allandal~ Nitrite                      0        0
+ 2             2             0 Allandal~ Nitrite                      0        0
+ 3             2             0 Allandal~ Nitrite                      0        0
+ 4             2             0 Allandal~ Nitrite                      0        0
+ 5             2             0 Allandal~ Nitrite                      0        0
+ 6             2             0 Allandal~ Nitrite                      0        0
+ 7             2             0 Allandal~ Nitrite                      0        0
+ 8             2             0 Allandal~ Nitrite                      0        0
+ 9             2             0 Allandal~ Nitrite                      0        0
+10             2             0 Allandal~ Nitrite                      0        0
+# ... with 14 more rows, and 9 more variables: Sample_type &lt;fct&gt;,
+#   Time_point &lt;chr&gt;, Time_minutes &lt;chr&gt;, Time_hours &lt;dbl&gt;, Time_days &lt;dbl&gt;,
+#   Ave_NO2_mM &lt;dbl&gt;, Std_NO2_mM &lt;dbl&gt;, Ave_NO3_mM &lt;dbl&gt;, Std_NO3_mM &lt;dbl&gt;</code></pre>
+<pre class="r"><code># close to zero
+
+# 1. Apply moisture correction factor (correcting for moisture in soil)
+soil_spike_ratio = 0.5  # soil weight(0.85g) / spike in volume (1.7ml) 
+moisture_percent_1 = 19 # NicholsC
+moisture_percent_2 = 33.2 # Allandale
+# moisture_percent_3 = 16.52 # Nichols-A
+
+mcf_1 = (soil_spike_ratio*(moisture_percent_1/100) + 1)
+mcf_1</code></pre>
+<pre><code>[1] 1.095</code></pre>
+<pre class="r"><code>mcf_2 = (soil_spike_ratio*(moisture_percent_2/100) + 1)
+mcf_2</code></pre>
+<pre><code>[1] 1.166</code></pre>
+<pre class="r"><code># mcf_3 = (soil_spike_ratio*(moisture_percent_3/100) + 1)
+# mcf_3
+
+# apply moisture factor to each soil
+dim(df_NO2NO3)</code></pre>
+<pre><code>[1] 360  15</code></pre>
+<pre class="r"><code>df_NO2NO3 %&gt;% select(Soil) %&gt;% unique()</code></pre>
+<pre><code># A tibble: 2 x 1
+  Soil         
+  &lt;fct&gt;        
+1 Allandale_pH4
+2 NicholsC_pH7 </code></pre>
+<pre class="r"><code>df_NO2NO3_mcf_1 &lt;- df_NO2NO3 %&gt;% filter(Soil == &quot;NicholsC_pH7&quot;, Sample_type == &quot;Slurry&quot;) %&gt;% mutate(Ave_NO3_mM = Ave_NO3_mM * mcf_1, Ave_NO2_mM = Ave_NO2_mM * mcf_1, Std_NO2_mM = Std_NO2_mM * mcf_1, Std_NO3_mM = Std_NO3_mM * mcf_1)
+dim(df_NO2NO3_mcf_1) #156</code></pre>
+<pre><code>[1] 156  15</code></pre>
+<pre class="r"><code>df_NO2NO3_mcf_2 &lt;- df_NO2NO3 %&gt;% filter(Soil == &quot;Allandale_pH4&quot;, Sample_type == &quot;Slurry&quot;) %&gt;% mutate(Ave_NO3_mM = Ave_NO3_mM * mcf_2, Ave_NO2_mM = Ave_NO2_mM * mcf_2, Std_NO2_mM = Std_NO2_mM * mcf_2, Std_NO3_mM = Std_NO3_mM * mcf_2)
+dim(df_NO2NO3_mcf_2) #156</code></pre>
+<pre><code>[1] 156  15</code></pre>
+<pre class="r"><code># df_NO2NO3_mcf_3 &lt;- df_NO2NO3 %&gt;% filter(Sample_type %in% c(&quot;Slurry&quot;,&quot;Control&quot;)) %&gt;% mutate(Ave_NO3_mM = Ave_NO3_mM * mcf_3, Ave_NO2_mM = Ave_NO2_mM * mcf_3, Std_NO2_mM = Std_NO2_mM * mcf_3, Std_NO3_mM = Std_NO3_mM * mcf_3)
+# dim(df_NO2NO3_mcf_3) #130 15
+
+df_NO2NO3_others_mcf &lt;- df_NO2NO3 %&gt;% filter(Sample_type %in% c(&quot;Nitrite_Blank&quot;, &quot;Nitrate_Blank&quot;))
+dim(df_NO2NO3_others_mcf) #72</code></pre>
+<pre><code>[1] 48 15</code></pre>
+<pre class="r"><code>df_NO2NO3_mcf &lt;- rbind(df_NO2NO3_mcf_1, df_NO2NO3_mcf_2, df_NO2NO3_others_mcf)
+dim(df_NO2NO3_mcf) # 360</code></pre>
+<pre><code>[1] 360  15</code></pre>
+<pre class="r"><code># plot to see
+ggplot(df_NO2NO3_mcf, aes(x=Time_hours, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Time (hours)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;After averaging with biological replicates \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/220103_Griess_pH_perturbation.Rmd/unnamed-chunk-3-14.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># 2. Apply blank correction factor (drying effect during incubation)
+# Blank reads
+df_no3_blank &lt;- df_NO2NO3 %&gt;% filter(Sample_type == &quot;Nitrate_Blank&quot;)
+df_no3_blank</code></pre>
+<pre><code># A tibble: 24 x 15
+   Nitrite_input Nitrate_input Soil      Titration_type Concentration_M Added_ul
+           &lt;dbl&gt;         &lt;dbl&gt; &lt;fct&gt;     &lt;chr&gt;                    &lt;dbl&gt;    &lt;dbl&gt;
+ 1             0             2 Allandal~ Nitrate                      0        0
+ 2             0             2 Allandal~ Nitrate                      0        0
+ 3             0             2 Allandal~ Nitrate                      0        0
+ 4             0             2 Allandal~ Nitrate                      0        0
+ 5             0             2 Allandal~ Nitrate                      0        0
+ 6             0             2 Allandal~ Nitrate                      0        0
+ 7             0             2 Allandal~ Nitrate                      0        0
+ 8             0             2 Allandal~ Nitrate                      0        0
+ 9             0             2 Allandal~ Nitrate                      0        0
+10             0             2 Allandal~ Nitrate                      0        0
+# ... with 14 more rows, and 9 more variables: Sample_type &lt;fct&gt;,
+#   Time_point &lt;chr&gt;, Time_minutes &lt;chr&gt;, Time_hours &lt;dbl&gt;, Time_days &lt;dbl&gt;,
+#   Ave_NO2_mM &lt;dbl&gt;, Std_NO2_mM &lt;dbl&gt;, Ave_NO3_mM &lt;dbl&gt;, Std_NO3_mM &lt;dbl&gt;</code></pre>
+<pre class="r"><code>df_no2_blank &lt;- df_NO2NO3 %&gt;% filter(Sample_type == &quot;Nitrite_Blank&quot;)
+df_no2_blank</code></pre>
+<pre><code># A tibble: 24 x 15
+   Nitrite_input Nitrate_input Soil      Titration_type Concentration_M Added_ul
+           &lt;dbl&gt;         &lt;dbl&gt; &lt;fct&gt;     &lt;chr&gt;                    &lt;dbl&gt;    &lt;dbl&gt;
+ 1             2             0 Allandal~ Nitrite                      0        0
+ 2             2             0 Allandal~ Nitrite                      0        0
+ 3             2             0 Allandal~ Nitrite                      0        0
+ 4             2             0 Allandal~ Nitrite                      0        0
+ 5             2             0 Allandal~ Nitrite                      0        0
+ 6             2             0 Allandal~ Nitrite                      0        0
+ 7             2             0 Allandal~ Nitrite                      0        0
+ 8             2             0 Allandal~ Nitrite                      0        0
+ 9             2             0 Allandal~ Nitrite                      0        0
+10             2             0 Allandal~ Nitrite                      0        0
+# ... with 14 more rows, and 9 more variables: Sample_type &lt;fct&gt;,
+#   Time_point &lt;chr&gt;, Time_minutes &lt;chr&gt;, Time_hours &lt;dbl&gt;, Time_days &lt;dbl&gt;,
+#   Ave_NO2_mM &lt;dbl&gt;, Std_NO2_mM &lt;dbl&gt;, Ave_NO3_mM &lt;dbl&gt;, Std_NO3_mM &lt;dbl&gt;</code></pre>
+<pre class="r"><code># df_aero_blank$Nitrate_input &lt;- as.numeric(as.character(df_aero_blank$Nitrate_input))
+df_no2_blank %&lt;&gt;% mutate(Correction_factor_NO2 = (Nitrite_input / Ave_NO2_mM)) 
+df_no3_blank %&lt;&gt;% mutate(Correction_factor_NO3 = (Nitrate_input / Ave_NO3_mM)) 
+
+cf_no2 &lt;- df_no2_blank %&gt;% select(Soil, Time_point, Correction_factor_NO2)
+cf_no3 &lt;- df_no3_blank %&gt;% select(Soil, Time_point, Correction_factor_NO3)
+
+# left join and multiply the correction factor
+# left join to samples
+df_sample_mcf &lt;- df_NO2NO3_mcf %&gt;% filter(!(Sample_type %in% c(&quot;Nitrite_Blank&quot;,&quot;Nitrate_Blank&quot;)))
+dim(df_sample_mcf) #312</code></pre>
+<pre><code>[1] 312  15</code></pre>
+<pre class="r"><code>df_sample_mcf$Sample_type %&gt;% unique()</code></pre>
+<pre><code>[1] Slurry
+Levels: Slurry Sucrose_Blank Nitrite_Blank Nitrate_Blank</code></pre>
+<pre class="r"><code>df_sample_bcf &lt;- df_sample_mcf %&gt;% left_join(cf_no2, by = c(&quot;Soil&quot;=&quot;Soil&quot;, &quot;Time_point&quot;=&quot;Time_point&quot;)) %&gt;% left_join(cf_no3, by = c(&quot;Soil&quot;=&quot;Soil&quot;, &quot;Time_point&quot;=&quot;Time_point&quot;))
+dim(df_sample_bcf)</code></pre>
+<pre><code>[1] 312  17</code></pre>
+<pre class="r"><code>df_sample_bcf &lt;- df_sample_bcf %&gt;% mutate(Ave_NO3_mM = Ave_NO3_mM * Correction_factor_NO3, Ave_NO2_mM = Ave_NO2_mM * Correction_factor_NO2, Std_NO2_mM = Std_NO2_mM * Correction_factor_NO2, Std_NO3_mM = Std_NO3_mM * Correction_factor_NO3)
+dim(df_sample_bcf) #312</code></pre>
+<pre><code>[1] 312  17</code></pre>
+<pre class="r"><code># merge dataframe with blank just for convenience
+df_NO2NO3_blanks_bcf &lt;- df_NO2NO3_mcf %&gt;% filter(Sample_type %in% c(&quot;Nitrite_Blank&quot;,&quot;Nitrate_Blank&quot;)) %&gt;% left_join(cf_no2, by = c(&quot;Soil&quot;=&quot;Soil&quot;, &quot;Time_point&quot;=&quot;Time_point&quot;)) %&gt;% left_join(cf_no3, by = c(&quot;Soil&quot;=&quot;Soil&quot;, &quot;Time_point&quot;=&quot;Time_point&quot;))
+dim(df_NO2NO3_blanks_bcf) #48</code></pre>
+<pre><code>[1] 48 17</code></pre>
+<pre class="r"><code>dim(df_sample_bcf) # 312</code></pre>
+<pre><code>[1] 312  17</code></pre>
+<pre class="r"><code>df_NO2NO3_bcf &lt;- rbind(df_sample_bcf, df_NO2NO3_blanks_bcf)
+dim(df_NO2NO3_bcf) # 360</code></pre>
+<pre><code>[1] 360  17</code></pre>
+</div>
+<div id="sanity-check-moisture-correction-blank-correction-factor" class="section level2">
+<h2>3. Sanity check: moisture correction &amp; blank correction factor</h2>
+<p>Blank correction<br />
+Use the nitrate concentration of the blank and use the ratio.<br />
+For example, multiply to nitrate concentration x (2mM / changed [NO3])<br />
+</p>
+<pre class="r"><code># without any correction
+# nitrate blanks
+dim(df_no3_blank)</code></pre>
+<pre><code>[1] 24 16</code></pre>
+<pre class="r"><code>ggplot(df_no3_blank, aes(x=Time_hours, y=Ave_NO3_mM, color=Soil, group=Soil)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  # scale_color_manual(values = c(&quot;deepskyblue4&quot;,&quot;maroon2&quot;))+
+  ylab(&quot;Measured NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Time (hr)&quot;) +
+  scale_y_continuous(breaks = seq(0,2.5,0.5), limits=c(0, 2.5))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle(&quot;Nitrate blank \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/220103_Griess_pH_perturbation.Rmd/unnamed-chunk-4-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># nitrite blanks
+dim(df_no2_blank)</code></pre>
+<pre><code>[1] 24 16</code></pre>
+<pre class="r"><code>ggplot(df_no2_blank, aes(x=Time_hours, y=Ave_NO2_mM, color=Soil, group=Soil)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  # scale_color_manual(values = c(&quot;deepskyblue4&quot;,&quot;maroon2&quot;))+
+  ylab(&quot;Measured NO2- (mM) \n&quot;) +
+  xlab(&quot;\n Time (hr)&quot;) +
+  scale_y_continuous(breaks = seq(0,2.5,0.5), limits=c(0, 2.5))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle(&quot;Nitrite blank \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/220103_Griess_pH_perturbation.Rmd/unnamed-chunk-4-2.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># without any correction
+ggplot(df_NO2NO3, aes(x=Time_hours, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  # scale_color_manual(values = c(&quot;deepskyblue4&quot;,&quot;maroon2&quot;))+
+  ylab(&quot;Measured NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Time (hr)&quot;) +
+  # scale_y_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  # scale_x_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  ggtitle(&quot;(Without any correction) All samples \n&quot;) +
+  mytheme_2d +
+  facet_grid(. ~ Soil) +
+  theme(strip.background = element_rect(colour=&quot;black&quot;, fill=&quot;white&quot;, size=0.1))</code></pre>
+<p><img src="figure/220103_Griess_pH_perturbation.Rmd/unnamed-chunk-4-3.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>### What are those points with very high std?
+colnames(df_NO2NO3)</code></pre>
+<pre><code> [1] &quot;Nitrite_input&quot;   &quot;Nitrate_input&quot;   &quot;Soil&quot;            &quot;Titration_type&quot; 
+ [5] &quot;Concentration_M&quot; &quot;Added_ul&quot;        &quot;Sample_type&quot;     &quot;Time_point&quot;     
+ [9] &quot;Time_minutes&quot;    &quot;Time_hours&quot;      &quot;Time_days&quot;       &quot;Ave_NO2_mM&quot;     
+[13] &quot;Std_NO2_mM&quot;      &quot;Ave_NO3_mM&quot;      &quot;Std_NO3_mM&quot;     </code></pre>
+<pre class="r"><code>df_NO2NO3 %&gt;% arrange(desc(Std_NO3_mM)) %&gt;% select(Soil, Titration_type, Concentration_M, Sample_type, Time_point, Std_NO3_mM) </code></pre>
+<pre><code># A tibble: 360 x 6
+   Soil         Titration_type Concentration_M Sample_type Time_point Std_NO3_mM
+   &lt;fct&gt;        &lt;chr&gt;                    &lt;dbl&gt; &lt;fct&gt;       &lt;chr&gt;           &lt;dbl&gt;
+ 1 Allandale_p~ HCl                     0.0125 Slurry      T12             0.654
+ 2 Allandale_p~ NaOH                    0.025  Slurry      T12             0.379
+ 3 Allandale_p~ NaOH                    0.0125 Slurry      T12             0.352
+ 4 Allandale_p~ NaOH                    0      Slurry      T12             0.331
+ 5 Allandale_p~ NaOH                    0.0375 Slurry      T12             0.326
+ 6 NicholsC_pH7 HCl                     0.35   Slurry      T0              0.281
+ 7 Allandale_p~ HCl                     0.0375 Slurry      T2              0.249
+ 8 NicholsC_pH7 HCl                     0.35   Slurry      T2              0.232
+ 9 NicholsC_pH7 NaOH                    0.05   Slurry      T1              0.211
+10 NicholsC_pH7 NaOH                    0.05   Slurry      T2              0.210
+# ... with 350 more rows</code></pre>
+<pre class="r"><code>## based on this I corrected the wrongly removed E02 -&lt; removed E01 (filter burst). Eliminated point P11 G11.
+
+# After moisture correction
+ggplot(df_NO2NO3_mcf, aes(x=Time_hours, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  # scale_color_manual(values = c(&quot;deepskyblue4&quot;,&quot;maroon2&quot;))+
+  ylab(&quot;Measured NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Time (hr)&quot;) +
+  # scale_y_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  # scale_x_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  ggtitle(&quot;(After moisture correction) All samples \n&quot;) +
+  mytheme_2d +
+  facet_grid(. ~ Soil) +
+  theme(strip.background = element_rect(colour=&quot;black&quot;, fill=&quot;white&quot;, size=0.1))</code></pre>
+<p><img src="figure/220103_Griess_pH_perturbation.Rmd/unnamed-chunk-4-4.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># After blank correction (evaporation) 
+ggplot(df_NO2NO3_bcf, aes(x=Time_hours, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  # scale_color_manual(values = c(&quot;deepskyblue4&quot;,&quot;maroon2&quot;))+
+  ylab(&quot;Measured NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Time (hr)&quot;) +
+  # scale_y_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  # scale_x_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  ggtitle(&quot;(After moisture + blank correction) All samples \n&quot;) +
+  mytheme_2d +
+  facet_grid(. ~ Soil) +
+  theme(strip.background = element_rect(colour=&quot;black&quot;, fill=&quot;white&quot;, size=0.1))</code></pre>
+<p><img src="figure/220103_Griess_pH_perturbation.Rmd/unnamed-chunk-4-5.png" width="1056" style="display: block; margin: auto;" /></p>
+</div>
+<div id="nitrogen-dynamics" class="section level2">
+<h2>4. Nitrogen dynamics</h2>
+</div>
+<div id="ph-perturbation-experiment." class="section level2">
+<h2>4.1. pH perturbation experiment.</h2>
+<ul>
+<li>Is there a difference in pH perturbation levels?</li>
+</ul>
+<pre class="r"><code># pH color
+col_pH &lt;- colorRampPalette(c(&quot;gold&quot;,&quot;purple&quot;))
+
+library(colorRamps)
+colorRamps::green2red</code></pre>
+<pre><code>function (n) 
+rgb.tables(n, red = c(1, 0, 2), green = c(0, 0, 2), blue = c(0, 
+    0, 0, 0))
+&lt;bytecode: 0x0000000032b48ef0&gt;
+&lt;environment: namespace:colorRamps&gt;</code></pre>
+<pre class="r"><code>plot(rep(1,13),col=col_pH(13),pch=19,cex=3)</code></pre>
+<p><img src="figure/220103_Griess_pH_perturbation.Rmd/unnamed-chunk-5-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>grad_pH &lt;- scale_colour_gradientn(colours = col_pH(100))
+
+# Confer this page (https://stackoverflow.com/questions/21537782/how-to-set-fixed-continuous-colour-values-in-ggplot2)
+# myPalette &lt;- colorRampPalette(rev(brewer.pal(11, &quot;Spectral&quot;)))
+# sc &lt;- scale_colour_gradientn(colours = myPalette(100), limits=c(1, 8))
+
+
+# first HCl, NaOH mM calculation
+df_NO2NO3_bcf</code></pre>
+<pre><code># A tibble: 360 x 17
+   Nitrite_input Nitrate_input Soil      Titration_type Concentration_M Added_ul
+           &lt;dbl&gt;         &lt;dbl&gt; &lt;fct&gt;     &lt;chr&gt;                    &lt;dbl&gt;    &lt;dbl&gt;
+ 1             0             2 NicholsC~ HCl                     0.0125        5
+ 2             0             2 NicholsC~ HCl                     0.0125        5
+ 3             0             2 NicholsC~ HCl                     0.0125        5
+ 4             0             2 NicholsC~ HCl                     0.0125        5
+ 5             0             2 NicholsC~ HCl                     0.0125        5
+ 6             0             2 NicholsC~ HCl                     0.0125        5
+ 7             0             2 NicholsC~ HCl                     0.0125        5
+ 8             0             2 NicholsC~ HCl                     0.0125        5
+ 9             0             2 NicholsC~ HCl                     0.0125        5
+10             0             2 NicholsC~ HCl                     0.0125        5
+# ... with 350 more rows, and 11 more variables: Sample_type &lt;fct&gt;,
+#   Time_point &lt;chr&gt;, Time_minutes &lt;chr&gt;, Time_hours &lt;dbl&gt;, Time_days &lt;dbl&gt;,
+#   Ave_NO2_mM &lt;dbl&gt;, Std_NO2_mM &lt;dbl&gt;, Ave_NO3_mM &lt;dbl&gt;, Std_NO3_mM &lt;dbl&gt;,
+#   Correction_factor_NO2 &lt;dbl&gt;, Correction_factor_NO3 &lt;dbl&gt;</code></pre>
+<pre class="r"><code># mols and molarity unit conversion
+fun_df_convert &lt;- function(df_pH_p1){
+  df_pH_p1$Added_ul &lt;- ifelse(df_pH_p1$Titration_type == &quot;NaOH&quot;,-1*df_pH_p1$Added_ul, df_pH_p1$Added_ul)
+  df_pH_p1 %&lt;&gt;% mutate(H_mol = Concentration_M * Added_ul * 10^(-6))
+  df_pH_p1 %&lt;&gt;% mutate(H_Molarity = H_mol / (300 * 10^(-6)))
+  df_pH_p1 %&lt;&gt;% mutate(H_mM = H_Molarity * 1000)
+  return(df_pH_p1)
+}
+
+# test
+df_pH &lt;- df_NO2NO3_bcf %&gt;% filter(Titration_type %in% c(&quot;NaOH&quot;,&quot;HCl&quot;))
+dim(df_pH)</code></pre>
+<pre><code>[1] 312  17</code></pre>
+<pre class="r"><code>Added_Volume &lt;- 1.7 # ml
+moisture_percent_1 = 19 # NicholsC
+moisture_percent_2 = 33.2 # Allandale
+df_pH$Added_ul &lt;- ifelse(df_pH$Titration_type == &quot;NaOH&quot;, -1*df_pH$Added_ul, df_pH$Added_ul) # HCl is +, NaOH is -
+df_pH %&lt;&gt;% mutate(H_mol = Concentration_M * Added_ul * 10^(-6)) # Calculate H mol 
+df_pH$Volume &lt;- ifelse(df_pH$Soil == &quot;NicholsC_pH7&quot;, Added_Volume*(1+ moisture_percent_1/100), 0) # Calc total volume
+df_pH$Volume &lt;- ifelse(df_pH$Soil == &quot;Allandale_pH4&quot;, Added_Volume*(1+ moisture_percent_2/100), df_pH$Volume) # Calc total volume
+# df_pH$Volume %&gt;% unique()
+df_pH %&lt;&gt;% mutate(H_Molarity = H_mol / (Volume * 10^(-3)))
+df_pH %&lt;&gt;% mutate(H_mM = H_Molarity * 1000)
+# openxlsx::write.xlsx(df_pH, &quot;df_pH.xlsx&quot;)
+
+# how many levels of H_mM?
+pH_pert &lt;- df_pH %&gt;% select(H_mM) %&gt;% unique() %&gt;% arrange()
+df_pH %&gt;% filter(Soil == &quot;NicholsC_pH7&quot;)%&gt;% select(H_mM) %&gt;% unique() %&gt;% arrange()</code></pre>
+<pre><code># A tibble: 13 x 1
+      H_mM
+     &lt;dbl&gt;
+ 1  0.0309
+ 2  0.0618
+ 3  0.124 
+ 4  0.247 
+ 5  0.371 
+ 6  0.494 
+ 7  0.618 
+ 8  0.741 
+ 9  0.865 
+10  0     
+11 -0.124 
+12 -0.247 
+13 -0.371 </code></pre>
+<pre class="r"><code>df_pH %&gt;% filter(Soil == &quot;Allandale_pH4&quot;)%&gt;% select(H_mM) %&gt;% unique() %&gt;% arrange()</code></pre>
+<pre><code># A tibble: 13 x 1
+      H_mM
+     &lt;dbl&gt;
+ 1  0.0276
+ 2  0.0552
+ 3  0.0828
+ 4  0.110 
+ 5  0.221 
+ 6  0.331 
+ 7  0     
+ 8 -0.0276
+ 9 -0.0552
+10 -0.0828
+11 -0.110 
+12 -0.221 
+13 -0.331 </code></pre>
+<pre class="r"><code># 1. pH perturbation
+# plot Nitrate
+dim(df_pH)</code></pre>
+<pre><code>[1] 312  21</code></pre>
+<pre class="r"><code>ggplot(df_pH, aes(x=Time_hours, y=Ave_NO3_mM, color=H_mM, group=H_mM)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_colour_gradientn(colours = col_pH(100)) +
+  # scale_color_manual(values=grad_pH) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Time (hr)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;pH perturbation \n&quot;) +
+  # label
+  # geom_text(aes(label = round(Ave_NO3_mM,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Soil) +
+  theme(strip.background = element_rect(colour=&quot;black&quot;, fill=&quot;white&quot;, size=0.1))</code></pre>
+<p><img src="figure/220103_Griess_pH_perturbation.Rmd/unnamed-chunk-5-2.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot it separately: NicholsC
+df_nic &lt;- df_pH %&gt;% filter(Soil == &quot;NicholsC_pH7&quot;)
+ggplot(df_nic, aes(x=Time_hours, y=Ave_NO3_mM, color=H_mM, group=H_mM)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_colour_gradientn(colours = col_pH(100)) +
+  # scale_color_manual(values=grad_pH) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Time (hr)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;pH perturbation (NicholsC: pH 6.98) \n&quot;) +
+  # label
+  # geom_text(aes(label = round(Ave_NO3_mM,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d +
+  # facet_grid(. ~ Soil) +
+  theme(strip.background = element_rect(colour=&quot;black&quot;, fill=&quot;white&quot;, size=0.1))</code></pre>
+<p><img src="figure/220103_Griess_pH_perturbation.Rmd/unnamed-chunk-5-3.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot it separately: Allandale
+df_al &lt;- df_pH %&gt;% filter(Soil == &quot;Allandale_pH4&quot;)
+ggplot(df_al, aes(x=Time_hours, y=Ave_NO3_mM, color=H_mM, group=H_mM)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_colour_gradientn(colours = col_pH(100)) +
+  # scale_color_manual(values=grad_pH) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Time (hr)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;pH perturbation (Allandale: pH 4) \n&quot;) +
+  # label
+  # geom_text(aes(label = round(Ave_NO3_mM,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d +
+  # facet_grid(. ~ Soil) +
+  theme(strip.background = element_rect(colour=&quot;black&quot;, fill=&quot;white&quot;, size=0.1))</code></pre>
+<p><img src="figure/220103_Griess_pH_perturbation.Rmd/unnamed-chunk-5-4.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot Nitrite
+ggplot(df_pH, aes(x=Time_hours, y=Ave_NO2_mM, color=H_mM, group=H_mM)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.5)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  scale_colour_gradientn(colours = col_pH(100)) +
+  # scale_color_manual(values=col_pH(4)) +
+  ylab(&quot;NO2- (mM) \n&quot;) +
+  xlab(&quot;\n Time (hr)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;pH perturbation \n&quot;) +
+  # label
+  # geom_text(aes(label = round(Ave_NO2_mM,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Soil) +
+  theme(strip.background = element_rect(colour=&quot;black&quot;, fill=&quot;white&quot;, size=0.1))</code></pre>
+<p><img src="figure/220103_Griess_pH_perturbation.Rmd/unnamed-chunk-5-5.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot separately: NicholsC
+df_nic &lt;- df_pH %&gt;% filter(Soil == &quot;NicholsC_pH7&quot;)
+ggplot(df_nic, aes(x=Time_hours, y=Ave_NO2_mM, color=H_mM, group=H_mM)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  scale_colour_gradientn(colours = col_pH(100)) +
+  # scale_color_manual(values=grad_pH) +
+  ylab(&quot;NO2- (mM) \n&quot;) +
+  xlab(&quot;\n Time (hr)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;pH perturbation (NicholsC: pH 6.98) \n&quot;) +
+  # label
+  # geom_text(aes(label = round(Ave_NO3_mM,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d +
+  # facet_grid(. ~ Soil) +
+  theme(strip.background = element_rect(colour=&quot;black&quot;, fill=&quot;white&quot;, size=0.1))</code></pre>
+<p><img src="figure/220103_Griess_pH_perturbation.Rmd/unnamed-chunk-5-6.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot it separately: Allandale
+df_al &lt;- df_pH %&gt;% filter(Soil == &quot;Allandale_pH4&quot;)
+ggplot(df_al, aes(x=Time_hours, y=Ave_NO2_mM, color=H_mM, group=H_mM)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  scale_colour_gradientn(colours = col_pH(100)) +
+  # scale_color_manual(values=grad_pH) +
+  ylab(&quot;NO2- (mM) \n&quot;) +
+  xlab(&quot;\n Time (hr)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;pH perturbation (Allandale: pH 4) \n&quot;) +
+  # label
+  # geom_text(aes(label = round(Ave_NO3_mM,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d +
+  # facet_grid(. ~ Soil) +
+  theme(strip.background = element_rect(colour=&quot;black&quot;, fill=&quot;white&quot;, size=0.1))</code></pre>
+<p><img src="figure/220103_Griess_pH_perturbation.Rmd/unnamed-chunk-5-7.png" width="1056" style="display: block; margin: auto;" /></p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.0.3 (2020-10-10)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 10 x64 (build 19042)
+
+Matrix products: default
+
+locale:
+[1] LC_COLLATE=English_United States.1252 
+[2] LC_CTYPE=English_United States.1252   
+[3] LC_MONETARY=English_United States.1252
+[4] LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.1252    
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] colorRamps_2.3     ggpubr_0.4.0       ggrepel_0.9.1      ape_5.5           
+ [5] openxlsx_4.2.3     devtools_2.4.0     usethis_2.0.1      gtools_3.8.2      
+ [9] reshape2_1.4.4     readxl_1.3.1       magrittr_2.0.1     forcats_0.5.1     
+[13] stringr_1.4.0      purrr_0.3.4        readr_1.4.0        tidyr_1.1.3       
+[17] tibble_3.0.4       tidyverse_1.3.1    vegan_2.5-7        lattice_0.20-41   
+[21] permute_0.9-5      RColorBrewer_1.1-2 ggplot2_3.3.5      dplyr_1.0.5       
+[25] workflowr_1.6.2   
+
+loaded via a namespace (and not attached):
+ [1] colorspace_2.0-0  ggsignif_0.6.2    ellipsis_0.3.2    rio_0.5.27       
+ [5] rprojroot_2.0.2   fs_1.5.0          rstudioapi_0.13   farver_2.1.0     
+ [9] remotes_2.4.0     fansi_0.4.2       lubridate_1.7.10  xml2_1.3.2       
+[13] splines_4.0.3     cachem_1.0.4      knitr_1.33        pkgload_1.2.1    
+[17] jsonlite_1.7.2    broom_0.7.9       cluster_2.1.0     dbplyr_2.1.1     
+[21] compiler_4.0.3    httr_1.4.2        backports_1.2.1   assertthat_0.2.1 
+[25] Matrix_1.2-18     fastmap_1.1.0     cli_3.0.1         later_1.2.0      
+[29] htmltools_0.5.1.1 prettyunits_1.1.1 tools_4.0.3       gtable_0.3.0     
+[33] glue_1.4.2        Rcpp_1.0.5        carData_3.0-4     cellranger_1.1.0 
+[37] jquerylib_0.1.4   vctrs_0.3.8       nlme_3.1-149      xfun_0.22        
+[41] ps_1.6.0          testthat_3.0.2    rvest_1.0.1       lifecycle_1.0.0  
+[45] rstatix_0.7.0     MASS_7.3-53       scales_1.1.1      hms_1.1.0        
+[49] promises_1.2.0.1  parallel_4.0.3    yaml_2.2.1        curl_4.3.2       
+[53] memoise_2.0.0     sass_0.4.0        stringi_1.5.3     highr_0.9        
+[57] desc_1.3.0        pkgbuild_1.2.0    zip_2.1.1         rlang_0.4.10     
+[61] pkgconfig_2.0.3   evaluate_0.14     labeling_0.4.2    tidyselect_1.1.1 
+[65] processx_3.5.1    plyr_1.8.6        R6_2.5.0          generics_0.1.0   
+[69] DBI_1.1.1         pillar_1.6.0      haven_2.4.1       whisker_0.4      
+[73] foreign_0.8-80    withr_2.4.2       mgcv_1.8-33       abind_1.4-5      
+[77] modelr_0.1.8      crayon_1.4.1      car_3.0-11        utf8_1.1.4       
+[81] rmarkdown_2.9     grid_4.0.3        data.table_1.14.0 callr_3.7.0      
+[85] git2r_0.28.0      reprex_2.0.0      digest_0.6.27     httpuv_1.6.0     
+[89] munsell_0.5.0     bslib_0.2.5.1     sessioninfo_1.1.1</code></pre>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
