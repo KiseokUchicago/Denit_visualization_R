@@ -29,5 +29,7 @@ Welcome to Kiseok Denitrification data visualization website.
 * [211128_Griess_time_series_3soil (11/28/21)](211128_Griess_time_series_3soil.html)
 * [211220_Griess_slurry_vs_supernatant2 (12/20/21)](211220_Griess_slurry_vs_supernatant2.html)
 * [211209_OD600_last_wash (12/09/21)](211209_OD600_last_wash.html)
+* [211224_TOC_spikein_test (12/24/21)](211224_TOC_spikein_test.html)
+* [220103_Griess_pH_perturbation (1/3/22)](220103_Griess_pH_perturbation.html)
 
 
