@@ -112,3 +112,71 @@ ggplot(df_dry_gg2, aes(x=Day,y=Weight, color=Temperature, group=Temperature)) +
   mytheme_2d
 ```
 
+
+## Soil drying rate testing 
+
+Researcher: **Kiseok Lee** \
+Data: 12/21/21 \
+Lab: **Seppe Kuehn**
+
+
+## 1. Import data
+```{r}
+# import file
+df_dry <- openxlsx::read.xlsx("data/211203_slurry_vs_water_drying_table.xlsx")
+df_dry_time <- openxlsx::read.xlsx("data/211203_slurry_vs_water_drying_time.xlsx")
+df_dry_time %<>% select(Time_point, Time_hours, Time_days)
+
+
+df_dry_gg <- melt(df_dry, id.vars = c("Time_point"), variable.name = "Sample_type",value.name = "Weight")
+df_dry_gg %<>% left_join(df_dry_time, by=c("Time_point"="Time_point"))
+
+# df_dry_gg$Day <- as.numeric(df_dry_gg$Day)
+dim(df_dry_gg)
+
+# remove NA
+dim(df_dry_gg)
+df_dry_gg <- na.omit(df_dry_gg)
+dim(df_dry_gg)
+
+
+```
+
+## 2. Plot
+```{r}
+# plot
+ggplot(df_dry_gg, aes(x=Time_days, y=Weight, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("Weight(g) \n") +
+  xlab("\n Days") +
+  scale_y_continuous(breaks = seq(0,30,5), limits=c(0, 30))+
+  ggtitle("Weight change (30C) \n") +
+  mytheme_2d
+
+# evaporation rate
+df_dry_points <- df_dry_gg %>% filter(Time_point %in% c("T0","T3","T5"))
+openxlsx::write.xlsx(df_dry_points, "211222_df_dry_points.xlsx")
+openxlsx::write.xlsx(df_dry_gg, "211222_df_dry_gg.xlsx")
+
+
+# plot
+ggplot(df_dry_gg, aes(x=Time_days, y=Weight, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("Weight(g) \n") +
+  xlab("\n Days") +
+  scale_y_continuous(breaks = seq(0,30,5), limits=c(0, 30))+
+  ggtitle("Weight change (30C) \n") +
+  mytheme_2d
+
+
+
+
+
+
+
+```
+

@@ -1,0 +1,652 @@
+---
+title: "211220_Griess_slurry_vs_supernatant2"
+author: "KiseokUchicago"
+date: "2021-12-20"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=11, fig.height=9,
+                      error=TRUE, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE)
+```
+
+## Time series analysis - Slurry vs Supernatant  (Griess assay)
+Researcher: **Kiseok Lee** \
+Experiment Date: 12/8/21 - 12/20/21 (2 weeks) \
+Analysis Date: 12/20/21
+Lab: **Seppe Kuehn**
+
+```{r}
+# libraries
+library(dplyr)
+library(ggplot2)
+library(RColorBrewer)
+library(vegan)
+library(tidyverse)
+library(magrittr)
+library(readxl)
+library(reshape2)
+library(gtools)
+library(devtools)
+library(openxlsx)
+library(ape)
+library(stringr)
+library(tidyr)
+library(ggrepel)
+library(ggpubr)
+
+## theme for ggplot
+mytheme <- theme_bw() + 
+  theme(text = element_text(family="serif")) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5, family="serif")) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13, family="serif"))+
+  theme(axis.text.y = element_text(size=10, family="serif"))+
+  theme(panel.grid.major = element_blank()) +
+  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),panel.border=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))
+
+mytheme_2d <- theme_bw() + 
+  theme(text = element_text(family="serif")) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5, family="serif")) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13, family="serif"))+
+  theme(axis.text.y = element_text(size=13, family="serif"))+
+  # theme(panel.grid.major = element_blank()) +
+  # theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))
+
+
+# color collection
+my_color_collection <- c(
+  "#CBD588", "#5F7FC7", "orange", "#AD6F3B", "#673770", 
+  "#D14285", "#652926", "#C84248", "#8569D5", "#5E738F",
+  "#D1A33D", "#8A7C64", "#599861","#616163", "#FFCDB2",
+  "#6D9F71", "#242F40",
+  "#CCA43B", "#F92A82", "#ED7B84", "#7EB77F", 
+  "#DEC4A1", "#E5D1D0", '#0E8482', '#C9DAEA', '#337357', 
+  '#95C623', '#E55812', '#04471C', '#F2D7EE', '#D3BCC0', 
+  '#A5668B', '#69306D', '#0E103D', '#1A535C', '#4ECDC4', 
+  '#F7FFF7', '#FF6B6B', '#FFE66D', '#6699CC', '#FFF275', 
+  '#FF8C42', '#FF3C38', '#A23E48', '#000000', '#CF5C36', 
+  '#EEE5E9', '#7C7C7C', '#EFC88B', '#2E5266', '#6E8898', 
+  '#9FB1BC', '#D3D0CB', '#E2C044', '#5BC0EB', '#FDE74C', 
+  '#9BC53D', '#E55934', '#FA7921', "#CD9BCD", "#508578", "#DA5724")
+
+# for git push, use this instead of using wflow_git_push()
+# git push -u origin master (in the Git app / in the working directory)
+
+```
+
+
+## 1. Import data table from python code
+We are going to use the vcl3 treated standard curve that is fitted with pure nitrate standards
+```{r}
+# import file
+df_p1 <- openxlsx::read.xlsx("data/211220_Griess_plate1.xlsx")
+df_p2 <- openxlsx::read.xlsx("data/211220_Griess_plate2.xlsx")
+df_p3 <- openxlsx::read.xlsx("data/211220_Griess_plate3.xlsx")
+df_p4 <- openxlsx::read.xlsx("data/211220_Griess_plate4.xlsx")
+df_p5 <- openxlsx::read.xlsx("data/211220_Griess_plate5.xlsx")
+df_p6 <- openxlsx::read.xlsx("data/211220_Griess_plate6.xlsx")
+df_p7 <- openxlsx::read.xlsx("data/211220_Griess_plate7.xlsx")
+df_p8 <- openxlsx::read.xlsx("data/211220_Griess_plate8.xlsx")
+df_p9 <- openxlsx::read.xlsx("data/211220_Griess_plate9.xlsx")
+df_p10 <- openxlsx::read.xlsx("data/211220_Griess_plate10.xlsx")
+df_p11 <- openxlsx::read.xlsx("data/211220_Griess_plate11.xlsx")
+
+head(df_p1)
+colnames(df_p1)
+dim(df_p1)
+
+head(df_p2)
+colnames(df_p2)
+dim(df_p2)
+
+head(df_p3)
+colnames(df_p3)
+dim(df_p3)
+
+head(df_p4)
+colnames(df_p4)
+dim(df_p4)
+
+head(df_p5)
+colnames(df_p5)
+dim(df_p5)
+
+head(df_p6)
+colnames(df_p6)
+dim(df_p6)
+
+dim(df_p7)
+dim(df_p8)
+dim(df_p9)
+dim(df_p10)
+dim(df_p11)
+
+# X1 to Well
+df_p1 %<>% rename(Well = X1)
+df_p2 %<>% rename(Well = X1)
+df_p3 %<>% rename(Well = X1)
+df_p4 %<>% rename(Well = X1)
+df_p5 %<>% rename(Well = X1)
+df_p6 %<>% rename(Well = X1)
+df_p7 %<>% rename(Well = X1)
+df_p8 %<>% rename(Well = X1)
+df_p9 %<>% rename(Well = X1)
+df_p10 %<>% rename(Well = X1)
+df_p11 %<>% rename(Well = X1)
+
+# remove wells that were contaminated during the experiment
+df_p1 %<>% filter(!(Well %in% c("C01","E01"))) # filter burst issue
+df_p4 %<>% filter(!(Well %in% c("F01"))) # filter burst issue
+df_p5 %<>% filter(!(Well %in% c("C10"))) # filter burst issue
+df_p11 %<>% filter(!(Well %in% c("B02", "G11"))) # filter burst issue  # G11 was removed because of abnormal value compared to other 2 replicates
+# dim(df_p4)
+
+# bind two dataframe
+df_p <- rbind(df_p1, df_p2, df_p3, df_p4, df_p5, df_p6, df_p7, df_p8, df_p9, df_p10, df_p11)
+dim(df_p)
+
+# remove NA
+dim(df_p)
+df_p <- na.omit(df_p)
+dim(df_p)
+
+# multiply dilution factor which is 5/2
+df_p %<>% select(-NO2_OD540, -NO2NO3_OD540)
+df_p %<>% mutate(NO2_mM = NO2_mM * (5/2), NO2NO3_mM = NO2NO3_mM * (5/2), NO3_mM = NO3_mM * (5/2))
+
+# Get the metadata for time point and left join
+Time_table_AU <- openxlsx::read.xlsx("data/211220_time_table_AU.xlsx")
+Time_table_BN <- openxlsx::read.xlsx("data/211220_time_table_BN.xlsx")
+Time_table <- rbind(Time_table_AU, Time_table_BN)
+
+Time_table %<>% select(-Date) 
+dim(df_p)
+df_p <- df_p %>% left_join(Time_table, by=("Time_point"="Time_point"))
+dim(df_p)
+colnames(df_p)
+# time_point order
+# df_p$Time_point <-  factor(df_p$Time_point, levels = paste0("T",0:10))
+
+```
+
+## 2. Get average and standard deviation & Moisture correction & Blank correction
+```{r}
+# plot to see
+ggplot(df_p, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Without averaging \n") +
+  mytheme_2d
+
+# plot to see
+ggplot(df_p1, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Without averaging \n") +
+  mytheme_2d
+
+# plot to see
+ggplot(df_p2, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Without averaging \n") +
+  mytheme_2d
+
+# plot to see
+ggplot(df_p3, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Without averaging \n") +
+  mytheme_2d
+
+# plot to see
+ggplot(df_p4, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Without averaging \n") +
+  mytheme_2d
+
+# plot to see
+ggplot(df_p5, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Without averaging \n") +
+  mytheme_2d
+
+# plot to see
+ggplot(df_p6, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Without averaging \n") +
+  mytheme_2d
+
+# plot to see
+ggplot(df_p7, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Without averaging \n") +
+  mytheme_2d
+
+# plot to see
+ggplot(df_p8, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Without averaging \n") +
+  mytheme_2d
+
+# plot to see
+ggplot(df_p9, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Without averaging \n") +
+  mytheme_2d
+
+# plot to see
+ggplot(df_p10, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Without averaging \n") +
+  mytheme_2d
+
+# plot to see
+ggplot(df_p11, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Nitrate_spike_in (mM)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Without averaging \n") +
+  mytheme_2d
+
+# average technical replicate
+colnames(df_p)
+dim(df_p)
+
+df_NO2NO3 <- df_p %>% group_by(Nitrite_input, Nitrate_input, Category, Dilution, Sample_type, Soil, Time_point, Plate, Time_minutes, Time_hours, Time_days) %>% summarise(Ave_NO2_mM = mean(NO2_mM), Std_NO2_mM = sd(NO2_mM), Ave_NO3_mM = mean(NO3_mM), Std_NO3_mM = sd(NO3_mM)) %>% ungroup()
+
+dim(df_NO2NO3)
+dim(df_p)
+
+df_NO2NO3$Sample_type
+# Factor in orders
+df_NO2NO3$Sample_type <-  factor(df_NO2NO3$Sample_type, levels = c("Slurry", "Supernatant","Control","Nitrite_Blank", "Nitrate_Blank"))
+df_NO2NO3$Time_point <-  factor(df_NO2NO3$Time_point, levels = c(paste0("AU",0:11),paste0("BN",0:9)))
+dim(df_NO2NO3) #294
+
+# Testing negative samples
+df_no3_blank <- df_NO2NO3 %>% filter(Sample_type == "Nitrate_Blank")
+df_no3_blank # 21
+
+df_no2_blank <- df_NO2NO3 %>% filter(Sample_type == "Nitrite_Blank")
+df_no2_blank # 21
+# close to zero
+
+# 1. Apply moisture correction factor (correcting for moisture in soil)
+soil_spike_ratio = 0.5  # soil weight(0.7g) / spike in volume (1.4ml) 
+# moisture_percent_1 = 19.9 # MIDWAY-A 
+# moisture_percent_2 = 53.9 # Washington-A 
+moisture_percent_3 = 16.52 # Nichols-A
+
+# mcf_1 = (soil_spike_ratio*(moisture_percent_1/100) + 1)
+# mcf_1
+# mcf_2 = (soil_spike_ratio*(moisture_percent_2/100) + 1)
+# mcf_2
+mcf_3 = (soil_spike_ratio*(moisture_percent_3/100) + 1)
+mcf_3
+
+# apply moisture factor to each soil
+dim(df_NO2NO3)
+df_NO2NO3 %>% select(Soil) %>% unique()
+
+# df_NO2NO3_mcf_1 <- df_NO2NO3 %>% filter(Soil == "Midway-A_6.89") %>% mutate(Ave_NO3_mM = Ave_NO3_mM * mcf_1, Ave_NO2_mM = Ave_NO2_mM * mcf_1, Std_NO2_mM = Std_NO2_mM * mcf_1, Std_NO3_mM = Std_NO3_mM * mcf_1)
+# dim(df_NO2NO3_mcf_1) #84
+# df_NO2NO3_mcf_2 <- df_NO2NO3 %>% filter(Soil == "Washington-A_7.88") %>% mutate(Ave_NO3_mM = Ave_NO3_mM * mcf_2, Ave_NO2_mM = Ave_NO2_mM * mcf_2, Std_NO2_mM = Std_NO2_mM * mcf_2, Std_NO3_mM = Std_NO3_mM * mcf_2)
+# dim(df_NO2NO3_mcf_2) #84
+df_NO2NO3_mcf_3 <- df_NO2NO3 %>% filter(Sample_type %in% c("Slurry","Control")) %>% mutate(Ave_NO3_mM = Ave_NO3_mM * mcf_3, Ave_NO2_mM = Ave_NO2_mM * mcf_3, Std_NO2_mM = Std_NO2_mM * mcf_3, Std_NO3_mM = Std_NO3_mM * mcf_3)
+dim(df_NO2NO3_mcf_3) #130 15
+
+df_NO2NO3_others_mcf <- df_NO2NO3 %>% filter(Sample_type %in% c("Supernatant","Nitrite_Blank", "Nitrate_Blank"))
+dim(df_NO2NO3_others_mcf) #162
+df_NO2NO3_mcf <- rbind(df_NO2NO3_mcf_3, df_NO2NO3_others_mcf)
+dim(df_NO2NO3_mcf) # 292
+
+# plot to see
+ggplot(df_NO2NO3_mcf, aes(x=Time_hours, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time (hours)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("After averaging with biological replicates \n") +
+  mytheme_2d
+
+# 2. Apply blank correction factor (drying effect during incubation)
+# Blank reads
+df_no3_blank <- df_NO2NO3 %>% filter(Sample_type == "Nitrate_Blank")
+df_no3_blank
+df_no2_blank <- df_NO2NO3 %>% filter(Sample_type == "Nitrite_Blank")
+df_no2_blank
+
+# df_aero_blank$Nitrate_input <- as.numeric(as.character(df_aero_blank$Nitrate_input))
+df_no2_blank %<>% mutate(Correction_factor_NO2 = (Nitrite_input / Ave_NO2_mM)) 
+df_no3_blank %<>% mutate(Correction_factor_NO3 = (Nitrate_input / Ave_NO3_mM)) 
+
+cf_no2 <- df_no2_blank %>% select(Category, Time_point, Correction_factor_NO2)
+cf_no3 <- df_no3_blank %>% select(Category, Time_point, Correction_factor_NO3)
+
+# left join and multiply the correction factor
+# left join to samples
+df_sample_mcf <- df_NO2NO3_mcf %>% filter(!(Sample_type %in% c("Nitrite_Blank","Nitrate_Blank")))
+dim(df_sample_mcf) #252
+
+df_sample_bcf <- df_sample_mcf %>% left_join(cf_no2, by = c("Category"="Category", "Time_point"="Time_point")) %>% left_join(cf_no3, by = c("Category"="Category", "Time_point"="Time_point"))
+dim(df_sample_bcf)
+
+df_sample_bcf <- df_sample_bcf %>% mutate(Ave_NO3_mM = Ave_NO3_mM * Correction_factor_NO3, Ave_NO2_mM = Ave_NO2_mM * Correction_factor_NO2, Std_NO2_mM = Std_NO2_mM * Correction_factor_NO2, Std_NO3_mM = Std_NO3_mM * Correction_factor_NO3)
+dim(df_sample_bcf)
+
+# merge dataframe with blank just for convenience
+df_NO2NO3_blanks_bcf <- df_NO2NO3_mcf %>% filter(Sample_type %in% c("Nitrite_Blank","Nitrate_Blank")) %>% left_join(cf_no2, by = c("Category"="Category", "Time_point"="Time_point")) %>% left_join(cf_no3, by = c("Category"="Category", "Time_point"="Time_point"))
+dim(df_NO2NO3_blanks_bcf) #44
+dim(df_sample_bcf) # 248 
+df_NO2NO3_bcf <- rbind(df_sample_bcf, df_NO2NO3_blanks_bcf)
+dim(df_NO2NO3_bcf) # 292
+
+```
+
+
+## 3. Sanity check: moisture correction & blank correction factor 
+
+Blank correction \
+Use the nitrate concentration of the blank and use the ratio. \
+For example, multiply to nitrate concentration x (2mM / changed [NO3]) \
+
+```{r}
+# without any correction
+# nitrate blanks
+dim(df_no3_blank)
+ggplot(df_no3_blank, aes(x=Time_hours, y=Ave_NO3_mM, color=Category, group=Category)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Time (hr)") +
+  scale_y_continuous(breaks = seq(0,6.5,0.5), limits=c(0, 6.5))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle("Nitrate blank \n") +
+  mytheme_2d
+
+# nitrite blanks
+dim(df_no2_blank)
+ggplot(df_no2_blank, aes(x=Time_hours, y=Ave_NO2_mM, color=Category, group=Category)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO2- (mM) \n") +
+  xlab("\n Time (hr)") +
+  scale_y_continuous(breaks = seq(0,6.5,0.5), limits=c(0, 6.5))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle("Nitrite blank \n") +
+  mytheme_2d
+
+# without any correction
+ggplot(df_NO2NO3, aes(x=Time_hours, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  # scale_x_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  ggtitle("(Without any correction) All samples \n") +
+  mytheme_2d +
+  facet_grid(. ~ Category) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+
+### What are those points with very high std?
+colnames(df_NO2NO3)
+df_NO2NO3 %>% arrange(desc(Std_NO3_mM)) %>% select(Category, Dilution, Sample_type, Time_point, Plate, Std_NO3_mM)
+## based on this I corrected the wrongly removed E02 -< removed E01 (filter burst). Eliminated point P11 G11.
+
+# After moisture correction
+ggplot(df_NO2NO3_mcf, aes(x=Time_hours, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  # scale_x_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  ggtitle("(After moisture correction) All samples \n") +
+  mytheme_2d +
+  facet_grid(. ~ Category) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+# After blank correction (evaporation) 
+ggplot(df_NO2NO3_bcf, aes(x=Time_hours, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  # scale_x_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  ggtitle("(After moisture + blank correction) All samples \n") +
+  mytheme_2d +
+  facet_grid(. ~ Category) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+
+```
+
+
+## 4. Nitrogen dynamics
+
+## 4.1. Soil Autoclave experiment.
+- Is there a difference in slurry and supernatant?
+```{r}
+# pH color
+# col_pH <- colorRampPalette(c("gold","purple"))
+# 
+# library(colorRamps)
+# colorRamps::green2red
+# plot(rep(1,4),col=col_pH(4),pch=19,cex=3)
+
+# 1. Comparing supernatant with slurry
+df_sample_AU <- df_NO2NO3_bcf %>% filter(Sample_type %in% c("Slurry", "Supernatant", "Control"), Category == "AU")
+df_sample_AU$Dilution <- factor(df_sample_AU$Dilution, levels = c(1, 0.5, 0.25, 0.125))
+
+# plot Nitrate
+ggplot(df_sample_AU, aes(x=Time_hours, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.5)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_manual(values=col_pH(4)) +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Slurry (soil autoclaved) vs Supernatant vs Control (no autoclave) \n") +
+  # label
+  # geom_text(aes(label = round(Ave_NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Dilution) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+# plot Nitrite
+ggplot(df_sample_AU, aes(x=Time_hours, y=Ave_NO2_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.5)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  # scale_color_manual(values=col_pH(4)) +
+  ylab("NO2- (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Slurry (soil autoclaved) vs Supernatant \n") +
+  # label
+  # geom_text(aes(label = round(Ave_NO2_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Dilution) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+# Highlight dilution 1x
+df_sample_AU_1 <- df_sample_AU %>% filter(Dilution == 1)
+ggplot(df_sample_AU_1, aes(x=Time_hours, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.5)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_manual(values=col_pH(4)) +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Slurry (soil autoclaved) vs Supernatant vs Control (no autoclave) \n") +
+  # label
+  # geom_text(aes(label = round(Ave_NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Dilution) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+```
+
+## 4.1. Biomass and Nutrient dilution series experiment
+- Is there a difference in slurry and supernatant?
+
+```{r}
+df_sample_BN <- df_NO2NO3_bcf %>% filter(Sample_type %in% c("Slurry", "Supernatant"), Category == "BN")
+df_sample_BN$Dilution <- factor(df_sample_BN$Dilution, levels = c(1, "B_0.5", "B_0.25", "B_0.125", "N_0.5", "N_0.25", "N_0.125"))
+
+df_sample_B <- df_sample_BN %>% filter(Dilution %in% c(1, "B_0.5", "B_0.25", "B_0.125"))
+df_sample_N <- df_sample_BN %>% filter(Dilution %in% c(1, "N_0.5", "N_0.25", "N_0.125"))
+
+# 1. Biomass dilution effect
+# plot
+ggplot(df_sample_B, aes(x=Time_hours, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.5)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_color_manual(values=c("#f8756b","#01ba37")) +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Biomass dilution effect \n") +
+  # label
+  # geom_text(aes(label = round(Ave_NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Dilution) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+# Nitrite
+ggplot(df_sample_B, aes(x=Time_hours, y=Ave_NO2_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.5)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  scale_color_manual(values=c("#f8756b","#01ba37")) +
+  ylab("NO2- (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Biomass dilution effect \n") +
+  # label
+  # geom_text(aes(label = round(Ave_NO2_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Dilution) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+# 2. Nutrient dilution effect
+# plot
+ggplot(df_sample_N, aes(x=Time_hours, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.5)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_color_manual(values=c("#f8756b","#01ba37")) +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Nutrient dilution effect \n") +
+  # label
+  # geom_text(aes(label = round(Ave_NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Dilution) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+# Nitrite
+ggplot(df_sample_N, aes(x=Time_hours, y=Ave_NO2_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.5)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  scale_color_manual(values=c("#f8756b","#01ba37")) +
+  ylab("NO2- (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Nutrient dilution effect \n") +
+  # label
+  # geom_text(aes(label = round(Ave_NO2_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Dilution) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+```
+

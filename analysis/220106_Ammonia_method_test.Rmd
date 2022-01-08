@@ -115,6 +115,7 @@ moisture_percent_1 = 19.9 # MIDWAY-A
 # moisture_percent_2 = 53.9 # Washington-A 
 # moisture_percent_3 = 16.52 # Nichols-A
 
+# partial extraction
 mcf_1 = (soil_spike_ratio*(moisture_percent_1/100) + 1)
 mcf_1
 # mcf_2 = (soil_spike_ratio*(moisture_percent_2/100) + 1)
@@ -122,8 +123,15 @@ mcf_1
 # mcf_3 = (soil_spike_ratio*(moisture_percent_3/100) + 1)
 # mcf_3
 
+# full extraction
+soil_g = 0.2
+spike_in_ml = 0.4
+KCl_ml  = 0.6
+mcf_full_1 = (soil_g*(moisture_percent_1/100) + spike_in_ml + KCl_ml ) / (spike_in_ml + KCl_ml) 
+mcf_full_1
+
 # apply moisture factor to each soil
-df_am_mcf <- df_am %>% mutate(Ammonia_ppm = Ammonia_ppm * mcf_1)
+df_am_mcf <- df_am %>% mutate(Ammonia_ppm = Ammonia_ppm * mcf_full_1)
 # dim(df_NO2NO3_mcf_1) #84
 # df_NO2NO3_mcf_2 <- df_NO2NO3 %>% filter(Soil == "Washington-A_7.88") %>% mutate(Ave_NO3_mM = Ave_NO3_mM * mcf_2, Ave_NO2_mM = Ave_NO2_mM * mcf_2, Std_NO2_mM = Std_NO2_mM * mcf_2, Std_NO3_mM = Std_NO3_mM * mcf_2)
 # dim(df_NO2NO3_mcf_2) #84
