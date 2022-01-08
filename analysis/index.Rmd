@@ -36,4 +36,5 @@ Welcome to Kiseok Denitrification data visualization website.
 * [220107-2_Ammonia_tweaking (1/7/22)](220107-2_Ammonia_tweaking.html)
 * [220107-3_Ammonia_30min_more (1/7/22)](220107-3_Ammonia_30min_more.html)
 * [220107-4_Ammonia_5ul (1/7/22)](220107-4_Ammonia_5ul.html)
-* [220107-5_Ammonia_confirm (1/7/22)](220107-5_Ammonia_confirm.html)
+* [220107-5,6,7,8,9_Ammonia_confirm (1/7/22)](220107-5_Ammonia_confirm.html)
+* [220108_Ammonia_spikein_soil_extract_direct (1/8/22)](220108_Ammonia_spikein_soil_extract_direct.html)
