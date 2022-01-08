@@ -1,0 +1,1825 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="KiseokUchicago" />
+
+<meta name="date" content="2021-12-20" />
+
+<title>211220_Griess_slurry_vs_supernatant2</title>
+
+<script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/master/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Denit_visualization_R</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/KiseokUchicago/Denit_visualization_R">
+    <span class="fa fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">211220_Griess_slurry_vs_supernatant2</h1>
+<h4 class="author">KiseokUchicago</h4>
+<h4 class="date">2021-12-20</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2022-01-08
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>Denit_visualization_R/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.2). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20210924code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20210924)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20210924code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20210924)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomKiseokUchicagoDenitvisualizationRtree4f7e4934831870ed96476583ceaf8950c2b85299targetblank4f7e493a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/KiseokUchicago/Denit_visualization_R/tree/4f7e4934831870ed96476583ceaf8950c2b85299" target="_blank">4f7e493</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomKiseokUchicagoDenitvisualizationRtree4f7e4934831870ed96476583ceaf8950c2b85299targetblank4f7e493a" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://github.com/KiseokUchicago/Denit_visualization_R/tree/4f7e4934831870ed96476583ceaf8950c2b85299" target="_blank">4f7e493</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    Figure_211014_external_lab/
+
+Untracked files:
+    Untracked:  210928_pH.pdf
+    Untracked:  211014_TN.pdf
+    Untracked:  211014_drying_oven_TOC.pdf
+    Untracked:  211014_toc_lab.pdf
+    Untracked:  211020_df_full_innate.xlsx
+    Untracked:  211222_df_dry_gg.xlsx
+    Untracked:  211222_df_dry_points.xlsx
+    Untracked:  Figure_210911_TOC/
+    Untracked:  Figure_210924/
+    Untracked:  Figure_210927_TOC/
+    Untracked:  Figure_210929/
+    Untracked:  Figure_211006/
+    Untracked:  Figure_211007/
+    Untracked:  Figure_211008/
+    Untracked:  Figure_211013/
+    Untracked:  data/120321_soil_buffering_capacity_Nichols-B.xlsx
+    Untracked:  data/210911_TOC_sample_plate1.xlsx
+    Untracked:  data/210922_Griess_sample_plate1-investigating.xlsx
+    Untracked:  data/210922_Griess_sample_plate1.xlsx
+    Untracked:  data/210927_TOC_sample_plate1_100ul.xlsx
+    Untracked:  data/210927_TOC_sample_plate1_10ul.xlsx
+    Untracked:  data/210928_Griess_sample_plate1.xlsx
+    Untracked:  data/211005_Griess_sample_plate1.xlsx
+    Untracked:  data/211007_Griess_blank_plate1.xlsx
+    Untracked:  data/211007_Griess_blank_plate2.xlsx
+    Untracked:  data/211008_Griess_blank_plate0.xlsx
+    Untracked:  data/211008_Griess_blank_plate1.xlsx
+    Untracked:  data/211017_Griess_plate0.xlsx
+    Untracked:  data/211017_Griess_plate1.xlsx
+    Untracked:  data/211017_Griess_plate2.xlsx
+    Untracked:  data/211017_Griess_plate3.xlsx
+    Untracked:  data/211017_Griess_plate4.xlsx
+    Untracked:  data/211017_Griess_plate5.xlsx
+    Untracked:  data/211017_Griess_plate6.xlsx
+    Untracked:  data/211017_Griess_plate7.xlsx
+    Untracked:  data/211017_Griess_plate8.xlsx
+    Untracked:  data/211019_Griess_plate1.xlsx
+    Untracked:  data/211020_Griess_plate0.xlsx
+    Untracked:  data/211020_Griess_plate1.xlsx
+    Untracked:  data/211020_df_full_innate.xlsx
+    Untracked:  data/211025_Griess_no3_fit_plate0.xlsx
+    Untracked:  data/211025_Griess_no3_fit_plate1.xlsx
+    Untracked:  data/211025_Griess_plate0.xlsx
+    Untracked:  data/211025_Griess_plate1.xlsx
+    Untracked:  data/211028_Griess_plate1.xlsx
+    Untracked:  data/211028_Griess_plate1_no3_fit.xlsx
+    Untracked:  data/211028_Griess_plate2.xlsx
+    Untracked:  data/211028_Griess_plate2_no3_fit.xlsx
+    Untracked:  data/211028_Griess_plate3.xlsx
+    Untracked:  data/211028_Griess_plate3_no3_fit.xlsx
+    Untracked:  data/211028_Griess_plate4.xlsx
+    Untracked:  data/211028_Griess_plate4_no3_fit.xlsx
+    Untracked:  data/211028_time_table.xlsx
+    Untracked:  data/211127_Griess_SUP1.xlsx
+    Untracked:  data/211127_Griess_SUP11.xlsx
+    Untracked:  data/211127_Griess_SUP3.xlsx
+    Untracked:  data/211127_Griess_SUP5.xlsx
+    Untracked:  data/211127_Griess_SUP7.xlsx
+    Untracked:  data/211127_Griess_SUP9.xlsx
+    Untracked:  data/211127_Griess_plate0.xlsx
+    Untracked:  data/211127_time_table.xlsx
+    Untracked:  data/211128_Griess_plate1.xlsx
+    Untracked:  data/211128_Griess_plate10.xlsx
+    Untracked:  data/211128_Griess_plate11.xlsx
+    Untracked:  data/211128_Griess_plate2.xlsx
+    Untracked:  data/211128_Griess_plate3.xlsx
+    Untracked:  data/211128_Griess_plate4.xlsx
+    Untracked:  data/211128_Griess_plate5.xlsx
+    Untracked:  data/211128_Griess_plate6.xlsx
+    Untracked:  data/211128_Griess_plate7.xlsx
+    Untracked:  data/211128_Griess_plate8.xlsx
+    Untracked:  data/211128_Griess_plate9.xlsx
+    Untracked:  data/211128_time_table.xlsx
+    Untracked:  data/211201_pH_colorimetric.xlsx
+    Untracked:  data/211203_slurry_vs_water_drying_table.xlsx
+    Untracked:  data/211203_slurry_vs_water_drying_time.xlsx
+    Untracked:  data/211208_pH_colorimetric_T3.xlsx
+    Untracked:  data/211208_pH_colorimetric_T4.xlsx
+    Untracked:  data/211208_pH_colorimetric_T5.xlsx
+    Untracked:  data/211208_pH_colorimetric_plate1.xlsx
+    Untracked:  data/211208_pH_colorimetric_plate2.xlsx
+    Untracked:  data/211208_pH_colorimetric_plate3.xlsx
+    Untracked:  data/211208_time_table.xlsx
+    Untracked:  data/211209_OD600_T1.xlsx
+    Untracked:  data/211209_OD600_T2.xlsx
+    Untracked:  data/211209_OD600_T3.xlsx
+    Untracked:  data/211209_time_table.xlsx
+    Untracked:  data/211210_pH_colorimetric_T0.xlsx
+    Untracked:  data/211210_pH_colorimetric_T1.xlsx
+    Untracked:  data/211210_pH_colorimetric_T2.xlsx
+    Untracked:  data/211210_pH_colorimetric_T3.xlsx
+    Untracked:  data/211210_time_table.xlsx
+    Untracked:  data/211218_pH_colorimetric_t0.xlsx
+    Untracked:  data/211218_pH_colorimetric_t1.xlsx
+    Untracked:  data/211218_pH_colorimetric_t2.xlsx
+    Untracked:  data/211218_pH_colorimetric_t3.xlsx
+    Untracked:  data/211218_pH_colorimetric_t4.xlsx
+    Untracked:  data/211218_time_table.xlsx
+    Untracked:  data/211220_Griess_plate1.xlsx
+    Untracked:  data/211220_Griess_plate10.xlsx
+    Untracked:  data/211220_Griess_plate11.xlsx
+    Untracked:  data/211220_Griess_plate2.xlsx
+    Untracked:  data/211220_Griess_plate3.xlsx
+    Untracked:  data/211220_Griess_plate4.xlsx
+    Untracked:  data/211220_Griess_plate5.xlsx
+    Untracked:  data/211220_Griess_plate6.xlsx
+    Untracked:  data/211220_Griess_plate7.xlsx
+    Untracked:  data/211220_Griess_plate8.xlsx
+    Untracked:  data/211220_Griess_plate9.xlsx
+    Untracked:  data/211220_time_table_AU.xlsx
+    Untracked:  data/211220_time_table_BN.xlsx
+    Untracked:  data/211224_TOC_sample_plate1.xlsx
+    Untracked:  data/220103_Griess_T0.xlsx
+    Untracked:  data/220103_Griess_T1.xlsx
+    Untracked:  data/220103_Griess_T11.xlsx
+    Untracked:  data/220103_Griess_T12.xlsx
+    Untracked:  data/220103_Griess_T2.xlsx
+    Untracked:  data/220103_Griess_T3.xlsx
+    Untracked:  data/220103_Griess_T4.xlsx
+    Untracked:  data/220103_Griess_T5.xlsx
+    Untracked:  data/220103_Griess_T6.xlsx
+    Untracked:  data/220103_Griess_T7.xlsx
+    Untracked:  data/220103_Griess_T8.xlsx
+    Untracked:  data/220103_Griess_T9.xlsx
+    Untracked:  data/220103_time_table.xlsx
+    Untracked:  data/220106_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107-2_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107-3_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107-4_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107-5_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107-6_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107-7_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107-8_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220108_Ammonia_sample_plate1.xlsx
+    Untracked:  data/TOC_TN_measurement_2_labs_211014.xlsx
+    Untracked:  data/dry_weight_curve(9.5.21).xlsx
+    Untracked:  data/pH_data(11.17.21)-Midway_etc.xlsx
+    Untracked:  data/pH_data(12.6.21)-Midway_incubation_endpoint.xlsx
+    Untracked:  data/pH_data(9.14.21).xlsx
+    Untracked:  data/pH_data(9.28.21).xlsx
+    Untracked:  df_NO2NO3.xlsx
+    Untracked:  df_pH.xlsx
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/211220_Griess_slurry_vs_supernatant2.Rmd</code>) and HTML (<code>docs/211220_Griess_slurry_vs_supernatant2.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/KiseokUchicago/Denit_visualization_R/blob/4f7e4934831870ed96476583ceaf8950c2b85299/analysis/211220_Griess_slurry_vs_supernatant2.Rmd" target="_blank">4f7e493</a>
+</td>
+<td>
+KiseokUchicago
+</td>
+<td>
+2022-01-08
+</td>
+<td>
+wflow_publish(c(“analysis/211224_TOC_spikein_test.Rmd”, “analysis/220106_Ammonia_method_test.Rmd”,
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="time-series-analysis---slurry-vs-supernatant-griess-assay" class="section level2">
+<h2>Time series analysis - Slurry vs Supernatant (Griess assay)</h2>
+<p>Researcher: <strong>Kiseok Lee</strong><br />
+Experiment Date: 12/8/21 - 12/20/21 (2 weeks)<br />
+Analysis Date: 12/20/21 Lab: <strong>Seppe Kuehn</strong></p>
+<pre class="r"><code># libraries
+library(dplyr)
+library(ggplot2)
+library(RColorBrewer)
+library(vegan)
+library(tidyverse)
+library(magrittr)
+library(readxl)
+library(reshape2)
+library(gtools)
+library(devtools)
+library(openxlsx)
+library(ape)
+library(stringr)
+library(tidyr)
+library(ggrepel)
+library(ggpubr)
+
+## theme for ggplot
+mytheme &lt;- theme_bw() + 
+  theme(text = element_text(family=&quot;serif&quot;)) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5, family=&quot;serif&quot;)) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5, family=&quot;serif&quot;)) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5, family=&quot;serif&quot;)) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13, family=&quot;serif&quot;))+
+  theme(axis.text.y = element_text(size=10, family=&quot;serif&quot;))+
+  theme(panel.grid.major = element_blank()) +
+  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),panel.border=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))
+
+mytheme_2d &lt;- theme_bw() + 
+  theme(text = element_text(family=&quot;serif&quot;)) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5, family=&quot;serif&quot;)) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5, family=&quot;serif&quot;)) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5, family=&quot;serif&quot;)) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13, family=&quot;serif&quot;))+
+  theme(axis.text.y = element_text(size=13, family=&quot;serif&quot;))+
+  # theme(panel.grid.major = element_blank()) +
+  # theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))
+
+
+# color collection
+my_color_collection &lt;- c(
+  &quot;#CBD588&quot;, &quot;#5F7FC7&quot;, &quot;orange&quot;, &quot;#AD6F3B&quot;, &quot;#673770&quot;, 
+  &quot;#D14285&quot;, &quot;#652926&quot;, &quot;#C84248&quot;, &quot;#8569D5&quot;, &quot;#5E738F&quot;,
+  &quot;#D1A33D&quot;, &quot;#8A7C64&quot;, &quot;#599861&quot;,&quot;#616163&quot;, &quot;#FFCDB2&quot;,
+  &quot;#6D9F71&quot;, &quot;#242F40&quot;,
+  &quot;#CCA43B&quot;, &quot;#F92A82&quot;, &quot;#ED7B84&quot;, &quot;#7EB77F&quot;, 
+  &quot;#DEC4A1&quot;, &quot;#E5D1D0&quot;, &#39;#0E8482&#39;, &#39;#C9DAEA&#39;, &#39;#337357&#39;, 
+  &#39;#95C623&#39;, &#39;#E55812&#39;, &#39;#04471C&#39;, &#39;#F2D7EE&#39;, &#39;#D3BCC0&#39;, 
+  &#39;#A5668B&#39;, &#39;#69306D&#39;, &#39;#0E103D&#39;, &#39;#1A535C&#39;, &#39;#4ECDC4&#39;, 
+  &#39;#F7FFF7&#39;, &#39;#FF6B6B&#39;, &#39;#FFE66D&#39;, &#39;#6699CC&#39;, &#39;#FFF275&#39;, 
+  &#39;#FF8C42&#39;, &#39;#FF3C38&#39;, &#39;#A23E48&#39;, &#39;#000000&#39;, &#39;#CF5C36&#39;, 
+  &#39;#EEE5E9&#39;, &#39;#7C7C7C&#39;, &#39;#EFC88B&#39;, &#39;#2E5266&#39;, &#39;#6E8898&#39;, 
+  &#39;#9FB1BC&#39;, &#39;#D3D0CB&#39;, &#39;#E2C044&#39;, &#39;#5BC0EB&#39;, &#39;#FDE74C&#39;, 
+  &#39;#9BC53D&#39;, &#39;#E55934&#39;, &#39;#FA7921&#39;, &quot;#CD9BCD&quot;, &quot;#508578&quot;, &quot;#DA5724&quot;)
+
+# for git push, use this instead of using wflow_git_push()
+# git push -u origin master (in the Git app / in the working directory)</code></pre>
+</div>
+<div id="import-data-table-from-python-code" class="section level2">
+<h2>1. Import data table from python code</h2>
+<p>We are going to use the vcl3 treated standard curve that is fitted with pure nitrate standards</p>
+<pre class="r"><code># import file
+df_p1 &lt;- openxlsx::read.xlsx(&quot;data/211220_Griess_plate1.xlsx&quot;)
+df_p2 &lt;- openxlsx::read.xlsx(&quot;data/211220_Griess_plate2.xlsx&quot;)
+df_p3 &lt;- openxlsx::read.xlsx(&quot;data/211220_Griess_plate3.xlsx&quot;)
+df_p4 &lt;- openxlsx::read.xlsx(&quot;data/211220_Griess_plate4.xlsx&quot;)
+df_p5 &lt;- openxlsx::read.xlsx(&quot;data/211220_Griess_plate5.xlsx&quot;)
+df_p6 &lt;- openxlsx::read.xlsx(&quot;data/211220_Griess_plate6.xlsx&quot;)
+df_p7 &lt;- openxlsx::read.xlsx(&quot;data/211220_Griess_plate7.xlsx&quot;)
+df_p8 &lt;- openxlsx::read.xlsx(&quot;data/211220_Griess_plate8.xlsx&quot;)
+df_p9 &lt;- openxlsx::read.xlsx(&quot;data/211220_Griess_plate9.xlsx&quot;)
+df_p10 &lt;- openxlsx::read.xlsx(&quot;data/211220_Griess_plate10.xlsx&quot;)
+df_p11 &lt;- openxlsx::read.xlsx(&quot;data/211220_Griess_plate11.xlsx&quot;)
+
+head(df_p1)</code></pre>
+<pre><code>   X1 Extraction_method Extraction_ul Nitrite_input Nitrate_input Category
+1 A01         0.5_1_1.5            70             0             2       AU
+2 A02         0.5_1_1.5            70             0             2       AU
+3 A03         0.5_1_1.5            70             0             2       AU
+4 A04         0.5_1_1.5            70             0             2       AU
+5 A05         0.5_1_1.5            70             0             2       AU
+6 A07         0.5_1_1.5            70             0             2       AU
+  Dilution Sample_type          Soil Time_point Plate NO2_OD540 NO2NO3_OD540
+1        1      Slurry NicholsA_7.12        AU0    P1   0.02105      0.72780
+2        1      Slurry NicholsA_7.12        AU0    P1   0.02225      0.72410
+3        1 Supernatant NicholsA_7.12        AU0    P1   0.00930      0.85025
+4        1     Control NicholsA_7.12        AU0    P1   0.24255      0.69385
+5        1     Control NicholsA_7.12        AU0    P1   0.25085      0.69475
+6        1      Slurry NicholsA_7.12        AU1    P1   0.10890      0.63535
+      NO2_mM NO2NO3_mM    NO3_mM
+1 0.01833436 0.7044746 0.6861403
+2 0.01893240 0.7006332 0.6817008
+3 0.01248043 0.8329909 0.8205105
+4 0.12932936 0.6693170 0.5399877
+5 0.13351254 0.6702465 0.5367339
+6 0.06220984 0.6092020 0.5469922</code></pre>
+<pre class="r"><code>colnames(df_p1)</code></pre>
+<pre><code> [1] &quot;X1&quot;                &quot;Extraction_method&quot; &quot;Extraction_ul&quot;    
+ [4] &quot;Nitrite_input&quot;     &quot;Nitrate_input&quot;     &quot;Category&quot;         
+ [7] &quot;Dilution&quot;          &quot;Sample_type&quot;       &quot;Soil&quot;             
+[10] &quot;Time_point&quot;        &quot;Plate&quot;             &quot;NO2_OD540&quot;        
+[13] &quot;NO2NO3_OD540&quot;      &quot;NO2_mM&quot;            &quot;NO2NO3_mM&quot;        
+[16] &quot;NO3_mM&quot;           </code></pre>
+<pre class="r"><code>dim(df_p1)</code></pre>
+<pre><code>[1] 88 16</code></pre>
+<pre class="r"><code>head(df_p2)</code></pre>
+<pre><code>   X1 Extraction_method Extraction_ul Nitrite_input Nitrate_input Category
+1 A01         0.5_1_1.5            70             0             2       BN
+2 A02         0.5_1_1.5            70             0             2       BN
+3 A03         0.5_1_1.5            70             0             2       BN
+4 A04         0.5_1_1.5            70             0             2       BN
+5 A05         0.5_1_1.5            70             0             2       BN
+6 A06         0.5_1_1.5            70             0             2       BN
+  Dilution Sample_type          Soil Time_point Plate NO2_OD540 NO2NO3_OD540
+1        1      Slurry NicholsA_7.12        BN0    P2   0.01305      0.50620
+2        1      Slurry NicholsA_7.12        BN0    P2   0.01305      0.53360
+3    N_0.5      Slurry NicholsA_7.12        BN0    P2   0.01365      0.57665
+4        1 Supernatant NicholsA_7.12        BN0    P2   0.00325      0.82585
+5        1 Supernatant NicholsA_7.12        BN0    P2   0.00320      0.78815
+6    N_0.5 Supernatant NicholsA_7.12        BN0    P2   0.00155      0.76490
+       NO2_mM NO2NO3_mM    NO3_mM
+1 0.014348340 0.4784993 0.4641510
+2 0.014348340 0.5060031 0.4916548
+3 0.014647237 0.5494593 0.5348121
+4 0.009467610 0.8071635 0.7976959
+5 0.009442714 0.7674742 0.7580315
+6 0.008621193 0.7431263 0.7345051</code></pre>
+<pre class="r"><code>colnames(df_p2)</code></pre>
+<pre><code> [1] &quot;X1&quot;                &quot;Extraction_method&quot; &quot;Extraction_ul&quot;    
+ [4] &quot;Nitrite_input&quot;     &quot;Nitrate_input&quot;     &quot;Category&quot;         
+ [7] &quot;Dilution&quot;          &quot;Sample_type&quot;       &quot;Soil&quot;             
+[10] &quot;Time_point&quot;        &quot;Plate&quot;             &quot;NO2_OD540&quot;        
+[13] &quot;NO2NO3_OD540&quot;      &quot;NO2_mM&quot;            &quot;NO2NO3_mM&quot;        
+[16] &quot;NO3_mM&quot;           </code></pre>
+<pre class="r"><code>dim(df_p2)</code></pre>
+<pre><code>[1] 88 16</code></pre>
+<pre class="r"><code>head(df_p3)</code></pre>
+<pre><code>   X1 Extraction_method Extraction_ul Nitrite_input Nitrate_input Category
+1 A01         0.5_1_1.5            70             0             2       BN
+2 A02         0.5_1_1.5            70             0             2       BN
+3 A03         0.5_1_1.5            70             0             2       BN
+4 A04         0.5_1_1.5            70             0             2       BN
+5 A05         0.5_1_1.5            70             0             2       BN
+6 A06         0.5_1_1.5            70             0             2       BN
+  Dilution Sample_type          Soil Time_point Plate NO2_OD540 NO2NO3_OD540
+1        1      Slurry NicholsA_7.12        BN1    P3   0.01740      0.58710
+2        1      Slurry NicholsA_7.12        BN1    P3   0.01515      0.50320
+3    N_0.5      Slurry NicholsA_7.12        BN1    P3   0.02315      0.59670
+4        1 Supernatant NicholsA_7.12        BN1    P3   0.00410      0.80825
+5        1 Supernatant NicholsA_7.12        BN1    P3   0.00505      0.80355
+6    N_0.5 Supernatant NicholsA_7.12        BN1    P3   0.00245      0.81145
+       NO2_mM NO2NO3_mM    NO3_mM
+1 0.016515543 0.5600533 0.5435378
+2 0.015394518 0.4754952 0.4601007
+3 0.019380950 0.5698014 0.5504205
+4 0.009890845 0.7886024 0.7787115
+5 0.010363894 0.7836553 0.7732915
+6 0.009069287 0.7919729 0.7829036</code></pre>
+<pre class="r"><code>colnames(df_p3)</code></pre>
+<pre><code> [1] &quot;X1&quot;                &quot;Extraction_method&quot; &quot;Extraction_ul&quot;    
+ [4] &quot;Nitrite_input&quot;     &quot;Nitrate_input&quot;     &quot;Category&quot;         
+ [7] &quot;Dilution&quot;          &quot;Sample_type&quot;       &quot;Soil&quot;             
+[10] &quot;Time_point&quot;        &quot;Plate&quot;             &quot;NO2_OD540&quot;        
+[13] &quot;NO2NO3_OD540&quot;      &quot;NO2_mM&quot;            &quot;NO2NO3_mM&quot;        
+[16] &quot;NO3_mM&quot;           </code></pre>
+<pre class="r"><code>dim(df_p3)</code></pre>
+<pre><code>[1] 88 16</code></pre>
+<pre class="r"><code>head(df_p4)</code></pre>
+<pre><code>   X1 Extraction_method Extraction_ul Nitrite_input Nitrate_input Category
+1 A01         0.5_1_1.5            70             0             2       BN
+2 A02         0.5_1_1.5            70             0             2       BN
+3 A03         0.5_1_1.5            70             0             2       BN
+4 A04         0.5_1_1.5            70             0             2       BN
+5 A05         0.5_1_1.5            70             0             2       BN
+6 A06         0.5_1_1.5            70             0             2       BN
+  Dilution Sample_type          Soil Time_point Plate NO2_OD540 NO2NO3_OD540
+1        1      Slurry NicholsA_7.12        BN2    P4   0.54070      0.17830
+2        1      Slurry NicholsA_7.12        BN2    P4   0.47030      0.16555
+3    N_0.5      Slurry NicholsA_7.12        BN2    P4   0.45365      0.15100
+4        1 Supernatant NicholsA_7.12        BN2    P4   0.27250      0.77040
+5        1 Supernatant NicholsA_7.12        BN2    P4   0.26730      0.76105
+6    N_0.5 Supernatant NicholsA_7.12        BN2    P4   0.13210      0.77980
+      NO2_mM NO2NO3_mM    NO3_mM
+1 0.28071268 0.1581423 0.0000000
+2 0.24475816 0.1459955 0.0000000
+3 0.23627386 0.1321608 0.0000000
+4 0.14443236 0.7488772 0.6044448
+5 0.14180849 0.7391039 0.5972954
+6 0.07382877 0.7587187 0.6848899</code></pre>
+<pre class="r"><code>colnames(df_p4)</code></pre>
+<pre><code> [1] &quot;X1&quot;                &quot;Extraction_method&quot; &quot;Extraction_ul&quot;    
+ [4] &quot;Nitrite_input&quot;     &quot;Nitrate_input&quot;     &quot;Category&quot;         
+ [7] &quot;Dilution&quot;          &quot;Sample_type&quot;       &quot;Soil&quot;             
+[10] &quot;Time_point&quot;        &quot;Plate&quot;             &quot;NO2_OD540&quot;        
+[13] &quot;NO2NO3_OD540&quot;      &quot;NO2_mM&quot;            &quot;NO2NO3_mM&quot;        
+[16] &quot;NO3_mM&quot;           </code></pre>
+<pre class="r"><code>dim(df_p4)</code></pre>
+<pre><code>[1] 88 16</code></pre>
+<pre class="r"><code>head(df_p5)</code></pre>
+<pre><code>   X1 Extraction_method Extraction_ul Nitrite_input Nitrate_input Category
+1 A01         0.5_1_1.5            70             0             2       BN
+2 A02         0.5_1_1.5            70             0             2       BN
+3 A03         0.5_1_1.5            70             0             2       BN
+4 A04         0.5_1_1.5            70             0             2       BN
+5 A05         0.5_1_1.5            70             0             2       BN
+6 A06         0.5_1_1.5            70             0             2       BN
+  Dilution Sample_type          Soil Time_point Plate NO2_OD540 NO2NO3_OD540
+1        1      Slurry NicholsA_7.12        BN3    P5   0.01725      0.00000
+2        1      Slurry NicholsA_7.12        BN3    P5   0.01445      0.00000
+3    N_0.5      Slurry NicholsA_7.12        BN3    P5   0.01535      0.00000
+4        1 Supernatant NicholsA_7.12        BN3    P5   0.54400      0.66925
+5        1 Supernatant NicholsA_7.12        BN3    P5   0.58025      0.66405
+6    N_0.5 Supernatant NicholsA_7.12        BN3    P5   0.30075      0.69755
+      NO2_mM NO2NO3_mM    NO3_mM
+1 0.01644080 0.0000000 0.0000000
+2 0.01504578 0.0000000 0.0000000
+3 0.01549416 0.0000000 0.0000000
+4 0.28240127 0.6439668 0.3615655
+5 0.30096936 0.6386214 0.3376521
+6 0.15869909 0.6731389 0.5144398</code></pre>
+<pre class="r"><code>colnames(df_p5)</code></pre>
+<pre><code> [1] &quot;X1&quot;                &quot;Extraction_method&quot; &quot;Extraction_ul&quot;    
+ [4] &quot;Nitrite_input&quot;     &quot;Nitrate_input&quot;     &quot;Category&quot;         
+ [7] &quot;Dilution&quot;          &quot;Sample_type&quot;       &quot;Soil&quot;             
+[10] &quot;Time_point&quot;        &quot;Plate&quot;             &quot;NO2_OD540&quot;        
+[13] &quot;NO2NO3_OD540&quot;      &quot;NO2_mM&quot;            &quot;NO2NO3_mM&quot;        
+[16] &quot;NO3_mM&quot;           </code></pre>
+<pre class="r"><code>dim(df_p5)</code></pre>
+<pre><code>[1] 88 16</code></pre>
+<pre class="r"><code>head(df_p6)</code></pre>
+<pre><code>   X1 Extraction_method Extraction_ul Nitrite_input Nitrate_input Category
+1 A01         0.5_1_1.5            70             0             2       BN
+2 A02         0.5_1_1.5            70             0             2       BN
+3 A03         0.5_1_1.5            70             0             2       BN
+4 A04         0.5_1_1.5            70             0             2       BN
+5 A05         0.5_1_1.5            70             0             2       BN
+6 A06         0.5_1_1.5            70             0             2       BN
+  Dilution Sample_type          Soil Time_point Plate NO2_OD540 NO2NO3_OD540
+1        1      Slurry NicholsA_7.12        BN4    P6   0.01450      0.00000
+2        1      Slurry NicholsA_7.12        BN4    P6   0.01295      0.00000
+3    N_0.5      Slurry NicholsA_7.12        BN4    P6   0.02000      0.00000
+4        1 Supernatant NicholsA_7.12        BN4    P6   0.48210      0.60200
+5        1 Supernatant NicholsA_7.12        BN4    P6   0.51825      0.57735
+6    N_0.5 Supernatant NicholsA_7.12        BN4    P6   0.42720      0.63455
+      NO2_mM NO2NO3_mM    NO3_mM
+1 0.01507069 0.0000000 0.0000000
+2 0.01429852 0.0000000 0.0000000
+3 0.01781110 0.0000000 0.0000000
+4 0.25077549 0.5751897 0.3244142
+5 0.26923281 0.5501684 0.2809356
+6 0.22281076 0.6083839 0.3855732</code></pre>
+<pre class="r"><code>colnames(df_p6)</code></pre>
+<pre><code> [1] &quot;X1&quot;                &quot;Extraction_method&quot; &quot;Extraction_ul&quot;    
+ [4] &quot;Nitrite_input&quot;     &quot;Nitrate_input&quot;     &quot;Category&quot;         
+ [7] &quot;Dilution&quot;          &quot;Sample_type&quot;       &quot;Soil&quot;             
+[10] &quot;Time_point&quot;        &quot;Plate&quot;             &quot;NO2_OD540&quot;        
+[13] &quot;NO2NO3_OD540&quot;      &quot;NO2_mM&quot;            &quot;NO2NO3_mM&quot;        
+[16] &quot;NO3_mM&quot;           </code></pre>
+<pre class="r"><code>dim(df_p6)</code></pre>
+<pre><code>[1] 88 16</code></pre>
+<pre class="r"><code>dim(df_p7)</code></pre>
+<pre><code>[1] 88 16</code></pre>
+<pre class="r"><code>dim(df_p8)</code></pre>
+<pre><code>[1] 88 16</code></pre>
+<pre class="r"><code>dim(df_p9)</code></pre>
+<pre><code>[1] 88 16</code></pre>
+<pre class="r"><code>dim(df_p10)</code></pre>
+<pre><code>[1] 88 16</code></pre>
+<pre class="r"><code>dim(df_p11)</code></pre>
+<pre><code>[1] 88 16</code></pre>
+<pre class="r"><code># X1 to Well
+df_p1 %&lt;&gt;% rename(Well = X1)
+df_p2 %&lt;&gt;% rename(Well = X1)
+df_p3 %&lt;&gt;% rename(Well = X1)
+df_p4 %&lt;&gt;% rename(Well = X1)
+df_p5 %&lt;&gt;% rename(Well = X1)
+df_p6 %&lt;&gt;% rename(Well = X1)
+df_p7 %&lt;&gt;% rename(Well = X1)
+df_p8 %&lt;&gt;% rename(Well = X1)
+df_p9 %&lt;&gt;% rename(Well = X1)
+df_p10 %&lt;&gt;% rename(Well = X1)
+df_p11 %&lt;&gt;% rename(Well = X1)
+
+# remove wells that were contaminated during the experiment
+df_p1 %&lt;&gt;% filter(!(Well %in% c(&quot;C01&quot;,&quot;E01&quot;))) # filter burst issue
+df_p4 %&lt;&gt;% filter(!(Well %in% c(&quot;F01&quot;))) # filter burst issue
+df_p5 %&lt;&gt;% filter(!(Well %in% c(&quot;C10&quot;))) # filter burst issue
+df_p11 %&lt;&gt;% filter(!(Well %in% c(&quot;B02&quot;, &quot;G11&quot;))) # filter burst issue  # G11 was removed because of abnormal value compared to other 2 replicates
+# dim(df_p4)
+
+# bind two dataframe
+df_p &lt;- rbind(df_p1, df_p2, df_p3, df_p4, df_p5, df_p6, df_p7, df_p8, df_p9, df_p10, df_p11)
+dim(df_p)</code></pre>
+<pre><code>[1] 962  16</code></pre>
+<pre class="r"><code># remove NA
+dim(df_p)</code></pre>
+<pre><code>[1] 962  16</code></pre>
+<pre class="r"><code>df_p &lt;- na.omit(df_p)
+dim(df_p)</code></pre>
+<pre><code>[1] 906  16</code></pre>
+<pre class="r"><code># multiply dilution factor which is 5/2
+df_p %&lt;&gt;% select(-NO2_OD540, -NO2NO3_OD540)
+df_p %&lt;&gt;% mutate(NO2_mM = NO2_mM * (5/2), NO2NO3_mM = NO2NO3_mM * (5/2), NO3_mM = NO3_mM * (5/2))
+
+# Get the metadata for time point and left join
+Time_table_AU &lt;- openxlsx::read.xlsx(&quot;data/211220_time_table_AU.xlsx&quot;)
+Time_table_BN &lt;- openxlsx::read.xlsx(&quot;data/211220_time_table_BN.xlsx&quot;)
+Time_table &lt;- rbind(Time_table_AU, Time_table_BN)
+
+Time_table %&lt;&gt;% select(-Date) 
+dim(df_p)</code></pre>
+<pre><code>[1] 906  14</code></pre>
+<pre class="r"><code>df_p &lt;- df_p %&gt;% left_join(Time_table, by=(&quot;Time_point&quot;=&quot;Time_point&quot;))
+dim(df_p)</code></pre>
+<pre><code>[1] 906  17</code></pre>
+<pre class="r"><code>colnames(df_p)</code></pre>
+<pre><code> [1] &quot;Well&quot;              &quot;Extraction_method&quot; &quot;Extraction_ul&quot;    
+ [4] &quot;Nitrite_input&quot;     &quot;Nitrate_input&quot;     &quot;Category&quot;         
+ [7] &quot;Dilution&quot;          &quot;Sample_type&quot;       &quot;Soil&quot;             
+[10] &quot;Time_point&quot;        &quot;Plate&quot;             &quot;NO2_mM&quot;           
+[13] &quot;NO2NO3_mM&quot;         &quot;NO3_mM&quot;            &quot;Time_minutes&quot;     
+[16] &quot;Time_hours&quot;        &quot;Time_days&quot;        </code></pre>
+<pre class="r"><code># time_point order
+# df_p$Time_point &lt;-  factor(df_p$Time_point, levels = paste0(&quot;T&quot;,0:10))</code></pre>
+</div>
+<div id="get-average-and-standard-deviation-moisture-correction-blank-correction" class="section level2">
+<h2>2. Get average and standard deviation &amp; Moisture correction &amp; Blank correction</h2>
+<pre class="r"><code># plot to see
+ggplot(df_p, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211220_Griess_slurry_vs_supernatant2.Rmd/unnamed-chunk-3-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot to see
+ggplot(df_p1, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211220_Griess_slurry_vs_supernatant2.Rmd/unnamed-chunk-3-2.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot to see
+ggplot(df_p2, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211220_Griess_slurry_vs_supernatant2.Rmd/unnamed-chunk-3-3.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot to see
+ggplot(df_p3, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211220_Griess_slurry_vs_supernatant2.Rmd/unnamed-chunk-3-4.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot to see
+ggplot(df_p4, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211220_Griess_slurry_vs_supernatant2.Rmd/unnamed-chunk-3-5.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot to see
+ggplot(df_p5, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211220_Griess_slurry_vs_supernatant2.Rmd/unnamed-chunk-3-6.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot to see
+ggplot(df_p6, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211220_Griess_slurry_vs_supernatant2.Rmd/unnamed-chunk-3-7.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot to see
+ggplot(df_p7, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211220_Griess_slurry_vs_supernatant2.Rmd/unnamed-chunk-3-8.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot to see
+ggplot(df_p8, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211220_Griess_slurry_vs_supernatant2.Rmd/unnamed-chunk-3-9.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot to see
+ggplot(df_p9, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211220_Griess_slurry_vs_supernatant2.Rmd/unnamed-chunk-3-10.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot to see
+ggplot(df_p10, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211220_Griess_slurry_vs_supernatant2.Rmd/unnamed-chunk-3-11.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot to see
+ggplot(df_p11, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Nitrate_spike_in (mM)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Without averaging \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211220_Griess_slurry_vs_supernatant2.Rmd/unnamed-chunk-3-12.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># average technical replicate
+colnames(df_p)</code></pre>
+<pre><code> [1] &quot;Well&quot;              &quot;Extraction_method&quot; &quot;Extraction_ul&quot;    
+ [4] &quot;Nitrite_input&quot;     &quot;Nitrate_input&quot;     &quot;Category&quot;         
+ [7] &quot;Dilution&quot;          &quot;Sample_type&quot;       &quot;Soil&quot;             
+[10] &quot;Time_point&quot;        &quot;Plate&quot;             &quot;NO2_mM&quot;           
+[13] &quot;NO2NO3_mM&quot;         &quot;NO3_mM&quot;            &quot;Time_minutes&quot;     
+[16] &quot;Time_hours&quot;        &quot;Time_days&quot;        </code></pre>
+<pre class="r"><code>dim(df_p)</code></pre>
+<pre><code>[1] 906  17</code></pre>
+<pre class="r"><code>df_NO2NO3 &lt;- df_p %&gt;% group_by(Nitrite_input, Nitrate_input, Category, Dilution, Sample_type, Soil, Time_point, Plate, Time_minutes, Time_hours, Time_days) %&gt;% summarise(Ave_NO2_mM = mean(NO2_mM), Std_NO2_mM = sd(NO2_mM), Ave_NO3_mM = mean(NO3_mM), Std_NO3_mM = sd(NO3_mM)) %&gt;% ungroup()
+
+dim(df_NO2NO3)</code></pre>
+<pre><code>[1] 292  15</code></pre>
+<pre class="r"><code>dim(df_p)</code></pre>
+<pre><code>[1] 906  17</code></pre>
+<pre class="r"><code>df_NO2NO3$Sample_type</code></pre>
+<pre><code>  [1] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+  [5] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+  [9] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+ [13] &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;  
+ [17] &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;  
+ [21] &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;  
+ [25] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+ [29] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+ [33] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+ [37] &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;  
+ [41] &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;  
+ [45] &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;  
+ [49] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+ [53] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+ [57] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+ [61] &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;  
+ [65] &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;  
+ [69] &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;  
+ [73] &quot;Control&quot;       &quot;Control&quot;       &quot;Control&quot;       &quot;Control&quot;      
+ [77] &quot;Control&quot;       &quot;Control&quot;       &quot;Control&quot;       &quot;Control&quot;      
+ [81] &quot;Control&quot;       &quot;Control&quot;       &quot;Control&quot;       &quot;Control&quot;      
+ [85] &quot;Nitrate_Blank&quot; &quot;Nitrate_Blank&quot; &quot;Nitrate_Blank&quot; &quot;Nitrate_Blank&quot;
+ [89] &quot;Nitrate_Blank&quot; &quot;Nitrate_Blank&quot; &quot;Nitrate_Blank&quot; &quot;Nitrate_Blank&quot;
+ [93] &quot;Nitrate_Blank&quot; &quot;Nitrate_Blank&quot; &quot;Nitrate_Blank&quot; &quot;Nitrate_Blank&quot;
+ [97] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[101] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[105] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[109] &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;  
+[113] &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;  
+[117] &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;  
+[121] &quot;Nitrate_Blank&quot; &quot;Nitrate_Blank&quot; &quot;Nitrate_Blank&quot; &quot;Nitrate_Blank&quot;
+[125] &quot;Nitrate_Blank&quot; &quot;Nitrate_Blank&quot; &quot;Nitrate_Blank&quot; &quot;Nitrate_Blank&quot;
+[129] &quot;Nitrate_Blank&quot; &quot;Nitrate_Blank&quot; &quot;Slurry&quot;        &quot;Slurry&quot;       
+[133] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[137] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[141] &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;  
+[145] &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;  
+[149] &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Slurry&quot;        &quot;Slurry&quot;       
+[153] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[157] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[161] &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;  
+[165] &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;  
+[169] &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Slurry&quot;        &quot;Slurry&quot;       
+[173] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[177] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[181] &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;  
+[185] &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;  
+[189] &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Slurry&quot;        &quot;Slurry&quot;       
+[193] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[197] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[201] &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;  
+[205] &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;  
+[209] &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Slurry&quot;        &quot;Slurry&quot;       
+[213] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[217] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[221] &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;  
+[225] &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;  
+[229] &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Slurry&quot;        &quot;Slurry&quot;       
+[233] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[237] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[241] &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;  
+[245] &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;  
+[249] &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Slurry&quot;        &quot;Slurry&quot;       
+[253] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[257] &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;        &quot;Slurry&quot;       
+[261] &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;  
+[265] &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Supernatant&quot;  
+[269] &quot;Supernatant&quot;   &quot;Supernatant&quot;   &quot;Nitrite_Blank&quot; &quot;Nitrite_Blank&quot;
+[273] &quot;Nitrite_Blank&quot; &quot;Nitrite_Blank&quot; &quot;Nitrite_Blank&quot; &quot;Nitrite_Blank&quot;
+[277] &quot;Nitrite_Blank&quot; &quot;Nitrite_Blank&quot; &quot;Nitrite_Blank&quot; &quot;Nitrite_Blank&quot;
+[281] &quot;Nitrite_Blank&quot; &quot;Nitrite_Blank&quot; &quot;Nitrite_Blank&quot; &quot;Nitrite_Blank&quot;
+[285] &quot;Nitrite_Blank&quot; &quot;Nitrite_Blank&quot; &quot;Nitrite_Blank&quot; &quot;Nitrite_Blank&quot;
+[289] &quot;Nitrite_Blank&quot; &quot;Nitrite_Blank&quot; &quot;Nitrite_Blank&quot; &quot;Nitrite_Blank&quot;</code></pre>
+<pre class="r"><code># Factor in orders
+df_NO2NO3$Sample_type &lt;-  factor(df_NO2NO3$Sample_type, levels = c(&quot;Slurry&quot;, &quot;Supernatant&quot;,&quot;Control&quot;,&quot;Nitrite_Blank&quot;, &quot;Nitrate_Blank&quot;))
+df_NO2NO3$Time_point &lt;-  factor(df_NO2NO3$Time_point, levels = c(paste0(&quot;AU&quot;,0:11),paste0(&quot;BN&quot;,0:9)))
+dim(df_NO2NO3) #294</code></pre>
+<pre><code>[1] 292  15</code></pre>
+<pre class="r"><code># Testing negative samples
+df_no3_blank &lt;- df_NO2NO3 %&gt;% filter(Sample_type == &quot;Nitrate_Blank&quot;)
+df_no3_blank # 21</code></pre>
+<pre><code># A tibble: 22 x 15
+   Nitrite_input Nitrate_input Category Dilution Sample_type  Soil    Time_point
+           &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;    &lt;fct&gt;        &lt;chr&gt;   &lt;fct&gt;     
+ 1             0             2 AU       1        Nitrate_Bla~ Nichol~ AU0       
+ 2             0             2 AU       1        Nitrate_Bla~ Nichol~ AU1       
+ 3             0             2 AU       1        Nitrate_Bla~ Nichol~ AU10      
+ 4             0             2 AU       1        Nitrate_Bla~ Nichol~ AU11      
+ 5             0             2 AU       1        Nitrate_Bla~ Nichol~ AU2       
+ 6             0             2 AU       1        Nitrate_Bla~ Nichol~ AU3       
+ 7             0             2 AU       1        Nitrate_Bla~ Nichol~ AU4       
+ 8             0             2 AU       1        Nitrate_Bla~ Nichol~ AU5       
+ 9             0             2 AU       1        Nitrate_Bla~ Nichol~ AU6       
+10             0             2 AU       1        Nitrate_Bla~ Nichol~ AU7       
+# ... with 12 more rows, and 8 more variables: Plate &lt;chr&gt;, Time_minutes &lt;chr&gt;,
+#   Time_hours &lt;dbl&gt;, Time_days &lt;dbl&gt;, Ave_NO2_mM &lt;dbl&gt;, Std_NO2_mM &lt;dbl&gt;,
+#   Ave_NO3_mM &lt;dbl&gt;, Std_NO3_mM &lt;dbl&gt;</code></pre>
+<pre class="r"><code>df_no2_blank &lt;- df_NO2NO3 %&gt;% filter(Sample_type == &quot;Nitrite_Blank&quot;)
+df_no2_blank # 21</code></pre>
+<pre><code># A tibble: 22 x 15
+   Nitrite_input Nitrate_input Category Dilution Sample_type  Soil    Time_point
+           &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;    &lt;fct&gt;        &lt;chr&gt;   &lt;fct&gt;     
+ 1             2             0 AU       1        Nitrite_Bla~ Nichol~ AU0       
+ 2             2             0 AU       1        Nitrite_Bla~ Nichol~ AU1       
+ 3             2             0 AU       1        Nitrite_Bla~ Nichol~ AU10      
+ 4             2             0 AU       1        Nitrite_Bla~ Nichol~ AU11      
+ 5             2             0 AU       1        Nitrite_Bla~ Nichol~ AU2       
+ 6             2             0 AU       1        Nitrite_Bla~ Nichol~ AU3       
+ 7             2             0 AU       1        Nitrite_Bla~ Nichol~ AU4       
+ 8             2             0 AU       1        Nitrite_Bla~ Nichol~ AU5       
+ 9             2             0 AU       1        Nitrite_Bla~ Nichol~ AU6       
+10             2             0 AU       1        Nitrite_Bla~ Nichol~ AU7       
+# ... with 12 more rows, and 8 more variables: Plate &lt;chr&gt;, Time_minutes &lt;chr&gt;,
+#   Time_hours &lt;dbl&gt;, Time_days &lt;dbl&gt;, Ave_NO2_mM &lt;dbl&gt;, Std_NO2_mM &lt;dbl&gt;,
+#   Ave_NO3_mM &lt;dbl&gt;, Std_NO3_mM &lt;dbl&gt;</code></pre>
+<pre class="r"><code># close to zero
+
+# 1. Apply moisture correction factor (correcting for moisture in soil)
+soil_spike_ratio = 0.5  # soil weight(0.7g) / spike in volume (1.4ml) 
+# moisture_percent_1 = 19.9 # MIDWAY-A 
+# moisture_percent_2 = 53.9 # Washington-A 
+moisture_percent_3 = 16.52 # Nichols-A
+
+# mcf_1 = (soil_spike_ratio*(moisture_percent_1/100) + 1)
+# mcf_1
+# mcf_2 = (soil_spike_ratio*(moisture_percent_2/100) + 1)
+# mcf_2
+mcf_3 = (soil_spike_ratio*(moisture_percent_3/100) + 1)
+mcf_3</code></pre>
+<pre><code>[1] 1.0826</code></pre>
+<pre class="r"><code># apply moisture factor to each soil
+dim(df_NO2NO3)</code></pre>
+<pre><code>[1] 292  15</code></pre>
+<pre class="r"><code>df_NO2NO3 %&gt;% select(Soil) %&gt;% unique()</code></pre>
+<pre><code># A tibble: 1 x 1
+  Soil         
+  &lt;chr&gt;        
+1 NicholsA_7.12</code></pre>
+<pre class="r"><code># df_NO2NO3_mcf_1 &lt;- df_NO2NO3 %&gt;% filter(Soil == &quot;Midway-A_6.89&quot;) %&gt;% mutate(Ave_NO3_mM = Ave_NO3_mM * mcf_1, Ave_NO2_mM = Ave_NO2_mM * mcf_1, Std_NO2_mM = Std_NO2_mM * mcf_1, Std_NO3_mM = Std_NO3_mM * mcf_1)
+# dim(df_NO2NO3_mcf_1) #84
+# df_NO2NO3_mcf_2 &lt;- df_NO2NO3 %&gt;% filter(Soil == &quot;Washington-A_7.88&quot;) %&gt;% mutate(Ave_NO3_mM = Ave_NO3_mM * mcf_2, Ave_NO2_mM = Ave_NO2_mM * mcf_2, Std_NO2_mM = Std_NO2_mM * mcf_2, Std_NO3_mM = Std_NO3_mM * mcf_2)
+# dim(df_NO2NO3_mcf_2) #84
+df_NO2NO3_mcf_3 &lt;- df_NO2NO3 %&gt;% filter(Sample_type %in% c(&quot;Slurry&quot;,&quot;Control&quot;)) %&gt;% mutate(Ave_NO3_mM = Ave_NO3_mM * mcf_3, Ave_NO2_mM = Ave_NO2_mM * mcf_3, Std_NO2_mM = Std_NO2_mM * mcf_3, Std_NO3_mM = Std_NO3_mM * mcf_3)
+dim(df_NO2NO3_mcf_3) #130 15</code></pre>
+<pre><code>[1] 130  15</code></pre>
+<pre class="r"><code>df_NO2NO3_others_mcf &lt;- df_NO2NO3 %&gt;% filter(Sample_type %in% c(&quot;Supernatant&quot;,&quot;Nitrite_Blank&quot;, &quot;Nitrate_Blank&quot;))
+dim(df_NO2NO3_others_mcf) #162</code></pre>
+<pre><code>[1] 162  15</code></pre>
+<pre class="r"><code>df_NO2NO3_mcf &lt;- rbind(df_NO2NO3_mcf_3, df_NO2NO3_others_mcf)
+dim(df_NO2NO3_mcf) # 292</code></pre>
+<pre><code>[1] 292  15</code></pre>
+<pre class="r"><code># plot to see
+ggplot(df_NO2NO3_mcf, aes(x=Time_hours, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Time (hours)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;After averaging with biological replicates \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211220_Griess_slurry_vs_supernatant2.Rmd/unnamed-chunk-3-13.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># 2. Apply blank correction factor (drying effect during incubation)
+# Blank reads
+df_no3_blank &lt;- df_NO2NO3 %&gt;% filter(Sample_type == &quot;Nitrate_Blank&quot;)
+df_no3_blank</code></pre>
+<pre><code># A tibble: 22 x 15
+   Nitrite_input Nitrate_input Category Dilution Sample_type  Soil    Time_point
+           &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;    &lt;fct&gt;        &lt;chr&gt;   &lt;fct&gt;     
+ 1             0             2 AU       1        Nitrate_Bla~ Nichol~ AU0       
+ 2             0             2 AU       1        Nitrate_Bla~ Nichol~ AU1       
+ 3             0             2 AU       1        Nitrate_Bla~ Nichol~ AU10      
+ 4             0             2 AU       1        Nitrate_Bla~ Nichol~ AU11      
+ 5             0             2 AU       1        Nitrate_Bla~ Nichol~ AU2       
+ 6             0             2 AU       1        Nitrate_Bla~ Nichol~ AU3       
+ 7             0             2 AU       1        Nitrate_Bla~ Nichol~ AU4       
+ 8             0             2 AU       1        Nitrate_Bla~ Nichol~ AU5       
+ 9             0             2 AU       1        Nitrate_Bla~ Nichol~ AU6       
+10             0             2 AU       1        Nitrate_Bla~ Nichol~ AU7       
+# ... with 12 more rows, and 8 more variables: Plate &lt;chr&gt;, Time_minutes &lt;chr&gt;,
+#   Time_hours &lt;dbl&gt;, Time_days &lt;dbl&gt;, Ave_NO2_mM &lt;dbl&gt;, Std_NO2_mM &lt;dbl&gt;,
+#   Ave_NO3_mM &lt;dbl&gt;, Std_NO3_mM &lt;dbl&gt;</code></pre>
+<pre class="r"><code>df_no2_blank &lt;- df_NO2NO3 %&gt;% filter(Sample_type == &quot;Nitrite_Blank&quot;)
+df_no2_blank</code></pre>
+<pre><code># A tibble: 22 x 15
+   Nitrite_input Nitrate_input Category Dilution Sample_type  Soil    Time_point
+           &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;    &lt;fct&gt;        &lt;chr&gt;   &lt;fct&gt;     
+ 1             2             0 AU       1        Nitrite_Bla~ Nichol~ AU0       
+ 2             2             0 AU       1        Nitrite_Bla~ Nichol~ AU1       
+ 3             2             0 AU       1        Nitrite_Bla~ Nichol~ AU10      
+ 4             2             0 AU       1        Nitrite_Bla~ Nichol~ AU11      
+ 5             2             0 AU       1        Nitrite_Bla~ Nichol~ AU2       
+ 6             2             0 AU       1        Nitrite_Bla~ Nichol~ AU3       
+ 7             2             0 AU       1        Nitrite_Bla~ Nichol~ AU4       
+ 8             2             0 AU       1        Nitrite_Bla~ Nichol~ AU5       
+ 9             2             0 AU       1        Nitrite_Bla~ Nichol~ AU6       
+10             2             0 AU       1        Nitrite_Bla~ Nichol~ AU7       
+# ... with 12 more rows, and 8 more variables: Plate &lt;chr&gt;, Time_minutes &lt;chr&gt;,
+#   Time_hours &lt;dbl&gt;, Time_days &lt;dbl&gt;, Ave_NO2_mM &lt;dbl&gt;, Std_NO2_mM &lt;dbl&gt;,
+#   Ave_NO3_mM &lt;dbl&gt;, Std_NO3_mM &lt;dbl&gt;</code></pre>
+<pre class="r"><code># df_aero_blank$Nitrate_input &lt;- as.numeric(as.character(df_aero_blank$Nitrate_input))
+df_no2_blank %&lt;&gt;% mutate(Correction_factor_NO2 = (Nitrite_input / Ave_NO2_mM)) 
+df_no3_blank %&lt;&gt;% mutate(Correction_factor_NO3 = (Nitrate_input / Ave_NO3_mM)) 
+
+cf_no2 &lt;- df_no2_blank %&gt;% select(Category, Time_point, Correction_factor_NO2)
+cf_no3 &lt;- df_no3_blank %&gt;% select(Category, Time_point, Correction_factor_NO3)
+
+# left join and multiply the correction factor
+# left join to samples
+df_sample_mcf &lt;- df_NO2NO3_mcf %&gt;% filter(!(Sample_type %in% c(&quot;Nitrite_Blank&quot;,&quot;Nitrate_Blank&quot;)))
+dim(df_sample_mcf) #252</code></pre>
+<pre><code>[1] 248  15</code></pre>
+<pre class="r"><code>df_sample_bcf &lt;- df_sample_mcf %&gt;% left_join(cf_no2, by = c(&quot;Category&quot;=&quot;Category&quot;, &quot;Time_point&quot;=&quot;Time_point&quot;)) %&gt;% left_join(cf_no3, by = c(&quot;Category&quot;=&quot;Category&quot;, &quot;Time_point&quot;=&quot;Time_point&quot;))
+dim(df_sample_bcf)</code></pre>
+<pre><code>[1] 248  17</code></pre>
+<pre class="r"><code>df_sample_bcf &lt;- df_sample_bcf %&gt;% mutate(Ave_NO3_mM = Ave_NO3_mM * Correction_factor_NO3, Ave_NO2_mM = Ave_NO2_mM * Correction_factor_NO2, Std_NO2_mM = Std_NO2_mM * Correction_factor_NO2, Std_NO3_mM = Std_NO3_mM * Correction_factor_NO3)
+dim(df_sample_bcf)</code></pre>
+<pre><code>[1] 248  17</code></pre>
+<pre class="r"><code># merge dataframe with blank just for convenience
+df_NO2NO3_blanks_bcf &lt;- df_NO2NO3_mcf %&gt;% filter(Sample_type %in% c(&quot;Nitrite_Blank&quot;,&quot;Nitrate_Blank&quot;)) %&gt;% left_join(cf_no2, by = c(&quot;Category&quot;=&quot;Category&quot;, &quot;Time_point&quot;=&quot;Time_point&quot;)) %&gt;% left_join(cf_no3, by = c(&quot;Category&quot;=&quot;Category&quot;, &quot;Time_point&quot;=&quot;Time_point&quot;))
+dim(df_NO2NO3_blanks_bcf) #44</code></pre>
+<pre><code>[1] 44 17</code></pre>
+<pre class="r"><code>dim(df_sample_bcf) # 248 </code></pre>
+<pre><code>[1] 248  17</code></pre>
+<pre class="r"><code>df_NO2NO3_bcf &lt;- rbind(df_sample_bcf, df_NO2NO3_blanks_bcf)
+dim(df_NO2NO3_bcf) # 292</code></pre>
+<pre><code>[1] 292  17</code></pre>
+</div>
+<div id="sanity-check-moisture-correction-blank-correction-factor" class="section level2">
+<h2>3. Sanity check: moisture correction &amp; blank correction factor</h2>
+<p>Blank correction<br />
+Use the nitrate concentration of the blank and use the ratio.<br />
+For example, multiply to nitrate concentration x (2mM / changed [NO3])<br />
+</p>
+<pre class="r"><code># without any correction
+# nitrate blanks
+dim(df_no3_blank)</code></pre>
+<pre><code>[1] 22 16</code></pre>
+<pre class="r"><code>ggplot(df_no3_blank, aes(x=Time_hours, y=Ave_NO3_mM, color=Category, group=Category)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  # scale_color_manual(values = c(&quot;deepskyblue4&quot;,&quot;maroon2&quot;))+
+  ylab(&quot;Measured NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Time (hr)&quot;) +
+  scale_y_continuous(breaks = seq(0,6.5,0.5), limits=c(0, 6.5))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle(&quot;Nitrate blank \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211220_Griess_slurry_vs_supernatant2.Rmd/unnamed-chunk-4-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># nitrite blanks
+dim(df_no2_blank)</code></pre>
+<pre><code>[1] 22 16</code></pre>
+<pre class="r"><code>ggplot(df_no2_blank, aes(x=Time_hours, y=Ave_NO2_mM, color=Category, group=Category)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  # scale_color_manual(values = c(&quot;deepskyblue4&quot;,&quot;maroon2&quot;))+
+  ylab(&quot;Measured NO2- (mM) \n&quot;) +
+  xlab(&quot;\n Time (hr)&quot;) +
+  scale_y_continuous(breaks = seq(0,6.5,0.5), limits=c(0, 6.5))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle(&quot;Nitrite blank \n&quot;) +
+  mytheme_2d</code></pre>
+<p><img src="figure/211220_Griess_slurry_vs_supernatant2.Rmd/unnamed-chunk-4-2.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># without any correction
+ggplot(df_NO2NO3, aes(x=Time_hours, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  # scale_color_manual(values = c(&quot;deepskyblue4&quot;,&quot;maroon2&quot;))+
+  ylab(&quot;Measured NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Time (hr)&quot;) +
+  # scale_y_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  # scale_x_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  ggtitle(&quot;(Without any correction) All samples \n&quot;) +
+  mytheme_2d +
+  facet_grid(. ~ Category) +
+  theme(strip.background = element_rect(colour=&quot;black&quot;, fill=&quot;white&quot;, size=0.1))</code></pre>
+<p><img src="figure/211220_Griess_slurry_vs_supernatant2.Rmd/unnamed-chunk-4-3.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>### What are those points with very high std?
+colnames(df_NO2NO3)</code></pre>
+<pre><code> [1] &quot;Nitrite_input&quot; &quot;Nitrate_input&quot; &quot;Category&quot;      &quot;Dilution&quot;     
+ [5] &quot;Sample_type&quot;   &quot;Soil&quot;          &quot;Time_point&quot;    &quot;Plate&quot;        
+ [9] &quot;Time_minutes&quot;  &quot;Time_hours&quot;    &quot;Time_days&quot;     &quot;Ave_NO2_mM&quot;   
+[13] &quot;Std_NO2_mM&quot;    &quot;Ave_NO3_mM&quot;    &quot;Std_NO3_mM&quot;   </code></pre>
+<pre class="r"><code>df_NO2NO3 %&gt;% arrange(desc(Std_NO3_mM)) %&gt;% select(Category, Dilution, Sample_type, Time_point, Plate, Std_NO3_mM)</code></pre>
+<pre><code># A tibble: 292 x 6
+   Category Dilution Sample_type   Time_point Plate Std_NO3_mM
+   &lt;chr&gt;    &lt;chr&gt;    &lt;fct&gt;         &lt;fct&gt;      &lt;chr&gt;      &lt;dbl&gt;
+ 1 AU       1        Supernatant   AU11       P11        0.366
+ 2 AU       1        Nitrate_Blank AU5        P5         0.343
+ 3 BN       N_0.125  Supernatant   BN9        P11        0.282
+ 4 BN       B_0.5    Supernatant   BN9        P11        0.213
+ 5 BN       N_0.125  Supernatant   BN7        P9         0.196
+ 6 BN       N_0.125  Supernatant   BN8        P10        0.195
+ 7 AU       0.25     Supernatant   AU7        P7         0.184
+ 8 BN       B_0.125  Supernatant   BN5        P7         0.168
+ 9 BN       B_0.125  Supernatant   BN4        P6         0.157
+10 BN       N_0.125  Supernatant   BN6        P8         0.154
+# ... with 282 more rows</code></pre>
+<pre class="r"><code>## based on this I corrected the wrongly removed E02 -&lt; removed E01 (filter burst). Eliminated point P11 G11.
+
+# After moisture correction
+ggplot(df_NO2NO3_mcf, aes(x=Time_hours, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  # scale_color_manual(values = c(&quot;deepskyblue4&quot;,&quot;maroon2&quot;))+
+  ylab(&quot;Measured NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Time (hr)&quot;) +
+  # scale_y_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  # scale_x_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  ggtitle(&quot;(After moisture correction) All samples \n&quot;) +
+  mytheme_2d +
+  facet_grid(. ~ Category) +
+  theme(strip.background = element_rect(colour=&quot;black&quot;, fill=&quot;white&quot;, size=0.1))</code></pre>
+<p><img src="figure/211220_Griess_slurry_vs_supernatant2.Rmd/unnamed-chunk-4-4.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># After blank correction (evaporation) 
+ggplot(df_NO2NO3_bcf, aes(x=Time_hours, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette=&#39;Set2&#39;) +
+  # scale_color_manual(values = c(&quot;deepskyblue4&quot;,&quot;maroon2&quot;))+
+  ylab(&quot;Measured NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Time (hr)&quot;) +
+  # scale_y_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  # scale_x_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  ggtitle(&quot;(After moisture + blank correction) All samples \n&quot;) +
+  mytheme_2d +
+  facet_grid(. ~ Category) +
+  theme(strip.background = element_rect(colour=&quot;black&quot;, fill=&quot;white&quot;, size=0.1))</code></pre>
+<p><img src="figure/211220_Griess_slurry_vs_supernatant2.Rmd/unnamed-chunk-4-5.png" width="1056" style="display: block; margin: auto;" /></p>
+</div>
+<div id="nitrogen-dynamics" class="section level2">
+<h2>4. Nitrogen dynamics</h2>
+</div>
+<div id="soil-autoclave-experiment." class="section level2">
+<h2>4.1. Soil Autoclave experiment.</h2>
+<ul>
+<li>Is there a difference in slurry and supernatant?</li>
+</ul>
+<pre class="r"><code># pH color
+# col_pH &lt;- colorRampPalette(c(&quot;gold&quot;,&quot;purple&quot;))
+# 
+# library(colorRamps)
+# colorRamps::green2red
+# plot(rep(1,4),col=col_pH(4),pch=19,cex=3)
+
+# 1. Comparing supernatant with slurry
+df_sample_AU &lt;- df_NO2NO3_bcf %&gt;% filter(Sample_type %in% c(&quot;Slurry&quot;, &quot;Supernatant&quot;, &quot;Control&quot;), Category == &quot;AU&quot;)
+df_sample_AU$Dilution &lt;- factor(df_sample_AU$Dilution, levels = c(1, 0.5, 0.25, 0.125))
+
+# plot Nitrate
+ggplot(df_sample_AU, aes(x=Time_hours, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.5)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_manual(values=col_pH(4)) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Time (hr)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Slurry (soil autoclaved) vs Supernatant vs Control (no autoclave) \n&quot;) +
+  # label
+  # geom_text(aes(label = round(Ave_NO3_mM,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Dilution) +
+  theme(strip.background = element_rect(colour=&quot;black&quot;, fill=&quot;white&quot;, size=0.1))</code></pre>
+<p><img src="figure/211220_Griess_slurry_vs_supernatant2.Rmd/unnamed-chunk-5-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot Nitrite
+ggplot(df_sample_AU, aes(x=Time_hours, y=Ave_NO2_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.5)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  # scale_color_manual(values=col_pH(4)) +
+  ylab(&quot;NO2- (mM) \n&quot;) +
+  xlab(&quot;\n Time (hr)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Slurry (soil autoclaved) vs Supernatant \n&quot;) +
+  # label
+  # geom_text(aes(label = round(Ave_NO2_mM,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Dilution) +
+  theme(strip.background = element_rect(colour=&quot;black&quot;, fill=&quot;white&quot;, size=0.1))</code></pre>
+<p><img src="figure/211220_Griess_slurry_vs_supernatant2.Rmd/unnamed-chunk-5-2.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Highlight dilution 1x
+df_sample_AU_1 &lt;- df_sample_AU %&gt;% filter(Dilution == 1)
+ggplot(df_sample_AU_1, aes(x=Time_hours, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.5)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_manual(values=col_pH(4)) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Time (hr)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Slurry (soil autoclaved) vs Supernatant vs Control (no autoclave) \n&quot;) +
+  # label
+  # geom_text(aes(label = round(Ave_NO3_mM,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Dilution) +
+  theme(strip.background = element_rect(colour=&quot;black&quot;, fill=&quot;white&quot;, size=0.1))</code></pre>
+<p><img src="figure/211220_Griess_slurry_vs_supernatant2.Rmd/unnamed-chunk-5-3.png" width="1056" style="display: block; margin: auto;" /></p>
+</div>
+<div id="biomass-and-nutrient-dilution-series-experiment" class="section level2">
+<h2>4.1. Biomass and Nutrient dilution series experiment</h2>
+<ul>
+<li>Is there a difference in slurry and supernatant?</li>
+</ul>
+<pre class="r"><code>df_sample_BN &lt;- df_NO2NO3_bcf %&gt;% filter(Sample_type %in% c(&quot;Slurry&quot;, &quot;Supernatant&quot;), Category == &quot;BN&quot;)
+df_sample_BN$Dilution &lt;- factor(df_sample_BN$Dilution, levels = c(1, &quot;B_0.5&quot;, &quot;B_0.25&quot;, &quot;B_0.125&quot;, &quot;N_0.5&quot;, &quot;N_0.25&quot;, &quot;N_0.125&quot;))
+
+df_sample_B &lt;- df_sample_BN %&gt;% filter(Dilution %in% c(1, &quot;B_0.5&quot;, &quot;B_0.25&quot;, &quot;B_0.125&quot;))
+df_sample_N &lt;- df_sample_BN %&gt;% filter(Dilution %in% c(1, &quot;N_0.5&quot;, &quot;N_0.25&quot;, &quot;N_0.125&quot;))
+
+# 1. Biomass dilution effect
+# plot
+ggplot(df_sample_B, aes(x=Time_hours, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.5)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_color_manual(values=c(&quot;#f8756b&quot;,&quot;#01ba37&quot;)) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Time (hr)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Biomass dilution effect \n&quot;) +
+  # label
+  # geom_text(aes(label = round(Ave_NO3_mM,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Dilution) +
+  theme(strip.background = element_rect(colour=&quot;black&quot;, fill=&quot;white&quot;, size=0.1))</code></pre>
+<p><img src="figure/211220_Griess_slurry_vs_supernatant2.Rmd/unnamed-chunk-6-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Nitrite
+ggplot(df_sample_B, aes(x=Time_hours, y=Ave_NO2_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.5)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  scale_color_manual(values=c(&quot;#f8756b&quot;,&quot;#01ba37&quot;)) +
+  ylab(&quot;NO2- (mM) \n&quot;) +
+  xlab(&quot;\n Time (hr)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Biomass dilution effect \n&quot;) +
+  # label
+  # geom_text(aes(label = round(Ave_NO2_mM,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Dilution) +
+  theme(strip.background = element_rect(colour=&quot;black&quot;, fill=&quot;white&quot;, size=0.1))</code></pre>
+<p><img src="figure/211220_Griess_slurry_vs_supernatant2.Rmd/unnamed-chunk-6-2.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># 2. Nutrient dilution effect
+# plot
+ggplot(df_sample_N, aes(x=Time_hours, y=Ave_NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.5)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_color_manual(values=c(&quot;#f8756b&quot;,&quot;#01ba37&quot;)) +
+  ylab(&quot;NO3- (mM) \n&quot;) +
+  xlab(&quot;\n Time (hr)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Nutrient dilution effect \n&quot;) +
+  # label
+  # geom_text(aes(label = round(Ave_NO3_mM,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Dilution) +
+  theme(strip.background = element_rect(colour=&quot;black&quot;, fill=&quot;white&quot;, size=0.1))</code></pre>
+<p><img src="figure/211220_Griess_slurry_vs_supernatant2.Rmd/unnamed-chunk-6-3.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Nitrite
+ggplot(df_sample_N, aes(x=Time_hours, y=Ave_NO2_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.5)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  scale_color_manual(values=c(&quot;#f8756b&quot;,&quot;#01ba37&quot;)) +
+  ylab(&quot;NO2- (mM) \n&quot;) +
+  xlab(&quot;\n Time (hr)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;Nutrient dilution effect \n&quot;) +
+  # label
+  # geom_text(aes(label = round(Ave_NO2_mM,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Dilution) +
+  theme(strip.background = element_rect(colour=&quot;black&quot;, fill=&quot;white&quot;, size=0.1))</code></pre>
+<p><img src="figure/211220_Griess_slurry_vs_supernatant2.Rmd/unnamed-chunk-6-4.png" width="1056" style="display: block; margin: auto;" /></p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.0.3 (2020-10-10)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 10 x64 (build 19042)
+
+Matrix products: default
+
+locale:
+[1] LC_COLLATE=English_United States.1252 
+[2] LC_CTYPE=English_United States.1252   
+[3] LC_MONETARY=English_United States.1252
+[4] LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.1252    
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] ggpubr_0.4.0       ggrepel_0.9.1      ape_5.5            openxlsx_4.2.3    
+ [5] devtools_2.4.0     usethis_2.0.1      gtools_3.8.2       reshape2_1.4.4    
+ [9] readxl_1.3.1       magrittr_2.0.1     forcats_0.5.1      stringr_1.4.0     
+[13] purrr_0.3.4        readr_1.4.0        tidyr_1.1.3        tibble_3.0.4      
+[17] tidyverse_1.3.1    vegan_2.5-7        lattice_0.20-41    permute_0.9-5     
+[21] RColorBrewer_1.1-2 ggplot2_3.3.5      dplyr_1.0.5        workflowr_1.6.2   
+
+loaded via a namespace (and not attached):
+ [1] colorspace_2.0-0  ggsignif_0.6.2    ellipsis_0.3.2    rio_0.5.27       
+ [5] rprojroot_2.0.2   fs_1.5.0          rstudioapi_0.13   farver_2.1.0     
+ [9] remotes_2.4.0     fansi_0.4.2       lubridate_1.7.10  xml2_1.3.2       
+[13] splines_4.0.3     cachem_1.0.4      knitr_1.33        pkgload_1.2.1    
+[17] jsonlite_1.7.2    broom_0.7.9       cluster_2.1.0     dbplyr_2.1.1     
+[21] compiler_4.0.3    httr_1.4.2        backports_1.2.1   assertthat_0.2.1 
+[25] Matrix_1.2-18     fastmap_1.1.0     cli_3.0.1         later_1.2.0      
+[29] htmltools_0.5.1.1 prettyunits_1.1.1 tools_4.0.3       gtable_0.3.0     
+[33] glue_1.4.2        Rcpp_1.0.5        carData_3.0-4     cellranger_1.1.0 
+[37] jquerylib_0.1.4   vctrs_0.3.8       nlme_3.1-149      xfun_0.22        
+[41] ps_1.6.0          testthat_3.0.2    rvest_1.0.1       lifecycle_1.0.0  
+[45] rstatix_0.7.0     MASS_7.3-53       scales_1.1.1      hms_1.1.0        
+[49] promises_1.2.0.1  parallel_4.0.3    yaml_2.2.1        curl_4.3.2       
+[53] memoise_2.0.0     sass_0.4.0        stringi_1.5.3     highr_0.9        
+[57] desc_1.3.0        pkgbuild_1.2.0    zip_2.1.1         rlang_0.4.10     
+[61] pkgconfig_2.0.3   evaluate_0.14     labeling_0.4.2    tidyselect_1.1.1 
+[65] processx_3.5.1    plyr_1.8.6        R6_2.5.0          generics_0.1.0   
+[69] DBI_1.1.1         pillar_1.6.0      haven_2.4.1       whisker_0.4      
+[73] foreign_0.8-80    withr_2.4.2       mgcv_1.8-33       abind_1.4-5      
+[77] modelr_0.1.8      crayon_1.4.1      car_3.0-11        utf8_1.1.4       
+[81] rmarkdown_2.9     grid_4.0.3        data.table_1.14.0 callr_3.7.0      
+[85] git2r_0.28.0      reprex_2.0.0      digest_0.6.27     httpuv_1.6.0     
+[89] munsell_0.5.0     bslib_0.2.5.1     sessioninfo_1.1.1</code></pre>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
