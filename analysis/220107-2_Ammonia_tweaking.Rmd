@@ -1,0 +1,291 @@
+---
+title: "220107-2_Ammonia_tweaking"
+author: "KiseokUchicago"
+date: "2022-01-07"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=11, fig.height=9,
+                      error=TRUE, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE)
+```
+
+## Salicylate-hypochlorite Ammonia assay measurements
+Researcher: **Kiseok Lee** \
+Experiment Date: 1/7/22 \
+Analysis Date: 1/7/22 \
+Lab: **Seppe Kuehn** \
+Motivation: Second attempt. Tweaking conditions \
+
+```{r}
+# libraries
+library(dplyr)
+library(ggplot2)
+library(RColorBrewer)
+library(vegan)
+library(tidyverse)
+library(magrittr)
+library(readxl)
+library(reshape2)
+library(gtools)
+library(devtools)
+library(openxlsx)
+library(ape)
+library(stringr)
+library(tidyr)
+library(ggrepel)
+library(ggpubr)
+
+## theme for ggplot
+mytheme <- theme_bw() + 
+  theme(text = element_text(family="serif")) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5, family="serif")) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13, family="serif"))+
+  theme(axis.text.y = element_text(size=10, family="serif"))+
+  theme(panel.grid.major = element_blank()) +
+  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),panel.border=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))
+
+mytheme_2d <- theme_bw() + 
+  theme(text = element_text(family="serif")) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5, family="serif")) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13, family="serif"))+
+  theme(axis.text.y = element_text(size=13, family="serif"))+
+  # theme(panel.grid.major = element_blank()) +
+  # theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))
+
+
+# color collection
+my_color_collection <- c(
+  "#CBD588", "#5F7FC7", "orange", "#AD6F3B", "#673770", 
+  "#D14285", "#652926", "#C84248", "#8569D5", "#5E738F",
+  "#D1A33D", "#8A7C64", "#599861","#616163", "#FFCDB2",
+  "#6D9F71", "#242F40",
+  "#CCA43B", "#F92A82", "#ED7B84", "#7EB77F", 
+  "#DEC4A1", "#E5D1D0", '#0E8482', '#C9DAEA', '#337357', 
+  '#95C623', '#E55812', '#04471C', '#F2D7EE', '#D3BCC0', 
+  '#A5668B', '#69306D', '#0E103D', '#1A535C', '#4ECDC4', 
+  '#F7FFF7', '#FF6B6B', '#FFE66D', '#6699CC', '#FFF275', 
+  '#FF8C42', '#FF3C38', '#A23E48', '#000000', '#CF5C36', 
+  '#EEE5E9', '#7C7C7C', '#EFC88B', '#2E5266', '#6E8898', 
+  '#9FB1BC', '#D3D0CB', '#E2C044', '#5BC0EB', '#FDE74C', 
+  '#9BC53D', '#E55934', '#FA7921', "#CD9BCD", "#508578", "#DA5724")
+
+# for git push, use this instead of using wflow_git_push()
+# git push -u origin master (in the Git app / in the working directory)
+
+```
+
+## 1. Import data table from python code
+```{r}
+# import file
+df_am <- openxlsx::read.xlsx("data/220107-2_Ammonia_sample_plate1.xlsx")
+dim(df_am)
+
+head(df_am)
+colnames(df_am)
+dim(df_am)
+
+# remove NA
+dim(df_am)
+df_am <- na.omit(df_am)
+dim(df_am)
+
+# remove wells H06, H09
+# df_p %<>% filter(!(Well %in% c("H06","H09")))
+# dim(df_p)
+
+```
+
+## 2. Preprocess data and select datapoints to visualize
+```{r}
+# 1. multiply dilution factor
+df_am %<>% mutate(Ammonia_ppm = Ammonia_ppm * 2.5)
+
+# 2. Apply moisture correction factor (correcting for moisture in soil)
+soil_spike_ratio = 0.5  # soil weight(0.2g) / spike in volume (0.4ml) 
+moisture_percent_1 = 19.9 # MIDWAY-A 
+# moisture_percent_2 = 53.9 # Washington-A 
+# moisture_percent_3 = 16.52 # Nichols-A
+
+# partial extraction
+mcf_1 = (soil_spike_ratio*(moisture_percent_1/100) + 1)
+mcf_1
+# mcf_2 = (soil_spike_ratio*(moisture_percent_2/100) + 1)
+# mcf_2
+# mcf_3 = (soil_spike_ratio*(moisture_percent_3/100) + 1)
+# mcf_3
+
+# full extraction
+soil_g = 0.2
+spike_in_ml = 0.4
+KCl_ml  = 0.6
+mcf_full_1 = (soil_g*(moisture_percent_1/100) + spike_in_ml + KCl_ml ) / (spike_in_ml + KCl_ml) 
+mcf_full_1
+
+# apply moisture factor to each soil
+df_am_mcf <- df_am %>% mutate(Ammonia_ppm = Ammonia_ppm * mcf_full_1)
+# dim(df_NO2NO3_mcf_1) #84
+# df_NO2NO3_mcf_2 <- df_NO2NO3 %>% filter(Soil == "Washington-A_7.88") %>% mutate(Ave_NO3_mM = Ave_NO3_mM * mcf_2, Ave_NO2_mM = Ave_NO2_mM * mcf_2, Std_NO2_mM = Std_NO2_mM * mcf_2, Std_NO3_mM = Std_NO3_mM * mcf_2)
+# dim(df_NO2NO3_mcf_2) #84
+# df_NO2NO3_mcf_3 <- df_NO2NO3 %>% filter(Sample_type %in% c("Slurry","Control")) %>% mutate(Ave_NO3_mM = Ave_NO3_mM * mcf_3, Ave_NO2_mM = Ave_NO2_mM * mcf_3, Std_NO2_mM = Std_NO2_mM * mcf_3, Std_NO3_mM = Std_NO3_mM * mcf_3)
+
+# average technical replicate
+
+df_ave <- df_am_mcf %>% group_by(Sample, Ammonia, Method) %>% summarise(Ave_Ammonia_ppm = mean(Ammonia_ppm), Std_Ammonia_ppm = sd(Ammonia_ppm)) %>% ungroup()
+
+colnames(df_ave)
+```
+
+## 3.1. Spike in testing
+```{r}
+# (1) Ammonia N mg/ml
+ggplot(df_ave, aes(x=Ammonia, y=Ave_Ammonia_ppm, color = Method, group = Method)) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_Ammonia_ppm - Std_Ammonia_ppm, ymax=Ave_Ammonia_ppm + Std_Ammonia_ppm), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("Ammonium-N (ppm, N mg/ml) \n") +
+  xlab("\n Ammonium (NH4-N) spike in amount (ppm, N mg/ml)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Ammonium measurement of Midway-A soil with spike-ins \n") +
+  # label
+  geom_text(aes(label = round(Ave_Ammonia_ppm,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+# Plot each method
+df_filt <- df_ave %>% filter(Method == "Filter")
+ggplot(df_filt, aes(x=Ammonia, y=Ave_Ammonia_ppm, color = Method, group = Method)) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_Ammonia_ppm - Std_Ammonia_ppm, ymax=Ave_Ammonia_ppm + Std_Ammonia_ppm), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("Ammonium-N (ppm, N mg/ml) \n") +
+  xlab("\n Ammonium (NH4-N) spike in amount (ppm, N mg/ml)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Ammonium measurement of Midway-A soil with spike-ins \n") +
+  # label
+  geom_text(aes(label = round(Ave_Ammonia_ppm,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+# Plot each method
+df_sup <- df_ave %>% filter(Method == "Supernatant")
+ggplot(df_sup, aes(x=Ammonia, y=Ave_Ammonia_ppm, color = Method, group = Method)) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_Ammonia_ppm - Std_Ammonia_ppm, ymax=Ave_Ammonia_ppm + Std_Ammonia_ppm), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("Ammonium-N (ppm, N mg/ml) \n") +
+  xlab("\n Ammonium (NH4-N) spike in amount (ppm, N mg/ml)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Ammonium measurement of Midway-A soil with spike-ins \n") +
+  # label
+  geom_text(aes(label = round(Ave_Ammonia_ppm,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+# Plot side by side
+ggplot(df_ave, aes(x=Ammonia, y=Ave_Ammonia_ppm, color = Method, group = Method)) +
+  geom_point(size=2.5, shape=21) +
+  geom_line(size=1)+
+  geom_errorbar(aes(ymin=Ave_Ammonia_ppm - Std_Ammonia_ppm, ymax=Ave_Ammonia_ppm + Std_Ammonia_ppm), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("Ammonium-N (ppm, N mg/ml) \n") +
+  xlab("\n Ammonium (NH4-N) spike in amount (ppm, N mg/ml)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Ammonium measurement of Midway-A soil with spike-ins \n") +
+  # label
+  geom_text(aes(label = round(Ave_Ammonia_ppm,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Method) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+
+```
+
+## 3.2. Extraction efficiency
+```{r}
+# get extraction ratio
+# innate nitrate
+add_innate <- df_ave %>% filter(Ammonia == 0) %>% rename(Innate_Ammonia_ppm = Ave_Ammonia_ppm) %>% select(Method, Innate_Ammonia_ppm)
+
+# plot innate ammonia amount
+ggplot(add_innate, aes(x=Method,y=Innate_Ammonia_ppm)) +
+  geom_bar(stat="identity", fill = "royalblue") +
+  ylab("Ammonium-N concentration (ppm, N mg/ml) \n") +
+  xlab("\n Method used") +
+  scale_y_continuous(breaks = seq(0,2,0.5), limits=c(0, 2))+
+  # scale_x_continuous(breaks = seq(0,17,1), limits=c(0, 17))+
+  ggtitle("Innate Ammonium-N in Midway-A soil \n") +
+  geom_text(aes(label = round(Innate_Ammonia_ppm,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE, position = position_dodge(0.8))+
+  mytheme_2d  
+
+df_innate <- df_ave %>% filter(Ammonia != 0) %>% arrange(Sample) %>%
+  left_join(add_innate, by=c("Method"="Method")) %>% 
+  mutate(Retrieved_Ammonia_ppm = Ave_Ammonia_ppm - Innate_Ammonia_ppm)
+
+# Retrieved ratio of spike ins
+df_innate$Ratio_retrieved <- df_innate$Retrieved_Ammonia_ppm / df_innate$Ammonia
+df_innate$Std_Ratio_retrieved <- df_innate$Std_Ammonia_ppm / df_innate$Ammonia 
+
+# plot
+df_innate$Ammonia <- factor(df_innate$Ammonia)
+
+ggplot(df_innate, aes(x=Ammonia, y=Ratio_retrieved, fill=Method, group=Method)) +
+  geom_bar(stat="identity",position="dodge")+
+  geom_errorbar(aes(ymin=Ratio_retrieved - Std_Ratio_retrieved, ymax=Ratio_retrieved + Std_Ratio_retrieved), width=.05, position = position_dodge(0.8))+
+  # geom_line(size=0.2)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("Ratio of retrieved Ammonium-N mg/ml \n") +
+  xlab("\n Ammonium-N spike in amount (ppm, N mg/ml)") +
+  scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
+  # scale_x_continuous(breaks = seq(0,17,1), limits=c(0, 17))+
+  ggtitle("Ammonium-N spike in extraction ratio \n") +
+  geom_text(aes(label = round(Ratio_retrieved,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE, position = position_dodge(0.8))+
+  mytheme_2d
+
+
+```
+
+## 3.3. Regression line
+```{r}
+## fit regression line
+colnames(df_am_mcf)
+
+fit.am <- lm(Ammonia_ppm ~ Ammonia, df_am_mcf)
+
+# (1) Plot fitted linear regression line: filter method
+ggplot(df_am_mcf, aes(x=Ammonia, y=Ammonia_ppm)) +
+  geom_point(size=2.5, shape=21, color = "brown") +
+  # geom_line(size=1)+
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  ylab("Ammonium-N concentration (ppm, N mg/ml) \n") +
+  xlab("\n Ammonium-N spike in amount (ppm, N mg/ml)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,family="serif", show.legend = FALSE)+
+  ggtitle("Ammonium-N of Midway-A soil (Filter method) \n") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  geom_abline(slope = coef(fit.am)[[2]], intercept = coef(fit.am)[[1]],
+              color = "maroon2") +
+  # show equation
+  # stat_cor(aes(label = paste(..rr.label.., ..p.label.., sep = "~`,`~"))) +
+  annotate("text",x=25,y=15, label= paste0("y = ", round(coef(fit.am)[[1]],3),"+",round(coef(fit.am)[[2]],3),"x"), color = "maroon2") +
+  mytheme_2d
+
+```
+
