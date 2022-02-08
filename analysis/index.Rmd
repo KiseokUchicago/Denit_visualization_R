@@ -39,7 +39,10 @@ Welcome to Kiseok Denitrification data visualization website.
 * [220107-5,6,7,8,9_Ammonia_confirm (1/7/22)](220107-5_Ammonia_confirm.html)
 * [220108_Ammonia_spikein_soil_extract_direct (1/8/22)](220108_Ammonia_spikein_soil_extract_direct.html)
 * [220110_Ammonia_KCl_H2O method comparison (1/10/22)](220110_Ammonia_KCl_H2O.html)
-
-
-
-
+* [220111_Ammonia_dynamics (1/11/22)](220111_Ammonia_dynamics.html)
+* [220113_pH_while_perturbation (1/13/22)](220113_pH_while_perturbation.html)
+* [220125_pH_during_perturbation (1/25/22)](220125_pH_during_perturbation.html)
+* [220126_pH_during_perturbation_mu_optT0 (1/26/22)](220126_pH_during_perturbation_mu_optT0.html)
+* [220128_Griess_pH_perturbation2 (1/28/22)](220128_Griess_pH_perturbation2.html)
+* [220131_pH_during_perturbation3 (1/31/22)](220131_pH_during_perturbation3.html)
+* [220131_Griess_pH_perturbation3 (1/31/22)](220131_Griess_pH_perturbation3.html)
