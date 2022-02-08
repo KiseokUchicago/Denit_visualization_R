@@ -9,8 +9,10 @@ editor_options:
 
 
 ```{r global_options, include=FALSE}
+library(knitr)
 knitr::opts_chunk$set(fig.width=11, fig.height=9,
-                      error=TRUE, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE)
+                      error=TRUE, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE,
+                      tidy.opts=list(width.cutoff=40),tidy=TRUE)
 ```
 
 ## Time series analysis - Slurry vs Supernatant  (Griess assay)
@@ -19,7 +21,7 @@ Experiment Date: 12/8/21 - 12/20/21 (2 weeks) \
 Analysis Date: 12/20/21
 Lab: **Seppe Kuehn**
 
-```{r}
+```{r, echo=FALSE}
 # libraries
 library(dplyr)
 library(ggplot2)
@@ -81,6 +83,9 @@ my_color_collection <- c(
 # for git push, use this instead of using wflow_git_push()
 # git push -u origin master (in the Git app / in the working directory)
 
+# for making pdf file
+library(rmarkdown)
+# render("analysis/~~.Rmd", "pdf_document")
 ```
 
 
