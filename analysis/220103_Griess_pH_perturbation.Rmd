@@ -13,7 +13,7 @@ knitr::opts_chunk$set(fig.width=11, fig.height=9,
                       error=TRUE, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE)
 ```
 
-## Time series analysis - Slurry vs Supernatant  (Griess assay)
+## Time series analysis - pH perturbation experiment  (Griess assay)
 Researcher: **Kiseok Lee** \
 Experiment Date: 12/29/21 - 1/3/22 (3 days) \
 Analysis Date: 1/4/21
