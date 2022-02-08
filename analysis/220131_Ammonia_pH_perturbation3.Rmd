@@ -1,0 +1,637 @@
+---
+title: "220131_Ammonia_pH_perturbation3"
+author: "KiseokUchicago"
+date: "2022-02-02"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+
+```{r global_options, include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(fig.width=11, fig.height=9,
+                      error=TRUE, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE,
+                      tidy.opts=list(width.cutoff=40),tidy=TRUE)
+```
+
+## Time series analysis - pH perturbation experiment-3 (Ammonia assay - Salicylate-Hypochloride assay)
+Researcher: **Kiseok Lee** \
+Experiment Date: 1/27/22 - 1/31/22 (5 days) \
+Analysis Date: 1/31/21
+Lab: **Seppe Kuehn**
+
+```{r}
+# libraries
+library(dplyr)
+library(ggplot2)
+library(RColorBrewer)
+library(vegan)
+library(tidyverse)
+library(magrittr)
+library(readxl)
+library(reshape2)
+library(gtools)
+library(devtools)
+library(openxlsx)
+library(ape)
+library(stringr)
+library(tidyr)
+library(ggrepel)
+library(ggpubr)
+
+## theme for ggplot
+mytheme <- theme_bw() + 
+  theme(text = element_text(family="serif")) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5, family="serif")) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13, family="serif"))+
+  theme(axis.text.y = element_text(size=10, family="serif"))+
+  theme(panel.grid.major = element_blank()) +
+  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),panel.border=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))
+
+mytheme_2d <- theme_bw() + 
+  theme(text = element_text(family="serif")) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5, family="serif")) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13, family="serif"))+
+  theme(axis.text.y = element_text(size=13, family="serif"))+
+  # theme(panel.grid.major = element_blank()) +
+  # theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))
+
+
+# color collection
+my_color_collection <- c(
+  "#CBD588", "#5F7FC7", "orange", "#AD6F3B", "#673770", 
+  "#D14285", "#652926", "#C84248", "#8569D5", "#5E738F",
+  "#D1A33D", "#8A7C64", "#599861","#616163", "#FFCDB2",
+  "#6D9F71", "#242F40",
+  "#CCA43B", "#F92A82", "#ED7B84", "#7EB77F", 
+  "#DEC4A1", "#E5D1D0", '#0E8482', '#C9DAEA', '#337357', 
+  '#95C623', '#E55812', '#04471C', '#F2D7EE', '#D3BCC0', 
+  '#A5668B', '#69306D', '#0E103D', '#1A535C', '#4ECDC4', 
+  '#F7FFF7', '#FF6B6B', '#FFE66D', '#6699CC', '#FFF275', 
+  '#FF8C42', '#FF3C38', '#A23E48', '#000000', '#CF5C36', 
+  '#EEE5E9', '#7C7C7C', '#EFC88B', '#2E5266', '#6E8898', 
+  '#9FB1BC', '#D3D0CB', '#E2C044', '#5BC0EB', '#FDE74C', 
+  '#9BC53D', '#E55934', '#FA7921', "#CD9BCD", "#508578", "#DA5724")
+
+# for git push, use this instead of using wflow_git_push()
+# git push -u origin master (in the Git app / in the working directory)
+
+# for making pdf file
+library(rmarkdown)
+# render("analysis/~~.Rmd", "pdf_document")
+```
+
+
+## 1. Import data table from python code
+We are going to use the vcl3 treated standard curve that is fitted with pure Ammonia standards
+```{r}
+# import file
+df_plate1 <- openxlsx::read.xlsx("data/220131_Ammonia_sample_plate1.xlsx")
+df_plate2 <- openxlsx::read.xlsx("data/220131_Ammonia_sample_plate2.xlsx")
+df_plate3 <- openxlsx::read.xlsx("data/220131_Ammonia_sample_plate3.xlsx")
+df_plate4 <- openxlsx::read.xlsx("data/220131_Ammonia_sample_plate4.xlsx")
+df_plate5 <- openxlsx::read.xlsx("data/220131_Ammonia_sample_plate5.xlsx")
+df_plate6 <- openxlsx::read.xlsx("data/220131_Ammonia_sample_plate6.xlsx")
+
+head(df_plate1)
+colnames(df_plate1)
+dim(df_plate1)
+
+head(df_plate2)
+colnames(df_plate2)
+dim(df_plate2)
+
+head(df_plate3)
+colnames(df_plate3)
+dim(df_plate3)
+
+head(df_plate4)
+colnames(df_plate4)
+dim(df_plate4)
+
+head(df_plate5)
+colnames(df_plate5)
+dim(df_plate5)
+
+head(df_plate6)
+colnames(df_plate6)
+dim(df_plate6)
+
+# X1 to Well
+# df_p0 %<>% rename(Well = X1)
+# df_p2 %<>% rename(Well = X1)
+# df_p3 %<>% rename(Well = X1)
+# df_p4 %<>% rename(Well = X1)
+# df_p5 %<>% rename(Well = X1)
+# df_p6 %<>% rename(Well = X1)
+# df_p7 %<>% rename(Well = X1)
+# df_p8 %<>% rename(Well = X1)
+# df_p9 %<>% rename(Well = X1)
+# df_p10 %<>% rename(Well = X1)
+# df_p11 %<>% rename(Well = X1)
+
+# remove wells that were contaminated during the experiment
+df_plate1 %<>% filter(!(Well %in% c("A08"))) # filter defect 
+df_plate5 %<>% filter(!(Well %in% c("B04","D04","F04","H04"))) # wrong sampling... I assume?
+# df_p8 %<>% filter(!(Well %in% c("A07", "A08", "E08"))) # filter burst issue
+# df_p11 %<>% filter(!(Well %in% c("A01"))) # filter burst issue  # G11 was removed because of abnormal value compared to other 2 replicates
+# dim(df_p4)
+
+# bind two dataframe
+df_a <- rbind(df_plate1, df_plate2, df_plate3, df_plate4, df_plate5, df_plate6)
+colnames(df_a)
+
+# remove NA
+dim(df_a)
+rowSums(is.na(df_a)) > 0
+df_a[rowSums(is.na(df_a)) > 0,]
+df_a <- na.omit(df_a) # what is being omitted?
+dim(df_a) # 523 -> 522
+
+# multiply dilution factor which is 5/2
+df_a %<>% mutate(Ammonia_ppm = Ammonia_ppm * (5/2))
+head(df_a)
+
+# extraction correction factor (only about 80% extraction)
+df_a %<>% mutate(Ammonia_ppm = Ammonia_ppm * (5/4))
+
+# converting to mM
+df_a %<>% mutate(NH4_M = Ammonia_ppm / (14.0067*1000))   # Nitrogen molecular weight 
+df_a %<>% mutate(NH4_mM = NH4_M * 1000)   # Nitrogen molecular weight 
+
+colnames(df_a)
+
+# Get the metadata for time point and left join
+Time_table <- openxlsx::read.xlsx("data/220131_time_table.xlsx")
+# Time_table_BN <- openxlsx::read.xlsx("data/220111_time_table_BN.xlsx")
+# Time_table <- rbind(Time_table_AU, Time_table_BN)
+Time_table %<>% select(-Date) 
+Time_table$Time_hours <- round(Time_table$Time_hours, 1)
+Time_table$Time_days <- round(Time_table$Time_days, 1)
+df_time <- Time_table
+
+dim(df_a)
+df_a <- df_a %>% left_join(Time_table, by=("Time_point"="Time_point"))
+dim(df_a)
+colnames(df_a)
+# time_point order
+df_a$Time_point <-  factor(df_a$Time_point, levels = paste0("T",0:10))
+
+```
+
+## 2. Get average and standard deviation & Moisture correction & Blank correction
+```{r}
+# plot to see
+ggplot(df_a, aes(x=Time_point, y=NH4_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NH4+ (mM) \n") +
+  xlab("\n Time point") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Without averaging \n") +
+  mytheme_2d
+
+# Setting H_mM column
+# df_soil <- df_a %>% filter(Titration_type %in% c("NaOH","HCl"))
+
+Added_Volume <- 1.7 # ml
+Soil_mg <- 0.85
+moisture_percent_1 = 23.6 # LaBaghWoods1
+Added_Volume + Soil_mg*(moisture_percent_1/100)
+# moisture_percent_2 = 33.2 # Allandale
+df_a$Added_ul <- ifelse(df_a$Titration_type == "NaOH", -1*df_a$Added_ul, df_a$Added_ul) # HCl is +, NaOH is -
+df_a %<>% mutate(H_mol = Concentration_M * Added_ul * 10^(-6)) # Calculate H mol 
+df_a$Volume <- ifelse(df_a$Soil == "LaBaghWoods_pH6.66", Added_Volume + Soil_mg*(moisture_percent_1/100), 0) # Calc total volume
+# df_a$Volume <- ifelse(df_a$Soil == "Allandale_pH4", Added_Volume + Soil_mg*(moisture_percent_2/100), df_a$Volume) # Calc total volume
+# df_a$Volume %>% unique()
+df_a %<>% mutate(H_Molarity = H_mol / (Volume * 10^(-3)))
+df_a %<>% mutate(H_mM = H_Molarity * 1000)
+# openxlsx::write.xlsx(df_a, "df_a.xlsx")
+
+# how many levels of H_mM?
+df_a %>% filter(Soil == "LaBaghWoods_pH6.66")%>% select(H_mM) %>% unique() %>% arrange(H_mM)
+# df_a %>% filter(Soil == "Allandale_pH4")%>% select(H_mM) %>% unique() %>% arrange()
+colnames(df_a)
+
+## Moisture correction
+dim(df_a)
+
+# Testing negative samples
+df_no3_blank <- df_a %>% filter(Sample_type == "Nitrate_Blank")  # Use Nitrate_Blank instead in the future
+df_no3_blank # 33
+
+df_no2_blank <- df_a %>% filter(Sample_type == "Nitrite_Blank")
+df_no2_blank # 33
+# close to zero
+
+# 1. Apply moisture correction factor (correcting for moisture in soil)
+soil_spike_ratio = 0.5 # soil weight(0.85g) / spike in volume (1.7ml) 
+moisture_percent_1 = 23.6 # LaBaghWoods1
+
+mcf_1 = (soil_spike_ratio*(moisture_percent_1/100) + 1)
+mcf_1
+
+# apply moisture factor to each soil
+dim(df_a)
+df_a %>% select(Soil) %>% unique()
+
+# this is a special case with no replicates
+df_a_mcf_1 <- df_a %>% filter(Titration_type %in% c("NaOH","HCl","No_Nitrate")) %>% mutate(Ammonia_ppm = Ammonia_ppm * mcf_1, NH4_M = NH4_M * mcf_1, NH4_mM = NH4_mM * mcf_1)
+dim(df_a_mcf_1) #458
+
+df_a_others_mcf <- df_a %>% filter(Sample_type %in% c("Nitrite_Blank", "Nitrate_Blank")) # Use Nitrate_Blank instead in the future
+dim(df_a_others_mcf) #64
+df_a_mcf <- rbind(df_a_mcf_1, df_a_others_mcf)
+dim(df_a_mcf) # 522
+colnames(df_a_mcf)
+
+# plot to see
+ggplot(df_a_mcf, aes(x=Time_hours, y=NH4_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time (hours)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("No averaging with biological replicates \n") +
+  mytheme_2d
+
+# 2. Apply blank correction factor (drying effect during incubation)
+# Blank reads
+# Get this from nitrate, nitrite reads
+df_no2_blank <- df_p %>% filter(Sample_type == "Nitrite_Blank")
+df_no2_blank
+
+# df_aero_blank$Nitrate_input <- as.numeric(as.character(df_aero_blank$Nitrate_input))
+df_no2_blank %<>% mutate(Correction_factor_NO2 = (Nitrite_input / NO2_mM)) 
+
+# average the blanks by time point
+cf_no2 <- df_no2_blank %>% select(Soil, Time_point, Correction_factor_NO2) %>% group_by(Soil, Time_point) %>% summarize(Correction_factor_NO2 = mean(Correction_factor_NO2)) %>% ungroup()
+
+# left join and multiply the correction factor
+# left join to samples
+df_sample_mcf <- df_a_mcf %>% filter(!(Sample_type %in% c("Nitrite_Blank","Nitrate_Blank")))
+dim(df_sample_mcf) #462
+df_sample_mcf$Sample_type %>% unique()
+
+df_sample_bcf <- df_sample_mcf %>% left_join(cf_no2, by = c("Soil"="Soil", "Time_point"="Time_point"))
+dim(df_sample_bcf)
+
+df_sample_bcf <- df_sample_bcf %>% mutate(Ammonia_ppm = Ammonia_ppm * Correction_factor_NO2, NH4_M = NH4_M * Correction_factor_NO2, NH4_mM = NH4_mM * Correction_factor_NO2)
+dim(df_sample_bcf) #462 22
+
+# merge dataframe with blank just for convenience
+df_a_blanks_bcf <- df_a_mcf %>% filter(Sample_type %in% c("Nitrite_Blank","Nitrate_Blank")) %>% left_join(cf_no2, by = c("Soil"="Soil", "Time_point"="Time_point"))
+dim(df_a_blanks_bcf) #64 22
+dim(df_sample_bcf) # 458
+df_a_bcf <- rbind(df_sample_bcf, df_a_blanks_bcf)
+dim(df_a_bcf) # 522 22
+
+```
+
+
+## 3. Sanity check: moisture correction & blank correction factor 
+
+Blank correction \
+Use the Ammonia concentration of the blank and use the ratio. \
+For example, multiply to Ammonia concentration x (2mM / changed [NO3]) \
+
+```{r}
+# without any correction
+ggplot(df_a, aes(x=Time_hours, y=NH4_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  # geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NH4+ (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  # scale_x_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  ggtitle("(Before moisture correction) All samples \n") +
+  mytheme_2d +
+  facet_grid(. ~ Soil) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+# After moisture correction
+ggplot(df_a_mcf, aes(x=Time_hours, y=NH4_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  # geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NH4+ (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  # scale_x_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  ggtitle("(After moisture correction) All samples \n") +
+  mytheme_2d +
+  facet_grid(. ~ Soil) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+# After blank correction (evaporation) 
+ggplot(df_a_bcf, aes(x=Time_hours, y=NH4_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  # geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NH4+ (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  # scale_x_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  ggtitle("(After moisture + blank correction) All samples \n") +
+  mytheme_2d +
+  facet_grid(. ~ Soil) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+
+```
+
+
+## 4. Nitrogen dynamics
+
+## 4.1. pH perturbation experiment.
+- Is there a difference in pH perturbation levels?
+```{r}
+# pH color
+col_pH <- colorRampPalette(c("gold","red","purple"))
+
+library(colorRamps)
+colorRamps::green2red
+plot(rep(1,13),col=col_pH(13),pch=19,cex=3)
+grad_pH <- scale_colour_gradientn(colours = col_pH(100))
+
+# Confer this page (https://stackoverflow.com/questions/21537782/how-to-set-fixed-continuous-colour-values-in-ggplot2)
+# myPalette <- colorRampPalette(rev(brewer.pal(11, "Spectral")))
+# sc <- scale_colour_gradientn(colours = myPalette(100), limits=c(1, 8))
+
+# 1. pH perturbation
+# plot Ammonia
+df_a_pH <- df_a_bcf %>% filter(Titration_type %in% c("NaOH","HCl"))
+
+dim(df_a_pH)
+colnames(df_a_pH)
+
+# average the no acid base one.
+df_plot <- df_a_pH %>% select(H_mM, Ammonia_ppm, NH4_mM, Soil, Time_hours)
+df_plot %>% filter(H_mM == 0) %>% dim()
+df_plot %>% filter(H_mM == 0) %>% group_by(H_mM, Soil, Time_hours) %>% summarize(NH4_mM = mean(NH4_mM), Ammonia_ppm = mean(Ammonia_ppm)) %>% ungroup()
+df_sub <- df_plot %>% filter(H_mM == 0) %>% group_by(H_mM, Soil, Time_hours) %>% summarize(NH4_mM = mean(NH4_mM), Ammonia_ppm = mean(Ammonia_ppm)) %>% ungroup()
+df_main <- df_plot %>% filter(H_mM != 0)
+dim(df_plot)
+dim(df_main)
+df_plot2 <- rbind(df_main, df_sub)
+
+ggplot(df_plot2, aes(x=Time_hours, y=NH4_mM, color=H_mM, group=H_mM)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+
+  scale_colour_gradientn(colours = col_pH(100)) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NH4+ (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("pH perturbation \n") +
+  # label
+  # geom_text(aes(label = round(NH4_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Soil) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+
+```
+
+## 4.2. No Nitrate
+
+```{r}
+## plot the No_Nitrate sample
+
+df_a_no <- df_a_bcf %>% filter(Titration_type %in% c("No_Nitrate","HCl")) %>% filter(H_mM == 0) %>% group_by(H_mM, Soil, Time_hours, Sample_type) %>% summarize(Ave_NH4_mM = mean(NH4_mM), std_NH4_mM = std(NH4_mM)) %>% ungroup()
+
+ggplot(df_a_no, aes(x=Time_hours, y=Ave_NH4_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=Ave_NH4_mM - std_NH4_mM, ymax=Ave_NH4_mM + std_NH4_mM), width=.05)+
+  # scale_colour_gradientn(colours = col_pH(100)) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NH4+ (mM) \n") +
+  xlab("\n Time (hr)") +
+  scale_y_continuous(breaks = seq(0,4,0.5), limits=c(0, 4))+
+  ggtitle("Effect of nitrate addition on Ammonia: Nitrate added vs Not added (no acid/base added) \n") +
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Soil) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+# let's include some pH perturbed samples
+colnames(df_a_no)
+df_10 <- df_a_pH %>% filter(!(H_mM == 0)) %>% filter(H_mM < 15 & H_mM > -15)
+df_10 %<>% select(H_mM, Soil, Time_hours, NH4_mM) %>% rename(Ave_NH4_mM = NH4_mM) %>% mutate(std_NH4_mM = 0) %>% mutate(Sample_type = paste0("H+ ", round(H_mM,2), " mM"))
+
+df_a_no_10 <- rbind(df_a_no, df_10)
+colnames(df_a_no_10)
+
+df_no_10$Sample_type <- factor(df_no_10$Sample_type, levels = c("2mM_Nitrate_added", "H+ 5.26 mM", "No_Nitrate_added","H+ 10.52 mM"))
+ggplot(df_a_no_10, aes(x=Time_hours, y=Ave_NH4_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=Ave_NH4_mM - std_NH4_mM, ymax=Ave_NH4_mM + std_NH4_mM), width=.05)+
+  # scale_colour_gradientn(colours = col_pH(100)) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NH4+ (mM) \n") +
+  xlab("\n Time (hr)") +
+  scale_y_continuous(breaks = seq(0,4,0.5), limits=c(0, 4))+
+  ggtitle("Effect of nitrate addition in comparison with acid added samples \n") +
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Soil) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+
+```
+
+## 5. Ammonia mu space
+
+## 5.1. Ammonia area under curve
+```{r}
+
+## area under curve
+df_plot2$Time_hours
+require(pracma)
+colnames(df_plot2)
+am_corr <- df_plot2 %>% select(H_mM, Time_hours, NH4_mM) %>% group_by(H_mM) %>% summarize(auc = trapz(Time_hours, NH4_mM)) %>% ungroup()
+
+plot(am_corr$H_mM, am_corr$auc)
+
+am_corr$H_mM_2 <- (am_corr$H_mM)^2
+fit.amm <- lm(auc ~ H_mM + H_mM_2, am_corr)
+summary(fit.amm)
+
+perturbH <- seq(-100, 100, 0.1)
+am_aucPredict <- predict(fit.amm,list(H_mM=perturbH, H_mM_2=perturbH^2))
+am_auc_quad <- data.frame(H_mM = perturbH, Time_hours = am_aucPredict)
+plot(perturbH, am_aucPredict)
+
+# (1) Plot fitted linear regression line
+ggplot(am_corr, aes(x=H_mM, y=auc)) +
+  geom_point(size=2.5, shape=16, color = "brown") +
+  stat_smooth(method = "loess", size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  xlab("Amount of pH perturbation (H+ mM) \n") +
+  ylab("\n Area under curve (NH4+)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,family="serif", show.legend = FALSE)+
+  ggtitle("Correlation with perturbation and area under ammonia curve \n") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = am_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.amm)[[1]],3), "+", round(coef(fit.amm)[[2]],3),"x+",round(coef(fit.amm)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.amm)$r.squared,3)), color = "maroon2") +
+  mytheme_2d
+
+
+```
+
+## 5.2. Ammonia average slope
+
+```{r}
+mat_NH4 <- dcast(df_plot2, H_mM ~ Time_hours, value.var = "NH4_mM")
+mat_NH4 <- tibble::column_to_rownames(mat_NH4, var = "H_mM")
+mat_NH4 <- as.matrix(mat_NH4) 
+class(mat_NH4)
+dim(mat_NH4)
+
+mat_NH4[is.na(mat_NH4)] 
+for (i in 1:dim(mat_NH4)[1]){
+  # print(i)
+  for (j in 1:dim(mat_NH4)[2]){
+    # print(j)
+    if (is.na(mat_NH4[i,j])){
+      mat_NH4[i,j] <- (mat_NH4[i,j-1] + mat_NH4[i,j+1] ) / 2
+    }
+  }
+}
+mat_NH4[is.na(mat_NH4)] # no more NA
+
+## Max
+vec_H_mM <- rownames(mat_NH4)
+vec_max_NH4 <- rep(-1, dim(mat_NH4)[1])
+vec_max_time <- rep(-1, dim(mat_NH4)[1])
+
+for (i in 1:dim(mat_NH4)[1]){
+  x = colnames(mat_NH4)
+  y = mat_NH4[i,]
+  max_j = y[dim(mat_NH4)[2]]
+  # save
+  vec_max_NH4[i] <- max_j
+  vec_max_time[i] <- x[dim(mat_NH4)[2]]
+  iter_j <- dim(mat_NH4)[2] -1
+  # get the more early points if the difference with max is not big (10%)
+  for (k in 1:iter_j){
+    print(k)
+    if ( (y[dim(mat_NH4)[2]-k] > max_j) || (abs(max_j - y[dim(mat_NH4)[2]-k])/max_j < 0.1) ){
+      max_j = y[dim(mat_NH4)[2] - k]
+      print(max_j)
+      vec_max_NH4[i] <- max_j
+      print(names(max_j))
+      vec_max_time[i] <- names(max_j)
+    } else{ break }
+  }
+}
+
+am_ave_slope <- data.frame(H_mM = vec_H_mM, NH4_mM = vec_max_NH4, Time_hours = vec_max_time)
+
+# check
+i = 36
+plot(colnames(mat_NH4), mat_NH4[i,])
+points(vec_max_time[i], vec_max_NO_mM[i], col='red')
+
+for (i in 1:dim(mat_NH4)[1]){
+  plot(colnames(mat_NH4), mat_NH4[i,])
+  points(vec_max_time[i], vec_max_NO_mM[i], col='red')
+}
+
+# get average slope
+am_ave_slope$H_mM <- as.numeric(am_ave_slope$H_mM)
+am_ave_slope$average_slope <- am_ave_slope$NH4_mM / as.numeric(am_ave_slope$Time_hours)
+
+# plot
+plot(vec_H_mM, am_ave_slope$average_slope)
+
+# quadratic fit
+am_ave_slope$H_mM_2 <- (am_ave_slope$H_mM)^2
+fit.aveslope <- lm(average_slope ~ H_mM + H_mM_2, am_ave_slope)
+summary(fit.aveslope)
+
+perturbH <- seq(-100, 100, 0.1)
+aveslopePredict <- predict(fit.aveslope, list(H_mM=perturbH, H_mM_2=perturbH^2))
+df_avs_quad <- data.frame(H_mM = perturbH, average_slope = aveslopePredict)
+plot(perturbH, aveslopePredict)
+
+# (1) Plot fitted quadratic regression line
+ggplot(am_ave_slope, aes(x=H_mM, y=average_slope)) +
+  geom_point(size=2.5, shape=16, color = "brown") +
+  stat_smooth(method = "loess", size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  xlab("Amount of pH perturbation (H+ mM) \n") +
+  ylab("\n Average slope of Ammonia curve (NH4_mM/Time_hours)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,family="serif", show.legend = FALSE)+
+  ggtitle("Correlation with perturbation and average slope of Ammonia curve \n") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_avs_quad, aes(x = H_mM, y = average_slope), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=0,label= paste0("y = ", round(coef(fit.aveslope)[[1]],3), "+", round(coef(fit.aveslope)[[2]],3),"x+",round(coef(fit.aveslope)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.aveslope)$r.squared,3)), color = "maroon2") +
+  mytheme_2d
+```
+
+## 5.3. Subtracting Ir = Amm_produce + N2O_produce
+```{r}
+# N2O_produce = Amm_produce - Ir
+
+mat_denit <- mat_Ir - mat_NH4
+
+df_denit <- melt(mat_denit) 
+names(df_denit) <- c("H_mM","Time_hours","NH4_mM")
+
+# plot I r = reduced Nitrite (accumulative)
+ggplot(df_denit, aes(x=Time_hours, y=NH4_mM, color=H_mM, group=H_mM)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.5)+
+  # geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+
+  scale_colour_gradientn(colours = col_pH(100)) +
+  # scale_color_manual(values=col_pH(4)) +
+  ylab("NO2- used in denitrification (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("I_denit (Nitrite reduced to NO) = I_r - Amm_produced \n") +
+  # label
+  # geom_text(aes(label = round(NH4_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+
+
+
+
+```
+
