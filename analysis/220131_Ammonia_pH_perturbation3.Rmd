@@ -640,20 +640,63 @@ ggplot(df_denit, aes(x=Time_hours, y=NH4_mM, color=H_mM, group=H_mM)) +
 ## 5.4. Is the ammonia measurements real?
 
 ```{r}
-df_brook <- read.xlsx("data/SPNa_86437_021122_edit.xlsx")
+df_brook <- read.xlsx("data/SPNa_86437_021122_edit2.xlsx")
 
 head(df_brook)
 dim(df_brook)
-colnames(df_brook)[1] <- "Sample"
-colnames(df_brook)[2] <- "NH4_ppm"
-df_brook$NH4_ppm <- as.numeric(df_brook$NH4_ppm)
+df_brook %<>% mutate(Ammonia_ppm = `NH4-N_ppm`)
+df_brook$Ammonia_ppm <- as.numeric(df_brook$Ammonia_ppm)
 
-df_brook$Sample <- factor(df_brook$Sample, levels = c("Am-25ppm-1", "Am-25ppm-2", "Am-25ppm-3", "Am-1","Am-2","Am-3","HCl-9","HCl-10","HCl-11",
+
+df_brook$Sample <- factor(df_brook$Sample, levels = c("Am-25ppm","Am-1","Am-2","Am-3","HCl-9","HCl-10","HCl-11",
                                                       "HCl0-1","HCl0-2","HCl0-3", "NN-1", "NN-2", "NN-3", "NaOH-9","NaOH-10","NaOH-11"))
-df_brook_sub <- df_brook %>% filter(!(Sample %in% c("Am-25ppm-1", "Am-25ppm-2", "Am-25ppm-3")))
+
+# multiply dilution factor which is 10x (600ul -> diluted to 6ml)
+df_brook %<>% mutate(Ammonia_ppm = Ammonia_ppm * (10))
+head(df_brook)
+
+# multiply dilution factor which is 5/2
+df_brook %<>% mutate(Ammonia_ppm = Ammonia_ppm * (5/2))
+head(df_brook)
+
+# converting to mM
+df_brook %<>% mutate(NH4_M = Ammonia_ppm / (14.0067*1000))   # Nitrogen molecular weight 
+df_brook %<>% mutate(NH4_mM = NH4_M * 1000)   # Nitrogen molecular weight 
+head(df_brook)
+
+# 1. Apply moisture correction factor (correcting for moisture in soil)
+soil_spike_ratio = 0.5 # soil weight(0.85g) / spike in volume (1.7ml) 
+moisture_percent_1 = 23.6 # LaBaghWoods1
+
+mcf_1 = (soil_spike_ratio*(moisture_percent_1/100) + 1)
+mcf_1
+
+# this is a special case with no replicates / also multiply the 5/4 for 80% extraction from soil.
+df_brook_mcf <- df_brook %>% filter(Sample_type == "Slurry") %>% mutate(Ammonia_ppm = Ammonia_ppm * mcf_1 *(5/4), NH4_M = NH4_M * mcf_1*(5/4), NH4_mM = NH4_mM * mcf_1 *(5/4))
+dim(df_brook_mcf) #458
+
+# 2. Apply blank correction factor (drying effect during incubation)
+# Blank reads
+# Get this from nitrate, nitrite reads
+df_no2_blank <- df_p %>% filter(Sample_type == "Nitrite_Blank")
+df_no2_blank
+
+# df_aero_blank$Nitrate_input <- as.numeric(as.character(df_aero_blank$Nitrate_input))
+df_no2_blank %<>% mutate(Correction_factor_NO2 = (Nitrite_input / NO2_mM)) 
+
+# average the blanks by time point
+cf_no2 <- df_no2_blank %>% select(Soil, Time_point, Correction_factor_NO2) %>% group_by(Soil, Time_point) %>% summarize(Correction_factor_NO2 = mean(Correction_factor_NO2)) %>% ungroup()
+
+df_brook_bcf <- df_brook_mcf
+Correction_factor_NO2 = cf_no2 %>% filter(Time_point == "T10") %>% select(Correction_factor_NO2) %>% unlist()
+df_brook_bcf <- df_brook_bcf %>% mutate(Ammonia_ppm = Ammonia_ppm * Correction_factor_NO2, NH4_M = NH4_M * Correction_factor_NO2, NH4_mM = NH4_mM * Correction_factor_NO2)
+head(df_brook_bcf)
+
+
+df_brook_sub <- df_brook %>% filter(!(Sample %in% c("Am-25ppm")))
 
 # 1. Raw data
-ggplot(df_brook_sub, aes(x=Sample, y=NH4_ppm, fill= Sample)) +
+ggplot(df_brook_sub, aes(x=Sample, y=`NH4-N_ppm`, fill= Sample)) +
   geom_bar(stat="identity",position="dodge", fill = "royalblue")+
   # geom_errorbar(aes(ymin=Ratio_retrieved - Std_Ratio_retrieved, ymax=Ratio_retrieved + Std_Ratio_retrieved), width=.05, position = position_dodge(0.8))+
   # geom_line(size=0.2)+
@@ -664,49 +707,33 @@ ggplot(df_brook_sub, aes(x=Sample, y=NH4_ppm, fill= Sample)) +
   # scale_x_continuous(breaks = seq(0,17,1), limits=c(0, 17))+
   ggtitle("[Raw data] Brookside lab flow injection analyzer NH4 measurement \n") +
   # scale_fill_manual( Sample = c("Am-25ppm-1"="red","Am-25ppm-2"='red',"Am-25ppm-3"='red'), guide = "none" ) +  # highlight
-  geom_text(aes(label = round(NH4_ppm,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE, position = position_dodge(0.8))+
+  geom_text(aes(label = round(`NH4-N_ppm`,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE, position = position_dodge(0.8))+
   mytheme_2d +
   theme(axis.text.x = element_text(hjust = 0.8, angle= 50, vjust=0.7, size=13, family="serif"))
 
 ## 2. comparing known samples
-df_brook <- read.xlsx("data/SPNa_86437_021122_edit.xlsx")
+df_brook_comp <- df_brook %>% filter(Sample %in% c("Am-25ppm", "Am-1","Am-2","Am-3"))
 
-head(df_brook)
-dim(df_brook)
-colnames(df_brook)[1] <- "Sample"
-colnames(df_brook)[2] <- "NH4_ppm"
-df_brook$NH4_ppm <- as.numeric(df_brook$NH4_ppm)
-
-df_brook_comp <- df_brook %>% filter(Sample %in% c("Am-25ppm-1", "Am-1","Am-2","Am-3"))
-df_brook_comp[4,1] <- "Known"
-
-ggplot(df_brook_comp, aes(x=Sample, y=Extraction_1.25x_mM, fill= Sample)) +
-  geom_bar(stat="identity",position="dodge", fill = "royalblue")+
+ggplot(df_brook_comp, aes(x=Sample, y=`NH4-N_ppm`, fill= Sample_type)) +
+  geom_bar(stat="identity",position="dodge")+
   # geom_errorbar(aes(ymin=Ratio_retrieved - Std_Ratio_retrieved, ymax=Ratio_retrieved + Std_Ratio_retrieved), width=.05, position = position_dodge(0.8))+
   # geom_line(size=0.2)+
   # scale_fill_brewer(palette='Set2') +
-  ylab("NH4+ (mM) \n") +
+  ylab("NH4-N ppm \n") +
   xlab("\n Sample ") +
   scale_y_continuous(breaks = seq(0,1.5,0.1), limits=c(0, 1.5))+
   # scale_x_continuous(breaks = seq(0,17,1), limits=c(0, 17))+
-  ggtitle("[Dilution considered] Brookside lab flow injection analyzer NH4 measurement \n") +
-  scale_fill_manual( values = c("Am-25ppm-1"="red"), guide = "none" ) +  # highlight
-  geom_text(aes(label = round(Extraction_1.25x_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE, position = position_dodge(0.8))+
+  ggtitle("[Known value] Brookside lab flow injection analyzer NH4 measurement \n") +
+  # scale_fill_manual( values = c("Am-25ppm"="red"), guide = "none" ) +  # highlight
+  geom_text(aes(label = round(`NH4-N_ppm`,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE, position = position_dodge(0.8))+
   mytheme_2d 
 
 ## 3. Comparing with my measurments
-df_brook$Sample <- factor(df_brook$Sample, levels = c("Am-25ppm-1", "Am-25ppm-2", "Am-25ppm-3", "Am-1","Am-2","Am-3","HCl-9","HCl-10","HCl-11",
-                                                      "HCl0-1","HCl0-2","HCl0-3", "NN-1", "NN-2", "NN-3", "NaOH-9","NaOH-10","NaOH-11"))
-df_brook_sub2 <- df_brook %>% filter(!(Sample %in% c("Am-25ppm-1", "Am-25ppm-2", "Am-25ppm-3", "Am-1","Am-2","Am-3")))
+df_melt <- df_brook_bcf 
+df_melt %<>% select(Sample, My_measurement_mM, NH4_mM) %>% melt()
+df_melt$Measurement <- ifelse(df_melt$variable == "NH4_mM", "Brookside", "Mine") 
 
-df_brook_sub2 %<>% select(Sample, Extraction_1.25x_mM, My_measurement_mM)
-
-df_sub2 <- melt(df_brook_sub2)
-df_sub2$Measuremnt <- ifelse(df_sub2$variable == "My_measurement_mM", "Mine", "Brookside")
-df_sub2$Sample <- factor(df_sub2$Sample, levels = c("Am-25ppm-1", "Am-25ppm-2", "Am-25ppm-3", "Am-1","Am-2","Am-3","HCl-9","HCl-10","HCl-11",
-                                                      "HCl0-1","HCl0-2","HCl0-3", "NN-1", "NN-2", "NN-3", "NaOH-9","NaOH-10","NaOH-11"))
-
-ggplot(df_sub2, aes(x=Sample, y=value, fill= Measuremnt)) +
+ggplot(df_melt, aes(x=Sample, y=value, fill= Measurement)) +
   geom_bar(stat="identity",position="dodge")+
   # geom_errorbar(aes(ymin=Ratio_retrieved - Std_Ratio_retrieved, ymax=Ratio_retrieved + Std_Ratio_retrieved), width=.05, position = position_dodge(0.8))+
   # geom_line(size=0.2)+
