@@ -296,6 +296,7 @@ dim(df_sample_bcf) # 458
 df_a_bcf <- rbind(df_sample_bcf, df_a_blanks_bcf)
 dim(df_a_bcf) # 522 22
 
+# write.xlsx(df_a_bcf, "df_a_bcf.xlsx")
 ```
 
 
@@ -631,6 +632,92 @@ ggplot(df_denit, aes(x=Time_hours, y=NH4_mM, color=H_mM, group=H_mM)) +
 
 
 
+
+
+```
+
+
+## 5.4. Is the ammonia measurements real?
+
+```{r}
+df_brook <- read.xlsx("data/SPNa_86437_021122_edit.xlsx")
+
+head(df_brook)
+dim(df_brook)
+colnames(df_brook)[1] <- "Sample"
+colnames(df_brook)[2] <- "NH4_ppm"
+df_brook$NH4_ppm <- as.numeric(df_brook$NH4_ppm)
+
+df_brook$Sample <- factor(df_brook$Sample, levels = c("Am-25ppm-1", "Am-25ppm-2", "Am-25ppm-3", "Am-1","Am-2","Am-3","HCl-9","HCl-10","HCl-11",
+                                                      "HCl0-1","HCl0-2","HCl0-3", "NN-1", "NN-2", "NN-3", "NaOH-9","NaOH-10","NaOH-11"))
+df_brook_sub <- df_brook %>% filter(!(Sample %in% c("Am-25ppm-1", "Am-25ppm-2", "Am-25ppm-3")))
+
+# 1. Raw data
+ggplot(df_brook_sub, aes(x=Sample, y=NH4_ppm, fill= Sample)) +
+  geom_bar(stat="identity",position="dodge", fill = "royalblue")+
+  # geom_errorbar(aes(ymin=Ratio_retrieved - Std_Ratio_retrieved, ymax=Ratio_retrieved + Std_Ratio_retrieved), width=.05, position = position_dodge(0.8))+
+  # geom_line(size=0.2)+
+  # scale_fill_brewer(palette='Set2') +
+  ylab("NH4-N ppm \n") +
+  xlab("\n Sample ") +
+  # scale_y_continuous(breaks = seq(0,1,0.1), limits=c(0, 1))+
+  # scale_x_continuous(breaks = seq(0,17,1), limits=c(0, 17))+
+  ggtitle("[Raw data] Brookside lab flow injection analyzer NH4 measurement \n") +
+  # scale_fill_manual( Sample = c("Am-25ppm-1"="red","Am-25ppm-2"='red',"Am-25ppm-3"='red'), guide = "none" ) +  # highlight
+  geom_text(aes(label = round(NH4_ppm,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE, position = position_dodge(0.8))+
+  mytheme_2d +
+  theme(axis.text.x = element_text(hjust = 0.8, angle= 50, vjust=0.7, size=13, family="serif"))
+
+## 2. comparing known samples
+df_brook <- read.xlsx("data/SPNa_86437_021122_edit.xlsx")
+
+head(df_brook)
+dim(df_brook)
+colnames(df_brook)[1] <- "Sample"
+colnames(df_brook)[2] <- "NH4_ppm"
+df_brook$NH4_ppm <- as.numeric(df_brook$NH4_ppm)
+
+df_brook_comp <- df_brook %>% filter(Sample %in% c("Am-25ppm-1", "Am-1","Am-2","Am-3"))
+df_brook_comp[4,1] <- "Known"
+
+ggplot(df_brook_comp, aes(x=Sample, y=Extraction_1.25x_mM, fill= Sample)) +
+  geom_bar(stat="identity",position="dodge", fill = "royalblue")+
+  # geom_errorbar(aes(ymin=Ratio_retrieved - Std_Ratio_retrieved, ymax=Ratio_retrieved + Std_Ratio_retrieved), width=.05, position = position_dodge(0.8))+
+  # geom_line(size=0.2)+
+  # scale_fill_brewer(palette='Set2') +
+  ylab("NH4+ (mM) \n") +
+  xlab("\n Sample ") +
+  scale_y_continuous(breaks = seq(0,1.5,0.1), limits=c(0, 1.5))+
+  # scale_x_continuous(breaks = seq(0,17,1), limits=c(0, 17))+
+  ggtitle("[Dilution considered] Brookside lab flow injection analyzer NH4 measurement \n") +
+  scale_fill_manual( values = c("Am-25ppm-1"="red"), guide = "none" ) +  # highlight
+  geom_text(aes(label = round(Extraction_1.25x_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE, position = position_dodge(0.8))+
+  mytheme_2d 
+
+## 3. Comparing with my measurments
+df_brook$Sample <- factor(df_brook$Sample, levels = c("Am-25ppm-1", "Am-25ppm-2", "Am-25ppm-3", "Am-1","Am-2","Am-3","HCl-9","HCl-10","HCl-11",
+                                                      "HCl0-1","HCl0-2","HCl0-3", "NN-1", "NN-2", "NN-3", "NaOH-9","NaOH-10","NaOH-11"))
+df_brook_sub2 <- df_brook %>% filter(!(Sample %in% c("Am-25ppm-1", "Am-25ppm-2", "Am-25ppm-3", "Am-1","Am-2","Am-3")))
+
+df_brook_sub2 %<>% select(Sample, Extraction_1.25x_mM, My_measurement_mM)
+
+df_sub2 <- melt(df_brook_sub2)
+df_sub2$Measuremnt <- ifelse(df_sub2$variable == "My_measurement_mM", "Mine", "Brookside")
+df_sub2$Sample <- factor(df_sub2$Sample, levels = c("Am-25ppm-1", "Am-25ppm-2", "Am-25ppm-3", "Am-1","Am-2","Am-3","HCl-9","HCl-10","HCl-11",
+                                                      "HCl0-1","HCl0-2","HCl0-3", "NN-1", "NN-2", "NN-3", "NaOH-9","NaOH-10","NaOH-11"))
+
+ggplot(df_sub2, aes(x=Sample, y=value, fill= Measuremnt)) +
+  geom_bar(stat="identity",position="dodge")+
+  # geom_errorbar(aes(ymin=Ratio_retrieved - Std_Ratio_retrieved, ymax=Ratio_retrieved + Std_Ratio_retrieved), width=.05, position = position_dodge(0.8))+
+  # geom_line(size=0.2)+
+  scale_fill_brewer(palette='Set1') +
+  ylab("NH4+ (mM) \n") +
+  xlab("\n Sample ") +
+  # scale_y_continuous(breaks = seq(0,1.5,0.1), limits=c(0, 1.5))+
+  # scale_x_continuous(breaks = seq(0,17,1), limits=c(0, 17))+
+  ggtitle("NH4 measurement comparison \n") +
+  geom_text(aes(label = round(value,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE, position = position_dodge(0.8))+
+  mytheme_2d 
 
 
 ```

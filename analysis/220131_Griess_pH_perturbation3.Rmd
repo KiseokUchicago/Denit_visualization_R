@@ -467,6 +467,7 @@ ggplot(df_plot2, aes(x=Time_hours, y=NO2_mM, color=H_mM, group=H_mM)) +
 
 ```
 
+
 ## 4.1.1. Nitrite peakheight and H_mM
 ```{r}
 colnames(df_plot2)
@@ -593,6 +594,538 @@ ggplot(df_peakheight, aes(x=H_mM, y=NO2_mM)) +
   annotate("text",x=0,y=1, label= paste0("y = ", round(coef(quad.peakheight)[[1]],3), "+", round(coef(quad.peakheight)[[2]],3),"x+",round(coef(quad.peakheight)[[3]],3), "x^2", ",  R^2: ", round(summary(quad.peakheight)$r.squared,3)), color = "maroon2") +
   mytheme_2d
 ```
+
+
+## 4.1.1.2. PCA on the nitrate, nitrite time readings.
+
+(1) First plot PCA with only the nitrate
+```{r}
+## make the above values to matrices
+
+mat_NO2 <- dcast(df_plot2, H_mM ~ Time_hours, value.var = "NO2_mM")
+mat_NO2 <- tibble::column_to_rownames(mat_NO2, var = "H_mM")
+mat_NO2 <- as.matrix(mat_NO2) 
+class(mat_NO2)
+dim(mat_NO2)
+mat_NO2[is.na(mat_NO2)]
+mat_NO2 <- na_to_average(mat_NO2)
+mat_NO2[is.na(mat_NO2)] # no more NA
+
+
+mat_NO3 <- dcast(df_plot2, H_mM ~ Time_hours, value.var = "NO3_mM")
+mat_NO3 <- tibble::column_to_rownames(mat_NO3, var = "H_mM")
+mat_NO3 <- as.matrix(mat_NO3) 
+class(mat_NO3)
+dim(mat_NO3)
+mat_NO3[is.na(mat_NO3)]
+mat_NO3 <- na_to_average(mat_NO3)
+mat_NO3[is.na(mat_NO3)] # no more NA
+
+# First, the typical principal component analysis on the samples would be to transpose the data such that the samples are rows of the data matrix. The prcomp function can be used to return the principal components and other variables.(https://genomicsclass.github.io/book/pages/pca_svd.html)
+any(is.na(mat_NO3))
+
+# PCA with prcomp
+pc <- prcomp(mat_NO3)
+eigs <- pc$sdev^2
+# variance explained
+eigs[1] / sum(eigs) # pc1
+
+eigs[2] / sum(eigs) # pc2
+
+# First, a new dataframe should be created, with the information of sample-group. (http://huboqiang.cn/2016/03/03/RscatterPlotPCA)
+df_out <- as.data.frame(pc$x)
+df_out
+
+head(df_out)
+df_out$H_mM <- rownames(df_out)
+df_out$H_mM <- as.numeric(df_out$H_mM)
+
+# plot PCA with timepoint labels
+ggplot(df_out,aes(x=PC1,y=PC2))+
+  geom_point(size = 4, alpha=0.9, aes(col = H_mM))+
+  scale_colour_gradientn(colours = col_pH(100)) +
+  xlab(paste0('\n PC1', " (explained variance: ",round(eigs[1] / sum(eigs),3)*100,"%)"))+
+  ylab(paste0("PC2"," (explained variance: ",round(eigs[2] / sum(eigs),3)*100,"%) \n")) +
+  ggtitle("Principle component analysis (Nitrate dynamics) \n") +
+  mytheme_2d
+  
+# Label with mM
+ggplot(df_out,aes(x=PC1,y=PC2, label=sprintf("%0.1f", round(H_mM, digits = 1))))+
+  geom_point(size = 5, alpha=0.9, aes(col = H_mM))+
+  scale_colour_gradientn(colours = col_pH(100)) +
+  xlab(paste0('\n PC1', " (explained variance: ",round(eigs[1] / sum(eigs),3)*100,"%)"))+
+  ylab(paste0("PC2"," (explained variance: ",round(eigs[2] / sum(eigs),3)*100,"%) \n")) +
+  ggtitle("Principle component analysis (Nitrate dynamics) \n") +
+  ggrepel::geom_label_repel() +
+  mytheme_2d
+  
+
+# 3D: http://www.sthda.com/english/wiki/impressive-package-for-3d-and-4d-graph-r-software-and-data-visualization
+library("plot3D")
+rownames(df_out) <- as.numeric(rownames(df_out))
+scatter3D(df_out$PC1, df_out$PC2, df_out$PC3, bty = "b2", pch = 16, cex = 2,col = (col_pH(100)),
+          main = "Principle component analysis (Nitrate dynamics)", xlab = "PC1",
+          ylab ="PC2", zlab = "PC3",
+          theta = 15, phi = 50)
+## is this correct? I don't think so.. doesn't agree with the 2d plot.... let's come back to this some time later..
+
+
+```
+
+(2) PCA with only nitrite dynamics
+
+```{r}
+# First, the typical principal component analysis on the samples would be to transpose the data such that the samples are rows of the data matrix. The prcomp function can be used to return the principal components and other variables.(https://genomicsclass.github.io/book/pages/pca_svd.html)
+any(is.na(mat_NO2))
+
+# PCA with prcomp
+pc <- prcomp(mat_NO2)
+eigs <- pc$sdev^2
+# variance explained
+eigs[1] / sum(eigs) # pc1
+
+eigs[2] / sum(eigs) # pc2
+
+# First, a new dataframe should be created, with the information of sample-group. (http://huboqiang.cn/2016/03/03/RscatterPlotPCA)
+df_out <- as.data.frame(pc$x)
+df_out
+
+head(df_out)
+df_out$H_mM <- rownames(df_out)
+df_out$H_mM <- as.numeric(df_out$H_mM)
+
+# plot PCA with timepoint labels
+ggplot(df_out,aes(x=PC1,y=PC2))+
+  geom_point(size = 4, alpha=0.9, aes(col = H_mM))+
+  scale_colour_gradientn(colours = col_pH(100)) +
+  xlab(paste0('\n PC1', " (explained variance: ",round(eigs[1] / sum(eigs),3)*100,"%)"))+
+  ylab(paste0("PC2"," (explained variance: ",round(eigs[2] / sum(eigs),3)*100,"%) \n")) +
+  ggtitle("Principle component analysis (Nitrite dynamics) \n") +
+  mytheme_2d
+  
+# Label with mM
+ggplot(df_out,aes(x=PC1,y=PC2, label=sprintf("%0.1f", round(H_mM, digits = 1))))+
+  geom_point(size = 5, alpha=0.9, aes(col = H_mM))+
+  scale_colour_gradientn(colours = col_pH(100)) +
+  xlab(paste0('\n PC1', " (explained variance: ",round(eigs[1] / sum(eigs),3)*100,"%)"))+
+  ylab(paste0("PC2"," (explained variance: ",round(eigs[2] / sum(eigs),3)*100,"%) \n")) +
+  ggtitle("Principle component analysis (Nitrite dynamics) \n") +
+  ggrepel::geom_label_repel() +
+  mytheme_2d
+  
+
+# 3D: http://www.sthda.com/english/wiki/impressive-package-for-3d-and-4d-graph-r-software-and-data-visualization
+library("plot3D")
+rownames(df_out) <- as.numeric(rownames(df_out))
+scatter3D(df_out$PC1, df_out$PC2, df_out$PC3, bty = "b2", pch = 16, cex = 2,col = (col_pH(100)),
+          main = "Principle component analysis (Nitrate dynamics)", xlab = "PC1",
+          ylab ="PC2", zlab = "PC3",
+          theta = 15, phi = 50)
+## is this correct? I don't think so.. doesn't agree with the 2d plot.... let's come back to this some time later..
+
+
+```
+
+(3) PCA with both nitrate and nitrite dynamics
+
+```{r}
+# First, the typical principal component analysis on the samples would be to transpose the data such that the samples are rows of the data matrix. The prcomp function can be used to return the principal components and other variables.(https://genomicsclass.github.io/book/pages/pca_svd.html)
+dim(mat_NO2)
+dim(mat_NO3)
+mat_NO23 <- cbind(mat_NO3, mat_NO2)
+any(is.na(mat_NO23))
+dim(mat_NO23)
+
+# PCA with prcomp
+pc <- prcomp(mat_NO23)
+eigs <- pc$sdev^2
+# variance explained
+eigs[1] / sum(eigs) # pc1
+
+eigs[2] / sum(eigs) # pc2
+
+# First, a new dataframe should be created, with the information of sample-group. (http://huboqiang.cn/2016/03/03/RscatterPlotPCA)
+df_out <- as.data.frame(pc$x)
+df_out
+
+head(df_out)
+df_out$H_mM <- rownames(df_out)
+df_out$H_mM <- as.numeric(df_out$H_mM)
+
+# plot PCA with timepoint labels
+ggplot(df_out,aes(x=PC1,y=PC2))+
+  geom_point(size = 4, alpha=0.9, aes(col = H_mM))+
+  scale_colour_gradientn(colours = col_pH(100)) +
+  xlab(paste0('\n PC1', " (explained variance: ",round(eigs[1] / sum(eigs),3)*100,"%)"))+
+  ylab(paste0("PC2"," (explained variance: ",round(eigs[2] / sum(eigs),3)*100,"%) \n")) +
+  ggtitle("Principle component analysis (Nitrite + Nitrate dynamics) \n") +
+  mytheme_2d
+  
+# Label with mM
+ggplot(df_out,aes(x=PC1,y=PC2, label=sprintf("%0.1f", round(H_mM, digits = 1))))+
+  geom_point(size = 5, alpha=0.9, aes(col = H_mM))+
+  scale_colour_gradientn(colours = col_pH(100)) +
+  xlab(paste0('\n PC1', " (explained variance: ",round(eigs[1] / sum(eigs),3)*100,"%)"))+
+  ylab(paste0("PC2"," (explained variance: ",round(eigs[2] / sum(eigs),3)*100,"%) \n")) +
+  ggtitle("Principle component analysis (Nitrite + Nitrate dynamics) \n") +
+  ggrepel::geom_label_repel() +
+  mytheme_2d
+  
+
+# 3D: http://www.sthda.com/english/wiki/impressive-package-for-3d-and-4d-graph-r-software-and-data-visualization
+library("plot3D")
+rownames(df_out) <- as.numeric(rownames(df_out))
+scatter3D(df_out$PC1, df_out$PC2, df_out$PC3, bty = "b2", pch = 16, cex = 2,col = (col_pH(100)),
+          main = "Principle component analysis (Nitrate dynamics)", xlab = "PC1",
+          ylab ="PC2", zlab = "PC3",
+          theta = 15, phi = 50)
+## is this correct? I don't think so.. doesn't agree with the 2d plot.... let's come back to this some time later..
+
+
+```
+
+
+
+## 4.1.1.3. (using inferred pH) PCA on the nitrate, nitrite time readings. 
+
+(1) (using inferred pH) First plot PCA with only the nitrate
+```{r}
+## make the above values to matrices
+df_plot2$pH <- (6.5 / (1+ exp(1*(0.07*(df_plot2$H_mM+125))-10))) + 2.5
+mat_NO2 <- dcast(df_plot2, pH ~ Time_hours, value.var = "NO2_mM")
+mat_NO2 <- tibble::column_to_rownames(mat_NO2, var = "pH")
+mat_NO2 <- as.matrix(mat_NO2) 
+class(mat_NO2)
+dim(mat_NO2)
+mat_NO2[is.na(mat_NO2)]
+mat_NO2 <- na_to_average(mat_NO2)
+mat_NO2[is.na(mat_NO2)] # no more NA
+
+
+mat_NO3 <- dcast(df_plot2, pH ~ Time_hours, value.var = "NO3_mM")
+mat_NO3 <- tibble::column_to_rownames(mat_NO3, var = "pH")
+mat_NO3 <- as.matrix(mat_NO3) 
+class(mat_NO3)
+dim(mat_NO3)
+mat_NO3[is.na(mat_NO3)]
+mat_NO3 <- na_to_average(mat_NO3)
+mat_NO3[is.na(mat_NO3)] # no more NA
+
+# First, the typical principal component analysis on the samples would be to transpose the data such that the samples are rows of the data matrix. The prcomp function can be used to return the principal components and other variables.(https://genomicsclass.github.io/book/pages/pca_svd.html)
+any(is.na(mat_NO3))
+
+# PCA with prcomp
+pc <- prcomp(mat_NO3)
+eigs <- pc$sdev^2
+# variance explained
+eigs[1] / sum(eigs) # pc1
+
+eigs[2] / sum(eigs) # pc2
+
+# First, a new dataframe should be created, with the information of sample-group. (http://huboqiang.cn/2016/03/03/RscatterPlotPCA)
+df_out <- as.data.frame(pc$x)
+df_out
+
+head(df_out)
+df_out$pH <- rownames(df_out)
+df_out$pH <- as.numeric(df_out$pH)
+
+# plot PCA with timepoint labels
+ggplot(df_out,aes(x=PC1,y=PC2))+
+  geom_point(size = 4, alpha=0.9, aes(col = pH))+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  xlab(paste0('\n PC1', " (explained variance: ",round(eigs[1] / sum(eigs),3)*100,"%)"))+
+  ylab(paste0("PC2"," (explained variance: ",round(eigs[2] / sum(eigs),3)*100,"%) \n")) +
+  ggtitle("[Using inferred pH] Principle component analysis (Nitrate dynamics) \n") +
+  mytheme_2d
+  
+# Label with mM
+ggplot(df_out,aes(x=PC1,y=PC2, label=sprintf("%0.1f", round(pH, digits = 1))))+
+  geom_point(size = 5, alpha=0.9, aes(col = pH))+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  xlab(paste0('\n PC1', " (explained variance: ",round(eigs[1] / sum(eigs),3)*100,"%)"))+
+  ylab(paste0("PC2"," (explained variance: ",round(eigs[2] / sum(eigs),3)*100,"%) \n")) +
+  ggtitle("[Using inferred pH] Principle component analysis (Nitrate dynamics) \n") +
+  ggrepel::geom_label_repel() +
+  mytheme_2d
+  
+
+# 3D: http://www.sthda.com/english/wiki/impressive-package-for-3d-and-4d-graph-r-software-and-data-visualization
+library("plot3D")
+rownames(df_out) <- as.numeric(rownames(df_out))
+scatter3D(df_out$PC1, df_out$PC2, df_out$PC3, bty = "b2", pch = 16, cex = 2,col = (rev(col_pH(100))),
+          main = "[Using inferred pH] Principle component analysis (Nitrate dynamics)", xlab = "PC1",
+          ylab ="PC2", zlab = "PC3",
+          theta = 15, phi = 50)
+## is this correct? I don't think so.. doesn't agree with the 2d plot.... let's come back to this some time later..
+
+
+```
+
+(2) (using inferred pH) PCA with only nitrite dynamics
+
+```{r}
+# First, the typical principal component analysis on the samples would be to transpose the data such that the samples are rows of the data matrix. The prcomp function can be used to return the principal components and other variables.(https://genomicsclass.github.io/book/pages/pca_svd.html)
+any(is.na(mat_NO2))
+
+# PCA with prcomp
+pc <- prcomp(mat_NO2)
+eigs <- pc$sdev^2
+# variance explained
+eigs[1] / sum(eigs) # pc1
+
+eigs[2] / sum(eigs) # pc2
+
+# First, a new dataframe should be created, with the information of sample-group. (http://huboqiang.cn/2016/03/03/RscatterPlotPCA)
+df_out <- as.data.frame(pc$x)
+df_out
+
+head(df_out)
+df_out$pH <- rownames(df_out)
+df_out$pH <- as.numeric(df_out$pH)
+
+# plot PCA with timepoint labels
+ggplot(df_out,aes(x=PC1,y=PC2))+
+  geom_point(size = 4, alpha=0.9, aes(col = pH))+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  xlab(paste0('\n PC1', " (explained variance: ",round(eigs[1] / sum(eigs),3)*100,"%)"))+
+  ylab(paste0("PC2"," (explained variance: ",round(eigs[2] / sum(eigs),3)*100,"%) \n")) +
+  ggtitle("[Using inferred pH] Principle component analysis (Nitrite dynamics) \n") +
+  mytheme_2d
+  
+# Label with mM
+ggplot(df_out,aes(x=PC1,y=PC2, label=sprintf("%0.1f", round(pH, digits = 1))))+
+  geom_point(size = 5, alpha=0.9, aes(col = pH))+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  xlab(paste0('\n PC1', " (explained variance: ",round(eigs[1] / sum(eigs),3)*100,"%)"))+
+  ylab(paste0("PC2"," (explained variance: ",round(eigs[2] / sum(eigs),3)*100,"%) \n")) +
+  ggtitle("[Using inferred pH] Principle component analysis (Nitrite dynamics) \n") +
+  ggrepel::geom_label_repel() +
+  mytheme_2d
+  
+
+# 3D: http://www.sthda.com/english/wiki/impressive-package-for-3d-and-4d-graph-r-software-and-data-visualization
+library("plot3D")
+rownames(df_out) <- as.numeric(rownames(df_out))
+scatter3D(df_out$PC1, df_out$PC2, df_out$PC3, bty = "b2", pch = 16, cex = 2,col = (rev(col_pH(100))),
+          main = "[Using inferred pH] Principle component analysis (Nitrate dynamics)", xlab = "PC1",
+          ylab ="PC2", zlab = "PC3",
+          theta = 15, phi = 50)
+## is this correct? I don't think so.. doesn't agree with the 2d plot.... let's come back to this some time later..
+
+
+```
+
+(3) (using inferred pH) PCA with both nitrate and nitrite dynamics
+
+```{r}
+# First, the typical principal component analysis on the samples would be to transpose the data such that the samples are rows of the data matrix. The prcomp function can be used to return the principal components and other variables.(https://genomicsclass.github.io/book/pages/pca_svd.html)
+dim(mat_NO2)
+dim(mat_NO3)
+mat_NO23 <- cbind(mat_NO3, mat_NO2)
+any(is.na(mat_NO23))
+dim(mat_NO23)
+
+# PCA with prcomp
+pc <- prcomp(mat_NO23)
+eigs <- pc$sdev^2
+# variance explained
+eigs[1] / sum(eigs) # pc1
+
+eigs[2] / sum(eigs) # pc2
+
+# First, a new dataframe should be created, with the information of sample-group. (http://huboqiang.cn/2016/03/03/RscatterPlotPCA)
+df_out <- as.data.frame(pc$x)
+df_out
+
+head(df_out)
+df_out$pH <- rownames(df_out)
+df_out$pH <- as.numeric(df_out$pH)
+
+# plot PCA with timepoint labels
+ggplot(df_out,aes(x=PC1,y=PC2))+
+  geom_point(size = 4, alpha=0.9, aes(col = pH))+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  xlab(paste0('\n PC1', " (explained variance: ",round(eigs[1] / sum(eigs),3)*100,"%)"))+
+  ylab(paste0("PC2"," (explained variance: ",round(eigs[2] / sum(eigs),3)*100,"%) \n")) +
+  ggtitle("[Using inferred pH] Principle component analysis (Nitrite + Nitrate dynamics) \n") +
+  mytheme_2d
+  
+# Label with mM
+ggplot(df_out,aes(x=PC1,y=PC2, label=sprintf("%0.1f", round(pH, digits = 1))))+
+  geom_point(size = 5, alpha=0.9, aes(col = pH))+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  xlab(paste0('\n PC1', " (explained variance: ",round(eigs[1] / sum(eigs),3)*100,"%)"))+
+  ylab(paste0("PC2"," (explained variance: ",round(eigs[2] / sum(eigs),3)*100,"%) \n")) +
+  ggtitle("[Using inferred pH] Principle component analysis (Nitrite + Nitrate dynamics) \n") +
+  ggrepel::geom_label_repel() +
+  mytheme_2d
+  
+
+# 3D: http://www.sthda.com/english/wiki/impressive-package-for-3d-and-4d-graph-r-software-and-data-visualization
+library("plot3D")
+rownames(df_out) <- as.numeric(rownames(df_out))
+scatter3D(df_out$PC1, df_out$PC2, df_out$PC3, bty = "b2", pch = 16, cex = 2,col = (rev(col_pH(100))),
+          main = "[Using inferred pH] Principle component analysis (Nitrate dynamics)", xlab = "PC1",
+          ylab ="PC2", zlab = "PC3",
+          theta = 15, phi = 50)
+## is this correct? I don't think so.. doesn't agree with the 2d plot.... let's come back to this some time later..
+
+
+```
+
+
+Let's take a closer look at the basic pH curves
+```{r}
+df_plot3 <- df_plot2
+df_plot3$NO3_mM <- ifelse(df_plot3$H_mM > -70, NA, df_plot3$NO3_mM)
+
+ggplot(df_plot3, aes(x=Time_hours, y=NO3_mM, color=H_mM, group=H_mM)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
+  scale_colour_gradientn(colours = col_pH(100)) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("pH perturbation (H_mM > -70) \n") +
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Soil) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+## 60
+
+df_plot3 <- df_plot2
+df_plot3$NO3_mM <- ifelse(df_plot3$H_mM > -60, NA, df_plot3$NO3_mM)
+
+ggplot(df_plot3, aes(x=Time_hours, y=NO3_mM, color=H_mM, group=H_mM)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
+  scale_colour_gradientn(colours = col_pH(100)) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("pH perturbation (H_mM > -60) \n") +
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Soil) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+## 50
+df_plot3 <- df_plot2
+df_plot3$NO3_mM <- ifelse(df_plot3$H_mM > -50, NA, df_plot3$NO3_mM)
+
+ggplot(df_plot3, aes(x=Time_hours, y=NO3_mM, color=H_mM, group=H_mM)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
+  scale_colour_gradientn(colours = col_pH(100)) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("pH perturbation (H_mM > -50) \n") +
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Soil) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+##
+
+df_plot3 <- df_plot2
+df_plot3$NO3_mM <- ifelse(df_plot3$pH < 8.9, NA, df_plot3$NO3_mM)
+
+ggplot(df_plot3, aes(x=Time_hours, y=NO3_mM, color=pH, group=pH)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("pH perturbation (inferred pH > 8.9) \n") +
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Soil) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+
+## 3 clusters - first cluster
+df_plot3 <- df_plot2
+df_plot3$NO3_mM <- ifelse(df_plot3$pH < 8.9, NA, df_plot3$NO3_mM)
+
+ggplot(df_plot3, aes(x=Time_hours, y=NO3_mM, color=pH, group=pH)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("pH perturbation (inferred pH > 8.9) \n") +
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Soil) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+
+## 3 clusters - second cluster
+df_plot3 <- df_plot2
+df_plot3$NO3_mM <- ifelse(df_plot3$pH > 8.9 | df_plot3$pH < 4, NA, df_plot3$NO3_mM)
+
+ggplot(df_plot3, aes(x=Time_hours, y=NO3_mM, color=pH, group=pH)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("pH perturbation (4 < inferred pH < 8.9) \n") +
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Soil) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+
+## 3 clusters - third cluster
+df_plot3 <- df_plot2
+df_plot3$NO3_mM <- ifelse(df_plot3$pH > 4, NA, df_plot3$NO3_mM)
+
+ggplot(df_plot3, aes(x=Time_hours, y=NO3_mM, color=pH, group=pH)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time (hr)") +
+  scale_y_continuous(breaks = seq(0,2.5,0.25), limits=c(0, 2.5))+
+  ggtitle("pH perturbation (inferred pH < 4) \n") +
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Soil) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+
+
+```
+
+
 
 ## 4.1.2. Peak time
 ```{r}
@@ -841,6 +1374,46 @@ ggplot(df_corr, aes(x=H_mM, y=auc)) +
   # show equation
   annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
   mytheme_2d
+
+
+## 220213 Use the inferred pH values for x axis
+# y <- (6.5 / (1+ exp(1*(0.07*(x+125))-10))) + 2.5
+df_corr$inferred_pH <-  (6.5 / (1+ exp(1*(0.07*(df_corr$H_mM+125))-10))) + 2.5
+
+plot(df_corr$inferred_pH, df_corr$auc)
+
+df_corr$inferred_pH_2 <- (df_corr$inferred_pH)^2
+fit.no3 <- lm(auc ~ inferred_pH + inferred_pH_2, df_corr)
+summary(fit.no3)
+
+perturbpH <- seq(2, 11, 0.01)
+aucPredict <- predict(fit.no3,list(inferred_pH=perturbpH, inferred_pH_2=perturbpH^2))
+df_auc_quad <- data.frame(H_mM = perturbpH, auc = aucPredict)
+plot(perturbpH, aucPredict)
+
+# (1) Plot fitted linear regression line
+ggplot(df_corr, aes(x=inferred_pH, y=auc)) +
+  geom_point(size=2.5, shape=16, color = "brown") +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  xlab("inferred pH \n") +
+  ylab("\n Area under curve (NO3-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,family="serif", show.legend = FALSE)+
+  ggtitle("Correlation with perturbed pH and area under nitrate curve \n") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  geom_line(data = df_auc_quad, aes(x = H_mM, y = auc), color = "maroon2", size = 1) +
+  # show equation
+  annotate("text",x=7,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d
+
+
+
+
 
 ## NO2 area under curve
 colnames(df_plot2)
