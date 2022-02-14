@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="KiseokUchicago" />
+
+<meta name="date" content="2022-02-10" />
+
+<title>220210_Cuhel_et_al_2010_qPCR_data</title>
+
+<script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/master/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Denit_visualization_R</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/KiseokUchicago/Denit_visualization_R">
+    <span class="fa fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">220210_Cuhel_et_al_2010_qPCR_data</h1>
+<h4 class="author">KiseokUchicago</h4>
+<h4 class="date">2022-02-10</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2022-02-13
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>Denit_visualization_R/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.2). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20210924code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20210924)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20210924code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20210924)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomKiseokUchicagoDenitvisualizationRtree14857ef3ccd4675a0f21a8d2d940997ae9f5b495targetblank14857efa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/KiseokUchicago/Denit_visualization_R/tree/14857ef3ccd4675a0f21a8d2d940997ae9f5b495" target="_blank">14857ef</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomKiseokUchicagoDenitvisualizationRtree14857ef3ccd4675a0f21a8d2d940997ae9f5b495targetblank14857efa" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://github.com/KiseokUchicago/Denit_visualization_R/tree/14857ef3ccd4675a0f21a8d2d940997ae9f5b495" target="_blank">14857ef</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+
+Untracked files:
+    Untracked:  220131_df_ammonia_bcf.xlsx
+    Untracked:  data/120321_soil_buffering_capacity_Nichols-B.xlsx
+    Untracked:  data/210911_TOC_sample_plate1.xlsx
+    Untracked:  data/210922_Griess_sample_plate1-investigating.xlsx
+    Untracked:  data/210922_Griess_sample_plate1.xlsx
+    Untracked:  data/210927_TOC_sample_plate1_100ul.xlsx
+    Untracked:  data/210927_TOC_sample_plate1_10ul.xlsx
+    Untracked:  data/210928_Griess_sample_plate1.xlsx
+    Untracked:  data/211005_Griess_sample_plate1.xlsx
+    Untracked:  data/211007_Griess_blank_plate1.xlsx
+    Untracked:  data/211007_Griess_blank_plate2.xlsx
+    Untracked:  data/211008_Griess_blank_plate0.xlsx
+    Untracked:  data/211008_Griess_blank_plate1.xlsx
+    Untracked:  data/211017_Griess_plate0.xlsx
+    Untracked:  data/211017_Griess_plate1.xlsx
+    Untracked:  data/211017_Griess_plate2.xlsx
+    Untracked:  data/211017_Griess_plate3.xlsx
+    Untracked:  data/211017_Griess_plate4.xlsx
+    Untracked:  data/211017_Griess_plate5.xlsx
+    Untracked:  data/211017_Griess_plate6.xlsx
+    Untracked:  data/211017_Griess_plate7.xlsx
+    Untracked:  data/211017_Griess_plate8.xlsx
+    Untracked:  data/211019_Griess_plate1.xlsx
+    Untracked:  data/211020_Griess_plate0.xlsx
+    Untracked:  data/211020_Griess_plate1.xlsx
+    Untracked:  data/211020_df_full_innate.xlsx
+    Untracked:  data/211025_Griess_no3_fit_plate0.xlsx
+    Untracked:  data/211025_Griess_no3_fit_plate1.xlsx
+    Untracked:  data/211025_Griess_plate0.xlsx
+    Untracked:  data/211025_Griess_plate1.xlsx
+    Untracked:  data/211028_Griess_plate1.xlsx
+    Untracked:  data/211028_Griess_plate1_no3_fit.xlsx
+    Untracked:  data/211028_Griess_plate2.xlsx
+    Untracked:  data/211028_Griess_plate2_no3_fit.xlsx
+    Untracked:  data/211028_Griess_plate3.xlsx
+    Untracked:  data/211028_Griess_plate3_no3_fit.xlsx
+    Untracked:  data/211028_Griess_plate4.xlsx
+    Untracked:  data/211028_Griess_plate4_no3_fit.xlsx
+    Untracked:  data/211028_time_table.xlsx
+    Untracked:  data/211127_Griess_SUP1.xlsx
+    Untracked:  data/211127_Griess_SUP11.xlsx
+    Untracked:  data/211127_Griess_SUP3.xlsx
+    Untracked:  data/211127_Griess_SUP5.xlsx
+    Untracked:  data/211127_Griess_SUP7.xlsx
+    Untracked:  data/211127_Griess_SUP9.xlsx
+    Untracked:  data/211127_Griess_plate0.xlsx
+    Untracked:  data/211127_time_table.xlsx
+    Untracked:  data/211128_Griess_plate1.xlsx
+    Untracked:  data/211128_Griess_plate10.xlsx
+    Untracked:  data/211128_Griess_plate11.xlsx
+    Untracked:  data/211128_Griess_plate2.xlsx
+    Untracked:  data/211128_Griess_plate3.xlsx
+    Untracked:  data/211128_Griess_plate4.xlsx
+    Untracked:  data/211128_Griess_plate5.xlsx
+    Untracked:  data/211128_Griess_plate6.xlsx
+    Untracked:  data/211128_Griess_plate7.xlsx
+    Untracked:  data/211128_Griess_plate8.xlsx
+    Untracked:  data/211128_Griess_plate9.xlsx
+    Untracked:  data/211128_time_table.xlsx
+    Untracked:  data/211201_pH_colorimetric.xlsx
+    Untracked:  data/211203_slurry_vs_water_drying_table.xlsx
+    Untracked:  data/211203_slurry_vs_water_drying_time.xlsx
+    Untracked:  data/211208_pH_colorimetric_T3.xlsx
+    Untracked:  data/211208_pH_colorimetric_T4.xlsx
+    Untracked:  data/211208_pH_colorimetric_T5.xlsx
+    Untracked:  data/211208_pH_colorimetric_plate1.xlsx
+    Untracked:  data/211208_pH_colorimetric_plate2.xlsx
+    Untracked:  data/211208_pH_colorimetric_plate3.xlsx
+    Untracked:  data/211208_time_table.xlsx
+    Untracked:  data/211209_OD600_T1.xlsx
+    Untracked:  data/211209_OD600_T2.xlsx
+    Untracked:  data/211209_OD600_T3.xlsx
+    Untracked:  data/211209_time_table.xlsx
+    Untracked:  data/211210_pH_colorimetric_T0.xlsx
+    Untracked:  data/211210_pH_colorimetric_T1.xlsx
+    Untracked:  data/211210_pH_colorimetric_T2.xlsx
+    Untracked:  data/211210_pH_colorimetric_T3.xlsx
+    Untracked:  data/211210_time_table.xlsx
+    Untracked:  data/211218_pH_colorimetric_t0.xlsx
+    Untracked:  data/211218_pH_colorimetric_t1.xlsx
+    Untracked:  data/211218_pH_colorimetric_t2.xlsx
+    Untracked:  data/211218_pH_colorimetric_t3.xlsx
+    Untracked:  data/211218_pH_colorimetric_t4.xlsx
+    Untracked:  data/211218_time_table.xlsx
+    Untracked:  data/211220_Griess_plate1.xlsx
+    Untracked:  data/211220_Griess_plate10.xlsx
+    Untracked:  data/211220_Griess_plate11.xlsx
+    Untracked:  data/211220_Griess_plate2.xlsx
+    Untracked:  data/211220_Griess_plate3.xlsx
+    Untracked:  data/211220_Griess_plate4.xlsx
+    Untracked:  data/211220_Griess_plate5.xlsx
+    Untracked:  data/211220_Griess_plate6.xlsx
+    Untracked:  data/211220_Griess_plate7.xlsx
+    Untracked:  data/211220_Griess_plate8.xlsx
+    Untracked:  data/211220_Griess_plate9.xlsx
+    Untracked:  data/211220_time_table_AU.xlsx
+    Untracked:  data/211220_time_table_BN.xlsx
+    Untracked:  data/211224_TOC_sample_plate1.xlsx
+    Untracked:  data/220103_Griess_T0.xlsx
+    Untracked:  data/220103_Griess_T1.xlsx
+    Untracked:  data/220103_Griess_T11.xlsx
+    Untracked:  data/220103_Griess_T12.xlsx
+    Untracked:  data/220103_Griess_T2.xlsx
+    Untracked:  data/220103_Griess_T3.xlsx
+    Untracked:  data/220103_Griess_T4.xlsx
+    Untracked:  data/220103_Griess_T5.xlsx
+    Untracked:  data/220103_Griess_T6.xlsx
+    Untracked:  data/220103_Griess_T7.xlsx
+    Untracked:  data/220103_Griess_T8.xlsx
+    Untracked:  data/220103_Griess_T9.xlsx
+    Untracked:  data/220103_time_table.xlsx
+    Untracked:  data/220106_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107-2_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107-3_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107-4_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107-5_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107-6_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107-7_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107-8_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107-9_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220108_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220110_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220110_Ammonia_sample_plate2.xlsx
+    Untracked:  data/220111_Ammonia_sample_T0.xlsx
+    Untracked:  data/220111_Ammonia_sample_T1.xlsx
+    Untracked:  data/220111_Ammonia_sample_T2.xlsx
+    Untracked:  data/220111_Ammonia_sample_T3.xlsx
+    Untracked:  data/220111_TOC_sample_plate1.xlsx
+    Untracked:  data/220112_Ammonia_sample_T11.xlsx
+    Untracked:  data/220112_Ammonia_sample_T12.xlsx
+    Untracked:  data/220112_Ammonia_sample_T4.xlsx
+    Untracked:  data/220112_Ammonia_sample_T5.xlsx
+    Untracked:  data/220112_Ammonia_sample_T6.xlsx
+    Untracked:  data/220112_Ammonia_sample_T7.xlsx
+    Untracked:  data/220112_Ammonia_sample_T8.xlsx
+    Untracked:  data/220112_Ammonia_sample_T9.xlsx
+    Untracked:  data/220113_pH_colorimetric_T0.xlsx
+    Untracked:  data/220113_pH_colorimetric_T12.xlsx
+    Untracked:  data/220113_pH_colorimetric_T2.xlsx
+    Untracked:  data/220113_pH_colorimetric_T3.xlsx
+    Untracked:  data/220113_pH_colorimetric_T8.xlsx
+    Untracked:  data/220125_pH_colorimetric_pH1_mu_opt0.099.xlsx
+    Untracked:  data/220125_pH_colorimetric_pH1_using6.66.xlsx
+    Untracked:  data/220125_pH_colorimetric_pH2_mu_opt0.099.xlsx
+    Untracked:  data/220125_pH_colorimetric_pH2_using6.66.xlsx
+    Untracked:  data/220125_time_table.xlsx
+    Untracked:  data/220128_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220128_Ammonia_sample_plate2.xlsx
+    Untracked:  data/220128_Ammonia_sample_plate3.xlsx
+    Untracked:  data/220128_Ammonia_sample_plate4.xlsx
+    Untracked:  data/220128_Ammonia_sample_plate5.xlsx
+    Untracked:  data/220128_Ammonia_sample_plate6.xlsx
+    Untracked:  data/220128_Griess_plate1.xlsx
+    Untracked:  data/220128_Griess_plate2.xlsx
+    Untracked:  data/220128_Griess_plate3.xlsx
+    Untracked:  data/220128_Griess_plate4.xlsx
+    Untracked:  data/220128_Griess_plate5.xlsx
+    Untracked:  data/220128_Griess_plate6.xlsx
+    Untracked:  data/220128_time_table.xlsx
+    Untracked:  data/220131_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220131_Ammonia_sample_plate2.xlsx
+    Untracked:  data/220131_Ammonia_sample_plate3.xlsx
+    Untracked:  data/220131_Ammonia_sample_plate4.xlsx
+    Untracked:  data/220131_Ammonia_sample_plate5.xlsx
+    Untracked:  data/220131_Ammonia_sample_plate6.xlsx
+    Untracked:  data/220131_Griess_plate1.xlsx
+    Untracked:  data/220131_Griess_plate2.xlsx
+    Untracked:  data/220131_Griess_plate3.xlsx
+    Untracked:  data/220131_Griess_plate4.xlsx
+    Untracked:  data/220131_Griess_plate5.xlsx
+    Untracked:  data/220131_Griess_plate6.xlsx
+    Untracked:  data/220131_pH_colorimetric_pH1_mu_opt_T0.xlsx
+    Untracked:  data/220131_pH_colorimetric_pH2_mu_opt_T0.xlsx
+    Untracked:  data/220131_time_table.xlsx
+    Untracked:  data/ForKiseok_from_Dr_Cuhel.xlsx
+    Untracked:  data/ForKiseok_from_Dr_Cuhel_format_edited.xlsx
+    Untracked:  data/SPNa_86437_021122_edit.xlsx
+    Untracked:  data/TOC_TN_measurement_2_labs_211014.xlsx
+    Untracked:  data/dry_weight_curve(9.5.21).xlsx
+    Untracked:  data/pH_data(11.17.21)-Midway_etc.xlsx
+    Untracked:  data/pH_data(12.6.21)-Midway_incubation_endpoint.xlsx
+    Untracked:  data/pH_data(9.14.21).xlsx
+    Untracked:  data/pH_data(9.28.21).xlsx
+    Untracked:  past_figures/
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/220210_Cuhel_et_al_2010_qPCR_data.Rmd</code>) and HTML (<code>docs/220210_Cuhel_et_al_2010_qPCR_data.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/KiseokUchicago/Denit_visualization_R/blob/14857ef3ccd4675a0f21a8d2d940997ae9f5b495/analysis/220210_Cuhel_et_al_2010_qPCR_data.Rmd" target="_blank">14857ef</a>
+</td>
+<td>
+KiseokUchicago
+</td>
+<td>
+2022-02-13
+</td>
+<td>
+wflow_publish(c(“analysis/220131_pH_during_perturbation3.Rmd”,
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="cuhel-et-al-2010-qpcr-data" class="section level2">
+<h2>Cuhel et al 2010 qPCR data</h2>
+<p>Researcher: <strong>Kiseok Lee</strong><br />
+Experiment Date: NA<br />
+Analysis Date: 2/10/21 Lab: <strong>Seppe Kuehn</strong></p>
+<pre class="r"><code># libraries
+library(dplyr)
+library(ggplot2)
+library(RColorBrewer)
+library(vegan)
+library(tidyverse)
+library(magrittr)
+library(readxl)
+library(reshape2)
+library(gtools)
+library(devtools)
+library(openxlsx)
+library(ape)
+library(stringr)
+library(tidyr)
+library(ggrepel)
+library(ggpubr)
+
+## theme for ggplot
+mytheme &lt;- theme_bw() + theme(text = element_text(family = &quot;serif&quot;)) + theme(plot.title = element_text(size = 19,
+    hjust = 0.5, family = &quot;serif&quot;)) + theme(axis.title.x = element_text(size = 17,
+    hjust = 0.5, family = &quot;serif&quot;)) + theme(axis.title.y = element_text(size = 17,
+    hjust = 0.5, family = &quot;serif&quot;)) + theme(axis.text.x = element_text(hjust = 0.5,
+    vjust = 0.3, size = 13, family = &quot;serif&quot;)) + theme(axis.text.y = element_text(size = 10,
+    family = &quot;serif&quot;)) + theme(panel.grid.major = element_blank()) + theme(panel.grid.minor = element_blank(),
+    panel.background = element_blank(), panel.border = element_blank(), plot.background = element_blank()) +
+    theme(axis.ticks = element_line(size = 1.1))
+
+mytheme_2d &lt;- theme_bw() + theme(text = element_text(family = &quot;serif&quot;)) + theme(plot.title = element_text(size = 19,
+    hjust = 0.5, family = &quot;serif&quot;)) + theme(axis.title.x = element_text(size = 17,
+    hjust = 0.5, family = &quot;serif&quot;)) + theme(axis.title.y = element_text(size = 17,
+    hjust = 0.5, family = &quot;serif&quot;)) + theme(axis.text.x = element_text(hjust = 0.5,
+    vjust = 0.3, size = 13, family = &quot;serif&quot;)) + theme(axis.text.y = element_text(size = 13,
+    family = &quot;serif&quot;)) + # theme(panel.grid.major = element_blank()) +  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) + family
+    family = &quot;serif&quot;)) + # theme(panel.grid.major = element_blank()) +  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) + =
+    family = &quot;serif&quot;)) + # theme(panel.grid.major = element_blank()) +  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) + &quot;serif&quot;))
+    family = &quot;serif&quot;)) + # theme(panel.grid.major = element_blank()) +  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) + +
+    family = &quot;serif&quot;)) + # theme(panel.grid.major = element_blank()) +  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) + #
+    family = &quot;serif&quot;)) + # theme(panel.grid.major = element_blank()) +  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) + theme(panel.grid.major
+    family = &quot;serif&quot;)) + # theme(panel.grid.major = element_blank()) +  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) + =
+    family = &quot;serif&quot;)) + # theme(panel.grid.major = element_blank()) +  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) + element_blank())
+    family = &quot;serif&quot;)) + # theme(panel.grid.major = element_blank()) +  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) + +
+    family = &quot;serif&quot;)) + # theme(panel.grid.major = element_blank()) +  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) + theme(panel.grid.minor
+    family = &quot;serif&quot;)) + # theme(panel.grid.major = element_blank()) +  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) + =
+    family = &quot;serif&quot;)) + # theme(panel.grid.major = element_blank()) +  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) + element_blank(),panel.background=element_blank(),plot.background=element_blank())
+    family = &quot;serif&quot;)) + # theme(panel.grid.major = element_blank()) +  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) + +
+theme(axis.ticks = element_line(size = 1.1))
+
+
+# color collection
+my_color_collection &lt;- c(&quot;#CBD588&quot;, &quot;#5F7FC7&quot;, &quot;orange&quot;, &quot;#AD6F3B&quot;, &quot;#673770&quot;, &quot;#D14285&quot;,
+    &quot;#652926&quot;, &quot;#C84248&quot;, &quot;#8569D5&quot;, &quot;#5E738F&quot;, &quot;#D1A33D&quot;, &quot;#8A7C64&quot;, &quot;#599861&quot;,
+    &quot;#616163&quot;, &quot;#FFCDB2&quot;, &quot;#6D9F71&quot;, &quot;#242F40&quot;, &quot;#CCA43B&quot;, &quot;#F92A82&quot;, &quot;#ED7B84&quot;,
+    &quot;#7EB77F&quot;, &quot;#DEC4A1&quot;, &quot;#E5D1D0&quot;, &quot;#0E8482&quot;, &quot;#C9DAEA&quot;, &quot;#337357&quot;, &quot;#95C623&quot;,
+    &quot;#E55812&quot;, &quot;#04471C&quot;, &quot;#F2D7EE&quot;, &quot;#D3BCC0&quot;, &quot;#A5668B&quot;, &quot;#69306D&quot;, &quot;#0E103D&quot;,
+    &quot;#1A535C&quot;, &quot;#4ECDC4&quot;, &quot;#F7FFF7&quot;, &quot;#FF6B6B&quot;, &quot;#FFE66D&quot;, &quot;#6699CC&quot;, &quot;#FFF275&quot;,
+    &quot;#FF8C42&quot;, &quot;#FF3C38&quot;, &quot;#A23E48&quot;, &quot;#000000&quot;, &quot;#CF5C36&quot;, &quot;#EEE5E9&quot;, &quot;#7C7C7C&quot;,
+    &quot;#EFC88B&quot;, &quot;#2E5266&quot;, &quot;#6E8898&quot;, &quot;#9FB1BC&quot;, &quot;#D3D0CB&quot;, &quot;#E2C044&quot;, &quot;#5BC0EB&quot;,
+    &quot;#FDE74C&quot;, &quot;#9BC53D&quot;, &quot;#E55934&quot;, &quot;#FA7921&quot;, &quot;#CD9BCD&quot;, &quot;#508578&quot;, &quot;#DA5724&quot;)
+
+# for git push, use this instead of using wflow_git_push() git push -u origin
+# master (in the Git app / in the working directory)
+
+# for making pdf file
+library(rmarkdown)
+# render(&#39;analysis/~~.Rmd&#39;, &#39;pdf_document&#39;)</code></pre>
+<pre><code>Error: &lt;text&gt;:35:21: unexpected &#39;)&#39;
+34:     family = &quot;serif&quot;)) + # theme(panel.grid.major = element_blank()) +  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) + family
+35:     family = &quot;serif&quot;)
+                        ^</code></pre>
+</div>
+<div id="import-data" class="section level2">
+<h2>1. Import data</h2>
+<pre class="r"><code>df_qpcr &lt;- read.xlsx(&quot;data/ForKiseok_from_Dr_Cuhel_format_edited.xlsx&quot;)
+
+## plot raw data, in scatter plot.  unit is gene copy number in 1 ng
+df_pl &lt;- melt(df_qpcr, id.vars = c(&quot;Sample&quot;, &quot;square&quot;, &quot;chamber&quot;, &quot;Soil_type&quot;, &quot;pH&quot;),
+    variable.name = &quot;Gene&quot;)
+colnames(df_pl)
+
+df_pl$pH &lt;- factor(df_pl$pH)
+
+ggplot(df_pl, aes(x = Gene, y = value, color = pH, group = pH)) + geom_point(size = 2.5,
+    shape = 21) + # geom_line(size=1)+ shape = 21) + # geom_line(size=1)+
+scale_fill_brewer(palette = &quot;Set2&quot;) + ylab(&quot;Gene copy number ng-1 \n&quot;) + xlab(&quot;\n Gene &quot;) +
+    # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+ggtitle(&quot;Raw data \n&quot;) + mytheme_2d
+
+## There is a need to plot by gene ratio (devided by total Ni gene copy number
+## in one sample) first let&#39;s dataframe
+
+df_q &lt;- df_qpcr %&gt;%
+    mutate(N_gene_sum = rowSums(.[c(&quot;narG&quot;, &quot;napA&quot;, &quot;nirS&quot;, &quot;nirK&quot;, &quot;nosZ&quot;)]))
+df_q &lt;- df_q %&gt;%
+    select(Sample, pH, narG, napA, nirS, nirK, nosZ, N_gene_sum) %&gt;%
+    mutate(narG = narG/N_gene_sum) %&gt;%
+    mutate(napA = napA/N_gene_sum) %&gt;%
+    mutate(nirS = nirS/N_gene_sum) %&gt;%
+    mutate(nirK = nirK/N_gene_sum) %&gt;%
+    mutate(nosZ = nosZ/N_gene_sum) %&gt;%
+    mutate(ratio_sum = rowSums(.[c(&quot;narG&quot;, &quot;napA&quot;, &quot;nirS&quot;, &quot;nirK&quot;, &quot;nosZ&quot;)])) %&gt;%
+    select(-N_gene_sum)
+df_q %&lt;&gt;%
+    select(-ratio_sum)
+df_q_pl &lt;- melt(df_q, id.vars = c(&quot;Sample&quot;, &quot;pH&quot;), variable.name = &quot;Gene&quot;)
+
+df_q_pl$pH &lt;- factor(df_q_pl$pH)
+
+ggplot(df_q_pl, aes(x = Gene, y = value, color = pH, group = pH)) + geom_point(size = 3,
+    shape = 16, alpha = 0.4) + # geom_line(size=1)+ shape = 16, alpha = 0.4) +
+    shape = 16, alpha = 0.4) + # geom_line(size=1)+ # geom_line(size=1)+
+scale_fill_brewer(palette = &quot;Set2&quot;) + ylab(&quot;Ni gene ratio = Gene copy number Ni / sum(Ni) \n&quot;) +
+    xlab(&quot;\n Gene &quot;) + scale_y_continuous(breaks = seq(0, 1, 0.05), limits = c(0,
+    1)) + ggtitle(&quot;Ni gene ratio \n&quot;) + mytheme_2d
+
+# Gene ratio
+ggplot(df_q_pl, aes(x = pH, y = value, color = Gene, group = Gene)) + geom_point(size = 3,
+    shape = 16, alpha = 0.4) + # geom_line(size=1)+ shape = 16, alpha = 0.4) +
+    shape = 16, alpha = 0.4) + # geom_line(size=1)+ # geom_line(size=1)+
+scale_fill_brewer(palette = &quot;Set2&quot;) + ylab(&quot;Ni gene ratio = Gene copy number Ni / sum(Ni) \n&quot;) +
+    xlab(&quot;\n pH &quot;) + scale_y_continuous(breaks = seq(0, 1, 0.05), limits = c(0, 1)) +
+    ggtitle(&quot;Ni gene ratio \n&quot;) + mytheme_2d
+
+# plot by gene
+ggplot(df_q_pl, aes(x = pH, y = value, color = Gene, group = Gene)) + geom_point(size = 3,
+    shape = 16, alpha = 0.7) + # geom_line(size=1)+ shape = 16, alpha = 0.7) +
+    shape = 16, alpha = 0.7) + # geom_line(size=1)+ # geom_line(size=1)+
+scale_fill_brewer(palette = &quot;Set2&quot;) + ylab(&quot;Ni gene ratio = Gene copy number Ni / sum(Ni) \n&quot;) +
+    xlab(&quot;\n pH &quot;) + # scale_y_continuous(breaks = seq(0,1,0.05), limits=c(0, 1))+ xlab(&quot;\n
+    xlab(&quot;\n pH &quot;) + # scale_y_continuous(breaks = seq(0,1,0.05), limits=c(0, 1))+ pH
+    xlab(&quot;\n pH &quot;) + # scale_y_continuous(breaks = seq(0,1,0.05), limits=c(0, 1))+ &quot;)
+    xlab(&quot;\n pH &quot;) + # scale_y_continuous(breaks = seq(0,1,0.05), limits=c(0, 1))+ +
+    xlab(&quot;\n pH &quot;) + # scale_y_continuous(breaks = seq(0,1,0.05), limits=c(0, 1))+ #
+    xlab(&quot;\n pH &quot;) + # scale_y_continuous(breaks = seq(0,1,0.05), limits=c(0, 1))+ scale_y_continuous(breaks
+    xlab(&quot;\n pH &quot;) + # scale_y_continuous(breaks = seq(0,1,0.05), limits=c(0, 1))+ =
+    xlab(&quot;\n pH &quot;) + # scale_y_continuous(breaks = seq(0,1,0.05), limits=c(0, 1))+ seq(0,1,0.05),
+    xlab(&quot;\n pH &quot;) + # scale_y_continuous(breaks = seq(0,1,0.05), limits=c(0, 1))+ limits=c(0,
+    xlab(&quot;\n pH &quot;) + # scale_y_continuous(breaks = seq(0,1,0.05), limits=c(0, 1))+ 1))+
+ggtitle(&quot;Ni gene ratio \n&quot;) + mytheme_2d + facet_grid(. ~ Gene) + theme(strip.background = element_rect(colour = &quot;black&quot;,
+    fill = &quot;white&quot;, size = 0.1))
+
+# perform statistical test
+head(df_q_pl)
+
+
+
+
+test &lt;- aggregate(df_q_pl$value, by = list(df_q_pl$pH, df_q_pl$Gene), max)
+test
+# colnames(test) &lt;- c(&#39;Label&#39;, &#39;MaxAbund&#39;) two way anova:
+# https://www.sheffield.ac.uk/polopoly_fs/1.536444!/file/MASH_2way_ANOVA_in_R.pdf
+model &lt;- aov(value ~ as.factor(pH) * as.factor(Gene), data = df_q_pl)
+summary(model)
+
+# Produce a histogram of the residuals.
+res &lt;- model$residuals
+hist(res, main = &quot;Histogram of residuals&quot;, xlab = &quot;Residuals&quot;)
+# The Levene&#39;s test for equality of variances is in the additional ‘car’
+# package.
+library(car)
+leveneTest(value ~ as.factor(pH) * as.factor(Gene), data = df_q_pl)
+# The p value is 0.8563 which is less than 0.05, so equal variances can not be
+# assumed.
+
+hsd_total &lt;- HSD.test(model, c(&quot;as.factor(pH)&quot;, &quot;as.factor(Gene)&quot;), group = T)
+
+
+
+
+## let&#39;s do it Gene by Gene
+df_narG &lt;- df_q_pl %&gt;%
+    filter(Gene == &quot;narG&quot;)
+test &lt;- aggregate(df_narG$value, by = list(df_narG$pH), max) %&gt;%
+    rename(Max = x, pH = Group.1)
+model_narG &lt;- aov(value ~ as.factor(pH), data = df_narG)
+summary(model_narG)
+TukeyHSD(model_narG)
+library(agricolae)
+hsd &lt;- HSD.test(model_narG, &quot;as.factor(pH)&quot;, group = T)
+hsd1 &lt;- tibble::rownames_to_column(hsd$groups, var = &quot;pH&quot;)
+hsd1 &lt;- data.frame(hsd1)
+hsd1 &lt;- merge(test, hsd1, by = &quot;pH&quot;)
+
+ggplot(df_narG, aes(x = pH, y = value)) + stat_boxplot(geom = &quot;errorbar&quot;, width = 0.5) +
+    geom_boxplot(fill = &quot;white&quot;) + #geom_text(data=hsd1,aes(x=Label,y=3.5,label=groups),vjust=0)+ geom_boxplot(fill
+    geom_boxplot(fill = &quot;white&quot;) + #geom_text(data=hsd1,aes(x=Label,y=3.5,label=groups),vjust=0)+ =
+    geom_boxplot(fill = &quot;white&quot;) + #geom_text(data=hsd1,aes(x=Label,y=3.5,label=groups),vjust=0)+ &quot;white&quot;)
+    geom_boxplot(fill = &quot;white&quot;) + #geom_text(data=hsd1,aes(x=Label,y=3.5,label=groups),vjust=0)+ +
+    geom_boxplot(fill = &quot;white&quot;) + #geom_text(data=hsd1,aes(x=Label,y=3.5,label=groups),vjust=0)+ #geom_text(data=hsd1,aes(x=Label,y=3.5,label=groups),vjust=0)+
+geom_text(data = hsd1, aes(x = pH, y = Max, label = groups), vjust = -1, size = 2.5) +
+    xlab(&quot;\n pH&quot;) + ylab(&quot;Ni gene ratio \n&quot;) + mytheme_2d + facet_grid(. ~ Gene) +
+    theme(strip.background = element_rect(colour = &quot;black&quot;, fill = &quot;white&quot;, size = 0.1))
+
+## function
+
+# color
+gg_color_hue &lt;- function(n) {
+    hues = seq(15, 375, length = n + 1)
+    hcl(h = hues, l = 65, c = 100)[1:n]
+}
+
+cols = gg_color_hue(5)
+
+plot_Tukeytest &lt;- function(gene_name, color) {
+    df_narG &lt;- df_q_pl %&gt;%
+        filter(Gene == gene_name)
+    test &lt;- aggregate(df_narG$value, by = list(df_narG$pH), max) %&gt;%
+        rename(Max = x, pH = Group.1)
+    model_narG &lt;- aov(value ~ as.factor(pH), data = df_narG)
+    summary(model_narG)
+    TukeyHSD(model_narG)
+    library(agricolae)
+    hsd &lt;- HSD.test(model_narG, &quot;as.factor(pH)&quot;, group = T)
+    hsd1 &lt;- tibble::rownames_to_column(hsd$groups, var = &quot;pH&quot;)
+    hsd1 &lt;- data.frame(hsd1)
+    hsd1 &lt;- merge(test, hsd1, by = &quot;pH&quot;)
+
+    p1 &lt;- ggplot(df_narG, aes(x = pH, y = value)) + stat_boxplot(geom = &quot;errorbar&quot;,
+        width = 0.5) + geom_boxplot(fill = color) + #geom_text(data=hsd1,aes(x=Label,y=3.5,label=groups),vjust=0)+ width
+        width = 0.5) + geom_boxplot(fill = color) + #geom_text(data=hsd1,aes(x=Label,y=3.5,label=groups),vjust=0)+ =
+        width = 0.5) + geom_boxplot(fill = color) + #geom_text(data=hsd1,aes(x=Label,y=3.5,label=groups),vjust=0)+ 0.5)
+        width = 0.5) + geom_boxplot(fill = color) + #geom_text(data=hsd1,aes(x=Label,y=3.5,label=groups),vjust=0)+ +
+        width = 0.5) + geom_boxplot(fill = color) + #geom_text(data=hsd1,aes(x=Label,y=3.5,label=groups),vjust=0)+ geom_boxplot(fill
+        width = 0.5) + geom_boxplot(fill = color) + #geom_text(data=hsd1,aes(x=Label,y=3.5,label=groups),vjust=0)+ =
+        width = 0.5) + geom_boxplot(fill = color) + #geom_text(data=hsd1,aes(x=Label,y=3.5,label=groups),vjust=0)+ color)
+        width = 0.5) + geom_boxplot(fill = color) + #geom_text(data=hsd1,aes(x=Label,y=3.5,label=groups),vjust=0)+ +
+        width = 0.5) + geom_boxplot(fill = color) + #geom_text(data=hsd1,aes(x=Label,y=3.5,label=groups),vjust=0)+ #geom_text(data=hsd1,aes(x=Label,y=3.5,label=groups),vjust=0)+
+    geom_text(data = hsd1, aes(x = pH, y = Max, label = groups), vjust = -1, size = 2.5) +
+        xlab(&quot;\n pH&quot;) + ylab(&quot;Ni gene ratio \n&quot;) + mytheme_2d + facet_grid(. ~ Gene) +
+        theme(strip.background = element_rect(colour = &quot;black&quot;, fill = &quot;white&quot;, size = 0.1))
+    return(p1)
+}
+
+p1 &lt;- plot_Tukeytest(gene_name = &quot;narG&quot;, color = cols[1])
+p2 &lt;- plot_Tukeytest(gene_name = &quot;napA&quot;, color = cols[2])
+p3 &lt;- plot_Tukeytest(gene_name = &quot;nirS&quot;, color = cols[3])
+p4 &lt;- plot_Tukeytest(gene_name = &quot;nirK&quot;, color = cols[4])
+p5 &lt;- plot_Tukeytest(gene_name = &quot;nosZ&quot;, color = cols[5])
+
+# wow this:
+# https://stackoverflow.com/questions/11076567/plot-a-legend-and-well-spaced-universal-y-axis-and-main-titles-in-grid-arrange
+library(gridExtra)
+grid.arrange(p1, p2 + ylab(NULL), p3 + ylab(NULL), p4 + ylab(NULL), p5 + ylab(NULL),
+    nrow = 1)</code></pre>
+<pre><code>Error: &lt;text&gt;:38:15: unexpected &#39;,&#39;
+37:     shape = 16, alpha = 0.4) + # geom_line(size=1)+ shape = 16, alpha = 0.4) +
+38:     shape = 16,
+                  ^</code></pre>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.0.3 (2020-10-10)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 10 x64 (build 22000)
+
+Matrix products: default
+
+locale:
+[1] LC_COLLATE=English_United States.1252 
+[2] LC_CTYPE=English_United States.1252   
+[3] LC_MONETARY=English_United States.1252
+[4] LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.1252    
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] knitr_1.37      workflowr_1.6.2
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_1.0.5        whisker_0.4       magrittr_2.0.1    R6_2.5.0         
+ [5] rlang_0.4.10      fansi_0.4.2       stringr_1.4.0     tools_4.0.3      
+ [9] xfun_0.29         utf8_1.1.4        git2r_0.28.0      jquerylib_0.1.4  
+[13] htmltools_0.5.1.1 ellipsis_0.3.2    rprojroot_2.0.2   yaml_2.2.1       
+[17] digest_0.6.27     tibble_3.0.4      lifecycle_1.0.0   crayon_1.4.1     
+[21] formatR_1.11      later_1.2.0       sass_0.4.0        vctrs_0.3.8      
+[25] promises_1.2.0.1  fs_1.5.0          glue_1.4.2        evaluate_0.14    
+[29] rmarkdown_2.9     stringi_1.5.3     bslib_0.2.5.1     compiler_4.0.3   
+[33] pillar_1.6.0      jsonlite_1.7.2    httpuv_1.6.0      pkgconfig_2.0.3  </code></pre>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
