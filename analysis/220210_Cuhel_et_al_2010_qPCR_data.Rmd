@@ -1,0 +1,261 @@
+---
+title: "220210_Cuhel_et_al_2010_qPCR_data"
+author: "KiseokUchicago"
+date: "2022-02-10"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+
+```{r global_options, include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(fig.width=11, fig.height=9,
+                      error=TRUE, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE ,tidy=TRUE)
+
+# knitr::opts_chunk$set(fig.width=11, fig.height=9,
+#                       error=TRUE, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE,
+#                       tidy.opts=list(width.cutoff=40),tidy=TRUE)
+```
+
+## Cuhel et al 2010 qPCR data
+Researcher: **Kiseok Lee** \
+Experiment Date: NA \
+Analysis Date: 2/10/21
+Lab: **Seppe Kuehn**
+
+```{r}
+# libraries
+library(dplyr)
+library(ggplot2)
+library(RColorBrewer)
+library(vegan)
+library(tidyverse)
+library(magrittr)
+library(readxl)
+library(reshape2)
+library(gtools)
+library(devtools)
+library(openxlsx)
+library(ape)
+library(stringr)
+library(tidyr)
+library(ggrepel)
+library(ggpubr)
+
+## theme for ggplot
+mytheme <- theme_bw() + 
+  theme(text = element_text(family="serif")) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5, family="serif")) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13, family="serif"))+
+  theme(axis.text.y = element_text(size=10, family="serif"))+
+  theme(panel.grid.major = element_blank()) +
+  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),panel.border=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))
+
+mytheme_2d <- theme_bw() + 
+  theme(text = element_text(family="serif")) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5, family="serif")) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5, family="serif")) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13, family="serif"))+
+  theme(axis.text.y = element_text(size=13, family="serif"))+
+  # theme(panel.grid.major = element_blank()) +
+  # theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))
+
+
+# color collection
+my_color_collection <- c(
+  "#CBD588", "#5F7FC7", "orange", "#AD6F3B", "#673770", 
+  "#D14285", "#652926", "#C84248", "#8569D5", "#5E738F",
+  "#D1A33D", "#8A7C64", "#599861","#616163", "#FFCDB2",
+  "#6D9F71", "#242F40",
+  "#CCA43B", "#F92A82", "#ED7B84", "#7EB77F", 
+  "#DEC4A1", "#E5D1D0", '#0E8482', '#C9DAEA', '#337357', 
+  '#95C623', '#E55812', '#04471C', '#F2D7EE', '#D3BCC0', 
+  '#A5668B', '#69306D', '#0E103D', '#1A535C', '#4ECDC4', 
+  '#F7FFF7', '#FF6B6B', '#FFE66D', '#6699CC', '#FFF275', 
+  '#FF8C42', '#FF3C38', '#A23E48', '#000000', '#CF5C36', 
+  '#EEE5E9', '#7C7C7C', '#EFC88B', '#2E5266', '#6E8898', 
+  '#9FB1BC', '#D3D0CB', '#E2C044', '#5BC0EB', '#FDE74C', 
+  '#9BC53D', '#E55934', '#FA7921', "#CD9BCD", "#508578", "#DA5724")
+
+# for git push, use this instead of using wflow_git_push()
+# git push -u origin master (in the Git app / in the working directory)
+
+# for making pdf file
+library(rmarkdown)
+# render("analysis/~~.Rmd", "pdf_document")
+```
+
+## 1. Import data
+```{r}
+df_qpcr <- read.xlsx("data/ForKiseok_from_Dr_Cuhel_format_edited.xlsx")
+
+## plot raw data, in scatter plot.
+## unit is gene copy number in 1 ng
+df_pl <- melt(df_qpcr, id.vars = c("Sample","square","chamber","Soil_type","pH"), variable.name = "Gene")
+colnames(df_pl)
+
+df_pl$pH <- factor(df_pl$pH)
+
+ggplot(df_pl, aes(x=Gene, y=value, color=pH, group=pH)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("Gene copy number ng-1 \n") +
+  xlab("\n Gene ") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Raw data \n") +
+  mytheme_2d
+
+## There is a need to plot by gene ratio (devided by total Ni gene copy number in one sample)
+## first let's dataframe
+
+df_q <- df_qpcr %>% mutate(N_gene_sum = rowSums(.[c("narG","napA","nirS","nirK","nosZ")]))
+df_q <- df_q %>% select(Sample, pH, narG, napA, nirS, nirK, nosZ, N_gene_sum) %>% mutate(narG = narG/N_gene_sum) %>% mutate(napA = napA/N_gene_sum) %>% mutate(nirS = nirS/N_gene_sum) %>% mutate(nirK=nirK / N_gene_sum) %>% mutate(nosZ = nosZ / N_gene_sum) %>% mutate(ratio_sum = rowSums(.[c("narG","napA","nirS","nirK","nosZ")])) %>% select(-N_gene_sum)
+df_q %<>% select(-ratio_sum) 
+df_q_pl <- melt(df_q, id.vars = c("Sample","pH"), variable.name = "Gene")
+
+df_q_pl$pH <- factor(df_q_pl$pH)
+
+ggplot(df_q_pl, aes(x=Gene, y=value, color=pH, group=pH)) +
+  geom_point(size=3, shape=16, alpha = 0.4) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("Ni gene ratio = Gene copy number Ni / sum(Ni) \n") +
+  xlab("\n Gene ") +
+  scale_y_continuous(breaks = seq(0,1,0.05), limits=c(0, 1))+
+  ggtitle("Ni gene ratio \n") +
+  mytheme_2d
+
+# Gene ratio
+ggplot(df_q_pl, aes(x=pH, y=value, color=Gene, group=Gene)) +
+  geom_point(size=3, shape=16, alpha = 0.4) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("Ni gene ratio = Gene copy number Ni / sum(Ni) \n") +
+  xlab("\n pH ") +
+  scale_y_continuous(breaks = seq(0,1,0.05), limits=c(0, 1))+
+  ggtitle("Ni gene ratio \n") +
+  mytheme_2d
+
+# plot by gene
+ggplot(df_q_pl, aes(x=pH, y=value, color=Gene, group=Gene)) +
+  geom_point(size=3, shape=16, alpha = 0.7) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("Ni gene ratio = Gene copy number Ni / sum(Ni) \n") +
+  xlab("\n pH ") +
+  # scale_y_continuous(breaks = seq(0,1,0.05), limits=c(0, 1))+
+  ggtitle("Ni gene ratio \n") +
+  mytheme_2d +
+  facet_grid(. ~ Gene) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+# perform statistical test
+head(df_q_pl)
+
+
+
+
+test <- aggregate(df_q_pl$value, by = list(df_q_pl$pH, df_q_pl$Gene), max)
+test
+# colnames(test) <- c("Label", "MaxAbund")
+# two way anova: https://www.sheffield.ac.uk/polopoly_fs/1.536444!/file/MASH_2way_ANOVA_in_R.pdf 
+model <- aov(value ~ as.factor(pH)*as.factor(Gene), data=df_q_pl)
+summary(model)
+
+# Produce  a  histogram  of  the  residuals.
+res <- model$residuals
+hist(res, main="Histogram of residuals",xlab="Residuals")  
+# The  Levene's test  for equality  of  variances is in  the additional ‘car’  package.
+library(car)
+leveneTest(value ~ as.factor(pH)*as.factor(Gene), data=df_q_pl)
+# The  p  value  is 0.8563  which  is less than  0.05,  so  equal variances  can not  be  assumed.
+
+hsd_total <- HSD.test(model, c("as.factor(pH)","as.factor(Gene)"), group=T)
+
+
+
+
+## let's do it Gene by Gene
+df_narG <- df_q_pl %>% filter(Gene == "narG")
+test <- aggregate(df_narG$value, by = list(df_narG$pH), max) %>% rename(Max = x, pH = Group.1) 
+model_narG <- aov(value ~ as.factor(pH), data=df_narG)
+summary(model_narG)
+TukeyHSD(model_narG)
+library(agricolae)
+hsd <- HSD.test(model_narG, "as.factor(pH)", group=T)
+hsd1 <- tibble::rownames_to_column(hsd$groups, var = 'pH')
+hsd1 <- data.frame(hsd1)
+hsd1 <- merge(test, hsd1, by = 'pH')
+
+ggplot(df_narG, aes(x=pH,y=value))+
+  stat_boxplot(geom ='errorbar', width = 0.5) +
+  geom_boxplot(fill='white')+
+  #geom_text(data=hsd1,aes(x=Label,y=3.5,label=groups),vjust=0)+
+  geom_text(data=hsd1,aes(x=pH,y=Max, label=groups), vjust=-1,size=2.5) +
+  xlab('\n pH')+
+  ylab("Ni gene ratio \n") +
+  mytheme_2d +
+  facet_grid(. ~ Gene) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+  
+## function
+
+# color
+gg_color_hue <- function(n) {
+  hues = seq(15, 375, length = n + 1)
+  hcl(h = hues, l = 65, c = 100)[1:n]
+}
+
+cols = gg_color_hue(5)
+
+plot_Tukeytest <- function(gene_name, color){
+  df_narG <- df_q_pl %>% filter(Gene == gene_name)
+  test <- aggregate(df_narG$value, by = list(df_narG$pH), max) %>% rename(Max = x, pH = Group.1) 
+  model_narG <- aov(value ~ as.factor(pH), data=df_narG)
+  summary(model_narG)
+  TukeyHSD(model_narG)
+  library(agricolae)
+  hsd <- HSD.test(model_narG, "as.factor(pH)", group=T)
+  hsd1 <- tibble::rownames_to_column(hsd$groups, var = 'pH')
+  hsd1 <- data.frame(hsd1)
+  hsd1 <- merge(test, hsd1, by = 'pH')
+  
+  p1 <- ggplot(df_narG, aes(x=pH,y=value))+
+    stat_boxplot(geom ='errorbar', width = 0.5) +
+    geom_boxplot(fill=color)+
+    #geom_text(data=hsd1,aes(x=Label,y=3.5,label=groups),vjust=0)+
+    geom_text(data=hsd1,aes(x=pH,y=Max, label=groups), vjust=-1,size=2.5) +
+    xlab('\n pH')+
+    ylab("Ni gene ratio \n") +
+    mytheme_2d +
+    facet_grid(. ~ Gene) +
+    theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+  return(p1)
+}
+
+p1 <- plot_Tukeytest(gene_name = "narG", color = cols[1])
+p2 <- plot_Tukeytest(gene_name = "napA", color = cols[2])
+p3 <- plot_Tukeytest(gene_name = "nirS", color = cols[3])
+p4 <- plot_Tukeytest(gene_name = "nirK", color = cols[4])
+p5 <- plot_Tukeytest(gene_name = "nosZ", color = cols[5])
+
+# wow this: https://stackoverflow.com/questions/11076567/plot-a-legend-and-well-spaced-universal-y-axis-and-main-titles-in-grid-arrange
+library(gridExtra)
+grid.arrange(p1, p2 +ylab(NULL), p3 + ylab(NULL), p4+ylab(NULL), p5+ylab(NULL), nrow=1)
+
+```
+
+
+
+
+
+
+
+

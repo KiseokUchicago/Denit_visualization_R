@@ -260,6 +260,157 @@ ggplot(df_T9, aes(x=H_mM, y=pH_colorimetric, color=Soil, group=Soil)) +
 
 ```
 
+## 2.1. Let's fit a line to the pH titration curves to infer the pH - H_mM
+```{r}
+
+df_plot_no1 <- df_plot %>% filter(!(pH_colorimetric==1))
+
+ggplot(df_plot_no1, aes(x=H_mM, y=pH_colorimetric, color=Time_days, group=Time_days)) +
+  geom_point(size=3, shape=16, alpha=1) +
+  # geom_errorbar(aes(ymin=Ave_pH - Std_pH, ymax=Ave_pH + Std_pH), width=.05)+
+  geom_line(size=1)+
+  geom_vline(xintercept=0, linetype="dashed", color = "black")+
+  # scale_color_brewer(palette='Set1') +
+  ylab("pH \n") +
+  xlab("\n added [H+] mM") +
+  scale_x_continuous(breaks = seq(-100,100,5), limits=c(-100, 100))+
+  scale_y_continuous(breaks = seq(0,14,1), limits=c(0, 14))+
+  ggtitle("Soil pH perturbation & titration curves (LaBaghWoods1: pH 6.66) \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d
+
+df_2.09 <- df_plot_no1 %>% filter(Time_days == 2.09 & H_mM > -30) %>% select(pH_colorimetric, H_mM, Time_days) # fit the line to the second day
+dim(df_2.09)
+
+df_2.09$H_mM_2 <- (df_2.09$H_mM)^2
+df_2.09$H_mM_3 <- (df_2.09$H_mM)^3
+
+fit.pH <- lm(pH_colorimetric ~ H_mM + H_mM_2 + H_mM_3, df_2.09)
+summary(fit.pH)
+
+perturbH <- seq(-100, 100, 0.1)
+pHPredict <- predict(fit.pH,list(H_mM=perturbH, H_mM_2=perturbH^2, H_mM_3=perturbH^3))
+df_auc_poly <- data.frame(H_mM = perturbH, pH = pHPredict)
+plot(perturbH, pHPredict)
+
+# how about plotting a sigmoidal function?
+
+plot(df_2.09$pH_colorimetric ~ df_2.09$H_mM)
+
+fit.sig <- nls(pH_colorimetric ~ SSlogis(H_mM, Asym, xmid, scal), data =df_2.09)
+summary(fit.sig)
+
+perturbH <- seq(-100, 100, 0.1)
+pHPredict <- predict(fit.sig, list(H_mM=perturbH))
+df_sig <- data.frame(H_mM = perturbH, pH = pHPredict)
+plot(perturbH, predict(fit.sig, list(H_mM=perturbH)))
+
+
+
+# (1) Plot fitted sigmoid line
+ggplot(df_2.09, aes(x=H_mM, y=pH_colorimetric)) +
+  geom_point(size=2.5, shape=16, color = "brown") +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  xlab("Amount of pH perturbation (H+ mM) \n") +
+  ylab("\n pH_colorimetric") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,family="serif", show.legend = FALSE)+
+  # ggtitle("Correlation with perturbation and area under nitrate curve \n") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  geom_line(data = df_sig, aes(x = H_mM, y = pH), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=10, label= paste0("y = ", round(coef(fit.sig)[[1]],3), "+", round(coef(fit.sig)[[2]],3),"x+",round(coef(fit.sig)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.sig)$r.squared,3)), color = "maroon2") +
+  mytheme_2d
+
+## use artificial dataset to fit the sigmoid function
+
+## how about we add some points? (This is a dangerous step)
+added_points = 10
+df_artificial_left <- data.frame(pH_colorimetric = rep(9, added_points), H_mM = seq(-30, -100, length = added_points), Time_days= rep(2.09, added_points))
+df_artificial_right <- data.frame(pH_colorimetric = rep(2.5, added_points), H_mM = seq(100, 170, length = added_points), Time_days= rep(2.09, added_points))
+df_2.09 <- df_plot_no1 %>% filter(Time_days == 2.09 & H_mM > -30) %>% select(pH_colorimetric, H_mM, Time_days) # fit the line to the second day
+dim(df_2.09)
+df_2.09_artificial <- rbind(df_2.09, df_artificial_left, df_artificial_right)
+
+
+plot(df_2.09_artificial$pH_colorimetric ~ df_2.09_artificial$H_mM)
+
+fit.sig <- nls(pH_colorimetric ~ SSlogis(H_mM, Asym, xmid, scal), data =df_2.09_artificial)
+summary(fit.sig)
+
+perturbH <- seq(-100, 100, 0.1)
+pHPredict <- predict(fit.sig, list(H_mM=perturbH))
+df_sig <- data.frame(H_mM = perturbH, pH = pHPredict)
+lines(perturbH, predict(fit.sig, list(H_mM=perturbH)), col = 'red')
+
+# (1) Plot fitted linear regression line
+ggplot(df_2.09, aes(x=H_mM, y=pH_colorimetric)) +
+  geom_point(size=2.5, shape=16, color = "brown") +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  xlab("Amount of pH perturbation (H+ mM) \n") +
+  ylab("\n pH_colorimetric") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,family="serif", show.legend = FALSE)+
+  # ggtitle("Correlation with perturbation and area under nitrate curve \n") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  geom_line(data = df_sig, aes(x = H_mM, y = pH), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=10, label= paste0("y = ", round(coef(fit.sig)[[1]],3), "+", round(coef(fit.sig)[[2]],3),"x+",round(coef(fit.sig)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.sig)$r.squared,3)), color = "maroon2") +
+  mytheme_2d
+
+
+## just draw our own sigmoid plot
+plot(df_2.09$pH_colorimetric ~ df_2.09$H_mM, xlim=c(-100, 100), ylim = c(2, 10))
+
+x <- seq(-100, 100, 0.1)
+y <- (6.5 / (1+ exp(1*(0.07*(x+125))-10))) + 2.5
+lines(x, y, col = 'red')
+df_draw <- data.frame(H_mM = x, pH = y)
+
+ggplot(df_2.09, aes(x=H_mM, y=pH_colorimetric)) +
+  geom_point(size=2.5, shape=16, color = "brown") +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  xlab("Amount of pH perturbation (H+ mM) \n") +
+  ylab("\n pH_colorimetric") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,family="serif", show.legend = FALSE)+
+  ggtitle("Artificial sigmoidal tritration curve (pink) drawn for inferring pH \n") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  geom_line(data = df_draw, aes(x = H_mM, y = pH), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=10, label= paste0("y = ", round(coef(fit.sig)[[1]],3), "+", round(coef(fit.sig)[[2]],3),"x+",round(coef(fit.sig)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.sig)$r.squared,3)), color = "maroon2") +
+  mytheme_2d
+
+
+```
+
+```{r}
+
+library(titrationCurves)
+wb_sa(eqpt = TRUE, main = "Titration of WB w/ SA")
+wb_sa(pka = 7, col = "blue", overlay = TRUE)
+
+
+```
+
+
+
 ## 3. Time dynamics of pH
 
 ```{r}
@@ -310,8 +461,8 @@ plot(df_no_no3$Time_hours, df_no_no3$pH_colorimetric, )
 points(df_no_ab$Time_hours, df_no_ab$pH_colorimetric, col='red')
 
 # plot ave and std
-df_no_no3_ave <- df_no_no3 %>% group_by(H_mM, Soil, Time_hours) %>% summarize(pH = mean(pH_colorimetric), std_pH = std(pH_colorimetric)) %>% ungroup() %>% mutate(Sample_type = "No_Nitrate_added")
-df_no_ab_ave <- df_no_ab %>% group_by(H_mM, Soil, Time_hours) %>% summarize(pH = mean(pH_colorimetric), std_pH = std(pH_colorimetric)) %>% ungroup() %>% mutate(Sample_type = "2mM_Nitrate_added")
+df_no_no3_ave <- df_no_no3 %>% group_by(H_mM, Soil, Time_hours) %>% summarize(pH = mean(pH_colorimetric), std_pH = sd(pH_colorimetric)) %>% ungroup() %>% mutate(Sample_type = "No_Nitrate_added")
+df_no_ab_ave <- df_no_ab %>% group_by(H_mM, Soil, Time_hours) %>% summarize(pH = mean(pH_colorimetric), std_pH = sd(pH_colorimetric)) %>% ungroup() %>% mutate(Sample_type = "2mM_Nitrate_added")
 
 df_no <- rbind(df_no_no3_ave, df_no_ab_ave)
 
