@@ -47,7 +47,7 @@ mytheme <- theme_bw() +
   theme(axis.title.x = element_text(size = 17,hjust = 0.5, family="serif")) + 
   theme(axis.title.y = element_text(size = 17,hjust = 0.5, family="serif")) + 
   theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13, family="serif"))+
-  theme(axis.text.y = element_text(size=10, family="serif"))+
+  theme(axis.text.y = element_text(size=13, family="serif"))+
   theme(panel.grid.major = element_blank()) +
   theme(panel.grid.minor = element_blank(),panel.background=element_blank(),panel.border=element_blank(),plot.background=element_blank()) +
   theme(axis.ticks = element_line(size = 1.1))
@@ -748,4 +748,7 @@ ggplot(df_melt, aes(x=Sample, y=value, fill= Measurement)) +
 
 
 ```
+
+
+
 
