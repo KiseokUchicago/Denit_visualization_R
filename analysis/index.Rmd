@@ -47,3 +47,12 @@ Welcome to Kiseok Denitrification data visualization website.
 * [220131_pH_during_perturbation3 (1/31/22)](220131_pH_during_perturbation3.html)
 * [220131_Griess_pH_perturbation3 (1/31/22)](220131_Griess_pH_perturbation3.html)
 * [220210_Cuhel_et_al_2010_qPCR_data (2/10/22)](220210_Cuhel_et_al_2010_qPCR_data.html)
+* [220327_Griess_3_soil_pH_perturbation (3/27/22)](220327_Griess_3_soil_pH_perturbation.html)
+* [220329_pH_3soil (3/29/22)](220329_pH_3soil.html)
+* [220407_pH_troubleshooting.Rmd (4/7/22)](220407_pH_troubleshooting.htmlwf)
+
+
+
+
+
+
