@@ -1,0 +1,353 @@
+---
+title: "220603_TOC_biomass_chloroform"
+author: "KiseokUchicago"
+date: "2022-06-04"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=11, fig.height=9,
+                      error=TRUE, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE)
+```
+
+## TOC(Total organic carbon) measurements: Biomass measurement with chloroform direct application
+Researcher: **Kiseok Lee** \
+Experiment Date: 6/3/22 \
+Analysis Date: 6/4/22 \
+Lab: **Seppe Kuehn**
+
+```{r}
+# libraries
+library(dplyr)
+library(ggplot2)
+library(RColorBrewer)
+library(vegan)
+library(tidyverse)
+library(magrittr)
+library(readxl)
+library(reshape2)
+library(gtools)
+library(devtools)
+library(openxlsx)
+library(ape)
+library(stringr)
+library(tidyr)
+library(ggrepel)
+library(ggpubr)
+
+## theme for ggplot
+mytheme <- theme_bw() + 
+  theme(text = element_text(face="bold", colour = 'black')) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13,face="bold", colour = 'black'))+
+  theme(axis.text.y = element_text(size=13,face="bold", colour = 'black'))+
+  theme(panel.grid.major = element_blank()) +
+  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),panel.border=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))+
+  theme(legend.text=element_text(size=10,face="bold", colour = 'black'))
+
+
+mytheme_2d <- theme_bw() + 
+  theme(text = element_text(face="bold", colour = 'black')) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13,face="bold", colour = 'black'))+
+  theme(axis.text.y = element_text(size=13,face="bold", colour = 'black'))+
+  # theme(panel.grid.major = element_blank()) +
+  # theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))+
+  theme(legend.text=element_text(size=10,face="bold", colour = 'black'))
+
+
+
+# color collection
+my_color_collection <- c(
+  "#CBD588", "#5F7FC7", "orange", "#AD6F3B", "#673770", 
+  "#D14285", "#652926", "#C84248", "#8569D5", "#5E738F",
+  "#D1A33D", "#8A7C64", "#599861","#616163", "#FFCDB2",
+  "#6D9F71", "#242F40",
+  "#CCA43B", "#F92A82", "#ED7B84", "#7EB77F", 
+  "#DEC4A1", "#E5D1D0", '#0E8482', '#C9DAEA', '#337357', 
+  '#95C623', '#E55812', '#04471C', '#F2D7EE', '#D3BCC0', 
+  '#A5668B', '#69306D', '#0E103D', '#1A535C', '#4ECDC4', 
+  '#F7FFF7', '#FF6B6B', '#FFE66D', '#6699CC', '#FFF275', 
+  '#FF8C42', '#FF3C38', '#A23E48', '#000000', '#CF5C36', 
+  '#EEE5E9', '#7C7C7C', '#EFC88B', '#2E5266', '#6E8898', 
+  '#9FB1BC', '#D3D0CB', '#E2C044', '#5BC0EB', '#FDE74C', 
+  '#9BC53D', '#E55934', '#FA7921', "#CD9BCD", "#508578", "#DA5724")
+
+# for git push, use this instead of using wflow_git_push()
+# git push -u origin master (in the Git app / in the working directory)
+
+# for making pdf file
+library(rmarkdown)
+# render("analysis/~~.Rmd", "pdf_document")
+
+```
+
+## 1. Import data table from python code
+```{r}
+# import file
+# 20ul
+df_20ul_1 <- openxlsx::read.xlsx("data/220603_TOC_sample_plate1.xlsx")
+df_20ul_2 <- openxlsx::read.xlsx("data/220603_TOC_sample_plate2.xlsx")
+# df_20ul_3 <- openxlsx::read.xlsx("data/220603_TOC_sample_plate3.xlsx")
+
+# only use left six columns
+# df_20ul_1 %<>% filter(Soil == "LaBaghWoods_pH6.66")
+
+# remove wells H06, H09
+# df_20ul_1 %<>% filter(!(Well %in% c("A01", "A03", "H03")))
+# dim(df_20ul_1)
+# df_20ul_2 %<>% filter(!(Well %in% c("D12")))
+# dim(df_20ul_3)
+
+# head(df_20ul_2)
+# colnames(df_20ul_2)
+# dim(df_20ul_2)
+
+df_20ul <- rbind(df_20ul_1, df_20ul_2)
+
+# remove NA
+dim(df_20ul)
+df_20ul <- na.omit(df_20ul)
+dim(df_20ul)
+
+
+# Get the metadata for time point and left join
+# Time_table <- openxlsx::read.xlsx("data/220519_time_table.xlsx")
+# Time_table_BN <- openxlsx::read.xlsx("data/220327_time_table_BN.xlsx")
+# Time_table <- rbind(Time_table_AU, Time_table_BN)
+
+# Time_table %<>% select(-Date) 
+# Time_table$Time_hours <- round(Time_table$Time_hours, 1)
+# Time_table$Time_days <- round(Time_table$Time_days, 1)
+# df_time <- Time_table
+# dim(df_20ul)
+# df_20ul <- df_20ul %>% left_join(Time_table, by=("Time_point"="Time_point"))
+# dim(df_20ul)
+# colnames(df_20ul)
+
+```
+
+
+## 2. Let's plot
+```{r}
+colnames(df_20ul)
+# look at the LB
+df_plot <- df_20ul
+
+# compare the filtered and non filtered
+colnames(df_plot)
+dim(df_plot)
+
+# plot all
+ggplot(df_plot, aes(x=Dilution_factor, y=TOC_mgml, color=Sample_type, group=Sample_type)) +
+  geom_point(size=3, shape=16) +
+  # geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_colour_gradientn(colours = col_pH(100)) +
+  # scale_color_manual(values=c("Black","Red","Blue", "Purple", "Brown")) +
+  ylab("Carbon (mg/ml)") +
+  xlab("Dilution factor (serial dilution)") +
+  # scale_y_continuous(breaks = seq(0,0.25,0.05), limits=c(0, 0.25))+
+  ggtitle("Direct chloroform application method \n") +
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  # ggtitle("pH (Cycloheximide-treated)") +
+  facet_grid(Filtered ~ Chloroform) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# average
+df_ave <- df_plot %>% group_by(Sample_type, Dilution_factor, Chloroform, Filtered) %>% summarize(std_mgml = sd(TOC_mgml), TOC_mgml = mean(TOC_mgml))
+dim(df_ave)
+
+ggplot(df_ave, aes(x=Dilution_factor, y=TOC_mgml, color=Chloroform, group=Chloroform)) +
+  geom_point(size=3, shape=16) +
+  # geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=TOC_mgml - std_mgml, ymax=TOC_mgml + std_mgml), width=.05)+
+  # scale_colour_gradientn(colours = col_pH(100)) +
+  # scale_color_manual(values=c("Black","Red","Blue", "Purple", "Brown")) +
+  ylab("Carbon (mg/ml)") +
+  xlab("Dilution factor (serial dilution)") +
+  # scale_y_continuous(breaks = seq(0,0.25,0.05), limits=c(0, 0.25))+
+  ggtitle("Direct chloroform application method \n") +
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  # ggtitle("pH (Cycloheximide-treated)") +
+  facet_grid(Filtered ~ Sample_type) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# Let's first look at soil sample without any spike in Ecoli
+df_ave$Chloroform <- factor(df_ave$Chloroform, levels=c("Control", "Chloroform"))
+df_ave$Filtered <- factor(df_ave$Filtered, levels=c("Not_filtered", "Filtered"))
+
+df_soil <- df_ave %>% filter(Sample_type == "Soil_spikein")
+df_soil0 <- df_soil %>% filter(Dilution_factor == 0)
+
+df_soil0
+
+# why??? plot
+ggplot(df_soil0, aes(x=Filtered, y=TOC_mgml, fill=Chloroform, group=Chloroform)) +
+  geom_bar(stat="identity",position="dodge")+
+  geom_errorbar(aes(ymin=TOC_mgml - std_mgml, ymax=TOC_mgml + std_mgml), width=.05, position = position_dodge(0.8))+
+  # geom_line(size=0.2, aes(color=Method))+
+  scale_fill_brewer(palette='Set2') +
+  scale_color_brewer(palette='Set2') +
+  ylab("Organic carbon (C mg/ml) \n") +
+  xlab("\n Filtered") +
+  # scale_y_continuous(breaks = seq(0,1.1,0.1), limits=c(0, 1.1))+
+  # scale_x_continuous(breaks = seq(0,17,1), limits=c(0, 17))+
+  ggtitle("Direct chloroform application to soil sample \n") +
+  geom_text(aes(label = round(TOC_mgml,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE, position = position_dodge(0.8))+
+  mytheme_2d
+
+# control is higher...
+# Let's look at only ecoli samples
+df_ecoli <- df_ave %>% filter(Sample_type == "Ecoli")
+
+ggplot(df_ecoli, aes(x=Dilution_factor, y=TOC_mgml, color=Chloroform, group=Chloroform)) +
+  geom_point(size=3, shape=16) +
+  # geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=TOC_mgml - std_mgml, ymax=TOC_mgml + std_mgml), width=.05)+
+  # scale_colour_gradientn(colours = col_pH(100)) +
+  # scale_color_manual(values=c("Black","Red","Blue", "Purple", "Brown")) +
+  ylab("Carbon (mg/ml)") +
+  xlab("Dilution factor (serial dilution)") +
+  # scale_y_continuous(breaks = seq(0,0.25,0.05), limits=c(0, 0.25))+
+  ggtitle("E. coli positive control, Direct chloroform application method \n") +
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  # ggtitle("pH (Cycloheximide-treated)") +
+  facet_grid(. ~ Filtered) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))
+  # theme(strip.text.y = element_text(size = 17))
+
+# let's subtract...
+df_ecoli_subtract <- df_ecoli
+df_ecoli_subtract
+
+df_ecoli_dcast <- dcast(df_ecoli_subtract, Sample_type + Dilution_factor + Filtered ~ Chloroform, value.var = "TOC_mgml")
+df_ecoli_dcast <- df_ecoli_dcast %>% mutate(Biomass_mgml = Chloroform - Control)
+
+ggplot(df_ecoli_dcast, aes(x=Dilution_factor, y=Biomass_mgml)) +
+  geom_point(size=3, shape=16) +
+  # geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=TOC_mgml - std_mgml, ymax=TOC_mgml + std_mgml), width=.05)+
+  # scale_colour_gradientn(colours = col_pH(100)) +
+  # scale_color_manual(values=c("Black","Red","Blue", "Purple", "Brown")) +
+  ylab("Biomass-C mg/ml") +
+  xlab("Dilution factor (serial dilution)") +
+  # scale_y_continuous(breaks = seq(0,0.25,0.05), limits=c(0, 0.25))+
+  ggtitle("E. coli positive control, Direct chloroform application method \n") +
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  # ggtitle("pH (Cycloheximide-treated)") +
+  facet_grid(. ~ Filtered) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))
+  # theme(strip.text.y = element_text(size = 17))
+
+
+# Soil?
+ggplot(df_soil, aes(x=Dilution_factor, y=TOC_mgml, color=Chloroform, group=Chloroform)) +
+  geom_point(size=3, shape=16) +
+  # geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=TOC_mgml - std_mgml, ymax=TOC_mgml + std_mgml), width=.05)+
+  # scale_colour_gradientn(colours = col_pH(100)) +
+  # scale_color_manual(values=c("Black","Red","Blue", "Purple", "Brown")) +
+  ylab("Carbon (mg/ml)") +
+  xlab("Dilution factor (serial dilution)") +
+  # scale_y_continuous(breaks = seq(0,0.25,0.05), limits=c(0, 0.25))+
+  ggtitle("Soil + spike in, Direct chloroform application method \n") +
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  # ggtitle("pH (Cycloheximide-treated)") +
+  facet_grid(. ~ Filtered) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))
+  # theme(strip.text.y = element_text(size = 17))
+
+
+
+
+df_soil_subtract <- df_soil
+df_soil_subtract
+
+df_soil_dcast <- dcast(df_soil_subtract, Sample_type + Dilution_factor + Filtered ~ Chloroform, value.var = "TOC_mgml")
+df_soil_dcast <- df_soil_dcast %>% mutate(Biomass_mgml = Chloroform - Control)
+
+ggplot(df_soil_dcast, aes(x=Dilution_factor, y=Biomass_mgml)) +
+  geom_point(size=3, shape=16) +
+  # geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=TOC_mgml - std_mgml, ymax=TOC_mgml + std_mgml), width=.05)+
+  # scale_colour_gradientn(colours = col_pH(100)) +
+  # scale_color_manual(values=c("Black","Red","Blue", "Purple", "Brown")) +
+  ylab("Biomass-C mg/ml") +
+  xlab("Dilution factor (serial dilution)") +
+  # scale_y_continuous(breaks = seq(0,0.25,0.05), limits=c(0, 0.25))+
+  ggtitle("Soil + spike in, Direct chloroform application method \n") +
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  # ggtitle("pH (Cycloheximide-treated)") +
+  facet_grid(. ~ Filtered) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))
+  # theme(strip.text.y = element_text(size = 17))
+
+
+```
+
+
+```{r}
+
+#
+df_OD <- openxlsx::read.xlsx('data/220603_100ul_OD600.xlsx')
+df_OD %<>% rename(OD600 = "600") %>% group_by(Dilution_factor) %>% summarize(OD600 = mean(OD600))
+df_blank <- df_OD %>% filter(Dilution_factor == 0) %>% unlist()
+blank <- df_blank[2]
+df_OD %<>% mutate(OD600 = OD600 - blank) %>% filter(Dilution_factor != 0)
+df_plot2 <- df_plot %>% left_join(df_OD, by=c("Dilution_factor"="Dilution_factor"))
+
+df_OD
+
+
+ggplot(df_plot2, aes(x=OD600, y=TOC_mgml, color=Microwave_sec, group=Microwave_sec)) +
+  geom_point(size=3, shape=16) +
+  # geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_colour_gradientn(colours = col_pH(100)) +
+  # scale_color_manual(values=c("Black","Red","Blue", "Purple", "Brown")) +
+  ylab("Carbon (mg/ml)") +
+  xlab("OD600") +
+  # geom_abline(slope = 1, intercept = 0) +
+  # scale_y_continuous(breaks = seq(0,0.25,0.05), limits=c(0, 0.25))+
+  ggtitle("30s, 45s microwaved sample (not filtered) \n") +
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  # ggtitle("pH (Cycloheximide-treated)") +
+  facet_grid(. ~ Microwave_sec) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))
+```
+
+
+
+

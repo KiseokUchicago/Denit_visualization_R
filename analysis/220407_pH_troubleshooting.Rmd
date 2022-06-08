@@ -89,8 +89,8 @@ library(rmarkdown)
 # render("analysis/~~.Rmd", "pdf_document")
 ```
 
-## First part, let's see how OD434 and OD585 are affected.
-## Import data
+## 1. First part, let's see how OD434 and OD585 are affected.
+Import data
 ```{r}
 df_pH1 <- openxlsx::read.xlsx("data/220407_pH_colorimetric_pH_base_treatment_mu_opt_T0.xlsx")
 
@@ -144,7 +144,7 @@ colnames(df_pH)
 
 ```
 
-## plot OD434 and OD585
+plot OD434 and OD585
 ```{r}
 df_OD <- read.xlsx("data/OD434_OD585_pH_base_treated_T0_220407.xlsx")
 colnames(df_OD)[1] <- "Well"
@@ -200,8 +200,8 @@ plot(df_OD$pH_colorimetric, df_OD$R_multi, col = "royalblue", lty = 1, pch = 18,
 ```
 
 
-## For the second part, let's see how OD434 and OD585 are affected 
-## Import data
+## 2. For the second part, let's see how OD434 and OD585 are affected 
+Import data
 ```{r}
 df_150ul <- openxlsx::read.xlsx("data/220407_pH_colorimetric_pH_standard_150ul_mu_opt_T0.xlsx")
 df_300ul <- openxlsx::read.xlsx("data/220407_pH_colorimetric_pH_standard_300ul_mu_opt_T0.xlsx")
@@ -282,7 +282,7 @@ plot(df_150_merged$pH_colorimetric, df_150_merged$R_multi, col = "royalblue", lt
 ```
 
 
-## Third part is to compare pH3 vs pH3_half
+## 3. Third part is to compare pH3 vs pH3_half
 Same mu_opt_T0 was used for both plates.
 ```{r}
 
@@ -627,4 +627,294 @@ plot(df_OD_WB$pH_colorimetric, df_OD_WB$R_multi, col = "royalblue", lty = 1, pch
 
 ```
 
+## 4. the fourth part, let's see the limit of pH detection 
+Import data
+```{r}
+df_limit <- openxlsx::read.xlsx("data/220408_pH_colorimetric_pH_limit_mu_opt_water.xlsx")
+df_limit %<>% filter(Sample_type == "sample")  # remove standard and water
+dim(df_limit)
 
+# Does this assay predict the standard's pH correctly?
+# df_merged$amount_ul <- factor(df_merged$amount_ul)
+
+
+ggplot(df_limit, aes(x=pH, y=pH_colorimetric)) +
+  geom_point(size=3, shape=16, col = "royalblue") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  geom_abline(slope = 0, intercept=10, col='red', linetype="dashed")+
+  geom_abline(slope = 0, intercept=3, col='red', linetype="dashed")+
+  # geom_line(size=1)+
+  # scale_fill_brewer(palette='Set2') +
+  ylab("pH by colorimetric assay \n") +
+  xlab("\n Known pH (pH meter)") +
+  scale_x_continuous(breaks = seq(1,14,1), limits=c(1, 14))+
+  scale_y_continuous(breaks = seq(1,14,1), limits=c(1, 14))+
+  ggtitle("pH measurement limit of the pH colorimetric assay (3 replicates) \n") +
+  mytheme_2d
+
+
+
+# use this instead: OD434
+plot(df_150_merged$pH, df_150_merged$OD434_background, col = "orange", lty = 1, pch = 17, lwd = 1, main = "OD434 (Control: water)",
+     ylab = "OD434", xlab = "added [H+] mM", ylim = c(-1, 3), cex=2)
+
+points(df_150_merged$pH, df_150_merged$OD434, col = "blue", pch = 17, cex=2)
+points(df_150_merged$pH, df_150_merged$OD434_subtraction, col = 'red', pch = 17, lwd = 1)
+
+legend("topright",legend = c("Background", "After dye", "(After dye - Background)"),
+    col = c("orange", "blue", 'red'), bty = "n", pch = 17, cex = 1, box.lty = 0)
+
+
+# use this instead
+plot(df_150_merged$pH, df_150_merged$OD585_background, col = "orange", lty = 1, pch = 16, lwd = 1, main = "OD585 (Control: water)",
+     ylab = "OD585", xlab = "added [H+] mM", ylim = c(-1, 10), xlim = c(1, 11), cex=2)
+
+points(df_150_merged$pH, df_150_merged$OD585, col = "blue", pch = 16, cex=2)
+points(df_150_merged$pH, df_150_merged$OD585_subtraction, col = 'red', pch = 16, lwd = 1)
+legend("topright",legend = c("Background", "After dye", "(After dye - Background)"),
+    col = c("orange", "blue", 'red'), bty = "n", pch = 16, cex = 1, box.lty = 0)
+
+# R_multi?
+plot(df_150_merged$pH, df_150_merged$R_multi, col = "red", lty = 1, pch = 15, lwd = 1, main = "R_multi (Control: water)",
+     ylab = "R_multi", xlab = "added [H+] mM",cex=2)
+
+
+# show R_multi and a_434, a_585
+plot(df_150_merged$pH, df_150_merged$R_multi, col = "red", lty = 1, pch = 15, lwd = 1, main = "R_multi (Control: water)",
+     ylab = "R_multi", xlab = "added [H+] mM",ylim = c(-20, 100), cex=2)
+abline(a=0, b=0)
+points(df_150_merged$pH, df_150_merged$OD434_subtraction, col = "red", pch = 17)
+points(df_150_merged$pH, df_150_merged$OD585_subtraction, col = 'red', pch = 16, lwd = 1)
+
+legend("topright",legend = c("OD434_corrected", "OC585_corrected", "R_multi = OD585/OD434"),
+    pch = c(17, 16, 15), bty = "n", col = 'red', cex = 1.2, box.lty = 0)
+
+# R_multi and pH
+
+plot(df_150_merged$pH_colorimetric, df_150_merged$R_multi, col = "royalblue", lty = 1, pch = 18, lwd = 1, main = "R_multi (Control: water)",
+     ylab = "R_multi", xlab = "pH_colorimetric", cex=1.5)
+
+
+```
+
+## 5. Half area plate with 150ul
+Would the signal be greater? \
+- Warren wood soil sample filtrate was used. 150ul = 50ul pH1 + 50ul pH4 + 50ul pH7 plate.
+- mu_opt was computed by aggregated samples.
+```{r}
+df_pH1 <- openxlsx::read.xlsx("data/220329_pH_colorimetric_pH1_mu_opt_T0.xlsx")
+df_pH4 <- openxlsx::read.xlsx("data/220329_pH_colorimetric_pH4_mu_opt_T0.xlsx") 
+df_pH7 <- openxlsx::read.xlsx("data/220329_pH_colorimetric_pH7_mu_opt_T0.xlsx") 
+
+df_pH <- rbind(df_pH1, df_pH4, df_pH7)
+colnames(df_pH)
+df_pH %<>% filter(Soil == "WarrenWoods1_pH5.23") 
+dim(df_pH)
+
+df_pH_half <- openxlsx::read.xlsx("data/220412_pH_colorimetric_pH_half_mu_opt_WW.xlsx") 
+colnames(df_pH_half)
+df_pH_half$Time_point <- "Aggregated_half_area"
+
+df_pH$Plate_type <- "Normal"
+df_pH_half$Plate_type <- "Half_area"
+
+df_time <- openxlsx::read.xlsx("data/220327_time_table.xlsx")
+df_time$Time_hours <- round(df_time$Time_hours, 1)
+df_time$Time_days <- round(df_time$Time_days, 2)
+
+df_pH_T <- rbind(df_pH, df_pH_half)
+# df_pH_T %<>% left_join(df_time, by=c("Time_point"="Time_point"))
+dim(df_pH_T) # 192
+
+# remove NA
+dim(df_pH_T) # 575
+df_pH_T[is.na(df_pH_T)]
+df_na <- df_pH_T[rowSums(is.na(df_pH_T)) > 0,]
+# df_pH_T <- na.omit(df_pH_T)
+df_pH_T <- df_pH_T[rowSums(is.na(df_pH_T)) == 0,]
+dim(df_pH_T) # 548
+
+# Change the soil names to include pH
+# df_pH_T$Soil <- str_replace(df_pH_T$Soil,"NicholsC","NicholsC_pH7")
+# df_pH_T$Soil <- str_replace(df_pH_T$Soil,"Allandale","Allandale_pH4")
+# df_pH_T$Soil <-  factor(df_pH_T$Soil, levels = c("NicholsC_pH7", "Allandale_pH4"))
+
+# mols and molarity unit conversion
+# test
+df_pH <- df_pH_T %>% filter(Titration_type %in% c("NaOH","HCl"))
+dim(df_pH) # 160
+Added_Volume <- 1.7 # ml
+Soil_mg <- 0.85
+moisture_percent_1 = 63.1 # Webster
+Added_Volume + Soil_mg*(moisture_percent_1/100)
+moisture_percent_2 = 6.8 # WarrenWoods1
+Added_Volume + Soil_mg*(moisture_percent_2/100)
+moisture_percent_3 = 9.0 # Crerar7
+Added_Volume + Soil_mg*(moisture_percent_3/100)
+
+df_pH$Added_ul <- ifelse(df_pH$Titration_type == "NaOH", -1*df_pH$Added_ul, df_pH$Added_ul) # HCl is +, NaOH is -
+df_pH %<>% mutate(H_mol = Concentration_M * Added_ul * 10^(-6)) # Calculate H mol 
+df_pH$Volume <- ifelse(df_pH$Soil == "Webster_pH3.3", Added_Volume + Soil_mg*(moisture_percent_1/100),
+                      ifelse(df_pH$Soil == "WarrenWoods1_pH5.23", Added_Volume + Soil_mg*(moisture_percent_2/100),
+                             ifelse(df_pH$Soil == "Crerar7_pH8.05", Added_Volume + Soil_mg*(moisture_percent_3/100),
+                                    0))) # Calc total volume# df_pH$Volume %>% unique()
+df_pH %<>% mutate(H_Molarity = H_mol / (Volume * 10^(-3)))
+df_pH %<>% mutate(H_mM = H_Molarity * 1000)
+# openxlsx::write.xlsx(df_pH, "df_pH.xlsx")
+
+# how many levels of H_mM?
+df_pH %>% filter(Soil == "Webster_pH3.3")%>% select(H_mM) %>% unique() %>% arrange(H_mM)
+df_pH %>% filter(Soil == "WarrenWoods1_pH5.23")%>% select(H_mM) %>% unique() %>% arrange(H_mM)
+df_pH %>% filter(Soil == "Crerar7_pH8.05")%>% select(H_mM) %>% unique() %>% arrange(H_mM)
+colnames(df_pH)
+
+df_pH$Plate_type
+
+# there is something wrong about df_pH H_mM == 0
+df_pH %>% filter(H_mM == 0)
+# let's remove G1 as well
+df_pH
+
+```
+
+plot titration curves
+
+```{r}
+df_plot <- df_pH
+
+# let's plot WW 
+# df_plot %>% filter(Soil == "Crerar7_pH8.05")
+
+ggplot(df_plot, aes(x=H_mM, y=pH_colorimetric, color=Time_point, group=Time_point)) +
+  geom_point(size=3, shape=16, alpha=1) +
+  # geom_errorbar(aes(ymin=Ave_pH - Std_pH, ymax=Ave_pH + Std_pH), width=.05)+
+  geom_line(size=1)+
+  # scale_color_brewer(palette='Set1') +
+  ylab("pH \n") +
+  xlab("\n added [H+] mM") +
+  scale_x_continuous(breaks = seq(-100,100,5))+
+  scale_y_continuous(breaks = seq(0,14,1), limits=c(0, 14))+
+  ggtitle("[Comparing normal vs half area plate] Soil pH perturbation titration curves (WarrenWoods pH 5.23) \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d
+
+
+```
+
+What is the reason for this??? \
+Let's look at the OD434, OD585, and R_multi
+```{r}
+df_OD <- read.xlsx("data/OD434_OD585_pH_half_150ul_220412.xlsx")
+colnames(df_OD)[1] <- "Well"
+
+df_pH_half <- df_pH %>% filter(Plate_type == "Half_area")
+df_OD_merged <- df_OD %>% left_join(df_pH_half, by=c("Well"="Well"))
+
+df_OD <- df_OD_merged
+
+# WW soil first
+# df_OD_C <- df_OD %>% filter(Soil == "Crerar7_pH8.05")
+
+# use this instead: OD434
+plot(df_OD$H_mM, df_OD$OD434_background, col = "orange", lty = 1, pch = 17, lwd = 1, main = "OD434 (WarrenWoods1 half_area plate)",
+     ylab = "OD434", xlab = "added [H+] mM", cex=2)
+
+plot(df_OD$H_mM, df_OD$OD434_background, col = "orange", lty = 1, pch = 17, lwd = 1, main = "OD434 (WarrenWoods1 half_area plate)",
+     ylab = "OD434", xlab = "added [H+] mM", ylim = c(-1, 5), cex=2)
+
+points(df_OD$H_mM, df_OD$OD434, col = "blue", pch = 17, cex=2)
+points(df_OD$H_mM, df_OD$OD434_subtraction, col = 'red', pch = 17, lwd = 1)
+
+legend("topright",legend = c("Background", "After dye", "(After dye - Background)"),
+    col = c("orange", "blue", 'red'), bty = "n", pch = 17, cex = 1, box.lty = 0)
+
+
+# use this instead
+plot(df_OD$H_mM, df_OD$OD585_background, col = "orange", lty = 1, pch = 16, lwd = 1, main = "OD585 (WarrenWoods1 half_area plate)",
+     ylab = "OD585", xlab = "added [H+] mM",cex=2)
+
+plot(df_OD$H_mM, df_OD$OD585_background, col = "orange", lty = 1, pch = 16, lwd = 1, main = "OD585 (WarrenWoods1 half_area plate)",
+     ylab = "OD585", xlab = "added [H+] mM", ylim = c(-1, 6), cex=2)
+
+points(df_OD$H_mM, df_OD$OD585, col = "blue", pch = 16, cex=2)
+points(df_OD$H_mM, df_OD$OD585_subtraction, col = 'red', pch = 16, lwd = 1)
+legend("topright",legend = c("Background", "After dye", "(After dye - Background)"),
+    col = c("orange", "blue", 'red'), bty = "n", pch = 16, cex = 1, box.lty = 0)
+
+# R_multi?
+plot(df_OD$H_mM, df_OD$R_multi, col = "red", lty = 1, pch = 15, lwd = 1, main = "R_multi (WarrenWoods1 half_area plate)",
+     ylab = "R_multi", xlab = "added [H+] mM",cex=2)
+
+
+# show R_multi and a_434, a_585
+plot(df_OD$H_mM, df_OD$R_multi, col = "red", lty = 1, pch = 15, lwd = 1, main = "R_multi (WarrenWoods1 half_area plate)",
+     ylab = "R_multi", xlab = "added [H+] mM",ylim = c(-20, 40), cex=2)
+abline(a=0, b=0)
+points(df_OD$H_mM, df_OD$OD434_subtraction, col = "red", pch = 17)
+points(df_OD$H_mM, df_OD$OD585_subtraction, col = 'red', pch = 16, lwd = 1)
+
+legend("topright",legend = c("OD434_corrected", "OC585_corrected", "R_multi = OD585/OD434"),
+    pch = c(17, 16, 15), bty = "n", col = 'red', cex = 1.2, box.lty = 0)
+
+# R_multi and pH
+
+plot(df_OD$pH_colorimetric, df_OD$R_multi, col = "royalblue", lty = 1, pch = 18, lwd = 1, main = "R_multi (WarrenWoods1 half_area plate)",
+     ylab = "R_multi", xlab = "pH_colorimetric", cex=1.5)
+
+
+```
+
+Next up, let's look at webster half area
+
+```{r}
+df_OD_WB <- df_OD %>% filter(Soil == "Webster_pH3.3")
+
+# use this instead: OD434
+plot(df_OD_WB$H_mM, df_OD_WB$OD434_background, col = "orange", lty = 1, pch = 17, lwd = 1, main = "OD434 (Webster_T5 half_area plate)",
+     ylab = "OD434", xlab = "added [H+] mM", cex=2)
+
+plot(df_OD_WB$H_mM, df_OD_WB$OD434_background, col = "orange", lty = 1, pch = 17, lwd = 1, main = "OD434 (Webster_T5 half_area plate)",
+     ylab = "OD434", xlab = "added [H+] mM", ylim = c(-1, 10), cex=2)
+
+points(df_OD_WB$H_mM, df_OD_WB$OD434, col = "blue", pch = 17, cex=2)
+points(df_OD_WB$H_mM, df_OD_WB$OD434_subtraction, col = 'red', pch = 17, lwd = 1)
+
+legend("topright",legend = c("Background", "After dye", "(After dye - Background)"),
+    col = c("orange", "blue", 'red'), bty = "n", pch = 17, cex = 1, box.lty = 0)
+
+
+# use this instead
+plot(df_OD_WB$H_mM, df_OD_WB$OD585_background, col = "orange", lty = 1, pch = 16, lwd = 1, main = "OD585 (Webster_T5 half_area plate)",
+     ylab = "OD585", xlab = "added [H+] mM",cex=2)
+
+plot(df_OD_WB$H_mM, df_OD_WB$OD585_background, col = "orange", lty = 1, pch = 16, lwd = 1, main = "OD585 (Webster_T5 half_area plate)",
+     ylab = "OD585", xlab = "added [H+] mM", ylim = c(-1, 5), cex=2)
+
+points(df_OD_WB$H_mM, df_OD_WB$OD585, col = "blue", pch = 16, cex=2)
+points(df_OD_WB$H_mM, df_OD_WB$OD585_subtraction, col = 'red', pch = 16, lwd = 1)
+legend("topright",legend = c("Background", "After dye", "(After dye - Background)"),
+    col = c("orange", "blue", 'red'), bty = "n", pch = 16, cex = 1, box.lty = 0)
+
+# R_multi?
+plot(df_OD_WB$H_mM, df_OD_WB$R_multi, col = "red", lty = 1, pch = 15, lwd = 1, main = "R_multi (Webster_T5 half_area plate)",
+     ylab = "R_multi", xlab = "added [H+] mM",cex=2)
+
+
+# show R_multi and a_434, a_585
+plot(df_OD_WB$H_mM, df_OD_WB$R_multi, col = "red", lty = 1, pch = 15, lwd = 1, main = "R_multi (Webster_T5 half_area plate)",
+     ylab = "R_multi", xlab = "added [H+] mM",ylim = c(-20, 120), cex=2)
+abline(a=0, b=0)
+points(df_OD_WB$H_mM, df_OD_WB$OD434_subtraction, col = "red", pch = 17)
+points(df_OD_WB$H_mM, df_OD_WB$OD585_subtraction, col = 'red', pch = 16, lwd = 1)
+
+legend("topright",legend = c("OD434_corrected", "OC585_corrected", "R_multi = OD585/OD434"),
+    pch = c(17, 16, 15), bty = "n", col = 'red', cex = 1.2, box.lty = 0)
+
+# R_multi and pH
+
+plot(df_OD_WB$pH_colorimetric, df_OD_WB$R_multi, col = "royalblue", lty = 1, pch = 18, lwd = 1, main = "R_multi (Webster_T5 half_area plate)",
+     ylab = "R_multi", xlab = "pH_colorimetric", cex=1.5)
+
+
+```

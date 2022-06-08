@@ -1,16 +1,17 @@
 ---
-title: "220327_Griess_3_soil_pH_perturbation"
+title: "220519_Griess_antibiotics_dose_effect"
 author: "KiseokUchicago"
-date: "2022-03-28"
+date: "2022-05-23"
 output: workflowr::wflow_html
 editor_options:
   chunk_output_type: console
 ---
 
-## Time series analysis - 3 soil pH perturbation experiment-4  (Griess assay)
+
+## Antibiotics and dose effect (Griess assay)
 Researcher: **Kiseok Lee** \
-Experiment Date: 3/6/22 - 3/10/22 (5 days) \
-Analysis Date: 3/28/22
+Experiment Date: 5/8/22 - 5/12/22 (5 days) \
+Analysis Date: 5/23/22
 Lab: **Seppe Kuehn**
 
 ```{r}
@@ -46,6 +47,7 @@ mytheme <- theme_bw() +
   theme(panel.grid.minor = element_blank(),panel.background=element_blank(),panel.border=element_blank(),plot.background=element_blank()) +
   theme(axis.ticks = element_line(size = 1.1))+
   theme(legend.text=element_text(size=10,face="bold", colour = 'black'))
+
 
 mytheme_2d <- theme_bw() + 
   theme(text = element_text(face="bold", colour = 'black')) +
@@ -90,22 +92,22 @@ library(rmarkdown)
 We are going to use the vcl3 treated standard curve that is fitted with pure nitrate standards
 ```{r error=TRUE}
 # import file
-df_plate1 <- openxlsx::read.xlsx("data/220327_Griess_plate1.xlsx")
-df_plate2 <- openxlsx::read.xlsx("data/220327_Griess_plate2.xlsx")
-df_plate3 <- openxlsx::read.xlsx("data/220327_Griess_plate3.xlsx")
-df_plate4 <- openxlsx::read.xlsx("data/220327_Griess_plate4.xlsx")
-df_plate5 <- openxlsx::read.xlsx("data/220327_Griess_plate5.xlsx")
-df_plate6 <- openxlsx::read.xlsx("data/220327_Griess_plate6.xlsx")
-df_plate7 <- openxlsx::read.xlsx("data/220327_Griess_plate7.xlsx")
-df_plate8 <- openxlsx::read.xlsx("data/220327_Griess_plate8.xlsx")
-df_plate9 <- openxlsx::read.xlsx("data/220327_Griess_pastplate9.xlsx")
-df_plate10 <- openxlsx::read.xlsx("data/220327_Griess_plate10.xlsx")
-df_plate11 <- openxlsx::read.xlsx("data/220327_Griess_plate11.xlsx")
-df_plate12 <- openxlsx::read.xlsx("data/220327_Griess_plate12.xlsx")
-df_plate13 <- openxlsx::read.xlsx("data/220327_Griess_plate13.xlsx")
-df_plate14 <- openxlsx::read.xlsx("data/220327_Griess_plate14.xlsx")
-df_plate15 <- openxlsx::read.xlsx("data/220327_Griess_plate15.xlsx")
-df_plate16 <- openxlsx::read.xlsx("data/220327_Griess_plate16.xlsx")
+df_plate1 <- openxlsx::read.xlsx("data/220519_Griess_plate1.xlsx")
+df_plate2 <- openxlsx::read.xlsx("data/220519_Griess_plate2.xlsx")
+df_plate3 <- openxlsx::read.xlsx("data/220519_Griess_plate3.xlsx")
+df_plate4 <- openxlsx::read.xlsx("data/220519_Griess_plate4.xlsx")
+df_plate5 <- openxlsx::read.xlsx("data/220519_Griess_plate5.xlsx")
+df_plate6 <- openxlsx::read.xlsx("data/220519_Griess_plate6.xlsx")
+df_plate7 <- openxlsx::read.xlsx("data/220519_Griess_plate7.xlsx")
+df_plate8 <- openxlsx::read.xlsx("data/220519_Griess_plate8.xlsx")
+df_plate9 <- openxlsx::read.xlsx("data/220519_Griess_plate9.xlsx")
+df_plate10 <- openxlsx::read.xlsx("data/220519_Griess_plate10.xlsx")
+df_plate11 <- openxlsx::read.xlsx("data/220519_Griess_plate11.xlsx")
+# df_plate12 <- openxlsx::read.xlsx("data/220519_Griess_plate12.xlsx")
+# df_plate13 <- openxlsx::read.xlsx("data/220519_Griess_plate13.xlsx")
+# df_plate14 <- openxlsx::read.xlsx("data/220519_Griess_plate14.xlsx")
+# df_plate15 <- openxlsx::read.xlsx("data/220519_Griess_plate15.xlsx")
+# df_plate16 <- openxlsx::read.xlsx("data/220519_Griess_plate16.xlsx")
 
 head(df_plate1)
 colnames(df_plate1)
@@ -131,59 +133,78 @@ head(df_plate6)
 colnames(df_plate6)
 dim(df_plate6)
 
-head(df_plate16)
-colnames(df_plate16)
-dim(df_plate16)
+head(df_plate7)
+colnames(df_plate7)
+dim(df_plate7)
+
+head(df_plate8)
+colnames(df_plate8)
+dim(df_plate8)
+
+head(df_plate9)
+colnames(df_plate9)
+dim(df_plate9)
+
+head(df_plate10)
+colnames(df_plate10)
+dim(df_plate10)
+
+head(df_plate11)
+colnames(df_plate11)
+dim(df_plate11)
+
+# head(df_plate16)
+# colnames(df_plate16)
+# dim(df_plate16)
 
 
 # X1 to Well
-df_plate1 %<>% rename(Well = X1)
-df_plate2 %<>% rename(Well = X1)
-df_plate3 %<>% rename(Well = X1)
-df_plate4 %<>% rename(Well = X1)
-df_plate5 %<>% rename(Well = X1)
-df_plate6 %<>% rename(Well = X1)
-df_plate7 %<>% rename(Well = X1)
-df_plate8 %<>% rename(Well = X1)
-df_plate9 %<>% rename(Well = X1)
-df_plate10 %<>% rename(Well = X1)
-df_plate11 %<>% rename(Well = X1)
-df_plate12 %<>% rename(Well = X1)
-df_plate13 %<>% rename(Well = X1)
-df_plate14 %<>% rename(Well = X1)
-df_plate15 %<>% rename(Well = X1)
-df_plate16 %<>% rename(Well = X1)
+# df_plate1 %<>% rename(Well = X1)
+# df_plate2 %<>% rename(Well = X1)
+# df_plate3 %<>% rename(Well = X1)
+# df_plate4 %<>% rename(Well = X1)
+# df_plate5 %<>% rename(Well = X1)
+# df_plate6 %<>% rename(Well = X1)
+# df_plate7 %<>% rename(Well = X1)
+# df_plate8 %<>% rename(Well = X1)
+# df_plate9 %<>% rename(Well = X1)
+# df_plate10 %<>% rename(Well = X1)
+# df_plate11 %<>% rename(Well = X1)
+# df_plate12 %<>% rename(Well = X1)
+# df_plate13 %<>% rename(Well = X1)
+# df_plate14 %<>% rename(Well = X1)
+# df_plate15 %<>% rename(Well = X1)
+# df_plate16 %<>% rename(Well = X1)
 
 
 # remove wells that were contaminated during the experiment
-df_plate4 %<>% filter(!(Well %in% c("A12", "B12"))) # filter defect
-df_plate12 %<>% filter(!(Well %in% c("A01"))) # filter defect
-
-# df_p6 %<>% filter(!(Well %in% c("A11"))) # filter burst issue
-# df_p8 %<>% filter(!(Well %in% c("A07", "A08", "E08"))) # filter burst issue
-# df_p11 %<>% filter(!(Well %in% c("A01"))) # filter burst issue  # G11 was removed because of abnormal value compared to other 2 replicates
-# dim(df_p4)
+df_plate1 %<>% filter(!(Well %in% c("A04"))) # NA detected below... don't know the reason
+# df_plate4 %<>% filter(!(Well %in% c("H05"))) # filter defect
+df_plate6 %<>% filter(!(Well %in% c("G05"))) # Too low.... why???
+# df_plate8 %<>% filter(!(Well %in% c("A01", "A09"))) # filter defect
+# df_plate9 %<>% filter(!(Well %in% c("D11"))) # NA detected below...
+# df_plate11 %<>% filter(!(Well %in% c("A12"))) # filter defect
 
 # bind two dataframe
-df_p <- rbind(df_plate1, df_plate2, df_plate3, df_plate4, df_plate5, df_plate6, df_plate7, df_plate8, df_plate9, df_plate10, df_plate11, df_plate12,
-              df_plate13, df_plate14, df_plate15, df_plate16)
+df_p <- rbind(df_plate1, df_plate2, df_plate3, df_plate4, df_plate5, df_plate6, df_plate7, df_plate8, df_plate9, df_plate10, df_plate11)
+              # df_plate12, df_plate13, df_plate14, df_plate15, df_plate16)
 dim(df_p)
 
 # remove NA
-dim(df_p) # 1533
+dim(df_p) # 1056
 df_p[is.na(df_p)]
-df_na <- df_p[rowSums(is.na(df_p)) > 0,]
+df_na <- df_p[rowSums(is.na(df_p)) > 0,]  # A04 in plate1 has NA. Let's remove from the wells above.
 # df_p <- na.omit(df_p)
 df_p <- df_p[rowSums(is.na(df_p)) == 0,]
-dim(df_p) # 1448
+dim(df_p) # 1055
 
 # multiply dilution factor which is 5/2
 # df_p %<>% select(-NO2_OD540, -NO2NO3_OD540)
 df_p %<>% mutate(NO2_mM = NO2_mM * (5/2), NO2NO3_mM = NO2NO3_mM * (5/2), NO3_mM = NO3_mM * (5/2))
 
 # Get the metadata for time point and left join
-Time_table <- openxlsx::read.xlsx("data/220327_time_table.xlsx")
-# Time_table_BN <- openxlsx::read.xlsx("data/220327_time_table_BN.xlsx")
+Time_table <- openxlsx::read.xlsx("data/220519_time_table.xlsx")
+# Time_table_BN <- openxlsx::read.xlsx("data/220519_time_table_BN.xlsx")
 # Time_table <- rbind(Time_table_AU, Time_table_BN)
 
 Time_table %<>% select(-Date) 
@@ -195,7 +216,8 @@ df_p <- df_p %>% left_join(Time_table, by=("Time_point"="Time_point"))
 dim(df_p)
 colnames(df_p)
 # time_point order
-# df_p$Time_point <-  factor(df_p$Time_point, levels = paste0("T",0:10))
+# df_p$Time_point <-  factor(df_p$Time_point, levels = c(paste0("LBA_T",0:10), paste0("Sterile_T",0:10)))
+df_p$Time_point <-  factor(df_p$Time_point, levels = c(paste0("T",0:10)))
 
 ```
 
@@ -207,10 +229,11 @@ ggplot(df_p, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) 
   # geom_line(size=1)+
   scale_fill_brewer(palette='Set2') +
   ylab("NO3- (mM) \n") +
-  xlab("\n Nitrate_spike_in (mM)") +
+  xlab("\n Time_point") +
   # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
   ggtitle("Without averaging \n") +
-  mytheme_2d
+  mytheme_2d +
+  theme(axis.text.x = element_text(hjust = 0.8, vjust=0.8, size=13, family="serif", angle = 40))
 
 # plot to see
 ggplot(df_p, aes(x=Time_point, y=NO2_mM, color=Sample_type, group=Sample_type)) +
@@ -218,12 +241,91 @@ ggplot(df_p, aes(x=Time_point, y=NO2_mM, color=Sample_type, group=Sample_type)) 
   # geom_line(size=1)+
   scale_fill_brewer(palette='Set2') +
   ylab("NO2- (mM) \n") +
-  xlab("\n Nitrite_spike_in (mM)") +
+  xlab("\n Time_point") +
   # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
   ggtitle("Without averaging \n") +
-  mytheme_2d
+  mytheme_2d+
+  theme(axis.text.x = element_text(hjust = 0.8, vjust=0.8, size=13, family="serif", angle = 40))
 
-# hmmm.. why over shooting of NO3-
+# let's plot the no nitrate sample's nitrate, nitrite levels
+df_no_nitrite <- df_p %>% filter(Sample_type == "No_Nitrate")
+
+ggplot(df_no_nitrite, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time_point") +
+  # scale_y_continuous(breaks = seq(0,0.5,0.05), limits=c(0, 0.5))+
+  ggtitle("Samples without nitrate addition \n") +
+  mytheme_2d +
+  theme(axis.text.x = element_text(hjust = 0.8, vjust=0.8, size=13, family="serif", angle = 40))
+
+ggplot(df_no_nitrite, aes(x=Time_point, y=NO2_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO2- (mM) \n") +
+  xlab("\n Time_point") +
+  scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Samples without nitrate addition \n") +
+  mytheme_2d+
+  theme(axis.text.x = element_text(hjust = 0.8, vjust=0.8, size=13, family="serif", angle = 40))
+
+# T8 is weird
+# how about blanks?
+
+# let's plot the blank sample's nitrate, nitrite levels
+df_A_blank <- df_p %>% filter(Sample_type == "Nitrate_Blank")
+ggplot(df_A_blank, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time_point") +
+  scale_y_continuous(breaks = seq(0,2.5,0.1), limits=c(0, 2.5))+
+  ggtitle("Nitrate blanks \n") +
+  mytheme_2d +
+  theme(axis.text.x = element_text(hjust = 0.8, vjust=0.8, size=13, family="serif", angle = 40))
+
+ggplot(df_A_blank, aes(x=Time_point, y=NO2_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO2- (mM) \n") +
+  xlab("\n Time_point") +
+  scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Nitrate blanks \n") +
+  mytheme_2d+
+  theme(axis.text.x = element_text(hjust = 0.8, vjust=0.8, size=13, family="serif", angle = 40))
+
+# let's plot the Nitrite blank sample's nitrate, nitrite levels
+df_I_blank <- df_p %>% filter(Sample_type == "Nitrite_Blank")
+ggplot(df_I_blank, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time_point") +
+  scale_y_continuous(breaks = seq(0,2.5,0.1), limits=c(0, 2.5))+
+  ggtitle("Nitrite blanks \n") +
+  mytheme_2d +
+  theme(axis.text.x = element_text(hjust = 0.8, vjust=0.8, size=13, family="serif", angle = 40))
+
+ggplot(df_I_blank, aes(x=Time_point, y=NO2_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO2- (mM) \n") +
+  xlab("\n Time_point") +
+  scale_y_continuous(breaks = seq(0,2.5,0.1), limits=c(0, 2.5))+
+  ggtitle("Nitrite blanks \n") +
+  mytheme_2d+
+  theme(axis.text.x = element_text(hjust = 0.8, vjust=0.8, size=13, family="serif", angle = 40))
+
+### Important ###
+# Due to the nitrate decrease in time, something is wrong. Therefore, I would omit the evaporation correction????
+
 
 # average technical replicate (here only 1 replicate per pH perturbation)
 colnames(df_p)
@@ -241,19 +343,20 @@ df_p$Titration_type %>% length()
 
 Added_Volume <- 1.7 # ml
 Soil_mg <- 0.85
-moisture_percent_1 = 63.1 # Webster
+moisture_percent_1 = 20.15 # Barneveld2
 Added_Volume + Soil_mg*(moisture_percent_1/100)
-moisture_percent_2 = 6.8 # WarrenWoods1
-Added_Volume + Soil_mg*(moisture_percent_2/100)
-moisture_percent_3 = 9.0 # Crerar7
-Added_Volume + Soil_mg*(moisture_percent_3/100)
+# moisture_percent_2 = 8.12 # Sterile - LaBaghWoods that has been autoclaved 5 times.
+# Added_Volume + Soil_mg*(moisture_percent_2/100)
+# moisture_percent_3 = 9.0 # Crerar7
+# Added_Volume + Soil_mg*(moisture_percent_3/100)
 
 df_p$Added_ul <- ifelse(df_p$Titration_type == "NaOH", -1*df_p$Added_ul, df_p$Added_ul) # HCl is +, NaOH is -
 df_p %<>% mutate(H_mol = Concentration_M * Added_ul * 10^(-6)) # Calculate H mol 
-df_p$Volume <- ifelse(df_p$Soil == "Webster_pH3.3", Added_Volume + Soil_mg*(moisture_percent_1/100),
-                      ifelse(df_p$Soil == "WarrenWoods1_pH5.23", Added_Volume + Soil_mg*(moisture_percent_2/100),
-                             ifelse(df_p$Soil == "Crerar1_pH8.05", Added_Volume + Soil_mg*(moisture_percent_3/100),
-                                    0))) # Calc total volume
+df_p$Volume <- ifelse(df_p$Soil == "Barneveld2", Added_Volume + Soil_mg*(moisture_percent_1/100),
+                      ifelse(df_p$Soil == "LaBaghWoods_autoclaved_pH6.66", Added_Volume + Soil_mg*(moisture_percent_2/100),
+                             0))
+                             # ifelse(df_p$Soil == "Crerar1_pH8.05", Added_Volume + Soil_mg*(moisture_percent_3/100),
+                                    # 0))) # Calc total volume
 
 # df_p$Volume <- ifelse(df_p$Soil == "Allandale_pH4", Added_Volume + Soil_mg*(moisture_percent_2/100), df_p$Volume) # Calc total volume
 # df_p$Volume %>% unique()
@@ -262,9 +365,9 @@ df_p %<>% mutate(H_mM = H_Molarity * 1000)
 # openxlsx::write.xlsx(df_p, "df_p.xlsx")
 
 # how many levels of H_mM?
-df_p %>% filter(Soil == "Webster_pH3.3")%>% select(H_mM) %>% unique() %>% arrange(H_mM)
-df_p %>% filter(Soil == "WarrenWoods1_pH5.23")%>% select(H_mM) %>% unique() %>% arrange()
-df_p %>% filter(Soil == "Crerar1_pH8.05")%>% select(H_mM) %>% unique() %>% arrange()
+df_p %>% filter(Soil == "Barneveld2")%>% select(H_mM) %>% unique() %>% arrange(H_mM)
+# df_p %>% filter(Soil == "LaBaghWoods_autoclaved_pH6.66")%>% select(H_mM) %>% unique() %>% arrange(H_mM)
+# df_p %>% filter(Soil == "Crerar1_pH8.05")%>% select(H_mM) %>% unique() %>% arrange()
 colnames(df_p)
 
 ## Moisture correction
@@ -283,27 +386,27 @@ soil_spike_ratio = 0.5 # soil weight(0.85g) / spike in volume (1.7ml)
 
 mcf_1 = (soil_spike_ratio*(moisture_percent_1/100) + 1)
 mcf_1
-mcf_2 = (soil_spike_ratio*(moisture_percent_2/100) + 1)
-mcf_2
-mcf_3 = (soil_spike_ratio*(moisture_percent_3/100) + 1)
-mcf_3
+# mcf_2 = (soil_spike_ratio*(moisture_percent_2/100) + 1)
+# mcf_2
+# mcf_3 = (soil_spike_ratio*(moisture_percent_3/100) + 1)
+# mcf_3
 
 # apply moisture factor to each soil
 dim(df_p)
 df_p %>% select(Soil) %>% unique()
 
 # this is a special case with no replicates
-df_p_mcf_1 <- df_p %>% filter(Soil == "Webster_pH3.3") %>% filter(Titration_type %in% c("NaOH","HCl","No_Nitrate")) %>% mutate(NO3_mM = NO3_mM * mcf_1, NO2_mM = NO2_mM * mcf_1)
-dim(df_p_mcf_1) #306
-df_p_mcf_2 <- df_p %>% filter(Soil == "WarrenWoods1_pH5.23") %>%  filter(Titration_type %in% c("NaOH","HCl","No_Nitrate")) %>% mutate(NO3_mM = NO3_mM * mcf_2, NO2_mM = NO2_mM * mcf_2)
-dim(df_p_mcf_2) #429
-df_p_mcf_3 <- df_p %>% filter(Soil == "Crerar1_pH8.05") %>% filter(Titration_type %in% c("NaOH","HCl","No_Nitrate")) %>% mutate(NO3_mM = NO3_mM * mcf_3, NO2_mM = NO2_mM * mcf_3)
-dim(df_p_mcf_3) #426
+df_p_mcf_1 <- df_p %>% filter(Soil == "Barneveld2") %>% filter(Titration_type %in% c("NaOH","HCl","No_Nitrate")) %>% mutate(NO3_mM = NO3_mM * mcf_1, NO2_mM = NO2_mM * mcf_1)
+dim(df_p_mcf_1) #923
+# df_p_mcf_2 <- df_p %>% filter(Soil == "LaBaghWoods_autoclaved_pH6.66") %>%  filter(Titration_type %in% c("NaOH","HCl","No_Nitrate")) %>% mutate(NO3_mM = NO3_mM * mcf_2, NO2_mM = NO2_mM * mcf_2)
+# dim(df_p_mcf_2) #426
+# df_p_mcf_3 <- df_p %>% filter(Soil == "Crerar1_pH8.05") %>% filter(Titration_type %in% c("NaOH","HCl","No_Nitrate")) %>% mutate(NO3_mM = NO3_mM * mcf_3, NO2_mM = NO2_mM * mcf_3)
+# dim(df_p_mcf_3) #426
 
 df_p_others_mcf <- df_p %>% filter(Sample_type %in% c("Nitrite_Blank", "Nitrate_Blank", "Ammonium_Blank")) # Use Nitrate_Blank instead in the future
-dim(df_p_others_mcf) #287
-df_p_mcf <- rbind(df_p_mcf_1, df_p_mcf_2, df_p_mcf_3, df_p_others_mcf)
-dim(df_p_mcf) # 1448
+dim(df_p_others_mcf) #132
+df_p_mcf <- rbind(df_p_mcf_1, df_p_others_mcf)
+dim(df_p_mcf) # 1055
 
 # plot to see
 ggplot(df_p_mcf, aes(x=Time_hours, y=NO3_mM, color=Sample_type, group=Sample_type)) +
@@ -331,10 +434,12 @@ df_no3_blank %<>% mutate(Correction_factor_NO3 = (Nitrate_input / NO3_mM))
 # average the blanks by time point
 cf_no2 <- df_no2_blank %>% select(Soil, Time_point, Correction_factor_NO2) %>% group_by(Soil, Time_point) %>% summarize(Correction_factor_NO2 = mean(Correction_factor_NO2)) %>% ungroup()
 cf_no3 <- df_no3_blank %>% select(Soil, Time_point, Correction_factor_NO3) %>% group_by(Soil, Time_point) %>% summarize(Correction_factor_NO3 = mean(Correction_factor_NO3)) %>% ungroup()
+# why is nitrate decreasing????
+
 
 # left join and multiply the correction factor
 # left join to samples
-df_sample_mcf <- df_p_mcf %>% filter(!(Sample_type %in% c("Nitrite_Blank","Nitrate_Blank","Ammonium_Blank","No_Nitrate")))
+df_sample_mcf <- df_p_mcf %>% filter(!(Sample_type %in% c("Nitrite_Blank","Nitrate_Blank","Ammonium_Blank")))
 dim(df_sample_mcf) #1065
 df_sample_mcf$Sample_type %>% unique()
 
@@ -342,20 +447,32 @@ df_sample_bcf <- df_sample_mcf %>% left_join(cf_no2, by = c("Soil"="Soil", "Time
 dim(df_sample_bcf)
 
 df_sample_bcf <- df_sample_bcf %>% mutate(NO3_mM = NO3_mM * Correction_factor_NO3, NO2_mM = NO2_mM * Correction_factor_NO2)
-dim(df_sample_bcf) #1065 23
+dim(df_sample_bcf) #849
 
 # merge dataframe with blank just for convenience
-df_p_blanks_bcf <- df_p_mcf %>% filter(Sample_type %in% c("Nitrite_Blank","Nitrate_Blank","Ammonium_Blank","No_Nitrate")) %>% left_join(cf_no2, by = c("Soil"="Soil", "Time_point"="Time_point")) %>% left_join(cf_no3, by = c("Soil"="Soil", "Time_point"="Time_point"))
-dim(df_p_blanks_bcf) #383 23
-dim(df_sample_bcf) # 1065 23
+df_p_blanks_bcf <- df_p_mcf %>% filter(Sample_type %in% c("Nitrite_Blank","Nitrate_Blank","Ammonium_Blank")) %>% left_join(cf_no2, by = c("Soil"="Soil", "Time_point"="Time_point")) %>% left_join(cf_no3, by = c("Soil"="Soil", "Time_point"="Time_point"))
+dim(df_p_blanks_bcf) #197 26
+dim(df_sample_bcf) # 849 26
 df_p_bcf <- rbind(df_sample_bcf, df_p_blanks_bcf)
-dim(df_p_bcf) # 1448 3
+dim(df_p_bcf) # 1055
 
 ## innate nitrate
-df_p_bcf %>% filter(Titration_type == "No_Nitrate" & Time_point == "WB_T0") %>% select(NO3_mM) %>% unlist() %>% mean()
-df_p_bcf %>% filter(Titration_type == "No_Nitrate" & Time_point == "WW_T0") %>% select(NO3_mM) %>% unlist() %>% mean()
-df_p_bcf %>% filter(Titration_type == "No_Nitrate" & Time_point == "C_T0") %>% select(NO3_mM) %>% unlist() %>% mean()
+df_p_bcf %>% filter(Titration_type == "No_Nitrate" & Time_point == "LBA_T0") %>% select(NO3_mM) %>% unlist() %>% mean()
+df_p_bcf %>% filter(Titration_type == "No_Nitrate" & Time_point == "Sterile_T0") %>% select(NO3_mM) %>% unlist() %>% mean()
 
+# export
+df_p_bcf$Time_point
+# removing timepoint T8
+df_kyle <- df_p_bcf
+df_kyle$Time_point %>% unique()
+dim(df_kyle)
+# write.xlsx(df_kyle, "220519_Griess_antibiotics_experiment_to_kyle.xlsx")
+
+df_kyle2 <- df_kyle %>% filter(Titration_type %in% c("NaOH", "HCl"))
+dim(df_kyle2)
+# write.xlsx(df_kyle2, "220519_Griess_antibiotics_dose_experiment_remove_blanks.xlsx")
+
+                               
 ```
 
 
@@ -377,7 +494,7 @@ ggplot(df_no3_blank, aes(x=Time_hours, y=NO3_mM, color=Soil, group=Soil)) +
   # scale_color_manual(values = c("deepskyblue4","maroon2"))+
   ylab("Measured NO3- (mM) \n") +
   xlab("\n Time (hr)") +
-  # scale_y_continuous(breaks = seq(0,2.7,0.5), limits=c(0, 2.7))+
+  scale_y_continuous(breaks = seq(0,2.5,0.5), limits=c(0, 2.5))+
   # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
   ggtitle("Nitrate blank \n") +
   mytheme_2d
@@ -392,7 +509,7 @@ ggplot(df_no2_blank, aes(x=Time_hours, y=NO2_mM, color=Soil, group=Soil)) +
   # scale_color_manual(values = c("deepskyblue4","maroon2"))+
   ylab("Measured NO2- (mM) \n") +
   xlab("\n Time (hr)") +
-  # scale_y_continuous(breaks = seq(0,2.7,0.5), limits=c(0, 2.7))+
+  scale_y_continuous(breaks = seq(0,2.7,0.5), limits=c(0, 2.7))+
   # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
   ggtitle("Nitrite blank \n") +
   mytheme_2d
@@ -452,80 +569,10 @@ ggplot(df_p_bcf, aes(x=Time_hours, y=NO3_mM, color=Sample_type, group=Sample_typ
   theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
 
 
-```
-
-## 3.2. What is going on in nitrite spike plates?
-```{r}
-
-df_T5 <- df_p_mcf %>% filter(Time_point %in% c("WB_T5", "C_T5"))
-
-ggplot(df_T5, aes(x=Time_hours, y=NO3_mM, color=Sample_type, group=Sample_type)) +
-  geom_point(size=2.5, shape=21) +
-  # geom_line(size=1)+
-  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
-  # scale_color_brewer(palette='Set2') +
-  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
-  ylab("Measured NO3- (mM) \n") +
-  xlab("\n Time (hr)") +
-  # scale_y_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
-  # scale_x_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
-  ggtitle("(After moisture correction) All samples \n") +
-  mytheme_2d +
-  facet_grid(. ~ Soil) +
-  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
-
-head(df_T5)
-
-
-ggplot(df_T5, aes(x=NO2_OD540, y=NO2_mM, color=Soil, group=Soil)) +
-  geom_point(size=4, shape=16, alpha=0.6) +
-  # geom_line(size=1)+
-  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
-  # scale_color_brewer(palette='Set2') +
-  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
-  ylab("Measured NO2- (mM) \n") +
-  xlab("\n NO2_OD540") +
-  # scale_y_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
-  # scale_x_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
-  ggtitle("(After moisture correction) OD540 and estimated nitrite concentration \n") +
-  mytheme_2d
-
-ggplot(df_T5, aes(x=NO2NO3_OD540, y=NO2NO3_mM, color=Soil, group=Soil)) +
-  geom_point(size=4, shape=16, alpha=0.6) +
-  # geom_line(size=1)+
-  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
-  # scale_color_brewer(palette='Set2') +
-  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
-  ylab("Measured NO2NO3_mM (mM) \n") +
-  xlab("\n NO2NO3_OD540") +
-  # scale_y_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
-  # scale_x_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
-  ggtitle("(After moisture correction) OD540 and estimated nitrite concentration \n") +
-  mytheme_2d
-
-df_blank3 <- df_T5 %>% filter(Sample_type %in% c("Nitrite_Blank", "Nitrate_Blank", "Ammonium_Blank"))
-
-ggplot(df_blank3, aes(x=NO3_mM, y=NO2_mM, color=Sample_type, group=Sample_type)) +
-  geom_point(size=5, shape=16) +
-  # geom_line(size=1)+
-  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
-  # scale_color_brewer(palette='Set2') +
-  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
-  ylab("Measured NO2- (mM) \n") +
-  xlab("\n Measured NO3- (mM)") +
-  # scale_y_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
-  # scale_x_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
-  ggtitle("(After moisture correction) Blank samples \n") +
-  mytheme_2d
-
-colnames(df_T5)
-
-
-
+## what??
+df_p_bcf %>% filter(NO2_mM > 2)
 
 ```
-
-
 
 ## 4. Nitrogen dynamics
 
@@ -546,33 +593,41 @@ grad_pH <- scale_colour_gradientn(colours = col_pH(100))
 
 # 1. pH perturbation
 # plot Nitrate
-df_pH <- df_p_bcf %>% filter(Titration_type %in% c("NaOH","HCl"))
-dim(df_pH)
+
+# only autoclaved soil is relevant for this analysis
+df_p_bcf$Soil <-  factor(df_p_bcf$Soil, levels = c("Barneveld2"))
+
+df_pH <- df_p_bcf %>% filter(Titration_type %in% c("NaOH","HCl")) 
+dim(df_pH) # 393
 
 # average the no acid base one.
-df_plot <- df_pH %>% select(H_mM, NO3_mM, NO2_mM, Soil, Time_hours, Time_point)
+df_plot <- df_pH %>% select(H_mM, Titration_type, Unit, NO3_mM, NO2_mM, Soil, Time_hours, Time_point, Antibiotics_type, Dose_ppm)
 df_plot %>% filter(H_mM == 0) %>% dim()
-df_plot %>% filter(H_mM == 0) %>% group_by(H_mM, Soil, Time_hours, Time_point) %>% summarize(NO3_mM = mean(NO3_mM), NO2_mM = mean(NO2_mM)) %>% ungroup()
-df_sub <- df_plot %>% filter(H_mM == 0) %>% group_by(H_mM, Soil, Time_hours, Time_point) %>% summarize(NO3_mM = mean(NO3_mM), NO2_mM = mean(NO2_mM)) %>% ungroup()
+df_plot %>% filter(H_mM == 0) %>% group_by(H_mM, Titration_type, Unit, Soil, Time_hours, Time_point, Antibiotics_type, Dose_ppm) %>% summarize(NO3_mM = mean(NO3_mM), NO2_mM = mean(NO2_mM)) %>% ungroup()
+df_sub <- df_plot %>% filter(H_mM == 0) %>% group_by(H_mM, Titration_type, Unit, Soil, Time_hours, Time_point, Antibiotics_type, Dose_ppm) %>% summarize(NO3_mM = mean(NO3_mM), NO2_mM = mean(NO2_mM)) %>% ungroup()
 df_main <- df_plot %>% filter(H_mM != 0)
 dim(df_plot)
 dim(df_main)
 df_plot2 <- rbind(df_main, df_sub)
-dim(df_plot2) # 1001
-
-# filter timepoint5
+dim(df_plot2) # 890
 
 
-p_A <- ggplot(df_plot2, aes(x=Time_hours, y=NO3_mM, color=H_mM, group=H_mM)) +
+
+# include pH data of the endpoint
+# df_pH_T7_10 <- df_220521_pH %>% filter(Time_point %in% c("T7","T10"))
+# 
+# df_plot2 <- df_plot2 %>% left_join(df_pH_T7_10, by=c("Soil"="Soil", "Titration_type"="Titration_type","Unit"="Unit", "Antibiotics_type"="Antibiotics_type", "Dose_ppm"="Dose_ppm"))
+
+# plot with H_mM
+ggplot(df_plot2, aes(x=Time_hours, y=NO3_mM, color=H_mM, group=H_mM)) +
   geom_point(size=2.5, shape=16) +
   geom_line(size=1.2)+
   # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
-  scale_colour_gradientn(colours = col_pH(100)) +
+  scale_colour_gradientn(colours = (col_pH(100))) +
   # scale_color_manual(values=grad_pH) +
   ylab("NO3- (mM) \n") +
   xlab("\n Time (hr)") +
   # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
-  # ggtitle("pH perturbation \n") +
   # label
   # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
   mytheme_2d +
@@ -580,19 +635,16 @@ p_A <- ggplot(df_plot2, aes(x=Time_hours, y=NO3_mM, color=H_mM, group=H_mM)) +
   theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
   theme(strip.text.x = element_text(size = 17))
 
-p_A
-
 # plot Nitrite
-p_I <- ggplot(df_plot2, aes(x=Time_hours, y=NO2_mM, color=H_mM, group=H_mM)) +
+ggplot(df_plot2, aes(x=Time_hours, y=NO2_mM, color=H_mM, group=H_mM)) +
   geom_point(size=2.5, shape=16) +
   geom_line(size=1.5)+
   # geom_errorbar(aes(ymin=NO2_mM - Std_NO2_mM, ymax=NO2_mM + Std_NO2_mM), width=.05)+
-  scale_colour_gradientn(colours = col_pH(100)) +
+  scale_colour_gradientn(colours = (col_pH(100))) +
   # scale_color_manual(values=col_pH(4)) +
   ylab("NO2- (mM) \n") +
   xlab("\n Time (hr)") +
   # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
-  # ggtitle("pH perturbation \n") +
   # label
   # geom_text(aes(label = round(NO2_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
   mytheme_2d +
@@ -600,272 +652,932 @@ p_I <- ggplot(df_plot2, aes(x=Time_hours, y=NO2_mM, color=H_mM, group=H_mM)) +
   theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
   theme(strip.text.x = element_text(size = 17))
 
-p_I
+# make dose (2500 and 5000)
+df_plot3 <- df_plot2
 
-require(gridExtra)
-library(grid)
-library(gtable)
+df_plot3$Dose_ppm <- ifelse(df_plot3$Dose_ppm == 2500, 5000, df_plot3$Dose_ppm)
+df_plot3$Dose_ppm <- ifelse(df_plot3$Dose_ppm == 5000, "2500 or 5000", df_plot3$Dose_ppm)
+df_plot3$Dose_ppm <- factor(df_plot3$Dose_ppm, levels = c(200, 1000, "2500 or 5000"))
+df_plot3$Antibiotics_type <- factor(df_plot3$Antibiotics_type, levels = c("CHL", "KAN", "STM","NYT","CHX","STM_CHX"))
+df_plot3 %<>% filter(Dose_ppm != 0)
 
-legend = gtable_filter(ggplotGrob(p_A), "guide-box")
+ggplot(df_plot3, aes(x=Time_hours, y=NO3_mM, color=H_mM, group=H_mM)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO3- (mM)") +
+  xlab("Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  ggtitle("Different antibiotics and dose effect")+
+  facet_grid(Dose_ppm ~ Antibiotics_type) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13, face="bold"))
 
-grid.arrange(arrangeGrob(p_A+xlab(NULL)+theme(legend.position="none"), 
-                         p_I+xlab(NULL)+theme(legend.position="none")+theme(strip.background = element_blank(), strip.text = element_blank(), strip.text.x = element_blank()), nrow=2,
-             top = textGrob("pH perturbation experiment on soils with 3 different pH levels", vjust = 0.5, gp = gpar(fontface = "bold", cex = 1.5)),
-             # left = textGrob("Relative abundance of strains with opt_pH", vjust = 0.5, rot=90, gp = gpar(fontface = "bold", cex = 1.5)),
-             bottom = textGrob("Time (hr)", vjust = 0, gp = gpar(fontface="bold", cex = 1.5)),
-             
-             right = legend
-             ))
+ggplot(df_plot3, aes(x=Time_hours, y=NO2_mM, color=H_mM, group=H_mM)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO2- (mM)") +
+  xlab("Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  ggtitle("Different antibiotics and dose effect")+
+  facet_grid(Dose_ppm ~ Antibiotics_type) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13, face="bold"))
+
+
+
+# dose effect - NO3-
+ggplot(df_plot3, aes(x=Time_hours, y=NO3_mM, color=Dose_ppm, group=Dose_ppm)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO3- (mM)") +
+  xlab("Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  ggtitle("Dose effect of antibiotics")+
+  facet_grid(H_mM ~ Antibiotics_type) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13, face="bold"))
+
+# dose effect - NO2-
+ggplot(df_plot3, aes(x=Time_hours, y=NO2_mM, color=Dose_ppm, group=Dose_ppm)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO2- (mM)") +
+  xlab("Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  ggtitle("Dose effect of antibiotics")+
+  facet_grid(H_mM ~ Antibiotics_type) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13, face="bold"))
+
+
+
+
+# color is antibiotics, pH is slots
+# ggplot(df_plot3, aes(x=Time_hours, y=NO3_mM, color=Antibiotics_type, group=Antibiotics_type)) +
+#   geom_point(size=2.5, shape=16) +
+#   geom_line(size=1.2)+
+#   # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
+#   # scale_colour_gradientn(colours = rev(col_pH(100))) +
+#   # scale_color_manual(values=grad_pH) +
+#   ylab("NO3- (mM)") +
+#   xlab("Time (hr)") +
+#   # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+#   # label
+#   # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+#   mytheme_2d +
+#   ggtitle("H_mM")+
+#   facet_grid(Dose_ppm ~ pH) +
+#   theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+#   theme(strip.text.x = element_text(size = 13)) +
+#   theme(strip.text.y = element_text(size = 13, face="bold"))
+
+#NO2
+ggplot(df_plot3, aes(x=Time_hours, y=NO2_mM, color=Antibiotics_type, group=Antibiotics_type)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO2- (mM)") +
+  xlab("Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  ggtitle("H_mM")+
+  facet_grid(Dose_ppm ~ H_mM) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13, face="bold"))
+
+
+# compare only with varying dose level
+df_dose <- df_plot2 %>% filter(H_mM == 0, Dose_ppm != 0)
+df_nodose <- df_plot2 %>% filter(Dose_ppm == 0)
+df_nodose_CHL <- df_nodose %>% mutate(Antibiotics_type = "CHL")
+df_nodose_KAN <- df_nodose %>% mutate(Antibiotics_type = "KAN")
+df_nodose_STM <- df_nodose %>% mutate(Antibiotics_type = "STM")
+df_nodose_NYT <- df_nodose %>% mutate(Antibiotics_type = "NYT")
+df_nodose_CHX <- df_nodose %>% mutate(Antibiotics_type = "CHX")
+df_nodose_STM_CHX <- df_nodose %>% mutate(Antibiotics_type = "STM_CHX")
+
+df_dose <- rbind(df_dose, df_nodose_CHL, df_nodose_KAN, df_nodose_STM, df_nodose_NYT, df_nodose_CHX, df_nodose_STM_CHX)
+
+df_dose$Dose_ppm <- factor(df_dose$Dose_ppm)
+df_dose$Antibiotics_type <- factor(df_dose$Antibiotics_type, levels = c("CHL", "KAN", "STM","NYT","CHX","STM_CHX"))
+
+ggplot(df_dose, aes(x=Time_hours, y=NO3_mM, color=Dose_ppm, group=Dose_ppm)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO3- (mM)") +
+  xlab("Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  ggtitle("Dose effect") +
+  facet_wrap(. ~ Antibiotics_type, nrow=2) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 13))
+  # theme(strip.text.y = element_text(size = 13, face="bold"))
+
+# NO2
+ggplot(df_dose, aes(x=Time_hours, y=NO2_mM, color=Dose_ppm, group=Dose_ppm)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO2- (mM)") +
+  xlab("Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  ggtitle("Dose effect") +
+  facet_wrap(. ~ Antibiotics_type, nrow=2) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 13))
+  # theme(strip.text.y = element_text(size = 13, face="bold"))
+
+
+
+
+
+
+# p_A <- ggplot(df_plot5, aes(x=Time_hours, y=NO3_mM, color=pH, group=pH)) +
+#   geom_point(size=2.5, shape=16) +
+#   geom_line(size=1.2)+
+#   # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
+#   scale_colour_gradientn(colours = rev(col_pH(100))) +
+#   # scale_color_manual(values=grad_pH) +
+#   ylab("NO3- (mM) \n") +
+#   xlab("\n Time (hr)") +
+#   # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+#   # label
+#   # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+#   mytheme_2d +
+#   facet_grid(Dose_ppm ~ Antibiotics_type) +
+#   theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+#   theme(strip.text.x = element_text(size = 17))
+# p_A
+# 
+# # plot Nitrite
+# p_I <- ggplot(df_plot3, aes(x=Time_hours, y=NO2_mM, color=pH, group=pH)) +
+#   geom_point(size=2.5, shape=16) +
+#   geom_line(size=1.5)+
+#   # geom_errorbar(aes(ymin=NO2_mM - Std_NO2_mM, ymax=NO2_mM + Std_NO2_mM), width=.05)+
+#   scale_colour_gradientn(colours = rev(col_pH(100))) +
+#   # scale_color_manual(values=col_pH(4)) +
+#   ylab("NO2- (mM) \n") +
+#   xlab("\n Time (hr)") +
+#   # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+#   # label
+#   # geom_text(aes(label = round(NO2_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+#   mytheme_2d +
+#   facet_grid(. ~ Soil) +
+#   theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+#   theme(strip.text.x = element_text(size = 17))
+# 
+# p_I
+
+# require(gridExtra)
+# library(grid)
+# library(gtable)
+# 
+# legend = gtable_filter(ggplotGrob(p_A), "guide-box")
+# 
+# grid.arrange(arrangeGrob(p_A+xlab(NULL)+theme(legend.position="none"), 
+#                          p_I+xlab(NULL)+theme(legend.position="none")+theme(strip.background = element_blank(), strip.text = element_blank(), strip.text.x = element_blank()), nrow=2,
+#              top = textGrob("pH perturbation experiment with autoclaved soil", vjust = 0.5, gp = gpar(fontface = "bold", cex = 1.5)),
+#              # left = textGrob("Relative abundance of strains with opt_pH", vjust = 0.5, rot=90, gp = gpar(fontface = "bold", cex = 1.5)),
+#              bottom = textGrob("Time (hr)", vjust = 0, gp = gpar(fontface="bold", cex = 1.5)),
+#              
+#              right = legend
+#              ))
 
 ```
 
-Add ammonium
+# plot with pH
 ```{r}
-am_plot2 <- read.xlsx("data/220420-2_Ammonia_bcf.xlsx")
+# plot together with pH data
+df_220521_pH <- read.xlsx("data/220521_pH_Antibiotics_dose_effect_experiment.xlsx") %>% select(-H_mM)
+df_220521_pH$Dose_ppm
+df_220521_pH$Time_point
 
-p_NH4 <- ggplot(am_plot2, aes(x=Time_hours, y=NH4_mM, color=H_mM, group=H_mM)) +
+df_220521_pH %>% filter(Antibiotics_type == "KAN") %>% arrange(pH) %>% filter(pH > 8, Dose_ppm == 5000)
+
+df_plot <- df_pH %>% select(H_mM, Titration_type, Unit, NO3_mM, NO2_mM, Soil, Time_hours, Time_point, Antibiotics_type, Dose_ppm)
+df_plot %>% filter(H_mM == 0) %>% dim()
+df_plot %>% filter(H_mM == 0) %>% group_by(H_mM, Titration_type, Unit, Soil, Time_hours, Time_point, Antibiotics_type, Dose_ppm) %>% summarize(NO3_mM = mean(NO3_mM), NO2_mM = mean(NO2_mM)) %>% ungroup()
+df_sub <- df_plot %>% filter(H_mM == 0) %>% group_by(H_mM, Titration_type, Unit, Soil, Time_hours, Time_point, Antibiotics_type, Dose_ppm) %>% summarize(NO3_mM = mean(NO3_mM), NO2_mM = mean(NO2_mM)) %>% ungroup()
+df_main <- df_plot %>% filter(H_mM != 0)
+dim(df_plot)
+dim(df_main)
+df_plot2 <- rbind(df_main, df_sub)
+dim(df_plot2) # 890
+colnames(df_plot2)
+
+df_plot2$Dose_ppm
+df_220521_pH$Dose_ppm
+
+df_220521_pH %<>% filter(Time_point %in% c("T7")) %>% select(-Time_point)
+
+df_plot2 %<>% left_join(df_220521_pH, by=c("Soil"="Soil", "Titration_type"="Titration_type","Unit"="Unit", "Antibiotics_type"="Antibiotics_type", "Dose_ppm"="Dose_ppm"))
+colnames(df_plot2)
+
+df_pH_label <- df_220521_pH %>% group_by(Titration_type, Unit) %>% summarize(pH_min = round(min(pH), 2), pH_max = round(max(pH), 2))
+df_pH_label$pH_ave <- (df_pH_label$pH_max + df_pH_label$pH_min)/2
+df_pH_label %<>% unite(col='pH_range', c("pH_min","pH_max"), sep=" - ", remove=F)
+df_pH_label
+df_pH_range <- df_plot2 %>% left_join(df_pH_label, by =c("Titration_type"="Titration_type", "Unit"="Unit"))
+
+# plot average and standard deviation
+# label with pH range
+
+# df_pH_label$pH_max <- as.character()
+
+# make dose (2500 and 5000)
+df_pH_range2 <- df_pH_range
+
+df_pH_range2$Dose_ppm <- ifelse(df_pH_range2$Dose_ppm == 2500, 5000, df_pH_range2$Dose_ppm)
+df_pH_range2$Dose_ppm <- ifelse(df_pH_range2$Dose_ppm == 5000, "2500 or 5000", df_pH_range2$Dose_ppm)
+df_pH_range2$Dose_ppm <- factor(df_pH_range2$Dose_ppm, levels = c(200, 1000, "2500 or 5000"))
+df_pH_range2$Antibiotics_type <- factor(df_pH_range2$Antibiotics_type, levels = c("CHL", "KAN", "STM","NYT","CHX","STM_CHX"))
+df_pH_range2 %<>% filter(Dose_ppm != 0)
+
+df_pH_range2 %>% filter(Antibiotics_type == "KAN") %>% arrange(pH) %>% filter(pH > 8, Dose_ppm == "2500 or 5000")
+
+ggplot(df_pH_range2, aes(x=Time_hours, y=NO3_mM, color=pH_ave, group=pH_ave)) +
   geom_point(size=2.5, shape=16) +
-  geom_line(size=1)+
-  # geom_errorbar(aes(ymin=NO2_mM - Std_NO2_mM, ymax=NO2_mM + Std_NO2_mM), width=.05)+
-  scale_colour_gradientn(colours = col_pH(100)) +
-  # scale_color_manual(values=col_pH(4)) +
-  ylab("NH4+ (mM) \n") +
-  xlab("\n Time (hr)") +
-  scale_y_continuous(breaks = seq(0,4,0.5), limits=c(0, 4))+
-  # ggtitle("pH perturbation \n") +
-  # label
-  # geom_text(aes(label = round(NO2_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
-  mytheme_2d +
-  facet_grid(. ~ Soil) +
-  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
-  theme(strip.text.x = element_text(size = 17))
-
-p_NH4
-
-p_A <- ggplot(df_plot2, aes(x=Time_hours, y=NO3_mM, color=H_mM, group=H_mM)) +
-  geom_point(size=2.5, shape=16) +
-  geom_line(size=1)+
+  geom_line(size=1.2)+
   # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
-  scale_colour_gradientn(colours = col_pH(100)) +
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO3- (mM)") +
+  xlab("Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  ggtitle("Different antibiotics and dose effect")+
+  facet_grid(Dose_ppm ~ Antibiotics_type) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13, face="bold"))
+
+ggplot(df_pH_range2, aes(x=Time_hours, y=NO2_mM, color=pH_ave, group=pH_ave)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO2- (mM)") +
+  xlab("Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  ggtitle("Different antibiotics and dose effect")+
+  facet_grid(Dose_ppm ~ Antibiotics_type) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13, face="bold"))
+
+
+
+# dose effect - NO3-
+ggplot(df_pH_range2, aes(x=Time_hours, y=NO3_mM, color=Dose_ppm, group=Dose_ppm)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO3- (mM)") +
+  xlab("Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  ggtitle("Dose effect of antibiotics")+
+  facet_grid(pH_range ~ Antibiotics_type) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13, face="bold"))
+
+# dose effect - NO2-
+ggplot(df_pH_range2, aes(x=Time_hours, y=NO2_mM, color=Dose_ppm, group=Dose_ppm)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO2- (mM)") +
+  xlab("Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  ggtitle("Dose effect of antibiotics")+
+  facet_grid(pH_range ~ Antibiotics_type) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13, face="bold"))
+
+
+
+
+# color is antibiotics, pH is slots
+ggplot(df_pH_range2, aes(x=Time_hours, y=NO3_mM, color=Antibiotics_type, group=Antibiotics_type)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO3- (mM)") +
+  xlab("Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  ggtitle("pH")+
+  facet_grid(Dose_ppm ~ pH_range) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13, face="bold"))
+
+#NO2
+ggplot(df_pH_range2, aes(x=Time_hours, y=NO2_mM, color=Antibiotics_type, group=Antibiotics_type)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO2- (mM)") +
+  xlab("Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  ggtitle("pH")+
+  facet_grid(Dose_ppm ~ pH_range) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13, face="bold"))
+
+
+# compare only with varying dose level
+df_dose <- df_plot2 %>% filter(H_mM == 0, Dose_ppm != 0)
+df_nodose <- df_plot2 %>% filter(Dose_ppm == 0)
+df_nodose_CHL <- df_nodose %>% mutate(Antibiotics_type = "CHL")
+df_nodose_KAN <- df_nodose %>% mutate(Antibiotics_type = "KAN")
+df_nodose_STM <- df_nodose %>% mutate(Antibiotics_type = "STM")
+df_nodose_NYT <- df_nodose %>% mutate(Antibiotics_type = "NYT")
+df_nodose_CHX <- df_nodose %>% mutate(Antibiotics_type = "CHX")
+df_nodose_STM_CHX <- df_nodose %>% mutate(Antibiotics_type = "STM_CHX")
+
+df_dose <- rbind(df_dose, df_nodose_CHL, df_nodose_KAN, df_nodose_STM, df_nodose_NYT, df_nodose_CHX, df_nodose_STM_CHX)
+
+df_dose$Dose_ppm <- factor(df_dose$Dose_ppm)
+df_dose$Antibiotics_type <- factor(df_dose$Antibiotics_type, levels = c("CHL", "KAN", "STM","NYT","CHX","STM_CHX"))
+
+
+```
+
+
+## STM, CHX, STM_CHX
+```{r}
+# fungal denitrification
+df_pH_range3 <- df_pH_range2 %>% filter(Antibiotics_type %in% c("STM","CHX","STM_CHX")) %>% filter(Dose_ppm %in% c(200, 1000))
+ggplot(df_pH_range3, aes(x=Time_hours, y=NO3_mM, color=Antibiotics_type, group=Antibiotics_type)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO3- (mM)") +
+  xlab("Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  ggtitle("Effect of fungicide cycloheximide")+
+  facet_grid(Dose_ppm ~ pH_range) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13, face="bold"))
+
+ggplot(df_pH_range3, aes(x=Time_hours, y=NO2_mM, color=Antibiotics_type, group=Antibiotics_type)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO2- (mM)") +
+  xlab("Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  ggtitle("Effect of fungicide cycloheximide")+
+  facet_grid(Dose_ppm ~ pH_range) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13, face="bold"))
+```
+
+
+
+
+
+
+
+<!-- Plot nitrate, nitrite, ammonium at the same time -->
+<!-- ```{r} -->
+<!-- df_ammo_plot3 <- read.xlsx("data/220519_Ammonia_sterile.xlsx") -->
+
+<!-- df_ammo_plot3$Soil <- factor(df_ammo_plot3$Soil, levels=c("LaBaghWoods_pH6.66", "LaBaghWoods_autoclaved_pH6.66")) -->
+
+<!-- p_NH4 <- ggplot(df_ammo_plot3, aes(x=Time_hours, y=NH4_mM, color=pH, group=pH)) + -->
+<!--   geom_point(size=2.5, shape=16) + -->
+<!--   geom_line(size=1.2)+ -->
+<!--   # geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+ -->
+<!--   scale_colour_gradientn(colours = rev(col_pH(100))) + -->
+<!--   # scale_color_manual(values=grad_pH) + -->
+<!--   ylab("NH4+ (mM) \n") + -->
+<!--   xlab("\n Time (hr)") + -->
+<!--   scale_y_continuous(breaks = seq(0,4,0.5), limits=c(0, 4))+ -->
+<!--   # ggtitle("pH perturbation \n") + -->
+<!--   # label -->
+<!--   # geom_text(aes(label = round(NH4_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+ -->
+<!--   mytheme_2d + -->
+<!--   facet_grid(. ~ Soil) + -->
+<!--   theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+ -->
+<!--   theme(strip.text.x = element_text(size = 17)) -->
+
+<!-- legend = gtable_filter(ggplotGrob(p_A), "guide-box") -->
+
+<!-- grid.arrange(arrangeGrob(p_A+xlab(NULL)+theme(legend.position="none"),  -->
+<!--                          p_I+xlab(NULL)+theme(legend.position="none")+theme(strip.background = element_blank(), strip.text = element_blank(), strip.text.x = element_blank()), -->
+<!--                          p_NH4+xlab(NULL)+theme(legend.position="none")+theme(strip.background = element_blank(), strip.text = element_blank(), strip.text.x = element_blank()) -->
+<!--                          , nrow=3, -->
+<!--              top = textGrob("pH perturbation experiment with autoclaved soil", vjust = 0.5, gp = gpar(fontface = "bold", cex = 1.5)), -->
+<!--              # left = textGrob("Relative abundance of strains with opt_pH", vjust = 0.5, rot=90, gp = gpar(fontface = "bold", cex = 1.5)), -->
+<!--              bottom = textGrob("Time (hr)", vjust = 0, gp = gpar(fontface="bold", cex = 1.5)), -->
+
+<!--              right = legend -->
+<!--              )) -->
+
+
+
+<!-- ``` -->
+
+
+<!-- Which are doing nitrate/nitrite reduction? -->
+<!-- ```{r} -->
+<!-- colnames(df_plot3) -->
+<!-- df_plot3$Soil -->
+<!-- df_au <- df_plot3 %>% filter(Soil == "LaBaghWoods_autoclaved_pH6.66") -->
+<!-- df_au_end <- df_au %>% filter(Time_point == "Sterile_T10") -->
+
+<!-- df_reduced <- df_au_end %>% filter(NO3_mM == 0) %>% mutate(Nitrate_reduced = T) -->
+<!-- df_not <- df_au_end %>% filter(NO3_mM != 0) %>% mutate(Nitrate_reduced =F) -->
+
+<!-- df_reduced <- rbind(df_reduced, df_not) -->
+
+<!-- # plot -->
+<!-- ggplot(df_reduced, aes(x=Nitrate_reduced, y=pH, color=pH, group=pH)) + -->
+<!--   geom_point(size=2.5, shape=16) + -->
+<!--   geom_line(size=1.5)+ -->
+<!--   # geom_errorbar(aes(ymin=NO2_mM - Std_NO2_mM, ymax=NO2_mM + Std_NO2_mM), width=.05)+ -->
+<!--   scale_colour_gradientn(colours = rev(col_pH(100))) + -->
+<!--   ggtitle("Counting perturbed samples that reduced all nitrate in autoclaved soil") + -->
+<!--   # scale_color_manual(values=col_pH(4)) + -->
+<!--   ylab("H+ (mM) \n") + -->
+<!--   xlab("\n Nitrate completely reduced?") + -->
+<!--   # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+ -->
+<!--   # label -->
+<!--   # geom_text(aes(label = round(NO2_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+ -->
+<!--   mytheme_2d -->
+
+<!-- # write.xlsx(df_reduced, "220519_nitrate_reduced_autoclaved_samples.xlsx") -->
+
+<!-- ``` -->
+
+
+<!-- No nitrate sample? -->
+<!-- ```{r} -->
+<!-- df_nn <- df_p_bcf %>% filter(Titration_type == "No_Nitrate") %>% filter(!(Time_point %in% c("LBA_T8", "Sterile_T8"))) -->
+<!-- colnames(df_nn) -->
+<!-- dim(df_nn) -->
+
+<!-- df_nn_ave <- df_nn %>% group_by(Soil, Time_hours, Time_point) %>% summarize(Std_NO3_mM = sd(NO3_mM), Std_NO2_mM = sd(NO2_mM), Ave_NO3_mM = mean(NO3_mM), Ave_NO2_mM = mean(NO2_mM)) %>% ungroup() -->
+
+<!-- ggplot(df_nn_ave, aes(x=Time_hours, y=Ave_NO3_mM, color=Soil)) + -->
+<!--   geom_point(size=2.5, shape=16) + -->
+<!--   geom_line(size=1.2)+ -->
+<!--   geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+ -->
+<!--   # scale_colour_gradientn(colours = col_pH(100)) + -->
+<!--   # scale_color_manual(values=grad_pH) + -->
+<!--   ylab("NO3- (mM) \n") + -->
+<!--   xlab("\n Time (hr)") + -->
+<!--   scale_y_continuous(breaks = seq(0,2,0.5), limits=c(0, 2))+ -->
+<!--   ggtitle("Samples provided with no Nitrate \n") + -->
+<!--   # label -->
+<!--   # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+ -->
+<!--   mytheme_2d+ -->
+<!--   facet_grid(. ~ Soil) + -->
+<!--   theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+ -->
+<!--   theme(strip.text.x = element_text(size = 17)) -->
+
+<!-- # plot Nitrite -->
+<!-- ggplot(df_nn_ave, aes(x=Time_hours, y=Ave_NO2_mM, color=Soil)) + -->
+<!--   geom_point(size=2.5, shape=16) + -->
+<!--   geom_line(size=1.2)+ -->
+<!--   geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+ -->
+<!--   # scale_colour_gradientn(colours = col_pH(100)) + -->
+<!--   # scale_color_manual(values=grad_pH) + -->
+<!--   ylab("NO2- (mM) \n") + -->
+<!--   xlab("\n Time (hr)") + -->
+<!--   scale_y_continuous(breaks = seq(0,2,0.5), limits=c(0, 2))+ -->
+<!--   ggtitle("Samples provided with no Nitrate \n") + -->
+<!--   # label -->
+<!--   # geom_text(aes(label = round(NO2_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+ -->
+<!--   mytheme_2d+ -->
+<!--   facet_grid(. ~ Soil) + -->
+<!--   theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+ -->
+<!--   theme(strip.text.x = element_text(size = 17)) -->
+
+<!-- p_A <- ggplot(df_nn_ave, aes(x=Time_hours, y=Ave_NO3_mM, color=Soil)) + -->
+<!--   geom_point(size=2.5, shape=16) + -->
+<!--   geom_line(size=1.2)+ -->
+<!--   geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+ -->
+<!--   # scale_colour_gradientn(colours = col_pH(100)) + -->
+<!--   # scale_color_manual(values=grad_pH) + -->
+<!--   ylab("NO3- (mM) \n") + -->
+<!--   xlab("\n Time (hr)") + -->
+<!--   scale_y_continuous(breaks = seq(0,2,0.5), limits=c(0, 2))+ -->
+<!--   # ggtitle("Samples provided with no Nitrate \n") + -->
+<!--   # label -->
+<!--   # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+ -->
+<!--   mytheme_2d+ -->
+<!--   facet_grid(. ~ Soil) + -->
+<!--   theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+ -->
+<!--   theme(strip.text.x = element_text(size = 17)) -->
+
+<!-- # plot Nitrite -->
+<!-- p_I <- ggplot(df_nn_ave, aes(x=Time_hours, y=Ave_NO2_mM, color=Soil)) + -->
+<!--   geom_point(size=2.5, shape=16) + -->
+<!--   geom_line(size=1.2)+ -->
+<!--   geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+ -->
+<!--   # scale_colour_gradientn(colours = col_pH(100)) + -->
+<!--   # scale_color_manual(values=grad_pH) + -->
+<!--   ylab("NO2- (mM) \n") + -->
+<!--   xlab("\n Time (hr)") + -->
+<!--   scale_y_continuous(breaks = seq(0,2,0.5), limits=c(0, 2))+ -->
+<!--   # ggtitle("Samples provided with no Nitrate \n") + -->
+<!--   # label -->
+<!--   # geom_text(aes(label = round(NO2_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+ -->
+<!--   mytheme_2d+ -->
+<!--   facet_grid(. ~ Soil) + -->
+<!--   theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+ -->
+<!--   theme(strip.text.x = element_text(size = 17)) -->
+
+<!-- grid.arrange(arrangeGrob(p_A+xlab(NULL)+theme(legend.position="none"),  -->
+<!--                          p_I+xlab(NULL)+theme(legend.position="none")+theme(strip.background = element_blank(), strip.text = element_blank(), strip.text.x = element_blank()), nrow=2, -->
+<!--              top = textGrob("Samples provided with no Nitrate", vjust = 0.5, gp = gpar(fontface = "bold", cex = 1.5)), -->
+<!--              # left = textGrob("Relative abundance of strains with opt_pH", vjust = 0.5, rot=90, gp = gpar(fontface = "bold", cex = 1.5)), -->
+<!--              bottom = textGrob("Time (hr)", vjust = 0, gp = gpar(fontface="bold", cex = 1.5)) -->
+<!--              )) -->
+
+<!-- # plot ammonia as well -->
+
+<!-- df_a_bcf <- read.xlsx("data/220519_Ammonia_df_a_bcf.xlsx") -->
+
+<!-- df_a_bcf$Soil <- factor(df_a_bcf$Soil, levels=c("LaBaghWoods_pH6.66", "LaBaghWoods_autoclaved_pH6.66")) -->
+<!-- df_a_bcf_nn <- df_a_bcf %>% filter(Titration_type == "No_Nitrate") %>% filter(!(Time_point %in% c("LBA_T8", "Sterile_T8"))) -->
+<!-- df_a_bcf_ave <- df_a_bcf_nn %>% group_by(Soil, Time_hours) %>% summarize(Std_NH4_mM = sd(NH4_mM), Ave_NH4_mM = mean(NH4_mM)) %>% ungroup() -->
+
+
+<!-- p_NH4 <- ggplot(df_a_bcf_ave, aes(x=Time_hours, y=Ave_NH4_mM, color=Soil)) + -->
+<!--   geom_point(size=2.5, shape=16) + -->
+<!--   geom_line(size=1.2)+ -->
+<!--   geom_errorbar(aes(ymin=Ave_NH4_mM - Std_NH4_mM, ymax=Ave_NH4_mM + Std_NH4_mM), width=.05)+ -->
+<!--   # scale_colour_gradientn(colours = col_pH(100)) + -->
+<!--   # scale_color_manual(values=grad_pH) + -->
+<!--   ylab("NH4- (mM) \n") + -->
+<!--   xlab("\n Time (hr)") + -->
+<!--   scale_y_continuous(breaks = seq(0,2.5,0.5), limits=c(0, 2.5))+ -->
+<!--   # ggtitle("Samples provided with no Nitrate \n") + -->
+<!--   # label -->
+<!--   # geom_text(aes(label = round(NH4_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+ -->
+<!--   mytheme_2d+ -->
+<!--   facet_grid(. ~ Soil) + -->
+<!--   theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+ -->
+<!--   theme(strip.text.x = element_text(size = 17)) -->
+
+<!-- p_NH4 -->
+
+<!-- # legend = gtable_filter(ggplotGrob(p_A), "guide-box") -->
+
+<!-- grid.arrange(arrangeGrob(p_A+xlab(NULL)+theme(legend.position="none"),  -->
+<!--                          p_I+xlab(NULL)+theme(legend.position="none")+theme(strip.background = element_blank(), strip.text = element_blank(), strip.text.x = element_blank()), -->
+<!--                          p_NH4+xlab(NULL)+theme(legend.position="none")+theme(strip.background = element_blank(), strip.text = element_blank(), strip.text.x = element_blank()) -->
+<!--                          , nrow=3, -->
+<!--              top = textGrob("Samples provided with no Nitrate.", vjust = 0.5, gp = gpar(fontface = "bold", cex = 1.5)), -->
+<!--              # left = textGrob("Relative abundance of strains with opt_pH", vjust = 0.5, rot=90, gp = gpar(fontface = "bold", cex = 1.5)), -->
+<!--              bottom = textGrob("Time (hr)", vjust = 0, gp = gpar(fontface="bold", cex = 1.5)) -->
+<!--              )) -->
+
+
+
+
+
+<!-- ``` -->
+
+## 4.2. Let's see if fungi or bacteria matter
+
+```{r}
+# only antibiotics treated samples
+df_LBA <- df_p_bcf %>% filter(Soil == "LaBaghWoods_pH6.66") %>% filter(!(Time_point == "LBA_T8"))
+dim(df_LBA) # 521 -> 473 (removed LBA_T8)
+
+
+df_effect <- df_LBA %>% filter(H_mM == 0) %>% filter(!(Titration_type %in% c("Nitrate", "Nitrite", "Ammonium", "No_Nitrate")))
+dim(df_effect) # 263 -> 165 -> 132 -> 120 (removed T8)
+df_effect$Titration_type
+df_effect$Antibiotics_type
+df_effect %>% filter(Time_point == "LBA_T0")
+
+# let's also include autoclaved sample
+df_autoclaved <- df_pH %>% filter(H_mM == 0) %>% filter(!(Time_point == "Sterile_T8"))
+df_autoclaved$Antibiotics_type <- "Autoclaved"
+dim(df_autoclaved) # 33
+df_effect <- rbind(df_effect, df_autoclaved)
+dim(df_effect) #153 -> 150
+
+# this is for kyle
+df_kyle2 <- rbind(df_kyle, df_autoclaved)
+# write.xlsx(df_kyle2, "220519_Griess_antibiotics_experiment_to_kyle_w_autoclaved.xlsx")
+
+# reorder factor
+df_effect$Antibiotics_type <- factor(df_effect$Antibiotics_type, levels = c("None", "CHL", "NYT", "CHL_NYT", "Autoclaved"))
+
+# plot
+ggplot(df_effect, aes(x=Time_hours, y=NO3_mM, color=Antibiotics_type, group=Antibiotics_type)) +
+  geom_point(size=2.5, shape=16) +
+  # geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_colour_gradientn(colours = col_pH(100)) +
   # scale_color_manual(values=grad_pH) +
   ylab("NO3- (mM) \n") +
   xlab("\n Time (hr)") +
   # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
-  # ggtitle("pH perturbation \n") +
+  ggtitle("Antibiotics application (Chloramphenicol: CHL, Nystatin: NYT, CHL+NYT: CHL_NYT) \n") +
   # label
   # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
-  mytheme_2d +
-  facet_grid(. ~ Soil) +
-  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
-  theme(strip.text.x = element_text(size = 17))
+  mytheme_2d
+  # facet_grid(. ~ Soil) +
+  # theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
 
-p_A
 
-# plot Nitrite
-p_I <- ggplot(df_plot2, aes(x=Time_hours, y=NO2_mM, color=H_mM, group=H_mM)) +
+
+# plot average and standard deviation
+colnames(df_effect)
+dim(df_effect)
+df_effect_ave <- df_effect %>% group_by(Nitrite_input, Nitrate_input, Soil, Titration_type, Sample_type, Antibiotics_type, H_mM, Time_point, Time_minutes, Time_hours, Time_days) %>% summarise(Std_NO2_mM = sd(NO2_mM), Std_NO3_mM = sd(NO3_mM), NO2_mM = mean(NO2_mM), NO3_mM = mean(NO3_mM)) %>% ungroup()
+dim(df_effect_ave)
+
+# nitrate
+ggplot(df_effect_ave, aes(x=Time_hours, y=NO3_mM, color=Antibiotics_type, group=Antibiotics_type)) +
   geom_point(size=2.5, shape=16) +
-  geom_line(size=1)+
-  # geom_errorbar(aes(ymin=NO2_mM - Std_NO2_mM, ymax=NO2_mM + Std_NO2_mM), width=.05)+
-  scale_colour_gradientn(colours = col_pH(100)) +
-  # scale_color_manual(values=col_pH(4)) +
-  ylab("NO2- (mM) \n") +
-  xlab("\n Time (hr)") +
-  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
-  # ggtitle("pH perturbation \n") +
-  # label
-  # geom_text(aes(label = round(NO2_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
-  mytheme_2d +
-  facet_grid(. ~ Soil) +
-  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
-  theme(strip.text.x = element_text(size = 17))
-
-p_I
-
-grid.arrange(arrangeGrob(p_A+xlab(NULL)+theme(legend.position="none"), 
-                         p_I+xlab(NULL)+theme(legend.position="none")+theme(strip.background = element_blank(), strip.text = element_blank(), strip.text.x = element_blank()),
-                         p_NH4+xlab(NULL)+theme(legend.position="none")+theme(strip.background = element_blank(), strip.text = element_blank(), strip.text.x = element_blank())
-                         , nrow=3,
-             top = textGrob("pH perturbation experiment on soils with 3 different pH levels", vjust = 0.5, gp = gpar(fontface = "bold", cex = 1.5)),
-             # left = textGrob("Relative abundance of strains with opt_pH", vjust = 0.5, rot=90, gp = gpar(fontface = "bold", cex = 1.5)),
-             bottom = textGrob("Time (hr)", vjust = 0, gp = gpar(fontface="bold", cex = 1.5)),
-             
-             right = legend
-             ))
-
-
-
-
-```
-
-Let's look closer at Crerar7
-```{r}
-df_plot3 <- df_plot2 %>% filter(Soil =="Crerar1_pH8.05")
-df_plot3$Titration_type <- ifelse(df_plot3$H_mM > 40, "Acidic perturbation > 40mM",
-                                  ifelse(df_plot3$H_mM < -40, "Basic perturbation < -40mM",
-                                         "Neutral range [-40mM, 40mM]"))
-
-am_plot3 <- am_plot2 %>% filter(Soil =="Crerar1_pH8.05")
-am_plot3$Titration_type <- ifelse(am_plot3$H_mM > 40, "Acidic perturbation > 40mM",
-                                  ifelse(am_plot3$H_mM < -40, "Basic perturbation < -40mM",
-                                         "Neutral range [-40mM, 40mM]"))
-
-p_NH4 <- ggplot(am_plot3, aes(x=Time_hours, y=NH4_mM, color=H_mM, group=H_mM)) +
-  geom_point(size=2.5, shape=16) +
-  geom_line(size=1)+
-  # geom_errorbar(aes(ymin=NO2_mM - Std_NO2_mM, ymax=NO2_mM + Std_NO2_mM), width=.05)+
-  scale_colour_gradientn(colours = col_pH(100)) +
-  # scale_color_manual(values=col_pH(4)) +
-  ylab("NH4+ (mM) \n") +
-  xlab("\n Time (hr)") +
-  scale_y_continuous(breaks = seq(0,4,0.5), limits=c(0, 4))+
-  # ggtitle("pH perturbation \n") +
-  # label
-  # geom_text(aes(label = round(NO2_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
-  mytheme_2d +
-  facet_grid(. ~ Titration_type) +
-  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
-  theme(strip.text.x = element_text(size = 17))
-
-p_NH4
-
-p_A <- ggplot(df_plot3, aes(x=Time_hours, y=NO3_mM, color=H_mM, group=H_mM)) +
-  geom_point(size=2.5, shape=16) +
-  geom_line(size=1)+
-  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
-  scale_colour_gradientn(colours = col_pH(100)) +
-  # scale_color_manual(values=grad_pH) +
+  geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_colour_gradientn(colours = col_pH(100)) +
+  scale_color_manual(values=c("Black","Red","Blue", "Purple", "Brown")) +
   ylab("NO3- (mM) \n") +
   xlab("\n Time (hr)") +
   # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
-  # ggtitle("pH perturbation \n") +
+  ggtitle("Antibiotics application: 200ppm of Chloramphenicol(CHL), Nystatin(NYT), CHL+NYT(CHL_NYT) \n") +
   # label
   # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
-  mytheme_2d +
-  facet_grid(. ~ Titration_type) +
-  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
-  theme(strip.text.x = element_text(size = 17))
+  mytheme_2d
 
-p_A
-
-# plot Nitrite
-p_I <- ggplot(df_plot3, aes(x=Time_hours, y=NO2_mM, color=H_mM, group=H_mM)) +
+# nitrite
+ggplot(df_effect_ave, aes(x=Time_hours, y=NO2_mM, color=Antibiotics_type, group=Antibiotics_type)) +
   geom_point(size=2.5, shape=16) +
-  geom_line(size=1)+
-  # geom_errorbar(aes(ymin=NO2_mM - Std_NO2_mM, ymax=NO2_mM + Std_NO2_mM), width=.05)+
-  scale_colour_gradientn(colours = col_pH(100)) +
-  # scale_color_manual(values=col_pH(4)) +
+  geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=NO2_mM - Std_NO2_mM, ymax=NO2_mM + Std_NO2_mM), width=.05)+
+  # scale_colour_gradientn(colours = col_pH(100)) +
+  scale_color_manual(values=c("Black","Red","Blue", "Purple", "Brown")) +
   ylab("NO2- (mM) \n") +
   xlab("\n Time (hr)") +
   # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
-  # ggtitle("pH perturbation \n") +
+  ggtitle("Antibiotics application: 200ppm of Chloramphenicol(CHL), Nystatin(NYT), CHL+NYT(CHL_NYT) \n") +
   # label
   # geom_text(aes(label = round(NO2_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
-  mytheme_2d +
-  facet_grid(. ~ Titration_type) +
-  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
-  theme(strip.text.x = element_text(size = 17))
+  mytheme_2d
 
-p_I
 
-grid.arrange(arrangeGrob(p_A+xlab(NULL)+theme(legend.position="none"), 
-                         p_I+xlab(NULL)+theme(legend.position="none")+theme(strip.background = element_blank(), strip.text = element_blank(), strip.text.x = element_blank()),
-                         p_NH4+xlab(NULL)+theme(legend.position="none")+theme(strip.background = element_blank(), strip.text = element_blank(), strip.text.x = element_blank())
-                         , nrow=3,
-             top = textGrob("pH perturbation experiment on Crerar7_pH8.08", vjust = 0.5, gp = gpar(fontface = "bold", cex = 1.5)),
-             # left = textGrob("Relative abundance of strains with opt_pH", vjust = 0.5, rot=90, gp = gpar(fontface = "bold", cex = 1.5)),
-             bottom = textGrob("Time (hr)", vjust = 0, gp = gpar(fontface="bold", cex = 1.5)),
-             
-             right = legend
-             ))
+
+
 
 
 ```
 
-Let's look closer at Crerar7-2
+
+## 4.3. Let's see other pH perturbed levels.
 ```{r}
-df_plot3 <- df_plot2 %>% filter(Soil =="Crerar1_pH8.05")
-df_plot3$Titration_type <- ifelse(df_plot3$H_mM > 40, "Strong acidic perturbation > 40mM",
-                                  ifelse(df_plot3$H_mM < -40, "Strong basic perturbation < -40mM",
-                                         ifelse(df_plot3$H_mM < 0, "Weak basic perturbation",
-                                         "Weak acidic perturbation")))
+df_pH_effect <- df_LBA %>% filter(!(Titration_type %in% c("Nitrate", "Nitrite", "Ammonium", "No_Nitrate")))
+dim(df_pH_effect) # 354
+df_pH_effect$Titration_type
+df_pH_effect$Antibiotics_type
+df_pH_effect %>% filter(Time_point == "LBA_T0")
 
-am_plot3 <- am_plot2 %>% filter(Soil =="Crerar1_pH8.05")
-am_plot3$Titration_type <- ifelse(am_plot3$H_mM > 40, "Strong acidic perturbation > 40mM",
-                                  ifelse(am_plot3$H_mM < -40, "Strong basic perturbation < -40mM",
-                                         ifelse(am_plot3$H_mM < 0, "Weak basic perturbation",
-                                         "Weak acidic perturbation")))
+# let's also include autoclaved sample
+df_autoclaved <- df_pH %>% filter(H_mM == 0) %>% filter(!(Time_point == "Sterile_T8"))
+df_autoclaved$Antibiotics_type <- "Autoclaved"
+dim(df_autoclaved) # 33
+df_pH_effect <- rbind(df_pH_effect, df_autoclaved)
+dim(df_pH_effect) #384
 
-p_NH4 <- ggplot(am_plot3, aes(x=Time_hours, y=NH4_mM, color=H_mM, group=H_mM)) +
+# reorder factor
+df_pH_effect$Antibiotics_type <- factor(df_pH_effect$Antibiotics_type, levels = c("None", "CHL", "NYT", "CHL_NYT", "Autoclaved"))
+
+# plot average and standard deviation
+colnames(df_pH_effect)
+dim(df_pH_effect)
+df_pH_effect_ave <- df_pH_effect %>% group_by(Nitrite_input, Nitrate_input, Soil, Titration_type, Sample_type, Antibiotics_type, H_mM, Time_point, Time_minutes, Time_hours, Time_days) %>% summarise(Std_NO2_mM = sd(NO2_mM), Std_NO3_mM = sd(NO3_mM), NO2_mM = mean(NO2_mM), NO3_mM = mean(NO3_mM)) %>% ungroup()
+dim(df_pH_effect_ave) # 284
+
+# nitrate
+ggplot(df_pH_effect_ave, aes(x=Time_hours, y=NO3_mM, color=Antibiotics_type, group=Antibiotics_type)) +
   geom_point(size=2.5, shape=16) +
-  geom_line(size=1)+
-  # geom_errorbar(aes(ymin=NO2_mM - Std_NO2_mM, ymax=NO2_mM + Std_NO2_mM), width=.05)+
-  scale_colour_gradientn(colours = col_pH(100)) +
-  # scale_color_manual(values=col_pH(4)) +
-  ylab("NH4+ (mM) \n") +
-  xlab("\n Time (hr)") +
-  scale_y_continuous(breaks = seq(0,4,0.5), limits=c(0, 4))+
-  # ggtitle("pH perturbation \n") +
-  # label
-  # geom_text(aes(label = round(NO2_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
-  mytheme_2d +
-  facet_grid(. ~ Titration_type) +
-  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
-  theme(strip.text.x = element_text(size = 17))
-
-p_NH4
-
-p_A <- ggplot(df_plot3, aes(x=Time_hours, y=NO3_mM, color=H_mM, group=H_mM)) +
-  geom_point(size=2.5, shape=16) +
-  geom_line(size=1)+
-  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
-  scale_colour_gradientn(colours = col_pH(100)) +
-  # scale_color_manual(values=grad_pH) +
+  geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_colour_gradientn(colours = col_pH(100)) +
+  scale_color_manual(values=c("Black","Red","Blue", "Purple", "Brown")) +
   ylab("NO3- (mM) \n") +
   xlab("\n Time (hr)") +
   # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
-  # ggtitle("pH perturbation \n") +
+  ggtitle("Antibiotics application x pH perturbation(H_mM): 200ppm of Chloramphenicol(CHL), Nystatin(NYT), CHL+NYT(CHL_NYT) \n") +
   # label
   # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
   mytheme_2d +
-  facet_grid(. ~ Titration_type) +
-  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
-  theme(strip.text.x = element_text(size = 17))
-
-p_A
-
-# plot Nitrite
-p_I <- ggplot(df_plot3, aes(x=Time_hours, y=NO2_mM, color=H_mM, group=H_mM)) +
+  facet_wrap(. ~ H_mM, nrow=2) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+    
+# nitrite
+ggplot(df_pH_effect_ave, aes(x=Time_hours, y=NO2_mM, color=Antibiotics_type, group=Antibiotics_type)) +
   geom_point(size=2.5, shape=16) +
-  geom_line(size=1)+
-  # geom_errorbar(aes(ymin=NO2_mM - Std_NO2_mM, ymax=NO2_mM + Std_NO2_mM), width=.05)+
-  scale_colour_gradientn(colours = col_pH(100)) +
-  # scale_color_manual(values=col_pH(4)) +
+  geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=NO2_mM - Std_NO2_mM, ymax=NO2_mM + Std_NO2_mM), width=.05)+
+  # scale_colour_gradientn(colours = col_pH(100)) +
+  scale_color_manual(values=c("Black","Red","Blue", "Purple", "Brown")) +
   ylab("NO2- (mM) \n") +
   xlab("\n Time (hr)") +
   # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
-  # ggtitle("pH perturbation \n") +
+  ggtitle("Antibiotics application x pH perturbation(H_mM): 200ppm of Chloramphenicol(CHL), Nystatin(NYT), CHL+NYT(CHL_NYT) \n") +
   # label
   # geom_text(aes(label = round(NO2_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
-  mytheme_2d +
-  facet_grid(. ~ Titration_type) +
-  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
-  theme(strip.text.x = element_text(size = 17))
-
-p_I
-
-grid.arrange(arrangeGrob(p_A+xlab(NULL)+theme(legend.position="none"), 
-                         p_I+xlab(NULL)+theme(legend.position="none")+theme(strip.background = element_blank(), strip.text = element_blank(), strip.text.x = element_blank()),
-                         p_NH4+xlab(NULL)+theme(legend.position="none")+theme(strip.background = element_blank(), strip.text = element_blank(), strip.text.x = element_blank())
-                         , nrow=3,
-             top = textGrob("pH perturbation experiment on Crerar7_pH8.08", vjust = 0.5, gp = gpar(fontface = "bold", cex = 1.5)),
-             # left = textGrob("Relative abundance of strains with opt_pH", vjust = 0.5, rot=90, gp = gpar(fontface = "bold", cex = 1.5)),
-             bottom = textGrob("Time (hr)", vjust = 0, gp = gpar(fontface="bold", cex = 1.5)),
-             
-             right = legend
-             ))
-
+  mytheme_2d+
+  facet_wrap(. ~ H_mM, nrow=2) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
 
 ```
+
+
+<!-- Plot pH in these plots -->
+<!-- ```{r} -->
+<!-- df_kyle2 <- read.xlsx("data/220519_Griess_antibiotics_experiment_to_kyle_remove_blanks_add_pH.xlsx") -->
+
+<!-- df_pH_effect <- df_kyle2 %>% filter(!(Titration_type %in% c("Nitrate", "Nitrite", "Ammonium", "No_Nitrate"))) -->
+<!-- dim(df_pH_effect) # 354 -->
+<!-- df_pH_effect$Titration_type -->
+<!-- df_pH_effect$Antibiotics_type -->
+<!-- df_pH_effect %>% filter(Time_point == "LBA_T0") -->
+
+<!-- # let's also include autoclaved sample -->
+<!-- df_autoclaved <- df_pH %>% filter(H_mM == 0) %>% filter(!(Time_point == "Sterile_T8")) -->
+<!-- df_autoclaved$Antibiotics_type <- "Autoclaved" -->
+<!-- dim(df_autoclaved) # 33 -->
+<!-- df_autoclaved$pH <- 7.7 # any number between 7.6, 7.8 to be classified as neutral soil. -->
+
+<!-- colnames(df_pH_effect) -->
+<!-- colnames(df_autoclaved) -->
+<!-- df_pH_effect <- rbind(df_pH_effect, df_autoclaved) -->
+<!-- dim(df_pH_effect) #384 -->
+
+<!-- # reorder factor -->
+<!-- df_pH_effect$Antibiotics_type <- factor(df_pH_effect$Antibiotics_type, levels = c("None", "CHL", "NYT", "CHL_NYT", "Autoclaved")) -->
+
+<!-- # plot average and standard deviation -->
+<!-- colnames(df_pH_effect) -->
+<!-- dim(df_pH_effect) -->
+<!-- df_pH_effect_ave <- df_pH_effect %>% group_by(Soil, Titration_type, Unit, Sample_type, Antibiotics_type, H_mM, Time_point, Time_minutes, Time_hours, Time_days, pH) %>% summarise(Std_NO2_mM = sd(NO2_mM), Std_NO3_mM = sd(NO3_mM), NO2_mM = mean(NO2_mM), NO3_mM = mean(NO3_mM)) %>% ungroup() -->
+<!-- dim(df_pH_effect_ave) # 284 -->
+
+<!-- # label with pH range -->
+<!-- df_pH_label <- df_pH_effect_ave %>% group_by(Titration_type, Unit) %>% summarize(pH_min = min(pH), pH_max = max(pH)) -->
+<!-- # df_pH_label$pH_max <- as.character() -->
+
+<!-- df_pH_label %<>% unite(col='pH_range', c("pH_min","pH_max"), sep="-", remove=F) -->
+
+<!-- df_pH_range <- df_pH_effect_ave %>% left_join(df_pH_label, by =c("Titration_type"="Titration_type", "Unit"="Unit")) -->
+
+
+<!-- # nitrate -->
+<!-- ggplot(df_pH_range, aes(x=Time_hours, y=NO3_mM, color=Antibiotics_type, group=Antibiotics_type)) + -->
+<!--   geom_point(size=2.5, shape=16) + -->
+<!--   geom_line(size=1.2)+ -->
+<!--   geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+ -->
+<!--   # scale_colour_gradientn(colours = col_pH(100)) + -->
+<!--   scale_color_manual(values=c("Black","Red","Blue", "Purple", "Brown")) + -->
+<!--   ylab("NO3- (mM) \n") + -->
+<!--   xlab("\n Time (hr)") + -->
+<!--   # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+ -->
+<!--   ggtitle("Antibiotics application x pH perturbation (pH at day2): 200ppm of Chloramphenicol(CHL), Nystatin(NYT), CHL+NYT(CHL_NYT) \n") + -->
+<!--   # label -->
+<!--   # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+ -->
+<!--   mytheme_2d + -->
+<!--   facet_wrap(. ~ pH_range, nrow=2) + -->
+<!--   theme(strip.background = element_rect(colour="black", fill="white", size=0.1)) -->
+
+<!-- # nitrite -->
+<!-- ggplot(df_pH_range, aes(x=Time_hours, y=NO2_mM, color=Antibiotics_type, group=Antibiotics_type)) + -->
+<!--   geom_point(size=2.5, shape=16) + -->
+<!--   geom_line(size=1.2)+ -->
+<!--   geom_errorbar(aes(ymin=NO2_mM - Std_NO2_mM, ymax=NO2_mM + Std_NO2_mM), width=.05)+ -->
+<!--   # scale_colour_gradientn(colours = col_pH(100)) + -->
+<!--   scale_color_manual(values=c("Black","Red","Blue", "Purple", "Brown")) + -->
+<!--   ylab("NO2- (mM) \n") + -->
+<!--   xlab("\n Time (hr)") + -->
+<!--   # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+ -->
+<!--   ggtitle("Antibiotics application x pH perturbation (pH at day2): 200ppm of Chloramphenicol(CHL), Nystatin(NYT), CHL+NYT(CHL_NYT) \n") + -->
+<!--   # label -->
+<!--   # geom_text(aes(label = round(NO2_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+ -->
+<!--   mytheme_2d+ -->
+<!--   facet_wrap(. ~ pH_range, nrow=2) + -->
+<!--   theme(strip.background = element_rect(colour="black", fill="white", size=0.1)) -->
+
+
+<!-- ``` -->
+
+
+
+
+
+<!-- ## (Temporary) Filter the T8 for now. -->
+<!-- ```{r} -->
+<!-- df_plot2 <- df_plot2 %>% filter(!(Time_point %in% c("WB_T5", "C_T5")))  -->
+<!-- dim(df_plot2) -->
+
+<!-- na_to_average <- function(mat_NO2){ -->
+<!--   for (i in 1:dim(mat_NO2)[1]){ -->
+<!--     # print(i) -->
+<!--     for (j in 1:dim(mat_NO2)[2]){ -->
+<!--       # print(j) -->
+<!--       if (is.na(mat_NO2[i,j])){ -->
+<!--         mat_NO2[i,j] <- (mat_NO2[i,j-1] + mat_NO2[i,j+1] ) / 2 -->
+<!--       } -->
+<!--     } -->
+<!--   } -->
+<!--   return(mat_NO2) -->
+<!-- } -->
+<!-- ``` -->
+
+
 
 <!-- ## 4.1.1. Nitrite peakheight and H_mM -->
 <!-- ```{r echo=F} -->
@@ -995,191 +1707,415 @@ grid.arrange(arrangeGrob(p_A+xlab(NULL)+theme(legend.position="none"),
 <!-- ``` -->
 
 
-## 4.1.1.2. PCA on the nitrate, nitrite time readings.
-
-Before PCA, we need to make the time point the same. In PCA, it wouldn't matter, right? yes. The value of the column or row is not incorporated in the SVD process.
-```{r}
-na_to_average <- function(mat_NO2){
-  for (i in 1:dim(mat_NO2)[1]){
-    # print(i)
-    for (j in 1:dim(mat_NO2)[2]){
-      # print(j)
-      if (is.na(mat_NO2[i,j])){
-        mat_NO2[i,j] <- (mat_NO2[i,j-1] + mat_NO2[i,j+1] ) / 2
-      }
-    }
-  }
-  return(mat_NO2)
-}
-
-# Remove soil name in time_point string
-df_plot2$Time_point <- str_replace(df_plot2$Time_point, ".*_","")
-
-any(is.na(df_plot2)) # no NAs. That's good
-dim(df_plot2) # 942 6
-
-paste0("T",00:10)
-# sprintf("%02d", 0:10)
-df_plot2$Time_point <- factor(df_plot2$Time_point, levels = paste0("T",00:10))
-
-# remove T10
-dim(df_plot2)
-df_plot2 %<>% filter(!(Time_point == "T10"))
-dim(df_plot2) # 874
-```
 
 
-## (1) First plot PCA with only the nitrate
-```{r}
+<!-- ## 4.1.1.2. PCA on the nitrate, nitrite time readings. -->
 
-## make the above values to matrices
-mat_NO2 <- dcast(df_plot2, H_mM + Soil ~ Time_point, value.var = "NO2_mM")
-mat_NO2[is.na(mat_NO2)]
+<!-- Before PCA, we need to make the time point the same. In PCA, it wouldn't matter, right? yes. The value of the column or row is not incorporated in the SVD process. -->
+<!-- ```{r} -->
+<!-- # Data only with autoclave and antibiotic treated samples -->
+<!-- df_PCA <- df_pH_effect_ave %>% select(-Std_NO2_mM, -Std_NO3_mM)  # remove standard deviation -->
 
-# mat_NO2 <- tibble::column_to_rownames(mat_NO2, var = "H_mM")
-dim(mat_NO2)
-colnames(mat_NO2)
+<!-- # Remove soil name in time_point string -->
+<!-- df_PCA$Time_point <- str_replace(df_PCA$Time_point, ".*_","") -->
 
-col_NO2 <- mat_NO2[,1:2]
-mat_NO2 <- as.matrix(mat_NO2[,3:ncol(mat_NO2)]) 
-class(mat_NO2)
-dim(mat_NO2)
-mat_NO2[is.na(mat_NO2)]
-mat_NO2 <- na_to_average(mat_NO2)
-mat_NO2[is.na(mat_NO2)] # no more NA
-col_NO2[24,]
-mat_NO2[24,]
-# need to remove row 24
+<!-- any(is.na(df_PCA)) # no NAs. That's good -->
+<!-- dim(df_PCA) # 284 15 -->
 
-mat_NO3 <- dcast(df_plot2, H_mM + Soil ~ Time_point, value.var = "NO3_mM")
-dim(mat_NO3)
-col_NO3 <- mat_NO3[,1:2]
-mat_NO3 <- as.matrix(mat_NO3[,3:ncol(mat_NO3)]) 
-class(mat_NO3)
-dim(mat_NO3)
-mat_NO3[is.na(mat_NO3)]
-mat_NO3 <- na_to_average(mat_NO3)
-mat_NO3[is.na(mat_NO3)] # no more NA
-col_NO3[24,]
-mat_NO3[24,]
+<!-- # remove NA -->
+<!-- df_PCA[is.na(df_PCA)] -->
+<!-- df_na <- df_PCA[rowSums(is.na(df_PCA)) > 0,] -->
+<!-- # df_PCA <- na.omit(df_PCA) -->
+<!-- # df_PCA <- df_PCA[rowSums(is.na(df_PCA)) == 0,] -->
+<!-- # dim(df_PCA) # 1046 -->
 
-# merge 2 matrix
-col_NO3
-col_NO2
+<!-- paste0("T",00:10) -->
+<!-- # sprintf("%02d", 0:10) -->
+<!-- df_PCA$Time_point <- factor(df_PCA$Time_point, levels = paste0("T",00:10)) -->
 
-identical(col_NO3, col_NO2) # True
-dim(mat_NO2)
-dim(mat_NO3)
-mat_NO2NO3 <- cbind(mat_NO2, mat_NO3)
-dim(mat_NO2NO3)
-
-# put in the row names
-col_NO2$H_mM <- round(col_NO2$H_mM, 2)
-class(col_NO2)
-vec_sample = unite(col_NO2, "Sample", Soil, H_mM, sep=":")
-vec_sample = vec_sample$Sample
-length(vec_sample)
-dim(mat_NO2NO3)
-rownames(mat_NO2NO3) = vec_sample
-rownames(mat_NO2NO3)
-mat_NO2NO3
-# First, the typical principal component analysis on the samples would be to transpose the data such that the samples are rows of the data matrix. The prcomp function can be used to return the principal components and other variables.(https://genomicsclass.github.io/book/pages/pca_svd.html)
-any(is.na(mat_NO2NO3))
-# remove row 24
-mat_NO2NO3 <- mat_NO2NO3[-24,]
-any(is.na(mat_NO2NO3))
-
-# PCA with prcomp
-pc <- prcomp(mat_NO2NO3)
-eigs <- pc$sdev^2
-# variance explained
-eigs[1] / sum(eigs) # pc1
-
-eigs[2] / sum(eigs) # pc2
-
-# First, a new dataframe should be created, with the information of sample-group. (http://huboqiang.cn/2016/03/03/RscatterPlotPCA)
-df_out <- as.data.frame(pc$x)
-df_out
-
-head(df_out)
-dim(df_out)
-df_out$new <- rownames(df_out)
-
-identical(vec_sample, df_out$new)
-df_out <- separate(df_out, new, c("Soil","H_mM"), sep=":", remove=T)
-
-df_out$H_mM <- as.numeric(df_out$H_mM)
-
-# plot PCA with timepoint labels
-ggplot(df_out,aes(x=PC1,y=PC2))+
-  geom_point(size = 4, alpha=0.9, aes(col = H_mM, shape = Soil))+
-  scale_colour_gradientn(colours = col_pH(100)) +
-  xlab(paste0('\n PC1', " (explained variance: ",round(eigs[1] / sum(eigs),3)*100,"%)"))+
-  ylab(paste0("PC2"," (explained variance: ",round(eigs[2] / sum(eigs),3)*100,"%) \n")) +
-  ggtitle("Principle component analysis (Nitrate + Nitrite dynamics) \n") +
-  mytheme_2d
-
-# make histogram for PC1
-ggplot(df_out, aes(x=PC1)) +
-  geom_freqpoly(binwidth = 0.85, aes(color=Soil), size=2) +
-  scale_fill_brewer(palette='Set2') +
-  # scale_x_continuous(limits=c(-2.5, 2.5)) +
-  ylab("Freq") +
-  xlab("PC1") +
-  ggtitle(paste0("Marginal distribution of PC1"))+
-  mytheme_2d
-
-# make histogram for PC2
-ggplot(df_out, aes(x=PC2)) +
-  geom_freqpoly(binwidth = 0.85, aes(color=Soil), size=2) +
-  scale_fill_brewer(palette='Set2') +
-  # scale_x_continuous(limits=c(-2.5, 2.5)) +
-  ylab("Freq") +
-  xlab("PC2") +
-  ggtitle(paste0("Marginal distribution of PC2"))+
-  mytheme_2d
-  
+<!-- dim(df_PCA) -->
+<!-- ``` -->
 
 
+<!-- ## (1) Plot PCA with nitrate + nitrite -->
+<!-- ```{r} -->
+<!-- # function -->
+<!-- na_to_average <- function(mat_NO2){ -->
+<!--   for (i in 1:dim(mat_NO2)[1]){ -->
+<!--     # print(i) -->
+<!--     for (j in 1:dim(mat_NO2)[2]){ -->
+<!--       # print(j) -->
+<!--       if (is.na(mat_NO2[i,j])){ -->
+<!--         mat_NO2[i,j] <- (mat_NO2[i,j-1] + mat_NO2[i,j+1] ) / 2 -->
+<!--       } -->
+<!--     } -->
+<!--   } -->
+<!--   return(mat_NO2) -->
+<!-- } -->
+
+<!-- ## make the above values to matrices -->
+<!-- mat_NO2 <- dcast(df_PCA, H_mM + Titration_type + Antibiotics_type ~ Time_point, value.var = "NO2_mM") -->
+<!-- mat_NO2[is.na(mat_NO2)] -->
+
+<!-- # mat_NO2 <- tibble::column_to_rownames(mat_NO2, var = "H_mM") -->
+<!-- dim(mat_NO2) -->
+<!-- colnames(mat_NO2) -->
+
+<!-- col_NO2 <- mat_NO2[,1:3] -->
+<!-- mat_NO2 <- as.matrix(mat_NO2[,4:ncol(mat_NO2)])  -->
+<!-- class(mat_NO2) -->
+<!-- dim(mat_NO2) -->
+<!-- mat_NO2[is.na(mat_NO2)] -->
+<!-- mat_NO2 <- na_to_average(mat_NO2) -->
+<!-- mat_NO2[is.na(mat_NO2)] # no more NA -->
+<!-- # col_NO2[24,] -->
+<!-- # mat_NO2[24,] -->
+<!-- # need to remove row 24 -->
+
+<!-- mat_NO3 <- dcast(df_PCA, H_mM + Titration_type + Antibiotics_type ~ Time_point, value.var = "NO3_mM") -->
+<!-- dim(mat_NO3) -->
+<!-- col_NO3 <- mat_NO3[,1:3] -->
+<!-- mat_NO3 <- as.matrix(mat_NO3[,4:ncol(mat_NO3)])  -->
+<!-- class(mat_NO3) -->
+<!-- dim(mat_NO3) -->
+<!-- mat_NO3[is.na(mat_NO3)] -->
+<!-- mat_NO3 <- na_to_average(mat_NO3) -->
+<!-- mat_NO3[is.na(mat_NO3)] # no more NA -->
+<!-- # col_NO3[24,] -->
+<!-- # mat_NO3[24,] -->
+
+<!-- # merge 2 matrix -->
+<!-- col_NO3 -->
+<!-- col_NO2 -->
+
+<!-- identical(col_NO3, col_NO2) # True -->
+<!-- dim(mat_NO2) -->
+<!-- dim(mat_NO3) -->
+<!-- mat_NO2NO3 <- cbind(mat_NO2, mat_NO3) -->
+<!-- dim(mat_NO2NO3) -->
+
+<!-- # put in the row names -->
+<!-- col_NO2$H_mM <- round(col_NO2$H_mM, 2) -->
+<!-- class(col_NO2) -->
+<!-- vec_sample = unite(col_NO2, "Sample", Titration_type, H_mM,Antibiotics_type, sep=":") -->
+<!-- vec_sample = vec_sample$Sample -->
+<!-- length(vec_sample) -->
+<!-- dim(mat_NO2NO3) -->
+<!-- rownames(mat_NO2NO3) = vec_sample -->
+<!-- rownames(mat_NO2NO3) -->
+<!-- mat_NO2NO3 -->
+<!-- # First, the typical principal component analysis on the samples would be to transpose the data such that the samples are rows of the data matrix. The prcomp function can be used to return the principal components and other variables.(https://genomicsclass.github.io/book/pages/pca_svd.html) -->
+<!-- any(is.na(mat_NO2NO3)) -->
+<!-- # remove row 24 -->
+<!-- any(is.na(mat_NO2NO3)) -->
+
+<!-- # PCA with prcomp -->
+<!-- pc <- prcomp(mat_NO2NO3) -->
+<!-- eigs <- pc$sdev^2 -->
+<!-- # variance explained -->
+<!-- eigs[1] / sum(eigs) # pc1 -->
+
+<!-- eigs[2] / sum(eigs) # pc2 -->
+
+<!-- # First, a new dataframe should be created, with the information of sample-group. (http://huboqiang.cn/2016/03/03/RscatterPlotPCA) -->
+<!-- df_out <- as.data.frame(pc$x) -->
+<!-- df_out -->
+
+<!-- head(df_out) -->
+<!-- dim(df_out) -->
+<!-- df_out$new <- rownames(df_out) -->
+
+<!-- identical(vec_sample, df_out$new) -->
+<!-- df_out <- separate(df_out, new, c("Titration_type","H_mM","Antibiotics_type"), sep=":", remove=T) -->
+
+<!-- df_out$H_mM <- as.numeric(df_out$H_mM) -->
+
+<!-- # plot PCA with timepoint labels -->
+<!-- ggplot(df_out,aes(x=PC1,y=PC2))+ -->
+<!--   geom_point(size = 4, alpha=0.9, aes(col = H_mM, shape = Antibiotics_type))+ -->
+<!--   scale_colour_gradientn(colours = col_pH(100)) + -->
+<!--   xlab(paste0('\n PC1', " (explained variance: ",round(eigs[1] / sum(eigs),3)*100,"%)"))+ -->
+<!--   ylab(paste0("PC2"," (explained variance: ",round(eigs[2] / sum(eigs),3)*100,"%) \n")) + -->
+<!--   ggtitle("Principle component analysis (Nitrate + Nitrite dynamics) \n") + -->
+<!--   mytheme_2d -->
+
+<!-- # make histogram for PC1 -->
+<!-- ggplot(df_out, aes(x=PC1)) + -->
+<!--   geom_freqpoly(binwidth = 0.5, aes(color=Antibiotics_type), size=2) + -->
+<!--   scale_fill_brewer(palette='Set2') + -->
+<!--   # scale_x_continuous(limits=c(-2.5, 2.5)) + -->
+<!--   ylab("Freq") + -->
+<!--   xlab("PC1") + -->
+<!--   ggtitle(paste0("Marginal distribution of PC1"))+ -->
+<!--   mytheme_2d -->
+
+<!-- # make histogram for PC2 -->
+<!-- ggplot(df_out, aes(x=PC2)) + -->
+<!--   geom_freqpoly(binwidth = 0.85, aes(color=Soil), size=2) + -->
+<!--   scale_fill_brewer(palette='Set2') + -->
+<!--   # scale_x_continuous(limits=c(-2.5, 2.5)) + -->
+<!--   ylab("Freq") + -->
+<!--   xlab("PC2") + -->
+<!--   ggtitle(paste0("Marginal distribution of PC2"))+ -->
+<!--   mytheme_2d -->
+
+<!-- # Label with mM -->
+<!-- ggplot(df_out,aes(x=PC1,y=PC2, label=sprintf("%0.1f", round(H_mM, digits = 1))))+ -->
+<!--   geom_point(size = 5, alpha=0.9, aes(col = H_mM))+ -->
+<!--   scale_colour_gradientn(colours = col_pH(100)) + -->
+<!--   xlab(paste0('\n PC1', " (explained variance: ",round(eigs[1] / sum(eigs),3)*100,"%)"))+ -->
+<!--   ylab(paste0("PC2"," (explained variance: ",round(eigs[2] / sum(eigs),3)*100,"%) \n")) + -->
+<!--   ggtitle("Principle component analysis (Nitrate + Nitrite dynamics) \n") + -->
+<!--   ggrepel::geom_label_repel() + -->
+<!--   mytheme_2d -->
 
 
-# Label with mM
-ggplot(df_out,aes(x=PC1,y=PC2, label=sprintf("%0.1f", round(H_mM, digits = 1))))+
-  geom_point(size = 5, alpha=0.9, aes(col = H_mM))+
-  scale_colour_gradientn(colours = col_pH(100)) +
-  xlab(paste0('\n PC1', " (explained variance: ",round(eigs[1] / sum(eigs),3)*100,"%)"))+
-  ylab(paste0("PC2"," (explained variance: ",round(eigs[2] / sum(eigs),3)*100,"%) \n")) +
-  ggtitle("Principle component analysis (Nitrate dynamics) \n") +
-  ggrepel::geom_label_repel() +
-  mytheme_2d
-  
-
-# 3D: http://www.sthda.com/english/wiki/impressive-package-for-3d-and-4d-graph-r-software-and-data-visualization
-# library("plot3D")
-# rownames(df_out) <- as.numeric(rownames(df_out))
-# scatter3D(df_out$PC1, df_out$PC2, df_out$PC3, bty = "b2", pch = 16, cex = 2,col = (col_pH(100)),
-#           main = "Principle component analysis (Nitrate dynamics)", xlab = "PC1",
-#           ylab ="PC2", zlab = "PC3",
-#           theta = 15, phi = 50)
-## is this correct? I don't think so.. doesn't agree with the 2d plot.... let's come back to this some time later..
-
-
-
-```
-
-## (1-1) How about an NMDS?
-```{r}
+<!-- # 3D: http://www.sthda.com/english/wiki/impressive-package-for-3d-and-4d-graph-r-software-and-data-visualization -->
+<!-- # library("plot3D") -->
+<!-- # rownames(df_out) <- as.numeric(rownames(df_out)) -->
+<!-- # scatter3D(df_out$PC1, df_out$PC2, df_out$PC3, bty = "b2", pch = 16, cex = 2,col = (col_pH(100)), -->
+<!-- #           main = "Principle component analysis (Nitrate dynamics)", xlab = "PC1", -->
+<!-- #           ylab ="PC2", zlab = "PC3", -->
+<!-- #           theta = 15, phi = 50) -->
+<!-- ## is this correct? I don't think so.. doesn't agree with the 2d plot.... let's come back to this some time later.. -->
 
 
 
+<!-- ``` -->
+
+<!-- Again with pH values -->
+<!-- ```{r} -->
+<!-- # function -->
+<!-- na_to_average <- function(mat_NO2){ -->
+<!--   for (i in 1:dim(mat_NO2)[1]){ -->
+<!--     # print(i) -->
+<!--     for (j in 1:dim(mat_NO2)[2]){ -->
+<!--       # print(j) -->
+<!--       if (is.na(mat_NO2[i,j])){ -->
+<!--         mat_NO2[i,j] <- (mat_NO2[i,j-1] + mat_NO2[i,j+1] ) / 2 -->
+<!--       } -->
+<!--     } -->
+<!--   } -->
+<!--   return(mat_NO2) -->
+<!-- } -->
+
+<!-- df_PCA$Titration_type %>% unique() -->
+<!-- ## make the above values to matrices -->
+<!-- mat_NO2 <- dcast(df_PCA, pH + Antibiotics_type ~ Time_point, value.var = "NO2_mM") -->
+<!-- mat_NO2[is.na(mat_NO2)] -->
+
+<!-- # mat_NO2 <- tibble::column_to_rownames(mat_NO2, var = "H_mM") -->
+<!-- dim(mat_NO2) -->
+<!-- colnames(mat_NO2) -->
+
+<!-- col_NO2 <- mat_NO2[,1:2] -->
+<!-- mat_NO2 <- as.matrix(mat_NO2[,3:ncol(mat_NO2)])  -->
+<!-- class(mat_NO2) -->
+<!-- dim(mat_NO2) -->
+<!-- mat_NO2[is.na(mat_NO2)] -->
+<!-- mat_NO2 <- na_to_average(mat_NO2) -->
+<!-- mat_NO2[is.na(mat_NO2)] # no more NA -->
+<!-- # col_NO2[24,] -->
+<!-- # mat_NO2[24,] -->
+<!-- # need to remove row 24 -->
+
+<!-- mat_NO3 <- dcast(df_PCA, pH + Antibiotics_type ~ Time_point, value.var = "NO3_mM") -->
+<!-- dim(mat_NO3) -->
+<!-- col_NO3 <- mat_NO3[,1:2] -->
+<!-- mat_NO3 <- as.matrix(mat_NO3[,3:ncol(mat_NO3)])  -->
+<!-- class(mat_NO3) -->
+<!-- dim(mat_NO3) -->
+<!-- mat_NO3[is.na(mat_NO3)] -->
+<!-- mat_NO3 <- na_to_average(mat_NO3) -->
+<!-- mat_NO3[is.na(mat_NO3)] # no more NA -->
+<!-- # col_NO3[24,] -->
+<!-- # mat_NO3[24,] -->
+
+<!-- # merge 2 matrix -->
+<!-- col_NO3 -->
+<!-- col_NO2 -->
+
+<!-- identical(col_NO3, col_NO2) # True -->
+<!-- dim(mat_NO2) -->
+<!-- dim(mat_NO3) -->
+<!-- mat_NO2NO3 <- cbind(mat_NO2, mat_NO3) -->
+<!-- dim(mat_NO2NO3) -->
+
+<!-- # put in the row names -->
+<!-- col_NO2$pH <- round(col_NO2$pH, 2) -->
+<!-- class(col_NO2) -->
+<!-- vec_sample = unite(col_NO2, "Sample", pH,Antibiotics_type, sep=":") -->
+<!-- vec_sample = vec_sample$Sample -->
+<!-- length(vec_sample) -->
+<!-- dim(mat_NO2NO3) -->
+<!-- rownames(mat_NO2NO3) = vec_sample -->
+<!-- rownames(mat_NO2NO3) -->
+<!-- mat_NO2NO3 -->
+<!-- # First, the typical principal component analysis on the samples would be to transpose the data such that the samples are rows of the data matrix. The prcomp function can be used to return the principal components and other variables.(https://genomicsclass.github.io/book/pages/pca_svd.html) -->
+<!-- any(is.na(mat_NO2NO3)) -->
+<!-- # remove row 24 -->
+<!-- any(is.na(mat_NO2NO3)) -->
+
+<!-- # PCA with prcomp -->
+<!-- pc <- prcomp(mat_NO2NO3) -->
+<!-- eigs <- pc$sdev^2 -->
+<!-- # variance explained -->
+<!-- eigs[1] / sum(eigs) # pc1 -->
+
+<!-- eigs[2] / sum(eigs) # pc2 -->
+
+<!-- # First, a new dataframe should be created, with the information of sample-group. (http://huboqiang.cn/2016/03/03/RscatterPlotPCA) -->
+<!-- df_out <- as.data.frame(pc$x) -->
+<!-- df_out -->
+
+<!-- head(df_out) -->
+<!-- dim(df_out) -->
+<!-- df_out$new <- rownames(df_out) -->
+
+<!-- identical(vec_sample, df_out$new) -->
+<!-- df_out <- separate(df_out, new, c("pH","Antibiotics_type"), sep=":", remove=T) -->
+
+<!-- df_out$pH <- as.numeric(df_out$pH) -->
+<!-- df_out$Antibiotics_type <- factor(df_out$Antibiotics_type, levels = c("None", "CHL", "NYT", "CHL_NYT", "Autoclaved")) -->
+
+<!-- # plot PCA with timepoint labels -->
+<!-- ggplot(df_out,aes(x=PC1,y=PC2))+ -->
+<!--   geom_point(size = 4, alpha=0.9, aes(col = pH, shape = Antibiotics_type))+ -->
+<!--   scale_colour_gradientn(colours = rev(col_pH(100))) + -->
+<!--   xlab(paste0('\n PC1', " (explained variance: ",round(eigs[1] / sum(eigs),3)*100,"%)"))+ -->
+<!--   ylab(paste0("PC2"," (explained variance: ",round(eigs[2] / sum(eigs),3)*100,"%) \n")) + -->
+<!--   ggtitle("Principle component analysis (Nitrate + Nitrite dynamics) \n") + -->
+<!--   mytheme_2d -->
+
+<!-- # make histogram for PC1 -->
+<!-- ggplot(df_out, aes(x=PC1)) + -->
+<!--   geom_freqpoly(binwidth = 0.5, aes(color=pH), size=2) + -->
+<!--   scale_fill_brewer(palette='Set2') + -->
+<!--   # scale_x_continuous(limits=c(-2.5, 2.5)) + -->
+<!--   ylab("Freq") + -->
+<!--   xlab("PC1") + -->
+<!--   ggtitle(paste0("Marginal distribution of PC1"))+ -->
+<!--   mytheme_2d -->
+
+<!-- # make histogram for PC2 -->
+<!-- ggplot(df_out, aes(x=PC2)) + -->
+<!--   geom_freqpoly(binwidth = 0.85, aes(color=pH), size=2) + -->
+<!--   scale_fill_brewer(palette='Set2') + -->
+<!--   # scale_x_continuous(limits=c(-2.5, 2.5)) + -->
+<!--   ylab("Freq") + -->
+<!--   xlab("PC2") + -->
+<!--   ggtitle(paste0("Marginal distribution of PC2"))+ -->
+<!--   mytheme_2d -->
+
+<!-- # Label with mM -->
+<!-- ggplot(df_out,aes(x=PC1,y=PC2, label=sprintf("%0.1f", round(pH, digits = 1))))+ -->
+<!--   geom_point(size = 5, alpha=0.9, aes(col = pH, shape = Antibiotics_type))+ -->
+<!--   scale_colour_gradientn(colours = rev(col_pH(100))) + -->
+<!--   xlab(paste0('\n PC1', " (explained variance: ",round(eigs[1] / sum(eigs),3)*100,"%)"))+ -->
+<!--   ylab(paste0("PC2"," (explained variance: ",round(eigs[2] / sum(eigs),3)*100,"%) \n")) + -->
+<!--   ggtitle("Principle component analysis (Nitrate + Nitrite dynamics) \n") + -->
+<!--   ggrepel::geom_label_repel() + -->
+<!--   mytheme_2d -->
+
+<!-- # plot pH and PC1 -->
+
+<!-- ggplot(df_out,aes(x=PC1,y=pH, label=sprintf("%0.1f", round(pH, digits = 1))))+ -->
+<!--   geom_point(size = 5, alpha=0.9, aes(col = pH, shape = Antibiotics_type))+ -->
+<!--   scale_colour_gradientn(colours = rev(col_pH(100))) + -->
+<!--   xlab(paste0('\n PC1', " (explained variance: ",round(eigs[1] / sum(eigs),3)*100,"%)"))+ -->
+<!--   ylab(paste0("pH \n")) + -->
+<!--   ggtitle("pH and PC1 \n") + -->
+<!--   # ggrepel::geom_label_repel() + -->
+<!--   mytheme_2d -->
+
+<!-- ``` -->
+
+
+<!-- Let's plot delta I / delta A -->
+
+<!-- ```{r} -->
+<!-- # compute delta I -->
+<!-- mat_NO2 -->
+<!-- dim(mat_NO2[,1]) -->
+
+<!-- length(mat_NO2[,1]) -->
+
+<!-- mat_delI <- matrix(nrow=nrow(mat_NO2), ncol=ncol(mat_NO2)-1) -->
+<!-- for (i in 1:(ncol(mat_NO2)-1)){ -->
+<!--   print(i) -->
+<!--   # print(mat_NO2[,i+1, drop=F] - mat_NO2[,i, drop=F] ) -->
+<!--   mat_delI[,i] <- mat_NO2[,i+1, drop=F] - mat_NO2[,i, drop=F] -->
+<!-- } -->
+
+<!-- # compute delta A -->
+<!-- mat_NO3 -->
+
+<!-- mat_delA <- matrix(nrow=nrow(mat_NO3), ncol=ncol(mat_NO3)-1) -->
+<!-- for (i in 1:(ncol(mat_NO3)-1)){ -->
+<!--   print(i) -->
+<!--   # print(mat_NO3[,i+1, drop=F] - mat_NO3[,i, drop=F] ) -->
+<!--   mat_delA[,i] <- mat_NO3[,i+1, drop=F] - mat_NO3[,i, drop=F] -->
+<!-- } -->
+
+<!-- col_NO2 -->
+
+<!-- abs(mat_delI / mat_delA) -->
+
+<!-- # confirming -->
+<!-- mat_delI[2,3] / mat_delA[2,3] -->
+<!-- mat_delI[28,8] / mat_delA[28,8] -->
+
+
+<!-- # histogram -->
+<!-- hist( abs(mat_delI / mat_delA)) -->
+
+<!-- # remove Inf? -->
+
+<!-- # let's plot -->
+<!-- df_ratio_delI_delA <- cbind(col_NO2, abs(mat_delI / mat_delA)) -->
+<!-- df_ratio_delI_delA <- melt(df_ratio_delI_delA, id.vars = c("Antibiotics_type","pH"), variable.name = "Time", value.name = "ratio_delI_delA") -->
+
+<!-- df_delA <- cbind(col_NO2, abs(mat_delA)) -->
+<!-- df_delA <- melt(df_delA, id.vars = c("Antibiotics_type","pH"), variable.name = "Time", value.name = "delA") -->
+
+<!-- # left join -->
+<!-- df_merge_ratio_delA <- df_ratio_delI_delA %>% left_join(df_delA, by = c("Antibiotics_type"="Antibiotics_type","pH"="pH","Time"="Time")) -->
+
+<!-- # plot -->
+<!-- ggplot(df_merge_ratio_delA,aes(x=delA, y=ratio_delI_delA, label=sprintf("%0.1f", round(pH, digits = 1))))+ -->
+<!--   geom_point(size = 5, alpha=0.9, aes(col = pH, shape = Antibiotics_type))+ -->
+<!--   scale_colour_gradientn(colours = rev(col_pH(100))) + -->
+<!--   xlab(paste0('\n delta A'))+ -->
+<!--   ylab(paste0("delta I / delta A \n")) + -->
+<!--   ggtitle("delta I delta A ratio \n") + -->
+<!--   ggrepel::geom_label_repel() + -->
+<!--   mytheme_2d -->
+
+<!-- # plot -->
+<!-- ggplot(df_merge_ratio_delA,aes(x=delA, y=ratio_delI_delA))+ -->
+<!--   geom_point(size = 5, alpha=0.9, aes(col = pH, shape = Antibiotics_type))+ -->
+<!--   scale_colour_gradientn(colours = rev(col_pH(100))) + -->
+<!--   scale_y_continuous(limits=c(0, 1)) + -->
+<!--   xlab(paste0('\n delta A'))+ -->
+<!--   ylab(paste0("delta I / delta A \n")) + -->
+<!--   ggtitle("delta I / delta A \n") + -->
+<!--   # ggrepel::geom_label_repel() + -->
+<!--   mytheme_2d -->
+
+<!-- # plot -->
+<!-- ggplot(df_merge_ratio_delA,aes(x=delA, y=ratio_delI_delA, label=sprintf("%0.1f", round(pH, digits = 1))))+ -->
+<!--   geom_point(size = 5, alpha=0.9, aes(col = pH, shape = Antibiotics_type))+ -->
+<!--   scale_colour_gradientn(colours = rev(col_pH(100))) + -->
+<!--   scale_y_continuous(limits=c(0, 1)) + -->
+<!--   xlab(paste0('\n delta A'))+ -->
+<!--   ylab(paste0("delta I / delta A \n")) + -->
+<!--   ggtitle("delta I / delta A \n") + -->
+<!--   ggrepel::geom_label_repel() + -->
+<!--   mytheme_2d -->
 
 
 
-
-
-```
-
-
+<!-- ``` -->
 
 
 
@@ -2662,5 +3598,7 @@ ggplot(df_out,aes(x=PC1,y=PC2, label=sprintf("%0.1f", round(H_mM, digits = 1))))
 <!-- pairs(df_mu_amm, main = "mu space correlation", -->
 <!--       pch=21, cex.labels = 1.7, cex=1.5, cex.main=2, col='blue') -->
 <!-- ``` -->
+
+
 
 

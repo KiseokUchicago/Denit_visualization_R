@@ -48,11 +48,28 @@ Welcome to Kiseok Denitrification data visualization website.
 * [220131_Griess_pH_perturbation3 (1/31/22)](220131_Griess_pH_perturbation3.html)
 * [220210_Cuhel_et_al_2010_qPCR_data (2/10/22)](220210_Cuhel_et_al_2010_qPCR_data.html)
 * [220327_Griess_3_soil_pH_perturbation (3/27/22)](220327_Griess_3_soil_pH_perturbation.html)
+* [220420_Ammonia_3_soil_pH_perturbation (4/20/22)](220420_Ammonia_3_soil_pH_perturbation.html)
 * [220329_pH_3soil (3/29/22)](220329_pH_3soil.html)
-* [220407_pH_troubleshooting.Rmd (4/7/22)](220407_pH_troubleshooting.htmlwf)
-
-
-
+* [220407_pH_troubleshooting (4/7/22)](220407_pH_troubleshooting.html)
+* [220414_Ammonium_compare_with_Brookside (4/14/22)](220414_Ammonium_compare_with_Brookside.html)
+* [220418_Ammonium_standard_known_concentration (4/18/22)](220418_Ammonium_standard_known_concentration.html)
+* [220419_Ammonium_compare_with_Brookside2 (4/19/22)](220419_Ammonium_compare_with_Brookside2.html)
+* [220421_Griess_antibiotics_and_sterile (4/21/22)](220421_Griess_antibiotics_and_sterile.html)
+* [220421_Ammonia_antibiotics_and_sterile (4/21/22)](220421_Ammonia_antibiotics_and_sterile.html)
+* [220422_pH_half_antibiotics_sterile (4/22/22)](220422_pH_half_antibiotics_sterile.html)
+* [220428_Ammonia_211128_aerobic_vs_anaerobic (4/28/22)](220428_Ammonia_211128_aerobic_vs_anaerobic.html)
+* [220508_TOC_time_series + new glass 96 well plate test (5/8/22)](220508_TOC_time_series.html)
+* [220513_TOC_more_time_points (5/15/22)](220513_TOC_more_time_points.html)
+* [220519_Griess_antibiotics_dose_effect (5/23/22)](220519_Griess_antibiotics_dose_effect.html)
+* [220520_TOC_antibiotics_dose_effect (5/24/22)](220520_TOC_antibiotics_dose_effect.html)
+* [220521_pH_antibiotics_dose_effect (5/23/22)](220521_pH_antibiotics_dose_effect.html)
+* [220519_Griess_crerar7_extreme_pH (5/25/22)](220519_Griess_crerar7_extreme_pH.html)
+* [220526_TOC_biomass_microwave_ecoli (5/27/22)](220526_TOC_biomass_microwave_ecoli.html)
+* [220527_TOC_biomass_microwave_ecoli2_30s_45s (5/28/22)](220527_TOC_biomass_microwave_ecoli2_30s_45s.html)
+* [220601_TOC_biomass_microwave_control_filtered (6/1/22)](220601_TOC_biomass_microwave_filtered.html)
+* [220602_TOC_biomass_microwave_microwave_filtered (6/2/22)](220602_TOC_biomass_microwave_microwave_filtered.html)
+* [220603_TOC_biomass_chloroform (6/4/22)](220603_TOC_biomass_chloroform.html)
+* [220606_TOC_biomass_chloroform2_large_scale (6/8/22)](220606_TOC_biomass_chloroform2_large_scale.html)
 
 
 

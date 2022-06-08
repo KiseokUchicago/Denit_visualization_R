@@ -42,26 +42,31 @@ library(ggpubr)
 
 ## theme for ggplot
 mytheme <- theme_bw() + 
-  theme(text = element_text(family="serif")) +
-  theme(plot.title = element_text(size = 19,hjust = 0.5, family="serif")) + 
-  theme(axis.title.x = element_text(size = 17,hjust = 0.5, family="serif")) + 
-  theme(axis.title.y = element_text(size = 17,hjust = 0.5, family="serif")) + 
-  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13, family="serif"))+
-  theme(axis.text.y = element_text(size=10, family="serif"))+
+  theme(text = element_text(face="bold", colour = 'black')) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13,face="bold", colour = 'black'))+
+  theme(axis.text.y = element_text(size=13,face="bold", colour = 'black'))+
   theme(panel.grid.major = element_blank()) +
   theme(panel.grid.minor = element_blank(),panel.background=element_blank(),panel.border=element_blank(),plot.background=element_blank()) +
-  theme(axis.ticks = element_line(size = 1.1))
+  theme(axis.ticks = element_line(size = 1.1))+
+  theme(legend.text=element_text(size=10,face="bold", colour = 'black'))
+
 
 mytheme_2d <- theme_bw() + 
-  theme(text = element_text(family="serif")) +
-  theme(plot.title = element_text(size = 19,hjust = 0.5, family="serif")) + 
-  theme(axis.title.x = element_text(size = 17,hjust = 0.5, family="serif")) + 
-  theme(axis.title.y = element_text(size = 17,hjust = 0.5, family="serif")) + 
-  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13, family="serif"))+
-  theme(axis.text.y = element_text(size=13, family="serif"))+
+  theme(text = element_text(face="bold", colour = 'black')) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13,face="bold", colour = 'black'))+
+  theme(axis.text.y = element_text(size=13,face="bold", colour = 'black'))+
   # theme(panel.grid.major = element_blank()) +
   # theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) +
-  theme(axis.ticks = element_line(size = 1.1))
+  theme(axis.ticks = element_line(size = 1.1))+
+  theme(legend.text=element_text(size=10,face="bold", colour = 'black'))
+
+
 
 
 # color collection
@@ -169,16 +174,16 @@ df_T <- na.omit(df_T)
 dim(df_T)
 
 # multiply dilution factor which is 5/2
-df_T %<>% mutate(Ammonia_ppm = Ammonia_ppm * (5/2))
+df_T %<>% mutate(NH4_mM = Ammonia_mM * (5/2))
 head(df_T)
 
 # extraction correction factor (only about 80% extraction)
-df_T %<>% mutate(Ammonia_ppm = Ammonia_ppm * (5/4))
+# df_T %<>% mutate(Ammonia_ppm = Ammonia_ppm * (5/4))
 
 
 # converting to mM
-df_T %<>% mutate(NH4_M = Ammonia_ppm / (14.0067*1000))   # Nitrogen molecular weight 
-df_T %<>% mutate(NH4_mM = NH4_M * 1000)   # Nitrogen molecular weight 
+# df_T %<>% mutate(NH4_M = Ammonia_ppm / (14.0067*1000))   # Nitrogen molecular weight 
+# df_T %<>% mutate(NH4_mM = NH4_M * 1000)   # Nitrogen molecular weight 
 
 colnames(df_T)
 # Get the metadata for time point and left join
@@ -357,7 +362,7 @@ ggplot(df_T12, aes(x=Time_point, y=Ammonia_ppm, color=Sample_type, group=Sample_
 colnames(df_T)
 dim(df_T)
 
-df_NH4 <- df_T %>% group_by(Nitrite_input, Nitrate_input, Soil, Titration_type, Concentration_M, Added_ul, Sample_type, Time_point, Time_minutes, Time_hours, Time_days) %>% summarise(Ave_Ammonia_ppm = mean(Ammonia_ppm), Std_Ammonia_ppm = sd(Ammonia_ppm), Ave_NH4_mM = mean(NH4_mM), Std_NH4_mM = sd(NH4_mM)) %>% ungroup()
+df_NH4 <- df_T %>% group_by(Nitrite_input, Nitrate_input, Soil, Titration_type, Concentration_M, Added_ul, Sample_type, Time_point, Time_minutes, Time_hours, Time_days) %>% summarise(Ave_NH4_mM = mean(NH4_mM), Std_NH4_mM = sd(NH4_mM)) %>% ungroup()
 
 dim(df_NH4)
 dim(df_T)
@@ -432,36 +437,36 @@ df_allan_t0 <- df_NH4_mcf %>% filter(Soil == "Allandale_pH4", Time_point == "T0"
 
 # 2. Apply blank correction factor (drying effect during incubation)
 # Blank reads
-df_no3_blank <- df_NH4 %>% filter(Sample_type == "Nitrate_Blank")
-df_no3_blank
-df_no2_blank <- df_NH4 %>% filter(Sample_type == "Nitrite_Blank")
-df_no2_blank
+# df_no3_blank <- df_NH4 %>% filter(Sample_type == "Nitrate_Blank")
+# df_no3_blank
+# df_no2_blank <- df_NH4 %>% filter(Sample_type == "Nitrite_Blank")
+# df_no2_blank
 
 # df_aero_blank$Ammonia_input <- as.numeric(as.character(df_aero_blank$Ammonia_input))
-df_no2_blank %<>% mutate(Correction_factor_NO2 = (Nitrite_input / Ave_NO2_mM)) 
-df_no3_blank %<>% mutate(Correction_factor_NO3 = (Ammonia_input / Ave_NH4_mM)) 
+# df_no2_blank %<>% mutate(Correction_factor_NO2 = (Nitrite_input / Ave_NO2_mM)) 
+# df_no3_blank %<>% mutate(Correction_factor_NO3 = (Ammonia_input / Ave_NH4_mM)) 
 
-cf_no2 <- df_no2_blank %>% select(Soil, Time_point, Correction_factor_NO2)
-cf_no3 <- df_no3_blank %>% select(Soil, Time_point, Correction_factor_NO3)
+# cf_no2 <- df_no2_blank %>% select(Soil, Time_point, Correction_factor_NO2)
+# cf_no3 <- df_no3_blank %>% select(Soil, Time_point, Correction_factor_NO3)
 
 # left join and multiply the correction factor
 # left join to samples
-df_sample_mcf <- df_NH4_mcf %>% filter(!(Sample_type %in% c("Nitrite_Blank","Ammonia_Blank")))
-dim(df_sample_mcf) #312
-df_sample_mcf$Sample_type %>% unique()
-
-df_sample_bcf <- df_sample_mcf %>% left_join(cf_no2, by = c("Soil"="Soil", "Time_point"="Time_point")) %>% left_join(cf_no3, by = c("Soil"="Soil", "Time_point"="Time_point"))
-dim(df_sample_bcf)
-
-df_sample_bcf <- df_sample_bcf %>% mutate(Ave_NH4_mM = Ave_NH4_mM * Correction_factor_NO3, Ave_NO2_mM = Ave_NO2_mM * Correction_factor_NO2, Std_NO2_mM = Std_NO2_mM * Correction_factor_NO2, Std_NH4_mM = Std_NH4_mM * Correction_factor_NO3)
-dim(df_sample_bcf) #312
+# df_sample_mcf <- df_NH4_mcf %>% filter(!(Sample_type %in% c("Nitrite_Blank","Ammonia_Blank")))
+# dim(df_sample_mcf) #312
+# df_sample_mcf$Sample_type %>% unique()
+# 
+# df_sample_bcf <- df_sample_mcf %>% left_join(cf_no2, by = c("Soil"="Soil", "Time_point"="Time_point")) %>% left_join(cf_no3, by = c("Soil"="Soil", "Time_point"="Time_point"))
+# dim(df_sample_bcf)
+# 
+# df_sample_bcf <- df_sample_bcf %>% mutate(Ave_NH4_mM = Ave_NH4_mM * Correction_factor_NO3, Ave_NO2_mM = Ave_NO2_mM * Correction_factor_NO2, Std_NO2_mM = Std_NO2_mM * Correction_factor_NO2, Std_NH4_mM = Std_NH4_mM * Correction_factor_NO3)
+# dim(df_sample_bcf) #312
 
 # merge dataframe with blank just for convenience
-df_NH4_blanks_bcf <- df_NH4_mcf %>% filter(Sample_type %in% c("Nitrite_Blank","Ammonia_Blank")) %>% left_join(cf_no2, by = c("Soil"="Soil", "Time_point"="Time_point")) %>% left_join(cf_no3, by = c("Soil"="Soil", "Time_point"="Time_point"))
-dim(df_NH4_blanks_bcf) #48
-dim(df_sample_bcf) # 312
-df_NH4_bcf <- rbind(df_sample_bcf, df_NH4_blanks_bcf)
-dim(df_NH4_bcf) # 360
+# df_NH4_blanks_bcf <- df_NH4_mcf %>% filter(Sample_type %in% c("Nitrite_Blank","Ammonia_Blank")) %>% left_join(cf_no2, by = c("Soil"="Soil", "Time_point"="Time_point")) %>% left_join(cf_no3, by = c("Soil"="Soil", "Time_point"="Time_point"))
+# dim(df_NH4_blanks_bcf) #48
+# dim(df_sample_bcf) # 312
+# df_NH4_bcf <- rbind(df_sample_bcf, df_NH4_blanks_bcf)
+# dim(df_NH4_bcf) # 360
 
 ```
 
@@ -577,30 +582,38 @@ fun_df_convert <- function(df_pH_p1){
 }
 
 # test
-df_pH <- df_NH4_mcf %>% filter(Titration_type %in% c("NaOH","HCl"))
-dim(df_pH)
+df_a <- df_NH4_mcf %>% filter(Titration_type %in% c("NaOH","HCl"))
+dim(df_a)
 Added_Volume <- 1.7 # ml
+Soil_mg <- 0.85
 moisture_percent_1 = 19 # NicholsC
 moisture_percent_2 = 33.2 # Allandale
-df_pH$Added_ul <- ifelse(df_pH$Titration_type == "NaOH", -1*df_pH$Added_ul, df_pH$Added_ul) # HCl is +, NaOH is -
-df_pH %<>% mutate(H_mol = Concentration_M * Added_ul * 10^(-6)) # Calculate H mol 
-df_pH$Volume <- ifelse(df_pH$Soil == "NicholsC_pH7", Added_Volume*(1+ moisture_percent_1/100), 0) # Calc total volume
-df_pH$Volume <- ifelse(df_pH$Soil == "Allandale_pH4", Added_Volume*(1+ moisture_percent_2/100), df_pH$Volume) # Calc total volume
-# df_pH$Volume %>% unique()
-df_pH %<>% mutate(H_Molarity = H_mol / (Volume * 10^(-3)))
-df_pH %<>% mutate(H_mM = H_Molarity * 1000)
-# openxlsx::write.xlsx(df_pH, "df_pH.xlsx")
+df_a$Added_ul <- ifelse(df_a$Titration_type == "NaOH", -1*df_a$Added_ul, df_a$Added_ul) # HCl is +, NaOH is -
+
+#volume
+df_a %<>% mutate(H_mol = Concentration_M * Added_ul * 10^(-6)) # Calculate H mol 
+df_a$Volume <- ifelse(df_a$Soil == "NicholsC_pH7", Added_Volume + Soil_mg*(moisture_percent_1/100),
+                      ifelse(df_a$Soil == "Allandale_pH4", Added_Volume + Soil_mg*(moisture_percent_2/100),0))
+                             # ifelse(df_a$Soil == "Crerar1_pH8.05", Added_Volume + Soil_mg*(moisture_percent_3/100),
+                                    # 0))) # Calc total volume
+
+
+
+# df_a$Volume %>% unique()
+df_a %<>% mutate(H_Molarity = H_mol / (Volume * 10^(-3)))
+df_a %<>% mutate(H_mM = H_Molarity * 1000)
+# openxlsx::write.xlsx(df_a, "df_a.xlsx")
 
 # how many levels of H_mM?
-pH_pert <- df_pH %>% select(H_mM) %>% unique() %>% arrange()
-df_pH %>% filter(Soil == "NicholsC_pH7")%>% select(H_mM) %>% unique() %>% arrange()
-df_pH %>% filter(Soil == "Allandale_pH4")%>% select(H_mM) %>% unique() %>% arrange()
+pH_pert <- df_a %>% select(H_mM) %>% unique() %>% arrange()
+df_a %>% filter(Soil == "NicholsC_pH7")%>% select(H_mM) %>% unique() %>% arrange()
+df_a %>% filter(Soil == "Allandale_pH4")%>% select(H_mM) %>% unique() %>% arrange()
 
 # 1. pH perturbation
 # plot Ammonia
-dim(df_pH)
+dim(df_a)
 
-ggplot(df_pH, aes(x=Time_hours, y=Ave_NH4_mM, color=H_mM, group=H_mM)) +
+ggplot(df_a, aes(x=Time_hours, y=Ave_NH4_mM, color=H_mM, group=H_mM)) +
   geom_point(size=2.5, shape=16) +
   geom_line(size=1.2)+
   geom_errorbar(aes(ymin=Ave_NH4_mM - Std_NH4_mM, ymax=Ave_NH4_mM + Std_NH4_mM), width=.05)+
@@ -614,10 +627,11 @@ ggplot(df_pH, aes(x=Time_hours, y=Ave_NH4_mM, color=H_mM, group=H_mM)) +
   # geom_text(aes(label = round(Ave_NH4_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
   mytheme_2d +
   facet_grid(. ~ Soil) +
-  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))
 
 # plot it separately: NicholsC
-df_nic <- df_pH %>% filter(Soil == "NicholsC_pH7")
+df_nic <- df_a %>% filter(Soil == "NicholsC_pH7")
 ggplot(df_nic, aes(x=Time_hours, y=Ave_NH4_mM, color=H_mM, group=H_mM)) +
   geom_point(size=2.5, shape=16) +
   geom_line(size=1.2)+
@@ -635,7 +649,7 @@ ggplot(df_nic, aes(x=Time_hours, y=Ave_NH4_mM, color=H_mM, group=H_mM)) +
   theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
 
 # plot it separately: Allandale
-df_al <- df_pH %>% filter(Soil == "Allandale_pH4")
+df_al <- df_a %>% filter(Soil == "Allandale_pH4")
 ggplot(df_al, aes(x=Time_hours, y=Ave_NH4_mM, color=H_mM, group=H_mM)) +
   geom_point(size=2.5, shape=16) +
   geom_line(size=1.2)+

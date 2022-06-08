@@ -1,0 +1,613 @@
+---
+title: "220513_TOC_more_time_points"
+author: "KiseokUchicago"
+date: "2022-05-15"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=11, fig.height=9,
+                      error=TRUE, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE)
+```
+
+## TOC(Total organic carbon) measurements
+Researcher: **Kiseok Lee** \
+Experiment Date: 5/8/22 \
+Analysis Date: 5/11/22 \
+Lab: **Seppe Kuehn**
+
+```{r}
+# libraries
+library(dplyr)
+library(ggplot2)
+library(RColorBrewer)
+library(vegan)
+library(tidyverse)
+library(magrittr)
+library(readxl)
+library(reshape2)
+library(gtools)
+library(devtools)
+library(openxlsx)
+library(ape)
+library(stringr)
+library(tidyr)
+library(ggrepel)
+library(ggpubr)
+
+## theme for ggplot
+mytheme <- theme_bw() + 
+  theme(text = element_text(face="bold", colour = 'black')) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13,face="bold", colour = 'black'))+
+  theme(axis.text.y = element_text(size=13,face="bold", colour = 'black'))+
+  theme(panel.grid.major = element_blank()) +
+  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),panel.border=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))+
+  theme(legend.text=element_text(size=10,face="bold", colour = 'black'))
+
+
+mytheme_2d <- theme_bw() + 
+  theme(text = element_text(face="bold", colour = 'black')) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13,face="bold", colour = 'black'))+
+  theme(axis.text.y = element_text(size=13,face="bold", colour = 'black'))+
+  # theme(panel.grid.major = element_blank()) +
+  # theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))+
+  theme(legend.text=element_text(size=10,face="bold", colour = 'black'))
+
+
+
+# color collection
+my_color_collection <- c(
+  "#CBD588", "#5F7FC7", "orange", "#AD6F3B", "#673770", 
+  "#D14285", "#652926", "#C84248", "#8569D5", "#5E738F",
+  "#D1A33D", "#8A7C64", "#599861","#616163", "#FFCDB2",
+  "#6D9F71", "#242F40",
+  "#CCA43B", "#F92A82", "#ED7B84", "#7EB77F", 
+  "#DEC4A1", "#E5D1D0", '#0E8482', '#C9DAEA', '#337357', 
+  '#95C623', '#E55812', '#04471C', '#F2D7EE', '#D3BCC0', 
+  '#A5668B', '#69306D', '#0E103D', '#1A535C', '#4ECDC4', 
+  '#F7FFF7', '#FF6B6B', '#FFE66D', '#6699CC', '#FFF275', 
+  '#FF8C42', '#FF3C38', '#A23E48', '#000000', '#CF5C36', 
+  '#EEE5E9', '#7C7C7C', '#EFC88B', '#2E5266', '#6E8898', 
+  '#9FB1BC', '#D3D0CB', '#E2C044', '#5BC0EB', '#FDE74C', 
+  '#9BC53D', '#E55934', '#FA7921', "#CD9BCD", "#508578", "#DA5724")
+
+# for git push, use this instead of using wflow_git_push()
+# git push -u origin master (in the Git app / in the working directory)
+
+# for making pdf file
+library(rmarkdown)
+# render("analysis/~~.Rmd", "pdf_document")
+
+```
+
+## 1. Import data table from python code
+```{r}
+# import file
+# 20ul
+df_20ul_1 <- openxlsx::read.xlsx("data/220513_TOC_sample_plate1.xlsx")
+df_20ul_2 <- openxlsx::read.xlsx("data/220513_TOC_sample_plate2.xlsx")
+df_20ul_3 <- openxlsx::read.xlsx("data/220513_TOC_sample_plate3.xlsx")
+
+# only use left six columns
+df_20ul_1 %<>% filter(Soil == "LaBaghWoods_pH6.66")
+
+# remove wells H06, H09
+df_20ul_1 %<>% filter(!(Well %in% c("A01", "A03", "H03")))
+dim(df_20ul_1)
+df_20ul_3 %<>% filter(!(Well %in% c("G06")))
+dim(df_20ul_3)
+
+head(df_20ul_2)
+colnames(df_20ul_2)
+dim(df_20ul_2)
+
+df_20ul <- rbind(df_20ul_1, df_20ul_2, df_20ul_3)
+
+# remove NA
+dim(df_20ul)
+df_20ul <- na.omit(df_20ul)
+dim(df_20ul)
+
+
+# Get the metadata for time point and left join
+Time_table <- openxlsx::read.xlsx("data/220421_time_table.xlsx")
+# Time_table_BN <- openxlsx::read.xlsx("data/220327_time_table_BN.xlsx")
+# Time_table <- rbind(Time_table_AU, Time_table_BN)
+
+Time_table %<>% select(-Date) 
+Time_table$Time_hours <- round(Time_table$Time_hours, 1)
+Time_table$Time_days <- round(Time_table$Time_days, 1)
+df_time <- Time_table
+dim(df_20ul)
+df_20ul <- df_20ul %>% left_join(Time_table, by=("Time_point"="Time_point"))
+dim(df_20ul)
+colnames(df_20ul)
+
+```
+
+## 2. Preprocess data and select datapoints to visualize
+```{r}
+# 1. multiply dilution factor
+df_20ul %<>% mutate(TOC_mgml = TOC_mgml * (5/2))
+
+# 2. Apply moisture correction factor (correcting for moisture in soil)
+
+Added_Volume <- 1.7 # ml
+Soil_mg <- 0.85
+moisture_percent_1 = 23.96 # LBA - LaBaghWoods for antibiotics
+Added_Volume + Soil_mg*(moisture_percent_1/100)
+moisture_percent_2 = 8.12 # Sterile - LaBaghWoods that has been autoclaved 5 times.
+Added_Volume + Soil_mg*(moisture_percent_2/100)
+# moisture_percent_3 = 9.0 # Crerar7
+# Added_Volume + Soil_mg*(moisture_percent_3/100)
+
+df_20ul$Added_ul <- ifelse(df_20ul$Titration_type == "NaOH", -1*df_20ul$Added_ul, df_20ul$Added_ul) # HCl is +, NaOH is -
+df_20ul %<>% mutate(H_mol = Concentration_M * Added_ul * 10^(-6)) # Calculate H mol 
+df_20ul$Volume <- ifelse(df_20ul$Soil == "LaBaghWoods_pH6.66", Added_Volume + Soil_mg*(moisture_percent_1/100),
+                      ifelse(df_20ul$Soil == "LaBaghWoods_autoclaved_pH6.66", Added_Volume + Soil_mg*(moisture_percent_2/100),
+                             0))
+                             # ifelse(df_20ul$Soil == "Crerar1_pH8.05", Added_Volume + Soil_mg*(moisture_percent_3/100),
+                                    # 0))) # Calc total volume
+
+# df_20ul$Volume <- ifelse(df_20ul$Soil == "Allandale_pH4", Added_Volume + Soil_mg*(moisture_percent_2/100), df_20ul$Volume) # Calc total volume
+# df_20ul$Volume %>% unique()
+df_20ul %<>% mutate(H_Molarity = H_mol / (Volume * 10^(-3)))
+df_20ul %<>% mutate(H_mM = H_Molarity * 1000)
+# openxlsx::write.xlsx(df_20ul, "df_20ul.xlsx")
+
+# how many levels of H_mM?
+df_20ul %>% filter(Soil == "LaBaghWoods_pH6.66")%>% select(H_mM) %>% unique() %>% arrange(H_mM)
+df_20ul %>% filter(Soil == "LaBaghWoods_autoclaved_pH6.66")%>% select(H_mM) %>% unique() %>% arrange(H_mM)
+# df_p %>% filter(Soil == "Crerar1_pH8.05")%>% select(H_mM) %>% unique() %>% arrange()
+colnames(df_20ul)
+
+## Moisture correction
+dim(df_20ul)
+
+# Testing negative samples
+df_no3_blank <- df_20ul %>% filter(Sample_type == "Nitrate_Blank")  # Use Nitrate_Blank instead in the future
+df_no3_blank # 33
+
+df_no2_blank <- df_20ul %>% filter(Sample_type == "Nitrite_Blank")
+df_no2_blank # 33
+
+# why does nitrite blanks have TOC?
+soil_spike_ratio = 0.5 # soil weight(0.85g) / spike in volume (1.7ml) 
+
+mcf_1 = (soil_spike_ratio*(moisture_percent_1/100) + 1)
+mcf_1
+mcf_2 = (soil_spike_ratio*(moisture_percent_2/100) + 1)
+mcf_2
+# mcf_3 = (soil_spike_ratio*(moisture_percent_3/100) + 1)
+# mcf_3
+
+# this is a special case with no replicates
+df_20ul_mcf_1 <- df_20ul %>% filter(Soil == "LaBaghWoods_pH6.66") %>% filter(Titration_type %in% c("NaOH","HCl","No_Nitrate")) %>% mutate(TOC_mgml = TOC_mgml * mcf_1)
+dim(df_20ul_mcf_1) #306
+df_20ul_mcf_2 <- df_20ul %>% filter(Soil == "LaBaghWoods_autoclaved_pH6.66") %>%  filter(Titration_type %in% c("NaOH","HCl","No_Nitrate")) %>% mutate(TOC_mgml = TOC_mgml * mcf_1)
+dim(df_20ul_mcf_2) #429
+# df_20ul_mcf_3 <- df_20ul %>% filter(Soil == "Crerar7_pH8.05") %>% filter(Titration_type %in% c("NaOH","HCl","No_Nitrate")) %>% mutate(TOC_mgml = TOC_mgml * mcf_1)
+# dim(df_20ul_mcf_3) #426
+
+df_20ul_others_mcf <- df_20ul %>% filter(Sample_type %in% c("Nitrite_Blank", "Nitrate_Blank", "Ammonium_Blank")) # Use Nitrate_Blank instead in the future
+dim(df_20ul_others_mcf) #287
+df_20ul_mcf <- rbind(df_20ul_mcf_1, df_20ul_mcf_2, df_20ul_others_mcf)
+dim(df_20ul_mcf) # 188
+
+# 3. Calculate soil TOC percent
+# soil_weight_g = 0.85
+# spike_in_volume_ml = 1.7
+# df_20ul_mcf %<>% mutate(TOC_percent = TOC_mgml * 0.001 * (spike_in_volume_ml / soil_weight_g) *100) 
+# df_percent <- df_20ul_mcf
+# colnames(df_percent)
+
+
+# average technical replicate
+# 
+# df_ave <- df_percent %>% group_by(Sample, TOC, Sample_type) %>% summarise(Ave_TOC_percent = mean(TOC_percent), Std_TOC_percent = sd(TOC_percent), Ave_TOC_mgml = mean(TOC_mgml), Std_TOC_mgml = sd(TOC_mgml)) %>% ungroup()
+# 
+# colnames(df_ave)
+```
+
+## 3. Get the concentrations
+
+```{r}
+# (1) Water soluble organic C mg/ml
+ggplot(df_20ul_mcf, aes(x=Time_hours, y=TOC_mgml)) +
+  geom_point(size=2.5, shape=21, color = "brown") +
+  geom_line(size=1, color='brown')+
+  # geom_errorbar(aes(ymin=Ave_TOC_mgml - Std_TOC_mgml, ymax=Ave_TOC_mgml + Std_TOC_mgml), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("Water Soluble Organic Carbon (C mg/ml) \n") +
+  xlab("\n Time (hr)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("[Before evaporation correction] Water-soluble organic carbon dynamics of no acid/base samples (3 replicates) \n") +
+  # label
+  # geom_text(aes(label = round(Ave_TOC_mgml,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+# plot blanks
+
+
+# (2) plot separately only the H_mM  == 0 samples
+df_20ul_mcf_null <- df_20ul_mcf %>% filter(H_mM  == 0, Sample_type == "Slurry")
+
+ggplot(df_20ul_mcf_null, aes(x=Time_hours, y=TOC_mgml)) +
+  geom_point(size=3, shape=16, color = "brown") +
+  # geom_line(size=1, color='brown')+
+  # geom_errorbar(aes(ymin=Ave_TOC_mgml - Std_TOC_mgml, ymax=Ave_TOC_mgml + Std_TOC_mgml), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("Water Soluble Organic Carbon (C mg/ml) \n") +
+  xlab("\n Time (hr)") +
+  scale_y_continuous(breaks = seq(0,1.5,0.1), limits=c(0, 1.5))+
+  ggtitle("[Before evaporation correction] Water-soluble organic carbon dynamics of no acid/base samples (3 replicates) \n") +
+  # label
+  # geom_text(aes(label = round(Ave_TOC_mgml,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+# (3) plot no nitrate samples
+df_20ul_mcf_nn <- df_20ul_mcf %>% filter(H_mM  == 0, Titration_type == "No_Nitrate")
+# df_20ul_mcf$Titration_type
+
+ggplot(df_20ul_mcf_nn, aes(x=Time_hours, y=TOC_mgml)) +
+  geom_point(size=3, shape=16, color = "brown") +
+  # geom_line(size=1, color='brown')+
+  # geom_errorbar(aes(ymin=Ave_TOC_mgml - Std_TOC_mgml, ymax=Ave_TOC_mgml + Std_TOC_mgml), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("Water Soluble Organic Carbon (C mg/ml) \n") +
+  xlab("\n Time (hr)") +
+  scale_y_continuous(breaks = seq(0,1.5,0.1), limits=c(0, 1.5))+
+  ggtitle("[Before evaporation correction] Water-soluble organic carbon dynamics of no NO3- samples (3 replicates) \n") +
+  # label
+  # geom_text(aes(label = round(Ave_TOC_mgml,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+
+```
+
+## 3.1. Correcting for evaporation
+```{r}
+# for Crerar7 NO2, correction factor for T10 is 
+# 0.9825210
+
+1.068441/1.143276 # NO2 T7
+1.005780/1.143276 # NO2 T10
+0.9939772/1.0299439 # NO3 T7
+0.9875936/1.0299439 # NO3 T10
+
+
+# let's use NO2's evaporation factor
+eva_correction_factor = 0.9875936/1.0299439
+df_20ul_mcf_bcf_1 <- df_20ul_mcf %>% filter(Time_point == "LBA_T10") %>% mutate(TOC_mgml = TOC_mgml * eva_correction_factor)
+eva_correction_factor = 1.068441/1.143276
+df_20ul_mcf_bcf_2 <- df_20ul_mcf %>% filter(Time_point == "LBA_T7") %>% mutate(TOC_mgml = TOC_mgml * eva_correction_factor)
+df_20ul_mcf_bcf_others <- df_20ul_mcf %>% filter(Time_point == "LBA_T0")
+
+df_20ul_mcf_bcf <- rbind(df_20ul_mcf_bcf_1, df_20ul_mcf_bcf_2, df_20ul_mcf_bcf_others)
+dim(df_20ul_mcf_bcf)
+
+# Redo the plots
+# (1) Water soluble organic C mg/ml
+ggplot(df_20ul_mcf_bcf, aes(x=Time_hours, y=TOC_mgml)) +
+  geom_point(size=2.5, shape=21, color = "brown") +
+  geom_line(size=1, color='brown')+
+  # geom_errorbar(aes(ymin=Ave_TOC_mgml - Std_TOC_mgml, ymax=Ave_TOC_mgml + Std_TOC_mgml), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("Water Soluble Organic Carbon (C mg/ml) \n") +
+  xlab("\n Time (hr)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("[After evaporation correction] Water-soluble organic carbon dynamics of no acid/base samples (3 replicates) \n") +
+  # label
+  # geom_text(aes(label = round(Ave_TOC_mgml,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+# (2) plot separately only the H_mM  == 0 samples
+df_20ul_mcf_bcf_null <- df_20ul_mcf_bcf %>% filter(H_mM  == 0, Sample_type == "Slurry")
+
+ggplot(df_20ul_mcf_bcf_null, aes(x=Time_hours, y=TOC_mgml)) +
+  geom_point(size=3, shape=16, color = "brown") +
+  # geom_line(size=1, color='brown')+
+  # geom_errorbar(aes(ymin=Ave_TOC_mgml - Std_TOC_mgml, ymax=Ave_TOC_mgml + Std_TOC_mgml), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("Water Soluble Organic Carbon (C mg/ml) \n") +
+  xlab("\n Time (hr)") +
+  scale_y_continuous(breaks = seq(0,1.5,0.1), limits=c(0, 1.5))+
+  ggtitle("[After evaporation correction] Water-soluble organic carbon dynamics of no acid/base samples (3 replicates) \n") +
+  # label
+  # geom_text(aes(label = round(Ave_TOC_mgml,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+# (3) plot no nitrate samples
+df_20ul_mcf_bcf_nn <- df_20ul_mcf_bcf %>% filter(H_mM  == 0, Titration_type == "No_Nitrate")
+# df_20ul_mcf$Titration_type
+
+ggplot(df_20ul_mcf_bcf_nn, aes(x=Time_hours, y=TOC_mgml)) +
+  geom_point(size=3, shape=16, color = "brown") +
+  # geom_line(size=1, color='brown')+
+  # geom_errorbar(aes(ymin=Ave_TOC_mgml - Std_TOC_mgml, ymax=Ave_TOC_mgml + Std_TOC_mgml), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("Water Soluble Organic Carbon (C mg/ml) \n") +
+  xlab("\n Time (hr)") +
+  scale_y_continuous(breaks = seq(0,1.5,0.1), limits=c(0, 1.5))+
+  ggtitle("[After evaporation correction] Water-soluble organic carbon dynamics of no NO3- samples (3 replicates) \n") +
+  # label
+  # geom_text(aes(label = round(Ave_TOC_mgml,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+# (4) plot blanks
+df_20ul_mcf_bcf_blk <- df_20ul_mcf_bcf %>% filter(Sample_type %in% c("Nitrite_Blank", "Nitrate_Blank", "Ammonium_Blank"))
+# df_20ul_mcf$Titration_type
+
+ggplot(df_20ul_mcf_bcf_blk, aes(x=Time_hours, y=TOC_mgml)) +
+  geom_point(size=3, shape=16, aes(color = Sample_type)) +
+  # geom_line(size=1, color='brown')+
+  # geom_errorbar(aes(ymin=Ave_TOC_mgml - Std_TOC_mgml, ymax=Ave_TOC_mgml + Std_TOC_mgml), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("Water Soluble Organic Carbon (C mg/ml) \n") +
+  xlab("\n Time (hr)") +
+  scale_y_continuous(breaks = seq(0,1.5,0.1), limits=c(0, 1.5))+
+  ggtitle("[After evaporation correction] Water-soluble organic carbon dynamics of blanks (3 replicates) \n") +
+  # label
+  # geom_text(aes(label = round(Ave_TOC_mgml,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d
+
+
+
+
+```
+
+## 3.2. Compare filtered and supernatant samples
+```{r}
+df_20ul_T0 <- df_20ul_mcf_bcf %>% filter(Time_point == "LBA_T0")
+dim(df_20ul_T0)
+colnames(df_20ul_T0)
+
+# select only certain columns
+df_scatter_T0 <- df_20ul_T0 %>% select(Sample_type, Titration_type, Antibiotics_type, Unit, H_mM, Treatment, TOC_mgml)
+
+# separate and leftjoin
+df_fil <- df_scatter_T0 %>% filter(Treatment == "Filtered") %>% rename(Filtered_TOC_mgml = TOC_mgml) %>% select(-Treatment) %>% group_by(Sample_type, Titration_type, Antibiotics_type, Unit, H_mM) %>% summarize(Filtered_TOC_mgml = mean(Filtered_TOC_mgml)) %>% ungroup()
+dim(df_fil)
+df_sup <- df_scatter_T0 %>% filter(Treatment == "Supernatant") %>% rename(Supernatant_TOC_mgml = TOC_mgml) %>% select(-Treatment) %>% group_by(Sample_type, Titration_type, Antibiotics_type, Unit, H_mM) %>% summarize(Supernatant_TOC_mgml = mean(Supernatant_TOC_mgml)) %>% ungroup()
+dim(df_sup)
+
+df_leftjoin <- df_sup %>% left_join(df_fil, by = c("Sample_type"="Sample_type", "Titration_type"="Titration_type", "Antibiotics_type"="Antibiotics_type", "Unit"="Unit", "H_mM"="H_mM" ))
+
+dim(df_leftjoin)
+
+# plot scatter plot
+ggplot(df_leftjoin, aes(x=Filtered_TOC_mgml, y=Supernatant_TOC_mgml)) +
+  # geom_line(size=1)+
+  geom_point(size=3, alpha=1, aes(color = Sample_type)) +
+  # geom_errorbar(aes(ymin=Ave_pH - Std_pH, ymax=Ave_pH + Std_pH), width=.05)+
+  geom_abline(intercept=0, slope=1)+
+  scale_color_brewer(palette='Set1') +
+  ylab("Water-soluble carbon (mg/ml) of supernatant \n") +
+  xlab("\n Water-soluble carbon (mg/ml) of filtrate") +
+  # scale_x_continuous(breaks = seq(0,14,1), limits=c(0, 14))+
+  # scale_y_continuous(breaks = seq(0,14,1), limits=c(0, 14))+
+  ggtitle("Comparing supernatant vs filtrate \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d
+
+# hmmm... what are the outliers?
+df_leftjoin %>% filter(Filtered_TOC_mgml > 1.5)
+df_leftjoin %>% filter(Filtered_TOC_mgml < 0.1, Supernatant_TOC_mgml > 0.1)
+
+
+
+```
+
+
+## 4. Let's look at the antibiotic effect
+
+```{r}
+df_kyle2 <- read.xlsx("data/220421_Griess_antibiotics_experiment_to_kyle_remove_blanks_add_pH.xlsx")
+
+df_pH_effect <- df_kyle2
+dim(df_pH_effect) # 354
+df_pH_effect$Titration_type
+df_pH_effect$Antibiotics_type
+df_pH_effect %>% filter(Time_point == "LBA_T0")
+
+colnames(df_pH_effect)
+# only get the pH (from T7 I believe)
+df_pH_effect2 <- df_pH_effect %>% filter(Time_point %in% c("LBA_T0", "LBA_T7", "LBA_T10")) %>% select(Sample_type, Titration_type, Antibiotics_type, Unit, H_mM, pH ) %>% group_by(Sample_type, Titration_type, Antibiotics_type, Unit, H_mM) %>% summarize(pH = mean(pH))
+
+colnames(df_pH_effect2)
+dim(df_pH_effect2)
+
+# Let's left_join with the carbon measurements
+
+
+df_20ul_pH <- df_20ul_mcf_bcf %>% select(-H_mM) %>% filter(Treatment != "Filtered") %>%  filter(!(Titration_type %in% c("Nitrate", "Nitrite", "Ammonium", "No_Nitrate"))) %>% left_join(df_pH_effect2, by = c("Sample_type"="Sample_type", "Titration_type"="Titration_type", "Antibiotics_type"="Antibiotics_type", "Unit"="Unit"))
+dim(df_20ul_pH) # 108
+
+# reorder factor
+df_20ul_pH$Antibiotics_type <- factor(df_20ul_pH$Antibiotics_type, levels = c("None", "CHL", "NYT", "CHL_NYT", "Autoclaved"))
+
+# plot average and standard deviation
+colnames(df_20ul_pH)
+dim(df_20ul_pH)
+df_20ul_pH_ave <- df_20ul_pH %>% group_by(Soil, Titration_type, Unit, Sample_type, Antibiotics_type, H_mM, Time_point, Time_minutes, Time_hours, Time_days, pH) %>% summarise(TOC_mgml = mean(TOC_mgml)) %>% ungroup()
+dim(df_20ul_pH_ave) # 84
+
+# label with pH range
+df_pH_label <- df_20ul_pH_ave %>% group_by(Titration_type, Unit) %>% summarize(pH_min = min(pH), pH_max = max(pH))
+# df_pH_label$pH_max <- as.character()
+
+df_pH_label %<>% unite(col='pH_range', c("pH_min","pH_max"), sep="-", remove=F)
+
+df_pH_range <- df_20ul_pH_ave %>% left_join(df_pH_label, by =c("Titration_type"="Titration_type", "Unit"="Unit"))
+dim(df_pH_range)
+dim(df_20ul_pH_ave)
+
+# WSOC
+p_C <- ggplot(df_pH_range, aes(x=Time_hours, y=TOC_mgml, color=Antibiotics_type, group=Antibiotics_type)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_colour_gradientn(colours = col_pH(100)) +
+  scale_color_manual(values=c("Black","Red","Blue", "Purple", "Brown")) +
+  ylab("Carbon (mg/ml) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # ggtitle("Antibiotics application x pH perturbation (pH at day2): 200ppm of Chloramphenicol(CHL), Nystatin(NYT) \n") +
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  facet_wrap(. ~ pH_range, nrow=1) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+    
+p_C
+
+```
+
+
+Nitrate, nitrite
+```{r}
+
+df_kyle2 <- read.xlsx("data/220421_Griess_antibiotics_experiment_to_kyle_remove_blanks_add_pH.xlsx")
+
+df_pH_effect <- df_kyle2 %>% filter(!(Titration_type %in% c("Nitrate", "Nitrite", "Ammonium", "No_Nitrate")))
+dim(df_pH_effect) # 354
+df_pH_effect$Titration_type
+df_pH_effect$Antibiotics_type
+df_pH_effect %>% filter(Time_point == "LBA_T0")
+
+# reorder factor
+df_pH_effect$Antibiotics_type <- factor(df_pH_effect$Antibiotics_type, levels = c("None", "CHL", "NYT", "CHL_NYT", "Autoclaved"))
+
+# plot average and standard deviation
+colnames(df_pH_effect)
+dim(df_pH_effect)
+df_pH_effect_ave <- df_pH_effect %>% group_by(Soil, Titration_type, Unit, Sample_type, Antibiotics_type, H_mM, Time_point, Time_minutes, Time_hours, Time_days, pH) %>% summarise(Std_NO2_mM = sd(NO2_mM), Std_NO3_mM = sd(NO3_mM), NO2_mM = mean(NO2_mM), NO3_mM = mean(NO3_mM)) %>% ungroup()
+dim(df_pH_effect_ave) # 284
+
+# label with pH range
+df_pH_label <- df_pH_effect_ave %>% group_by(Titration_type, Unit) %>% summarize(pH_min = min(pH), pH_max = max(pH))
+# df_pH_label$pH_max <- as.character()
+
+df_pH_label %<>% unite(col='pH_range', c("pH_min","pH_max"), sep="-", remove=F)
+
+df_pH_range <- df_pH_effect_ave %>% left_join(df_pH_label, by =c("Titration_type"="Titration_type", "Unit"="Unit"))
+
+
+# nitrate
+p_A <- ggplot(df_pH_range, aes(x=Time_hours, y=NO3_mM, color=Antibiotics_type, group=Antibiotics_type)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_colour_gradientn(colours = col_pH(100)) +
+  scale_color_manual(values=c("Black","Red","Blue", "Purple", "Brown")) +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # ggtitle("Antibiotics application x pH perturbation (pH at day2): 200ppm of Chloramphenicol(CHL), Nystatin(NYT), CHL+NYT(CHL_NYT) \n") +
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  facet_wrap(. ~ pH_range, nrow=1) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+    
+p_A
+# nitrite
+p_I <- ggplot(df_pH_range, aes(x=Time_hours, y=NO2_mM, color=Antibiotics_type, group=Antibiotics_type)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=NO2_mM - Std_NO2_mM, ymax=NO2_mM + Std_NO2_mM), width=.05)+
+  # scale_colour_gradientn(colours = col_pH(100)) +
+  scale_color_manual(values=c("Black","Red","Blue", "Purple", "Brown")) +
+  ylab("NO2- (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # ggtitle("Antibiotics application x pH perturbation (pH at day2): 200ppm of Chloramphenicol(CHL), Nystatin(NYT), CHL+NYT(CHL_NYT) \n") +
+  # label
+  # geom_text(aes(label = round(NO2_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d+
+  facet_wrap(. ~ pH_range, nrow=1) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+p_I
+
+legend = gtable_filter(ggplotGrob(p_A), "guide-box")
+
+
+
+grid.arrange(arrangeGrob(p_A+xlab(NULL)+theme(legend.position="none"), 
+                         p_I+xlab(NULL)+theme(legend.position="none")+theme(strip.background = element_blank(), strip.text = element_blank(), strip.text.x = element_blank()),
+                         p_C+xlab(NULL)+theme(legend.position="none")+theme(strip.background = element_blank(), strip.text = element_blank(), strip.text.x = element_blank())
+                         , nrow=3,
+             top = textGrob("Antibiotics application x pH perturbation (pH at day2): 200ppm of Chloramphenicol(CHL), Nystatin(NYT)", vjust = 0.5, gp = gpar(fontface = "bold", cex = 1.5)),
+             # left = textGrob("Relative abundance of strains with opt_pH", vjust = 0.5, rot=90, gp = gpar(fontface = "bold", cex = 1.5)),
+             bottom = textGrob("Time (hr)", vjust = 0, gp = gpar(fontface="bold", cex = 1.5)),
+             
+             right = legend
+             ))
+
+
+grid.arrange(arrangeGrob(p_A+xlab(NULL)+theme(legend.position="none"), 
+                         p_I+xlab(NULL)+theme(legend.position="none")+theme(strip.background = element_blank(), strip.text = element_blank(), strip.text.x = element_blank()), nrow=2,
+             top = textGrob("Antibiotics application x pH perturbation (pH at day2): 200ppm of Chloramphenicol(CHL), Nystatin(NYT)", vjust = 0.5, gp = gpar(fontface = "bold", cex = 1.5)),
+             # left = textGrob("Relative abundance of strains with opt_pH", vjust = 0.5, rot=90, gp = gpar(fontface = "bold", cex = 1.5)),
+             bottom = textGrob("Time (hr)", vjust = 0, gp = gpar(fontface="bold", cex = 1.5)),
+             
+             right = legend
+             ))
+
+```
+
+## Let's plot with ammonium
+```{r}
+df_pH_range_NH4 <- read.xlsx("data/220421_Ammonia_df_pH_range.xlsx")
+# reorder factor
+df_pH_range_NH4$Antibiotics_type <- factor(df_pH_range_NH4$Antibiotics_type, levels = c("None", "CHL", "NYT", "CHL_NYT", "Autoclaved"))
+
+# WSOC
+p_NH4 <- ggplot(df_pH_range_NH4, aes(x=Time_hours, y=NH4_mM, color=Antibiotics_type, group=Antibiotics_type)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_colour_gradientn(colours = col_pH(100)) +
+  scale_color_manual(values=c("Black","Red","Blue", "Purple", "Brown")) +
+  ylab("NH4+ (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # ggtitle("Antibiotics application x pH perturbation (pH at day2): 200ppm of Chloramphenicol(CHL), Nystatin(NYT) \n") +
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  facet_wrap(. ~ pH_range, nrow=1) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+    
+p_NH4
+
+
+grid.arrange(arrangeGrob(p_A+xlab(NULL)+theme(legend.position="none"), 
+                         p_I+xlab(NULL)+theme(legend.position="none")+theme(strip.background = element_blank(), strip.text = element_blank(), strip.text.x = element_blank()),
+                         p_NH4+xlab(NULL)+theme(legend.position="none")+theme(strip.background = element_blank(), strip.text = element_blank(), strip.text.x = element_blank()),
+                         p_C+xlab(NULL)+theme(legend.position="none")+theme(strip.background = element_blank(), strip.text = element_blank(), strip.text.x = element_blank())
+                         , nrow=4,
+             top = textGrob("Antibiotics application x pH perturbation (pH at day2): 200ppm of Chloramphenicol(CHL), Nystatin(NYT)", vjust = 0.5, gp = gpar(fontface = "bold", cex = 1.5)),
+             # left = textGrob("Relative abundance of strains with opt_pH", vjust = 0.5, rot=90, gp = gpar(fontface = "bold", cex = 1.5)),
+             bottom = textGrob("Time (hr)", vjust = 0, gp = gpar(fontface="bold", cex = 1.5)),
+             
+             right = legend
+             ))
+
+```
+
+

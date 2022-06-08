@@ -1,0 +1,1219 @@
+---
+title: "220422_pH_half_antibiotics_sterile"
+author: "KiseokUchicago"
+date: "2022-04-26"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+
+```{r global_options, include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(fig.width=11, fig.height=9,
+                      error=TRUE, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE,
+                      tidy.opts=list(width.cutoff=40),tidy=TRUE)
+```
+
+## Time series analysis - pH analysis of antibiotic-treated / autoclaved soils
+Researcher: **Kiseok Lee** \
+Experiment Date: 4/14/22 - 4/18/22 (5 days) \
+Analysis Date: 4/26/21
+Lab: **Seppe Kuehn**
+
+```{r, include=FALSE}
+# libraries
+library(dplyr)
+library(ggplot2)
+library(RColorBrewer)
+library(vegan)
+library(tidyverse)
+library(magrittr)
+library(readxl)
+library(reshape2)
+library(gtools)
+library(devtools)
+library(openxlsx)
+library(ape)
+library(stringr)
+library(tidyr)
+library(ggrepel)
+library(ggpubr)
+require(gridExtra)
+# grid.arrange(p_strain, p_ai, nrow=1)
+
+```
+
+```{r, echo=F}
+## theme for ggplot
+mytheme <- theme_bw() + 
+  theme(text = element_text(face="bold", colour = 'black')) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13,face="bold", colour = 'black'))+
+  theme(axis.text.y = element_text(size=13,face="bold", colour = 'black'))+
+  theme(panel.grid.major = element_blank()) +
+  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),panel.border=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))+
+  theme(legend.text=element_text(size=10,face="bold", colour = 'black'))
+
+
+mytheme_2d <- theme_bw() + 
+  theme(text = element_text(face="bold", colour = 'black')) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13,face="bold", colour = 'black'))+
+  theme(axis.text.y = element_text(size=13,face="bold", colour = 'black'))+
+  # theme(panel.grid.major = element_blank()) +
+  # theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))+
+  theme(legend.text=element_text(size=10,face="bold", colour = 'black'))
+
+
+# color collection
+my_color_collection <- c(
+  "#CBD588", "#5F7FC7", "orange", "#AD6F3B", "#673770", 
+  "#D14285", "#652926", "#C84248", "#8569D5", "#5E738F",
+  "#D1A33D", "#8A7C64", "#599861","#616163", "#FFCDB2",
+  "#6D9F71", "#242F40",
+  "#CCA43B", "#F92A82", "#ED7B84", "#7EB77F", 
+  "#DEC4A1", "#E5D1D0", '#0E8482', '#C9DAEA', '#337357', 
+  '#95C623', '#E55812', '#04471C', '#F2D7EE', '#D3BCC0', 
+  '#A5668B', '#69306D', '#0E103D', '#1A535C', '#4ECDC4', 
+  '#F7FFF7', '#FF6B6B', '#FFE66D', '#6699CC', '#FFF275', 
+  '#FF8C42', '#FF3C38', '#A23E48', '#000000', '#CF5C36', 
+  '#EEE5E9', '#7C7C7C', '#EFC88B', '#2E5266', '#6E8898', 
+  '#9FB1BC', '#D3D0CB', '#E2C044', '#5BC0EB', '#FDE74C', 
+  '#9BC53D', '#E55934', '#FA7921', "#CD9BCD", "#508578", "#DA5724")
+
+# for git push, use this instead of using wflow_git_push()
+# git push -u origin master (in the Git app / in the working directory)
+
+# for making pdf file
+library(rmarkdown)
+# render("analysis/~~.Rmd", "pdf_document")
+```
+
+
+
+## 1. 20ul of 0.5M HCl or 0.05M NaOH was incrementally added
+```{r}
+df_pH1 <- openxlsx::read.xlsx("data/220422_pH_colorimetric_LBA_Sterile_T0_mu_opt_T0.xlsx")
+df_pH2 <- openxlsx::read.xlsx("data/220422_pH_colorimetric_LBA_Sterile_T4_mu_opt_T0.xlsx") 
+df_pH3 <- openxlsx::read.xlsx("data/220422_pH_colorimetric_LBA_Sterile_T7_mu_opt_T0.xlsx") 
+df_pH4 <- openxlsx::read.xlsx("data/220422_pH_colorimetric_LBA_Sterile_T9_mu_opt_T0.xlsx") 
+
+# I incorporated pH meter into pH1 and pH3... so... I'll put pH_meter column for other df.
+df_pH2$pH_meter <- NA
+df_pH4$pH_meter <- NA
+colnames(df_pH1)
+colnames(df_pH2)
+colnames(df_pH3)
+colnames(df_pH4)
+
+df_pH1_alt <- openxlsx::read.xlsx("data/220422_pH_colorimetric_LBA_Sterile_T0_mu_opt_T0.xlsx")
+df_pH2_alt <- openxlsx::read.xlsx("data/220422_pH_colorimetric_LBA_Sterile_T4_mu_opt_T4.xlsx")
+df_pH3_alt <- openxlsx::read.xlsx("data/220422_pH_colorimetric_LBA_Sterile_T7_mu_opt_T7.xlsx")
+df_pH4_alt <- openxlsx::read.xlsx("data/220422_pH_colorimetric_LBA_Sterile_T9_mu_opt_T9.xlsx")
+
+colnames(df_pH1)
+dim(df_pH1)
+dim(df_pH2)
+dim(df_pH3)
+dim(df_pH4)
+
+dim(df_pH1_alt)
+dim(df_pH2_alt)
+dim(df_pH3_alt)
+dim(df_pH4_alt)
+
+
+# Filter defect
+# I ruined T10....
+df_pH1 %<>% filter(!(Well %in% c("A01"))) # Filter defect 
+df_pH2 %<>% filter(!(Well %in% c("H01", "D05"))) # little sample
+df_pH3 %<>% filter(!(Well %in% c("A04", "A05", "E04", "H06", "G01"))) # little sample
+df_pH4 %<>% filter(!(Well %in% c("H02","H05","F03"))) # Less than 90ul of sample
+
+df_pH1_alt %<>% filter(!(Well %in% c("A01"))) # Filter defect 
+df_pH2_alt %<>% filter(!(Well %in% c("H01", "D05"))) # little sample
+df_pH3_alt %<>% filter(!(Well %in% c("A04", "A05", "E04", "H06", "G01"))) # little sample
+df_pH4_alt %<>% filter(!(Well %in% c("H02","H05","F03"))) # Less than 90ul of sample
+
+df_time <- openxlsx::read.xlsx("data/220421_time_table.xlsx")
+df_time$Time_hours <- round(df_time$Time_hours, 1)
+df_time$Time_days <- round(df_time$Time_days, 2)
+
+df_pH_T <- rbind(df_pH1, df_pH2, df_pH3, df_pH4)
+df_pH_T %<>% left_join(df_time, by=c("Time_point"="Time_point"))
+dim(df_pH_T) # 575
+
+df_pH_T_alt <- rbind(df_pH1_alt, df_pH2_alt, df_pH3_alt, df_pH4_alt)
+df_pH_T_alt %<>% left_join(df_time, by=c("Time_point"="Time_point"))
+dim(df_pH_T_alt) # 575
+
+# remove NA # don't remove NA this time
+# dim(df_pH_T) # 575
+# df_pH_T[is.na(df_pH_T)]
+# df_na <- df_pH_T[rowSums(is.na(df_pH_T)) > 0,]
+# # df_pH_T <- na.omit(df_pH_T)
+# df_pH_T <- df_pH_T[rowSums(is.na(df_pH_T)) == 0,]
+# dim(df_pH_T) # 373
+
+# Change the soil names to include pH
+# df_pH_T$Soil <- str_replace(df_pH_T$Soil,"NicholsC","NicholsC_pH7")
+# df_pH_T$Soil <- str_replace(df_pH_T$Soil,"Allandale","Allandale_pH4")
+# df_pH_T$Soil <-  factor(df_pH_T$Soil, levels = c("NicholsC_pH7", "Allandale_pH4"))
+
+# mols and molarity unit conversion
+# test
+df_pH <- df_pH_T %>% filter(Titration_type %in% c("NaOH","HCl","No_Nitrate"))
+dim(df_pH) # 304
+df_pH$Titration_type %>% unique()
+
+Added_Volume <- 1.7 # ml
+Soil_mg <- 0.85
+moisture_percent_1 = 23.96 # LBA - LaBaghWoods for antibiotics
+Added_Volume + Soil_mg*(moisture_percent_1/100)
+moisture_percent_2 = 8.12 # Sterile - LaBaghWoods that has been autoclaved 5 times.
+Added_Volume + Soil_mg*(moisture_percent_2/100)
+# moisture_percent_3 = 9.0 # Crerar7
+# Added_Volume + Soil_mg*(moisture_percent_3/100)
+
+df_pH$Added_ul <- ifelse(df_pH$Titration_type == "NaOH", -1*df_pH$Added_ul, df_pH$Added_ul) # HCl is +, NaOH is -
+df_pH %<>% mutate(H_mol = Concentration_M * Added_ul * 10^(-6)) # Calculate H mol 
+df_pH$Volume <- ifelse(df_pH$Soil == "LaBaghWoods_pH6.66", Added_Volume + Soil_mg*(moisture_percent_1/100),
+                      ifelse(df_pH$Soil == "LaBaghWoods_autoclaved_pH6.66", Added_Volume + Soil_mg*(moisture_percent_2/100),
+                             0))
+                             # ifelse(df_pH$Soil == "Crerar1_pH8.05", Added_Volume + Soil_mg*(moisture_percent_3/100),
+                                    # 0))) # Calc total volume
+
+df_pH %<>% mutate(H_Molarity = H_mol / (Volume * 10^(-3)))
+df_pH %<>% mutate(H_mM = H_Molarity * 1000)
+# openxlsx::write.xlsx(df_pH, "df_pH.xlsx")
+
+# how many levels of H_mM?
+df_pH %>% filter(Soil == "LaBaghWoods_pH6.66")%>% select(H_mM) %>% unique() %>% arrange(H_mM)
+df_pH %>% filter(Soil == "LaBaghWoods_autoclaved_pH6.66")%>% select(H_mM) %>% unique() %>% arrange(H_mM)
+# df_pH %>% filter(Soil == "Crerar1_pH8.05")%>% select(H_mM) %>% unique() %>% arrange()
+colnames(df_pH)
+
+
+
+
+# average the pH
+# 220329 only used 1 replicate. So, no need to average.
+# df_pH_ave <- df_pH %>% group_by(Nitrite_input, Nitrate_input, Soil, Titration_type, Concentration_M, Added_ul, Sample_type, H_mol, H_Molarity, H_mM, Time_point, Time_minutes, Time_hours, Time_days) %>% summarise(Ave_pH = mean(pH_colorimetric), Std_pH = sd(pH_colorimetric)) %>% ungroup()
+
+# colnames(df_pH_ave)
+
+```
+
+Export pH for ammonium analysis
+```{r}
+# where is autoclaved?
+# df_pH %>% filter(Soil == "LaBaghWoods_autoclaved_pH6.66")
+
+# remove blanks
+df_pH_export <- df_pH
+
+# use only T7
+df_pH_export %<>% filter(Time_point %in% c("LBA_T7","Sterile_T7")) %>% rename(pH = pH_colorimetric) %>% arrange(H_mM, Soil, Titration_type, Antibiotics_type)
+
+# average the replicates
+df_pH_export2 <- df_pH_export %>% group_by(Soil, Titration_type, Unit, H_mM, Antibiotics_type) %>% summarise(pH = mean(pH)) %>% ungroup() %>% arrange(Antibiotics_type, H_mM)
+df_pH_export2$pH <- as.numeric(df_pH_export2$pH)
+
+ggplot(df_pH_export2, aes(x=H_mM, y=pH, color=Antibiotics_type, group=Antibiotics_type)) +
+  geom_point(size=3, shape=16, alpha=1) +
+  # geom_errorbar(aes(ymin=Ave_pH - Std_pH, ymax=Ave_pH + Std_pH), width=.05)+
+  geom_line(size=1)+
+  # scale_color_brewer(palette='Set1') +
+  ylab("pH \n") +
+  xlab("\n added [H+] mM") +
+  scale_x_continuous(breaks = seq(-100,100,5))+
+  scale_y_continuous(breaks = seq(0,14,1), limits=c(0, 14))+
+  ggtitle("Soil pH perturbation & titration curves (LaBaghWoods1(pH6.66)) \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d+
+  facet_grid(. ~ Soil) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))
+
+write.xlsx(df_pH_export2, "220422_pH_Antibiotics_Sterile_experiment.xlsx")
+
+```
+
+
+
+To Kyle
+
+```{r}
+# Let's export pH levels for Kyle (220426)
+dim(df_pH)
+# removing timepoint T8
+df_pH_kyle <- df_pH %>% filter(Soil == "LaBaghWoods_pH6.66")
+df_pH_kyle$Time_point %>% unique()
+df_pH_kyle2 <- df_pH_kyle %>% filter(Titration_type %in% c("NaOH", "HCl")) 
+# only look at T7
+df_pH_kyle2 %<>% filter(Time_point == "LBA_T7") %>% rename(pH = pH_colorimetric) %>% arrange(H_mM, Antibiotics_type)
+dim(df_pH_kyle2) # 33
+df_pH_kyle2 %>% arrange(H_mM, Antibiotics_type)
+
+# average the replicates
+df_pH_kyle3 <- df_pH_kyle2 %>% group_by(Titration_type, Unit, Antibiotics_type) %>% summarise(pH = mean(pH)) %>% ungroup()
+df_pH_kyle3$pH <- as.numeric(df_pH_kyle3$pH)
+
+ggplot(df_pH_kyle3, aes(x=H_mM, y=pH, color=Antibiotics_type, group=Antibiotics_type)) +
+  geom_point(size=3, shape=16, alpha=1) +
+  # geom_errorbar(aes(ymin=Ave_pH - Std_pH, ymax=Ave_pH + Std_pH), width=.05)+
+  geom_line(size=1)+
+  # scale_color_brewer(palette='Set1') +
+  ylab("pH \n") +
+  xlab("\n added [H+] mM") +
+  scale_x_continuous(breaks = seq(-100,100,5))+
+  scale_y_continuous(breaks = seq(0,14,1), limits=c(0, 14))+
+  ggtitle("Soil pH perturbation & titration curves (LaBaghWoods1(pH6.66)) \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d
+
+# add NaOH Unit 6 
+df_pH_kyle3 %>% filter(Unit == 6, Titration_type == "NaOH")
+pH_mean = mean(df_pH_kyle3 %>% filter(Unit == 6, Titration_type == "NaOH") %>% select(pH) %>% unlist())
+df_pH_kyle3 <- rbind(df_pH_kyle3, c("NaOH", as.numeric(6), "CHL", as.numeric(pH_mean)))
+df_pH_kyle3$pH <- as.numeric(df_pH_kyle3$pH)
+df_pH_kyle3$pH <- round(df_pH_kyle3$pH, 3)
+# df_kyle2 is from 
+df_kyle2 <- read.xlsx("data/220421_Griess_antibiotics_experiment_to_kyle_remove_blanks.xlsx")
+
+# incompatible?
+df_pH_kyle3$Unit <- as.numeric(df_pH_kyle3$Unit)
+df_kyle2$Unit
+
+df_kyle3 <- df_kyle2 %>% left_join(df_pH_kyle3, by=c("Titration_type"="Titration_type", "Unit"="Unit","Antibiotics_type"="Antibiotics_type"))
+
+write.xlsx(df_kyle3, "220421_Griess_antibiotics_experiment_to_kyle_remove_blanks_add_pH.xlsx")
+
+```
+
+
+This is for alt
+```{r}
+df_pH_alt <- df_pH_T_alt %>% filter(Titration_type %in% c("NaOH","HCl","No_Nitrate"))
+dim(df_pH_alt_alt) # 304
+df_pH_alt$Titration_type %>% unique()
+
+Added_Volume <- 1.7 # ml
+Soil_mg <- 0.85
+moisture_percent_1 = 23.96 # LBA - LaBaghWoods for antibiotics
+Added_Volume + Soil_mg*(moisture_percent_1/100)
+moisture_percent_2 = 8.12 # Sterile - LaBaghWoods that has been autoclaved 5 times.
+Added_Volume + Soil_mg*(moisture_percent_2/100)
+# moisture_percent_3 = 9.0 # Crerar7
+# Added_Volume + Soil_mg*(moisture_percent_3/100)
+
+df_pH_alt$Added_ul <- ifelse(df_pH_alt$Titration_type == "NaOH", -1*df_pH_alt$Added_ul, df_pH_alt$Added_ul) # HCl is +, NaOH is -
+df_pH_alt %<>% mutate(H_mol = Concentration_M * Added_ul * 10^(-6)) # Calculate H mol 
+df_pH_alt$Volume <- ifelse(df_pH_alt$Soil == "LaBaghWoods_pH6.66", Added_Volume + Soil_mg*(moisture_percent_1/100),
+                      ifelse(df_pH_alt$Soil == "LaBaghWoods_autoclaved_pH6.66", Added_Volume + Soil_mg*(moisture_percent_2/100),
+                             0))
+                             # ifelse(df_pH_alt$Soil == "Crerar1_pH8.05", Added_Volume + Soil_mg*(moisture_percent_3/100),
+                                    # 0))) # Calc total volume
+
+df_pH_alt %<>% mutate(H_Molarity = H_mol / (Volume * 10^(-3)))
+df_pH_alt %<>% mutate(H_mM = H_Molarity * 1000)
+# openxlsx::write.xlsx(df_pH_alt, "df_pH_alt.xlsx")
+
+# how many levels of H_mM?
+df_pH_alt %>% filter(Soil == "LaBaghWoods_pH6.66")%>% select(H_mM) %>% unique() %>% arrange(H_mM)
+df_pH_alt %>% filter(Soil == "LaBaghWoods_autoclaved_pH6.66")%>% select(H_mM) %>% unique() %>% arrange(H_mM)
+# df_pH_alt %>% filter(Soil == "Crerar1_pH8.05")%>% select(H_mM) %>% unique() %>% arrange()
+colnames(df_pH_alt)
+```
+
+
+## 2. Plot titration curves
+Plot one time point at the time
+```{r}
+df_time
+# df_T0 <- df_pH_ave %>% filter(Time_point == "T0")
+
+# Plot it in one plot - time series
+df_plot <- df_pH
+# df_plot$Time_days <- factor(df_plot$Time_days)
+levels = c("LBA_T0", "LBA_T4", "LBA_T7", "LBA_T9", "Sterile_T0", "Sterile_T4", "Sterile_T7", "Sterile_T9")
+df_plot$Time_point <- factor(df_plot$Time_point, levels = levels)
+# unique(df_pH$Time_point)
+colnames(df_plot)
+
+ggplot(df_plot, aes(x=H_mM, y=pH_colorimetric, color=Time_point, group=Time_point)) +
+  geom_point(size=3, shape=16, alpha=1) +
+  # geom_errorbar(aes(ymin=Ave_pH - Std_pH, ymax=Ave_pH + Std_pH), width=.05)+
+  geom_line(size=1)+
+  # scale_color_brewer(palette='Set1') +
+  ylab("pH \n") +
+  xlab("\n added [H+] mM") +
+  scale_x_continuous(breaks = seq(-100,100,5))+
+  scale_y_continuous(breaks = seq(0,14,1), limits=c(0, 14))+
+  ggtitle("Soil pH perturbation & titration curves (LaBaghWoods1(pH6.66)) \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d
+
+# pH meter
+ggplot(df_plot, aes(x=H_mM, y=pH_meter, color=Time_point, group=Time_point)) +
+  geom_point(size=3, shape=16, alpha=1) +
+  # geom_errorbar(aes(ymin=Ave_pH - Std_pH, ymax=Ave_pH + Std_pH), width=.05)+
+  geom_line(size=1)+
+  # scale_color_brewer(palette='Set1') +
+  ylab("pH \n") +
+  xlab("\n added [H+] mM") +
+  scale_x_continuous(breaks = seq(-100,100,5))+
+  scale_y_continuous(breaks = seq(0,14,1), limits=c(0, 14))+
+  ggtitle("[pH micrometer] Soil pH perturbation & titration curves (LaBaghWoods1(pH6.66)) \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d
+
+# Plot it separately 
+df_pH$Soil %>% unique()
+df_pH_LBA <- df_pH %>% filter(Soil == "LaBaghWoods_pH6.66")
+dim(df_pH_LBA)
+df_pH_Sterile <- df_pH %>% filter(Soil == "LaBaghWoods_autoclaved_pH6.66")
+
+# plot all LBA (antibiotics)
+colnames(df_pH_LBA)
+# order factors
+df_pH_LBA$Antibiotics_type <- factor(df_pH_LBA$Antibiotics_type, levels = c("None", "CHL", "NYT", "CHL_NYT"))
+
+# average
+df_pH_LBA <- df_pH_LBA %>% group_by(Titration_type, Unit, Antibiotics_type, H_mM, Time_point, Time_hours, Time_days) %>% summarise(pH_colorimetric = mean(pH_colorimetric), pH_meter = mean(pH_meter)) %>% ungroup()
+dim(df_pH_LBA)
+
+df_pH_LBA$Time_hours <- factor(df_pH_LBA$Time_hours)
+
+# one plot
+ggplot(df_pH_LBA, aes(x=H_mM, y=pH_colorimetric, color=Time_hours, shape = Antibiotics_type)) +
+  geom_line(size=1)+
+  geom_point(size=3, alpha=1) +
+  # geom_errorbar(aes(ymin=Ave_pH - Std_pH, ymax=Ave_pH + Std_pH), width=.05)+
+  
+  # scale_color_brewer(palette='Set1') +
+  ylab("pH \n") +
+  xlab("\n added [H+] mM") +
+  scale_x_continuous(breaks = seq(-100,100,5))+
+  scale_y_continuous(breaks = seq(0,14,1), limits=c(0, 14))+
+  ggtitle("[LaBaghWoods1 (pH 6.66)] Soil pH perturbation & titration x Antibiotic treatment (Chloramphenicol(CHL), Nystatin(NYT)) \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d
+  # facet_wrap(~ Antibiotics_type, nrow = 2) +
+  # theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+# 2 by 2
+ggplot(df_pH_LBA, aes(x=H_mM, y=pH_colorimetric, color=Time_hours, shape = Antibiotics_type)) +
+  geom_line(size=1)+
+  geom_point(size=3, alpha=1) +
+  # geom_errorbar(aes(ymin=Ave_pH - Std_pH, ymax=Ave_pH + Std_pH), width=.05)+
+  
+  # scale_color_brewer(palette='Set1') +
+  ylab("pH \n") +
+  xlab("\n added [H+] mM") +
+  scale_x_continuous(breaks = seq(-100,100,5))+
+  scale_y_continuous(breaks = seq(0,14,1), limits=c(0, 14))+
+  ggtitle("[LaBaghWoods1 (pH 6.66)] Soil pH perturbation & titration x Antibiotic treatment (Chloramphenicol(CHL), Nystatin(NYT)) \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d +
+  facet_wrap(~ Antibiotics_type, nrow = 2) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+
+# let's remove the CHL_NYT
+df_pH_LBA3 <- df_pH_LBA %>% filter(Antibiotics_type %in% c("None", "CHL", "NYT"))
+
+ggplot(df_pH_LBA3, aes(x=H_mM, y=pH_colorimetric, color=Time_hours)) +
+  geom_line(size=1)+
+  geom_point(aes(shape = Antibiotics_type),size=3, alpha=1) +
+  # geom_errorbar(aes(ymin=Ave_pH - Std_pH, ymax=Ave_pH + Std_pH), width=.05)+
+  
+  # scale_color_brewer(palette='Set1') +
+  ylab("pH \n") +
+  xlab("\n added [H+] mM") +
+  scale_x_continuous(breaks = seq(-100,100,5))+
+  scale_y_continuous(breaks = seq(0,14,1), limits=c(0, 14))+
+  ggtitle("[LaBaghWoods1 (pH 6.66)] Soil pH perturbation & titration x Antibiotic treatment (Chloramphenicol(CHL), Nystatin(NYT)) \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d+
+  facet_wrap(~ Antibiotics_type, nrow = 1) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+# comparing by timepoint
+ggplot(df_pH_LBA3, aes(x=H_mM, y=pH_colorimetric, color=Antibiotics_type)) +
+  geom_line(size=1)+
+  geom_point(aes(shape = Antibiotics_type),size=3, alpha=1) +
+  # geom_errorbar(aes(ymin=Ave_pH - Std_pH, ymax=Ave_pH + Std_pH), width=.05)+
+  
+  # scale_color_brewer(palette='Set1') +
+  ylab("pH \n") +
+  xlab("\n added [H+] mM") +
+  scale_x_continuous(breaks = seq(-100,100,5))+
+  scale_y_continuous(breaks = seq(0,14,1), limits=c(0, 14))+
+  ggtitle("[LaBaghWoods1 (pH 6.66)] Soil pH perturbation & titration x Antibiotic treatment (Chloramphenicol(CHL), Nystatin(NYT)) \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d+
+  facet_wrap(~ Time_hours, nrow = 2) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+
+
+
+```
+
+Include autoclaved soils
+```{r}
+# Include autoclaved soils
+df_pH_Sterile 
+head(df_pH_Sterile)
+
+df_auto <- df_pH_Sterile %>% filter(Titration_type %in% c("HCl", "NaOH"))
+dim(df_auto)
+
+# limit range to -45, 45
+df_auto %<>% filter(H_mM > -50, H_mM < 50)
+
+df_auto$Antibiotics_type <- "Autoclaved"
+# average
+df_auto <- df_auto %>% group_by(Titration_type, Unit, Antibiotics_type, H_mM, Time_point, Time_hours, Time_days) %>% summarise(pH_colorimetric = mean(pH_colorimetric), pH_meter = mean(pH_meter)) %>% ungroup()
+dim(df_auto)
+
+
+ggplot(df_auto, aes(x=H_mM, y=pH_colorimetric, color=Antibiotics_type)) +
+  geom_line(size=1)+
+  geom_point(aes(shape = Antibiotics_type),size=3, alpha=1) +
+  # geom_errorbar(aes(ymin=Ave_pH - Std_pH, ymax=Ave_pH + Std_pH), width=.05)+
+  
+  # scale_color_brewer(palette='Set1') +
+  ylab("pH \n") +
+  xlab("\n added [H+] mM") +
+  scale_x_continuous(breaks = seq(-100,100,5))+
+  scale_y_continuous(breaks = seq(0,14,1), limits=c(0, 14))+
+  ggtitle("[LaBaghWoods1 (pH 6.66)] Soil pH perturbation & titration x Antibiotic treatment (Chloramphenicol(CHL), Nystatin(NYT)) \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d+
+  facet_wrap(~ Time_hours, nrow = 2) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+# rbind and redraw
+# df_pH_LBA3$pH_colorimetric <- as.numeric(df_pH_LBA3$pH_colorimetric) 
+# df_auto$pH_colorimetric <- as.numeric(df_auto$pH_colorimetric)
+df_LBA3_auto <- rbind(df_pH_LBA3, df_auto)
+
+# because the time is a bit different
+df_LBA3_auto$Time_days <- round(df_LBA3_auto$Time_days, 0)
+df_LBA3_auto$Time_days %>% unique()
+
+ggplot(df_LBA3_auto, aes(x=H_mM, y=pH_colorimetric, color=Antibiotics_type)) +
+  geom_line(size=1)+
+  geom_point(aes(shape = Antibiotics_type),size=3, alpha=1) +
+  # geom_errorbar(aes(ymin=Ave_pH - Std_pH, ymax=Ave_pH + Std_pH), width=.05)+
+  
+  # scale_color_brewer(palette='Set1') +
+  ylab("pH \n") +
+  xlab("\n added [H+] mM") +
+  scale_x_continuous(breaks = seq(-100,100,5))+
+  scale_y_continuous(breaks = seq(0,14,1), limits=c(0, 14))+
+  ggtitle("[LaBaghWoods1 (pH 6.66)] Soil pH perturbation & titration x Antibiotic treatment (Chloramphenicol(CHL), Nystatin(NYT)) \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d+
+  facet_wrap(~ Time_days, nrow = 2) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))
+
+
+```
+
+Plot the time series change of pH
+```{r}
+
+df_LBA3_auto_ss <- df_LBA3_auto %>% filter(H_mM == 0) %>% filter(!(Titration_type == "No_Nitrate"))
+
+# plot pH change
+ggplot(df_LBA3_auto_ss, aes(x=Time_days, y=pH_colorimetric, color=Antibiotics_type)) +
+  geom_line(size=1.2)+
+  geom_point(aes(shape = Antibiotics_type),size=3, alpha=1) +
+  # geom_errorbar(aes(ymin=Ave_pH - Std_pH, ymax=Ave_pH + Std_pH), width=.05)+
+  scale_color_manual(values=c("Black","orangered","Blue", "chocolate4"))+
+  # scale_color_brewer(palette='Set1') +
+  ylab("pH \n") +
+  xlab("\n Time (days)") +
+  # scale_x_continuous(breaks = seq(-100,100,5))+
+  # scale_y_continuous(breaks = seq(0,14,1), limits=c(0, 14))+
+  ggtitle("pH change during incubation of soil (no acid/base treatment) \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d
+  # facet_wrap(~ Time_days, nrow = 2) +
+  # theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+# plot no nitrite as well
+df_LBA3_auto_ss1 <- df_LBA3_auto %>% filter(H_mM == 0) %>% filter(!(Titration_type == "No_Nitrate"))
+df_LBA3_auto_ss2 <- df_LBA3_auto %>% filter(H_mM == 0) %>% filter((Titration_type == "No_Nitrate"))
+df_LBA3_auto_ss2$Antibiotics_type <- "No_Nitrate"
+df_LBA3_auto2 <- rbind(df_LBA3_auto_ss1, df_LBA3_auto_ss2)
+df_LBA3_auto2 %<>% rename(Treatment = Antibiotics_type)
+
+# plot pH change
+ggplot(df_LBA3_auto2, aes(x=Time_days, y=pH_colorimetric, color=Treatment)) +
+  geom_line(size=1)+
+  geom_point(aes(shape = Treatment),size=3, alpha=1) +
+  # geom_errorbar(aes(ymin=Ave_pH - Std_pH, ymax=Ave_pH + Std_pH), width=.05)+
+  scale_color_manual(values=c("Black","orangered","Blue", "chocolate4", "green1"))+
+  # scale_color_brewer(palette='Set1') +
+  ylab("pH \n") +
+  xlab("\n Time (days)") +
+  # scale_x_continuous(breaks = seq(-100,100,5))+
+  # scale_y_continuous(breaks = seq(0,14,1), limits=c(0, 14))+
+  ggtitle("pH change during incubation of soil (no acid/base treatment) \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d
+  # facet_wrap(~ Time_days, nrow = 2) +
+  # theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+# plot the change from T0 pH to T7
+# take two time points and get the delta pH for each H_mM
+
+df_LBA3_auto_T0 <- df_LBA3_auto %>% filter(Time_days == 0) %>% rename(pH_T0 = pH_colorimetric) %>% select(-Time_point, -Time_hours, -Time_days)
+df_LBA3_auto_T7 <- df_LBA3_auto %>% filter(Time_days == 2) %>% rename(pH_T7 = pH_colorimetric) %>% select(-Time_point, -Time_hours, -Time_days)
+# join
+df_deltapH <- df_LBA3_auto_T0 %>% left_join(df_LBA3_auto_T7, c("Titration_type"="Titration_type", "Unit"="Unit", "Antibiotics_type"="Antibiotics_type", "H_mM"="H_mM"))
+
+# subtract
+df_deltapH$delta_pH <- df_deltapH$pH_T7 - df_deltapH$pH_T0
+df_deltapH %<>% filter(Titration_type !="No_Nitrate")
+
+# plot
+ggplot(df_deltapH, aes(x=H_mM, y=delta_pH, color=Antibiotics_type)) +
+  geom_line(size=1)+
+  geom_point(aes(shape = Antibiotics_type),size=3, alpha=1) +
+  # geom_errorbar(aes(ymin=Ave_pH - Std_pH, ymax=Ave_pH + Std_pH), width=.05)+
+  geom_abline(slope=0, intercept=0) +
+  # scale_color_brewer(palette='Set1') +
+  ylab("delta pH (T7 - T0) \n") +
+  xlab("\n added [H+] mM") +
+  scale_x_continuous(breaks = seq(-50,50,5))+
+  scale_y_continuous(breaks = seq(-5,5,1), limits=c(-5, 5))+
+  ggtitle("[LaBaghWoods1 (pH 6.66)] Soil pH change by (biological) activity \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d
+ 
+```
+
+Now it's time to compare colorimeteric vs. pH micrometer measurements
+```{r}
+# 
+
+
+df_pH_Sterile
+df_pH_LBA3
+
+# melt pH_colorimetric and pH_meter
+df_Sterile_mlt <- melt(df_pH_Sterile, measure.vars = c("pH_colorimetric", "pH_meter"), variable.name = "pH_method", value.name = "pH")
+df_LBA3_mlt <- melt(df_pH_LBA3, measure.vars = c("pH_colorimetric", "pH_meter"), variable.name = "pH_method", value.name = "pH")
+
+colnames(df_pH_LBA3)
+
+# restrict to T0 and T7
+df_Sterile_mlt %<>% filter(Time_point %in% c("Sterile_T0", "Sterile_T7"))
+df_LBA3_mlt %<>% filter(Time_point %in% c("LBA_T0", "LBA_T7")) %>% filter(Antibiotics_type == "None")
+
+
+# no nitrate where
+df_LBA3_mlt %>% filter(Titration_type == "No_Nitrate")
+
+# comparing LBA samples
+ggplot(df_LBA3_mlt, aes(x=H_mM, y=pH, color=pH_method)) +
+  geom_line(size=1)+
+  geom_point(aes(shape = Antibiotics_type),size=3, alpha=1) +
+  # geom_errorbar(aes(ymin=Ave_pH - Std_pH, ymax=Ave_pH + Std_pH), width=.05)+
+  
+  # scale_color_brewer(palette='Set1') +
+  ylab("pH \n") +
+  xlab("\n added [H+] mM") +
+  scale_x_continuous(breaks = seq(-100,100,5))+
+  scale_y_continuous(breaks = seq(0,14,1), limits=c(0, 14))+
+  ggtitle("[LaBaghWoods1 pH 6.66] Comparing pH measuring methods \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d+
+  facet_wrap(~ Time_hours, nrow = 1) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))
+
+# comparing Autoclaved samples
+ggplot(df_Sterile_mlt, aes(x=H_mM, y=pH, color=pH_method)) +
+  geom_line(size=1)+
+  geom_point(aes(shape = Antibiotics_type),size=3, alpha=1) +
+  # geom_errorbar(aes(ymin=Ave_pH - Std_pH, ymax=Ave_pH + Std_pH), width=.05)+
+  
+  # scale_color_brewer(palette='Set1') +
+  ylab("pH \n") +
+  xlab("\n added [H+] mM") +
+  scale_x_continuous(breaks = seq(-100,100,5))+
+  scale_y_continuous(breaks = seq(0,14,1), limits=c(0, 14))+
+  ggtitle("[LaBaghWoods1 pH 6.66 autoclaved] Comparing pH measuring methods \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d+
+  facet_wrap(~ Time_hours, nrow = 2) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))
+
+
+
+## Compare pH dynamics
+ggplot(df_LBA3_mlt, aes(x=H_mM, y=pH, color=Time_point)) +
+  geom_line(size=1)+
+  geom_point(size=3, alpha=1) +
+  # geom_errorbar(aes(ymin=Ave_pH - Std_pH, ymax=Ave_pH + Std_pH), width=.05)+
+  
+  scale_color_brewer(palette='Set1') +
+  ylab("pH \n") +
+  xlab("\n added [H+] mM") +
+  scale_x_continuous(breaks = seq(-100,100,5))+
+  scale_y_continuous(breaks = seq(0,14,1), limits=c(0, 14))+
+  ggtitle("[LaBaghWoods1 pH 6.66] Comparing pH measuring methods \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d+
+  facet_wrap(~ pH_method, nrow = 2) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))
+
+
+ggplot(df_Sterile_mlt, aes(x=H_mM, y=pH, color=Time_point)) +
+  geom_line(size=1)+
+  geom_point(size=3, alpha=1) +
+  # geom_errorbar(aes(ymin=Ave_pH - Std_pH, ymax=Ave_pH + Std_pH), width=.05)+
+  
+  scale_color_brewer(palette='Set1') +
+  ylab("pH \n") +
+  xlab("\n added [H+] mM") +
+  scale_x_continuous(breaks = seq(-100,100,5))+
+  scale_y_continuous(breaks = seq(0,14,1), limits=c(0, 14))+
+  ggtitle("[LaBaghWoods1 pH 6.66 autoclaved] Comparing pH measuring methods \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d+
+  facet_wrap(~ pH_method, nrow = 2) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))
+
+# plot scatter plot
+ggplot(df_plot, aes(x=pH_colorimetric, y=pH_meter)) +
+  # geom_line(size=1)+
+  geom_point(size=3, alpha=1, color="royalblue") +
+  # geom_errorbar(aes(ymin=Ave_pH - Std_pH, ymax=Ave_pH + Std_pH), width=.05)+
+  geom_abline(intercept=0, slope=1)+
+  scale_color_brewer(palette='Set1') +
+  ylab("pH by micro electrode \n") +
+  xlab("\n pH by colorimetric assay") +
+  scale_x_continuous(breaks = seq(0,14,1), limits=c(0, 14))+
+  scale_y_continuous(breaks = seq(0,14,1), limits=c(0, 14))+
+  ggtitle("Comparing pH measuring methods \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d
+
+
+
+
+
+
+
+```
+
+
+
+
+
+
+
+
+
+Compare with alt
+```{r}
+df_time
+# df_T0 <- df_pH_ave %>% filter(Time_point == "T0")
+
+# Plot it in one plot - time series
+df_plot_alt <- df_pH_alt
+# df_plot$Time_days <- factor(df_plot$Time_days)
+levels = c("LBA_T0", "LBA_T4", "LBA_T7", "LBA_T9", "Sterile_T0", "Sterile_T4", "Sterile_T7", "Sterile_T9")
+df_plot_alt$Time_point <- factor(df_plot_alt$Time_point, levels = levels)
+# unique(df_pH$Time_point)
+
+ggplot(df_plot_alt, aes(x=H_mM, y=pH_colorimetric, color=Time_point, group=Time_point)) +
+  geom_point(size=3, shape=16, alpha=1) +
+  # geom_errorbar(aes(ymin=Ave_pH - Std_pH, ymax=Ave_pH + Std_pH), width=.05)+
+  geom_line(size=1)+
+  # scale_color_brewer(palette='Set1') +
+  ylab("pH \n") +
+  xlab("\n added [H+] mM") +
+  scale_x_continuous(breaks = seq(-100,100,5))+
+  scale_y_continuous(breaks = seq(0,14,1), limits=c(0, 14))+
+  ggtitle("Soil pH perturbation & titration curves (LaBaghWoods1(pH6.66)) \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d
+
+# just plot and compare LBA_T0
+df_LBA <- df_plot %>% filter(Time_point %in% c("LBA_T4","LBA_T7")) %>% mutate(mu_opt = "T0")
+df_LBA_alt <- df_plot_alt %>% filter(Time_point %in% c("LBA_T4","LBA_T7")) %>% mutate(mu_opt = "T4 or T7")
+df_compare <- rbind(df_LBA, df_LBA_alt)
+df_compare
+
+
+ggplot(df_compare, aes(x=H_mM, y=pH_colorimetric, color=mu_opt, group=mu_opt)) +
+  geom_point(size=3, shape=16, alpha=1) +
+  # geom_errorbar(aes(ymin=Ave_pH - Std_pH, ymax=Ave_pH + Std_pH), width=.05)+
+  geom_line(size=1)+
+  # scale_color_brewer(palette='Set1') +
+  ylab("pH \n") +
+  xlab("\n added [H+] mM") +
+  scale_x_continuous(breaks = seq(-100,100,5))+
+  scale_y_continuous(breaks = seq(0,14,1), limits=c(0, 14))+
+  ggtitle("Comparing using mu_opt of T0 or other: Soil pH perturbation & titration curves (LaBaghWoods1(pH6.66)) \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d+
+  facet_wrap(~ Time_point, nrow = 1) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+```
+
+
+
+
+
+
+
+## 2.1. plot OD434 and OD585
+```{r}
+df_OD <- read.xlsx("data/OD434_OD585_WW_C_T0_220329.xlsx")
+colnames(df_OD)[1] <- "Well"
+
+df_OD_merged <- df_OD %>% left_join(df_plot %>% filter(Time_point %in% c("WW_T0", "C_T0")), by=c("Well"="Well"))
+
+df_OD_C <- df_OD_merged %>% filter(Soil == "Crerar7_pH8.05")
+
+# plot OD434 and its change
+ggplot(df_OD_C, aes(x=H_mM, y=OD434, color=Time_days, group=Time_days)) +
+  geom_point(size=3, shape=16, alpha=1) +
+  # geom_errorbar(aes(ymin=Ave_pH - Std_pH, ymax=Ave_pH + Std_pH), width=.05)+
+  geom_line(size=1)+
+  geom_vline(xintercept=0, linetype="dashed", color = "black")+
+  # scale_color_brewer(palette='Set1') +
+  ylab("pH \n") +
+  xlab("\n added [H+] mM") +
+  # scale_x_continuous(breaks = seq(-100,100,5), limits=c(-100, 100))+
+  # scale_y_continuous(breaks = seq(0,14,1), limits=c(0, 14))+
+  ggtitle("Soil pH perturbation & titration curves (Crerar7_pH8.05) \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d
+
+# use this instead: OD434
+plot(df_OD_C$H_mM, df_OD_C$OD434_background, col = "orange", lty = 1, pch = 17, lwd = 1, main = "OD434 (Crerar7_T0 soil)",
+     ylab = "OD434", xlab = "added [H+] mM", ylim = c(-1, 3), cex=2)
+
+points(df_OD_C$H_mM, df_OD_C$OD434, col = "blue", pch = 17, cex=2)
+points(df_OD_C$H_mM, df_OD_C$OD434_subtraction, col = 'red', pch = 17, lwd = 1)
+
+legend("topright",legend = c("Background", "After dye", "(After dye - Background)"),
+    col = c("orange", "blue", 'red'), bty = "n", pch = 17, cex = 1, box.lty = 0)
+
+
+# use this instead
+plot(df_OD_C$H_mM, df_OD_C$OD585_background, col = "orange", lty = 1, pch = 16, lwd = 1, main = "OD585 (Crerar7_T0 soil)",
+     ylab = "OD585", xlab = "added [H+] mM", ylim = c(0, 3), cex=2)
+
+points(df_OD_C$H_mM, df_OD_C$OD585, col = "blue", pch = 16, cex=2)
+points(df_OD_C$H_mM, df_OD_C$OD585_subtraction, col = 'red', pch = 16, lwd = 1)
+legend("topright",legend = c("Background", "After dye", "(After dye - Background)"),
+    col = c("orange", "blue", 'red'), bty = "n", pch = 16, cex = 1, box.lty = 0)
+
+# R_multi?
+plot(df_OD_C$H_mM, df_OD_C$R_multi, col = "red", lty = 1, pch = 15, lwd = 1, main = "R_multi (Crerar7_T0 soil)",
+     ylab = "R_multi", xlab = "added [H+] mM",cex=2)
+
+
+# show R_multi and a_434, a_585
+plot(df_OD_C$H_mM, df_OD_C$R_multi, col = "red", lty = 1, pch = 15, lwd = 1, main = "R_multi (Crerar7_T0 soil)",
+     ylab = "R_multi", xlab = "added [H+] mM",ylim = c(-20, 100), cex=2)
+abline(a=0, b=0)
+points(df_OD_C$H_mM, df_OD_C$OD434_subtraction, col = "red", pch = 17)
+points(df_OD_C$H_mM, df_OD_C$OD585_subtraction, col = 'red', pch = 16, lwd = 1)
+
+legend("topright",legend = c("OD434_corrected", "OC585_corrected", "R_multi = OD585/OD434"),
+    pch = c(17, 16, 15), bty = "n", col = 'red', cex = 1.2, box.lty = 0)
+
+# R_multi and pH
+
+plot(df_OD_C$pH_colorimetric, df_OD_C$R_multi, col = "royalblue", lty = 1, pch = 18, lwd = 1, main = "R_multi (Crerar7_T0 soil)",
+     ylab = "R_multi", xlab = "pH_colorimetric", cex=1.5)
+
+
+```
+
+
+
+Plot by time point
+```{r}
+# df_T0 <- df_pH_ave %>% filter(Time_point == "T0")
+df_T0 <- df_pH %>% filter(Time_point == "T0")
+
+ggplot(df_T0, aes(x=H_mM, y=pH_colorimetric, color=Soil, group=Soil)) +
+  geom_point(size=3, shape=16, alpha=1) +
+  # geom_errorbar(aes(ymin=Ave_pH - Std_pH, ymax=Ave_pH + Std_pH), width=.05)+
+  geom_line(size=1)+
+  # scale_color_brewer(palette='Set1') +
+  ylab("pH \n") +
+  xlab("\n added [H+] mM") +
+  scale_y_continuous(breaks = seq(0,12,1), limits=c(0, 12))+
+  ggtitle("[T0] Soil pH perturbation (Anaerobic incubation) \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d
+
+# df_T2 <- df_pH_ave %>% filter(Time_point == "T2")
+df_T4 <- df_pH %>% filter(Time_point == "T4")
+
+ggplot(df_T4, aes(x=H_mM, y=pH_colorimetric, color=Soil, group=Soil)) +
+  geom_point(size=3, shape=16, alpha=1) +
+  # geom_errorbar(aes(ymin=Ave_pH - Std_pH, ymax=Ave_pH + Std_pH), width=.05)+
+  geom_line(size=1)+
+  # scale_color_brewer(palette='Set1') +
+  ylab("pH \n") +
+  xlab("\n added [H+] mM") +
+  scale_y_continuous(breaks = seq(0,12,1), limits=c(0, 12))+
+  ggtitle("[T4] Soil pH perturbation (Anaerobic incubation) \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d
+
+# df_T7 <- df_pH_ave %>% filter(Time_point == "T7")
+df_T7 <- df_pH %>% filter(Time_point == "T7")
+df_T7 %>% filter(H_mM == 0)
+
+ggplot(df_T7, aes(x=H_mM, y=pH_colorimetric, color=Soil, group=Soil)) +
+  geom_point(size=3, shape=16, alpha=1) +
+  # geom_errorbar(aes(ymin=Ave_pH - Std_pH, ymax=Ave_pH + Std_pH), width=.05)+
+  geom_line(size=1)+
+  # scale_color_brewer(palette='Set1') +
+  ylab("pH \n") +
+  xlab("\n added [H+] mM") +
+  scale_y_continuous(breaks = seq(0,12,1), limits=c(0, 12))+
+  ggtitle("[T7] Soil pH perturbation (Anaerobic incubation) \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d
+
+# df_T9 <- df_pH_ave %>% filter(Time_point == "T9")
+df_T9 <- df_pH %>% filter(Time_point == "T9")
+
+ggplot(df_T9, aes(x=H_mM, y=pH_colorimetric, color=Soil, group=Soil)) +
+  geom_point(size=3, shape=16, alpha=1) +
+  # geom_errorbar(aes(ymin=Ave_pH - Std_pH, ymax=Ave_pH + Std_pH), width=.05)+
+  geom_line(size=1)+
+  # scale_color_brewer(palette='Set1') +
+  ylab("pH \n") +
+  xlab("\n added [H+] mM") +
+  scale_y_continuous(breaks = seq(0,12,1), limits=c(0, 12))+
+  ggtitle("[T9] Soil pH perturbation (Anaerobic incubation) \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d
+```
+
+
+## 2.1. Let's fit a line to the pH titration curves to infer the pH - H_mM
+```{r}
+
+df_plot_no1 <- df_plot %>% filter(!(pH_colorimetric==1))
+
+ggplot(df_plot_no1, aes(x=H_mM, y=pH_colorimetric, color=Time_days, group=Time_days)) +
+  geom_point(size=3, shape=16, alpha=1) +
+  # geom_errorbar(aes(ymin=Ave_pH - Std_pH, ymax=Ave_pH + Std_pH), width=.05)+
+  geom_line(size=1)+
+  geom_vline(xintercept=0, linetype="dashed", color = "black")+
+  # scale_color_brewer(palette='Set1') +
+  ylab("pH \n") +
+  xlab("\n added [H+] mM") +
+  scale_x_continuous(breaks = seq(-100,100,5), limits=c(-100, 100))+
+  scale_y_continuous(breaks = seq(0,14,1), limits=c(0, 14))+
+  ggtitle("Soil pH perturbation & titration curves (LaBaghWoods1: pH 6.66) \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d
+
+df_2.09 <- df_plot_no1 %>% filter(Time_days == 2.09 & H_mM > -30) %>% select(pH_colorimetric, H_mM, Time_days) # fit the line to the second day
+dim(df_2.09)
+
+df_2.09$H_mM_2 <- (df_2.09$H_mM)^2
+df_2.09$H_mM_3 <- (df_2.09$H_mM)^3
+
+fit.pH <- lm(pH_colorimetric ~ H_mM + H_mM_2 + H_mM_3, df_2.09)
+summary(fit.pH)
+
+perturbH <- seq(-100, 100, 0.1)
+pHPredict <- predict(fit.pH,list(H_mM=perturbH, H_mM_2=perturbH^2, H_mM_3=perturbH^3))
+df_auc_poly <- data.frame(H_mM = perturbH, pH = pHPredict)
+plot(perturbH, pHPredict)
+
+# how about plotting a sigmoidal function?
+
+plot(df_2.09$pH_colorimetric ~ df_2.09$H_mM)
+
+fit.sig <- nls(pH_colorimetric ~ SSlogis(H_mM, Asym, xmid, scal), data =df_2.09)
+summary(fit.sig)
+
+perturbH <- seq(-100, 100, 0.1)
+pHPredict <- predict(fit.sig, list(H_mM=perturbH))
+df_sig <- data.frame(H_mM = perturbH, pH = pHPredict)
+plot(perturbH, predict(fit.sig, list(H_mM=perturbH)))
+
+
+
+# (1) Plot fitted sigmoid line
+ggplot(df_2.09, aes(x=H_mM, y=pH_colorimetric)) +
+  geom_point(size=2.5, shape=16, color = "brown") +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  xlab("Amount of pH perturbation (H+ mM) \n") +
+  ylab("\n pH_colorimetric") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,family="serif", show.legend = FALSE)+
+  # ggtitle("Correlation with perturbation and area under nitrate curve \n") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  geom_line(data = df_sig, aes(x = H_mM, y = pH), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=10, label= paste0("y = ", round(coef(fit.sig)[[1]],3), "+", round(coef(fit.sig)[[2]],3),"x+",round(coef(fit.sig)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.sig)$r.squared,3)), color = "maroon2") +
+  mytheme_2d
+
+## use artificial dataset to fit the sigmoid function
+
+## how about we add some points? (This is a dangerous step)
+added_points = 10
+df_artificial_left <- data.frame(pH_colorimetric = rep(9, added_points), H_mM = seq(-30, -100, length = added_points), Time_days= rep(2.09, added_points))
+df_artificial_right <- data.frame(pH_colorimetric = rep(2.5, added_points), H_mM = seq(100, 170, length = added_points), Time_days= rep(2.09, added_points))
+df_2.09 <- df_plot_no1 %>% filter(Time_days == 2.09 & H_mM > -30) %>% select(pH_colorimetric, H_mM, Time_days) # fit the line to the second day
+dim(df_2.09)
+df_2.09_artificial <- rbind(df_2.09, df_artificial_left, df_artificial_right)
+
+
+plot(df_2.09_artificial$pH_colorimetric ~ df_2.09_artificial$H_mM)
+
+fit.sig <- nls(pH_colorimetric ~ SSlogis(H_mM, Asym, xmid, scal), data =df_2.09_artificial)
+summary(fit.sig)
+
+perturbH <- seq(-100, 100, 0.1)
+pHPredict <- predict(fit.sig, list(H_mM=perturbH))
+df_sig <- data.frame(H_mM = perturbH, pH = pHPredict)
+lines(perturbH, predict(fit.sig, list(H_mM=perturbH)), col = 'red')
+
+# (1) Plot fitted linear regression line
+ggplot(df_2.09, aes(x=H_mM, y=pH_colorimetric)) +
+  geom_point(size=2.5, shape=16, color = "brown") +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  xlab("Amount of pH perturbation (H+ mM) \n") +
+  ylab("\n pH_colorimetric") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,family="serif", show.legend = FALSE)+
+  # ggtitle("Correlation with perturbation and area under nitrate curve \n") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  geom_line(data = df_sig, aes(x = H_mM, y = pH), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=10, label= paste0("y = ", round(coef(fit.sig)[[1]],3), "+", round(coef(fit.sig)[[2]],3),"x+",round(coef(fit.sig)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.sig)$r.squared,3)), color = "maroon2") +
+  mytheme_2d
+
+
+## just draw our own sigmoid plot
+plot(df_2.09$pH_colorimetric ~ df_2.09$H_mM, xlim=c(-100, 100), ylim = c(2, 10))
+
+x <- seq(-100, 100, 0.1)
+y <- (6.5 / (1+ exp(1*(0.07*(x+125))-10))) + 2.5
+lines(x, y, col = 'red')
+df_draw <- data.frame(H_mM = x, pH = y)
+
+ggplot(df_2.09, aes(x=H_mM, y=pH_colorimetric)) +
+  geom_point(size=2.5, shape=16, color = "brown") +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  xlab("Amount of pH perturbation (H+ mM) \n") +
+  ylab("\n pH_colorimetric") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,family="serif", show.legend = FALSE)+
+  ggtitle("Artificial sigmoidal tritration curve (pink) drawn for inferring pH \n") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  geom_line(data = df_draw, aes(x = H_mM, y = pH), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=10, label= paste0("y = ", round(coef(fit.sig)[[1]],3), "+", round(coef(fit.sig)[[2]],3),"x+",round(coef(fit.sig)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.sig)$r.squared,3)), color = "maroon2") +
+  mytheme_2d
+
+
+```
+
+```{r}
+
+library(titrationCurves)
+wb_sa(eqpt = TRUE, main = "Titration of WB w/ SA")
+wb_sa(pka = 7, col = "blue", overlay = TRUE)
+
+
+```
+
+
+
+## 3. Time dynamics of pH
+
+```{r}
+# Get No_Nitrate sample
+df_pH <- df_pH_T %>% filter(Titration_type %in% c("NaOH","HCl","No_Nitrate"))
+dim(df_pH) # 160
+Added_Volume <- 1.7 # ml
+Soil_mg <- 0.85
+moisture_percent_1 = 23.6 # LaBaghWoods1
+Added_Volume + Soil_mg*(moisture_percent_1/100)
+# moisture_percent_2 = 33.2 # Allandale
+df_pH$Added_ul <- ifelse(df_pH$Titration_type == "NaOH", -1*df_pH$Added_ul, df_pH$Added_ul) # HCl is +, NaOH is -
+df_pH %<>% mutate(H_mol = Concentration_M * Added_ul * 10^(-6)) # Calculate H mol 
+df_pH$Volume <- ifelse(df_pH$Soil == "LaBaghWoods_pH6.66", Added_Volume + Soil_mg*(moisture_percent_1/100), 0) # Calc total volume
+# df_pH$Volume <- ifelse(df_pH$Soil == "Allandale_pH4", Added_Volume + Soil_mg*(moisture_percent_2/100), df_pH$Volume) # Calc total volume
+# df_pH$Volume %>% unique()
+df_pH %<>% mutate(H_Molarity = H_mol / (Volume * 10^(-3)))
+df_pH %<>% mutate(H_mM = H_Molarity * 1000)
+# openxlsx::write.xlsx(df_pH, "df_pH.xlsx")
+
+# how many levels of H_mM?
+pH_pert <- df_pH %>% select(H_mM) %>% unique() %>% arrange()
+df_pH %>% filter(Soil == "LaBaghWoods_pH6.66")%>% select(H_mM) %>% unique() %>% arrange(H_mM)
+# df_pH %>% filter(Soil == "Allandale_pH4")%>% select(H_mM) %>% unique() %>% arrange()
+colnames(df_pH)
+
+df_pH %>% filter()
+
+# plot time dynamics
+
+# pH color
+col_pH <- colorRampPalette(c("gold","red","purple"))
+
+library(colorRamps)
+colorRamps::green2red
+plot(rep(1,13),col=col_pH(13),pch=19,cex=3)
+grad_pH <- scale_colour_gradientn(colours = col_pH(100))
+
+# Confer this page (https://stackoverflow.com/questions/21537782/how-to-set-fixed-continuous-colour-values-in-ggplot2)
+# myPalette <- colorRampPalette(rev(brewer.pal(11, "Spectral")))
+# sc <- scale_colour_gradientn(colours = myPalette(100), limits=c(1, 8))
+
+# 1. pH perturbation
+# first only plot No_Nitrate samples
+df_no_no3 <- df_pH %>% filter(Titration_type == "No_Nitrate") %>% select(H_mM, pH_colorimetric, Soil, Time_hours)
+df_no_ab <- df_pH %>% filter(Titration_type == "HCl" & H_mM == 0) %>% select(H_mM, pH_colorimetric, Soil, Time_hours)
+plot(df_no_no3$Time_hours, df_no_no3$pH_colorimetric, )
+points(df_no_ab$Time_hours, df_no_ab$pH_colorimetric, col='red')
+
+# plot ave and std
+df_no_no3_ave <- df_no_no3 %>% group_by(H_mM, Soil, Time_hours) %>% summarize(pH = mean(pH_colorimetric), std_pH = sd(pH_colorimetric)) %>% ungroup() %>% mutate(Sample_type = "No_Nitrate_added")
+df_no_ab_ave <- df_no_ab %>% group_by(H_mM, Soil, Time_hours) %>% summarize(pH = mean(pH_colorimetric), std_pH = sd(pH_colorimetric)) %>% ungroup() %>% mutate(Sample_type = "2mM_Nitrate_added")
+
+df_no <- rbind(df_no_no3_ave, df_no_ab_ave)
+
+ggplot(df_no, aes(x=Time_hours, y=pH, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=pH - std_pH, ymax=pH + std_pH), width=.05)+
+  # scale_colour_gradientn(colours = col_pH(100)) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("pH \n") +
+  xlab("\n Time (hr)") +
+  scale_y_continuous(breaks = seq(6.5,8,0.25), limits=c(6.5, 8))+
+  ggtitle("Effect of nitrate addition (no acid/base added) \n") +
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Soil) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+# let's include some pH perturbed samples
+df_pH %>% filter(!(H_mM == 0)) %>% dim()
+df_10 <- df_pH %>% filter(!(H_mM == 0)) %>% filter(H_mM < 15 & H_mM > -15) %>% filter(H_mM > 5)
+df_10 %<>% select(H_mM, Soil, Time_hours, pH_colorimetric) %>% rename(pH = pH_colorimetric) %>% mutate(std_pH = 0) %>% mutate(Sample_type = paste0("H+ ", round(H_mM,2), " mM"))
+
+df_no_10 <- rbind(df_no, df_10)
+colnames(df_no_10)
+
+df_no_10$Sample_type <- factor(df_no_10$Sample_type, levels = c("2mM_Nitrate_added", "H+ 5.26 mM", "No_Nitrate_added","H+ 10.52 mM"))
+
+ggplot(df_no_10, aes(x=Time_hours, y=pH, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5) +
+  geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=pH - std_pH, ymax=pH + std_pH), width=.05)+
+  # scale_colour_gradientn(colours = col_pH(100)) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("pH \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(6.5,8,0.25), limits=c(6.5, 8))+
+  ggtitle("Effect of nitrate addition in comparison with acid added samples \n") +
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Soil) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+ggplot(df_pH, aes(x=Time_hours, y=pH_colorimetric, color=H_mM, group=H_mM)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
+  scale_colour_gradientn(colours = col_pH(100)) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("pH \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("pH perturbation \n") +
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Soil) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+
+
+```
+
+
+
