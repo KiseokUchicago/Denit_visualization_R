@@ -1,0 +1,2247 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="KiseokUchicago" />
+
+<meta name="date" content="2022-05-11" />
+
+<title>220508_TOC_time_series</title>
+
+<script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/master/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Denit_visualization_R</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/KiseokUchicago/Denit_visualization_R">
+    <span class="fa fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">220508_TOC_time_series</h1>
+<h4 class="author">KiseokUchicago</h4>
+<h4 class="date">2022-05-11</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2022-06-08
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>Denit_visualization_R/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.2). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20210924code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20210924)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20210924code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20210924)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomKiseokUchicagoDenitvisualizationRtree7905c9343b41b0f3a42aba137993e7c632c5b0e2targetblank7905c93a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/KiseokUchicago/Denit_visualization_R/tree/7905c9343b41b0f3a42aba137993e7c632c5b0e2" target="_blank">7905c93</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomKiseokUchicagoDenitvisualizationRtree7905c9343b41b0f3a42aba137993e7c632c5b0e2targetblank7905c93a" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://github.com/KiseokUchicago/Denit_visualization_R/tree/7905c9343b41b0f3a42aba137993e7c632c5b0e2" target="_blank">7905c93</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+
+Untracked files:
+    Untracked:  211020_df_full_innate.xlsx
+    Untracked:  220421_Griess_antibiotics_experiment_to_kyle_remove_blanks.xlsx
+    Untracked:  220421_Griess_antibiotics_experiment_to_kyle_remove_blanks_add_pH.xlsx
+    Untracked:  220421_Griess_antibiotics_experiment_to_kyle_w_autoclaved.xlsx
+    Untracked:  220422_pH_Antibiotics_Sterile_experiment.xlsx
+    Untracked:  220519_Griess_antibiotics_experiment_to_kyle_w_autoclaved.xlsx
+    Untracked:  220521_pH_Antibiotics_dose_effect_experiment.xlsx
+    Untracked:  data/120321_soil_buffering_capacity_Nichols-B.xlsx
+    Untracked:  data/210911_TOC_sample_plate1.xlsx
+    Untracked:  data/210922_Griess_sample_plate1-investigating.xlsx
+    Untracked:  data/210922_Griess_sample_plate1.xlsx
+    Untracked:  data/210927_TOC_sample_plate1_100ul.xlsx
+    Untracked:  data/210927_TOC_sample_plate1_10ul.xlsx
+    Untracked:  data/210928_Griess_sample_plate1.xlsx
+    Untracked:  data/211005_Griess_sample_plate1.xlsx
+    Untracked:  data/211007_Griess_blank_plate1.xlsx
+    Untracked:  data/211007_Griess_blank_plate2.xlsx
+    Untracked:  data/211008_Griess_blank_plate0.xlsx
+    Untracked:  data/211008_Griess_blank_plate1.xlsx
+    Untracked:  data/211017_Griess_plate0.xlsx
+    Untracked:  data/211017_Griess_plate1.xlsx
+    Untracked:  data/211017_Griess_plate2.xlsx
+    Untracked:  data/211017_Griess_plate3.xlsx
+    Untracked:  data/211017_Griess_plate4.xlsx
+    Untracked:  data/211017_Griess_plate5.xlsx
+    Untracked:  data/211017_Griess_plate6.xlsx
+    Untracked:  data/211017_Griess_plate7.xlsx
+    Untracked:  data/211017_Griess_plate8.xlsx
+    Untracked:  data/211019_Griess_plate1.xlsx
+    Untracked:  data/211020_Griess_plate0.xlsx
+    Untracked:  data/211020_Griess_plate1.xlsx
+    Untracked:  data/211020_df_full_innate.xlsx
+    Untracked:  data/211025_Griess_no3_fit_plate0.xlsx
+    Untracked:  data/211025_Griess_no3_fit_plate1.xlsx
+    Untracked:  data/211025_Griess_plate0.xlsx
+    Untracked:  data/211025_Griess_plate1.xlsx
+    Untracked:  data/211028_Griess_plate1.xlsx
+    Untracked:  data/211028_Griess_plate1_no3_fit.xlsx
+    Untracked:  data/211028_Griess_plate2.xlsx
+    Untracked:  data/211028_Griess_plate2_no3_fit.xlsx
+    Untracked:  data/211028_Griess_plate3.xlsx
+    Untracked:  data/211028_Griess_plate3_no3_fit.xlsx
+    Untracked:  data/211028_Griess_plate4.xlsx
+    Untracked:  data/211028_Griess_plate4_no3_fit.xlsx
+    Untracked:  data/211028_time_table.xlsx
+    Untracked:  data/211127_Griess_SUP1.xlsx
+    Untracked:  data/211127_Griess_SUP11.xlsx
+    Untracked:  data/211127_Griess_SUP3.xlsx
+    Untracked:  data/211127_Griess_SUP5.xlsx
+    Untracked:  data/211127_Griess_SUP7.xlsx
+    Untracked:  data/211127_Griess_SUP9.xlsx
+    Untracked:  data/211127_Griess_plate0.xlsx
+    Untracked:  data/211127_time_table.xlsx
+    Untracked:  data/211128_Ammonia_sample_plate10.xlsx
+    Untracked:  data/211128_Ammonia_sample_plate11.xlsx
+    Untracked:  data/211128_Griess_plate1.xlsx
+    Untracked:  data/211128_Griess_plate10.xlsx
+    Untracked:  data/211128_Griess_plate11.xlsx
+    Untracked:  data/211128_Griess_plate2.xlsx
+    Untracked:  data/211128_Griess_plate3.xlsx
+    Untracked:  data/211128_Griess_plate4.xlsx
+    Untracked:  data/211128_Griess_plate5.xlsx
+    Untracked:  data/211128_Griess_plate6.xlsx
+    Untracked:  data/211128_Griess_plate7.xlsx
+    Untracked:  data/211128_Griess_plate8.xlsx
+    Untracked:  data/211128_Griess_plate9.xlsx
+    Untracked:  data/211128_time_table.xlsx
+    Untracked:  data/211201_pH_colorimetric.xlsx
+    Untracked:  data/211203_slurry_vs_water_drying_table.xlsx
+    Untracked:  data/211203_slurry_vs_water_drying_time.xlsx
+    Untracked:  data/211208_pH_colorimetric_T3.xlsx
+    Untracked:  data/211208_pH_colorimetric_T4.xlsx
+    Untracked:  data/211208_pH_colorimetric_T5.xlsx
+    Untracked:  data/211208_pH_colorimetric_plate1.xlsx
+    Untracked:  data/211208_pH_colorimetric_plate2.xlsx
+    Untracked:  data/211208_pH_colorimetric_plate3.xlsx
+    Untracked:  data/211208_time_table.xlsx
+    Untracked:  data/211209_OD600_T1.xlsx
+    Untracked:  data/211209_OD600_T2.xlsx
+    Untracked:  data/211209_OD600_T3.xlsx
+    Untracked:  data/211209_time_table.xlsx
+    Untracked:  data/211210_pH_colorimetric_T0.xlsx
+    Untracked:  data/211210_pH_colorimetric_T1.xlsx
+    Untracked:  data/211210_pH_colorimetric_T2.xlsx
+    Untracked:  data/211210_pH_colorimetric_T3.xlsx
+    Untracked:  data/211210_time_table.xlsx
+    Untracked:  data/211218_pH_colorimetric_t0.xlsx
+    Untracked:  data/211218_pH_colorimetric_t1.xlsx
+    Untracked:  data/211218_pH_colorimetric_t2.xlsx
+    Untracked:  data/211218_pH_colorimetric_t3.xlsx
+    Untracked:  data/211218_pH_colorimetric_t4.xlsx
+    Untracked:  data/211218_time_table.xlsx
+    Untracked:  data/211220_Griess_plate1.xlsx
+    Untracked:  data/211220_Griess_plate10.xlsx
+    Untracked:  data/211220_Griess_plate11.xlsx
+    Untracked:  data/211220_Griess_plate2.xlsx
+    Untracked:  data/211220_Griess_plate3.xlsx
+    Untracked:  data/211220_Griess_plate4.xlsx
+    Untracked:  data/211220_Griess_plate5.xlsx
+    Untracked:  data/211220_Griess_plate6.xlsx
+    Untracked:  data/211220_Griess_plate7.xlsx
+    Untracked:  data/211220_Griess_plate8.xlsx
+    Untracked:  data/211220_Griess_plate9.xlsx
+    Untracked:  data/211220_time_table_AU.xlsx
+    Untracked:  data/211220_time_table_BN.xlsx
+    Untracked:  data/211224_TOC_sample_plate1.xlsx
+    Untracked:  data/220103_Griess_T0.xlsx
+    Untracked:  data/220103_Griess_T1.xlsx
+    Untracked:  data/220103_Griess_T11.xlsx
+    Untracked:  data/220103_Griess_T12.xlsx
+    Untracked:  data/220103_Griess_T2.xlsx
+    Untracked:  data/220103_Griess_T3.xlsx
+    Untracked:  data/220103_Griess_T4.xlsx
+    Untracked:  data/220103_Griess_T5.xlsx
+    Untracked:  data/220103_Griess_T6.xlsx
+    Untracked:  data/220103_Griess_T7.xlsx
+    Untracked:  data/220103_Griess_T8.xlsx
+    Untracked:  data/220103_Griess_T9.xlsx
+    Untracked:  data/220103_time_table.xlsx
+    Untracked:  data/220106_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107-2_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107-3_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107-4_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107-5_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107-6_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107-7_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107-8_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107-9_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220108_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220110_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220110_Ammonia_sample_plate2.xlsx
+    Untracked:  data/220111_Ammonia_sample_T0.xlsx
+    Untracked:  data/220111_Ammonia_sample_T1.xlsx
+    Untracked:  data/220111_Ammonia_sample_T2.xlsx
+    Untracked:  data/220111_Ammonia_sample_T3.xlsx
+    Untracked:  data/220111_TOC_sample_plate1.xlsx
+    Untracked:  data/220112_Ammonia_sample_T11.xlsx
+    Untracked:  data/220112_Ammonia_sample_T12.xlsx
+    Untracked:  data/220112_Ammonia_sample_T4.xlsx
+    Untracked:  data/220112_Ammonia_sample_T5.xlsx
+    Untracked:  data/220112_Ammonia_sample_T6.xlsx
+    Untracked:  data/220112_Ammonia_sample_T7.xlsx
+    Untracked:  data/220112_Ammonia_sample_T8.xlsx
+    Untracked:  data/220112_Ammonia_sample_T9.xlsx
+    Untracked:  data/220113_pH_colorimetric_T0.xlsx
+    Untracked:  data/220113_pH_colorimetric_T12.xlsx
+    Untracked:  data/220113_pH_colorimetric_T2.xlsx
+    Untracked:  data/220113_pH_colorimetric_T3.xlsx
+    Untracked:  data/220113_pH_colorimetric_T8.xlsx
+    Untracked:  data/220125_pH_colorimetric_pH1_mu_opt0.099.xlsx
+    Untracked:  data/220125_pH_colorimetric_pH1_using6.66.xlsx
+    Untracked:  data/220125_pH_colorimetric_pH2_mu_opt0.099.xlsx
+    Untracked:  data/220125_pH_colorimetric_pH2_using6.66.xlsx
+    Untracked:  data/220125_time_table.xlsx
+    Untracked:  data/220128_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220128_Ammonia_sample_plate2.xlsx
+    Untracked:  data/220128_Ammonia_sample_plate3.xlsx
+    Untracked:  data/220128_Ammonia_sample_plate4.xlsx
+    Untracked:  data/220128_Ammonia_sample_plate5.xlsx
+    Untracked:  data/220128_Ammonia_sample_plate6.xlsx
+    Untracked:  data/220128_Griess_plate1.xlsx
+    Untracked:  data/220128_Griess_plate2.xlsx
+    Untracked:  data/220128_Griess_plate3.xlsx
+    Untracked:  data/220128_Griess_plate4.xlsx
+    Untracked:  data/220128_Griess_plate5.xlsx
+    Untracked:  data/220128_Griess_plate6.xlsx
+    Untracked:  data/220128_time_table.xlsx
+    Untracked:  data/220131_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220131_Ammonia_sample_plate2.xlsx
+    Untracked:  data/220131_Ammonia_sample_plate3.xlsx
+    Untracked:  data/220131_Ammonia_sample_plate4.xlsx
+    Untracked:  data/220131_Ammonia_sample_plate5.xlsx
+    Untracked:  data/220131_Ammonia_sample_plate6.xlsx
+    Untracked:  data/220131_Griess_plate1.xlsx
+    Untracked:  data/220131_Griess_plate2.xlsx
+    Untracked:  data/220131_Griess_plate3.xlsx
+    Untracked:  data/220131_Griess_plate4.xlsx
+    Untracked:  data/220131_Griess_plate5.xlsx
+    Untracked:  data/220131_Griess_plate6.xlsx
+    Untracked:  data/220131_pH_colorimetric_pH1_mu_opt_T0.xlsx
+    Untracked:  data/220131_pH_colorimetric_pH2_mu_opt_T0.xlsx
+    Untracked:  data/220131_time_table.xlsx
+    Untracked:  data/220327_Griess_pastplate9.xlsx
+    Untracked:  data/220327_Griess_plate1.xlsx
+    Untracked:  data/220327_Griess_plate10.xlsx
+    Untracked:  data/220327_Griess_plate11.xlsx
+    Untracked:  data/220327_Griess_plate12.xlsx
+    Untracked:  data/220327_Griess_plate13.xlsx
+    Untracked:  data/220327_Griess_plate14.xlsx
+    Untracked:  data/220327_Griess_plate15.xlsx
+    Untracked:  data/220327_Griess_plate16.xlsx
+    Untracked:  data/220327_Griess_plate2.xlsx
+    Untracked:  data/220327_Griess_plate3.xlsx
+    Untracked:  data/220327_Griess_plate4.xlsx
+    Untracked:  data/220327_Griess_plate5.xlsx
+    Untracked:  data/220327_Griess_plate6.xlsx
+    Untracked:  data/220327_Griess_plate7.xlsx
+    Untracked:  data/220327_Griess_plate8.xlsx
+    Untracked:  data/220327_Griess_plate9.xlsx
+    Untracked:  data/220327_time_table.xlsx
+    Untracked:  data/220329_pH_colorimetric_pH1_mu_opt_T0.xlsx
+    Untracked:  data/220329_pH_colorimetric_pH2_mu_opt_T0.xlsx
+    Untracked:  data/220329_pH_colorimetric_pH3_mu_opt_T0.xlsx
+    Untracked:  data/220329_pH_colorimetric_pH4_mu_opt_T0.xlsx
+    Untracked:  data/220329_pH_colorimetric_pH6_mu_opt_T0.xlsx
+    Untracked:  data/220329_pH_colorimetric_pH7_mu_opt_T0.xlsx
+    Untracked:  data/220407_pH_colorimetric_pH3_half_mu_opt_T0.xlsx
+    Untracked:  data/220407_pH_colorimetric_pH_base_treatment_mu_opt_T0.xlsx
+    Untracked:  data/220407_pH_colorimetric_pH_standard_150ul_mu_opt_T0.xlsx
+    Untracked:  data/220407_pH_colorimetric_pH_standard_300ul_mu_opt_T0.xlsx
+    Untracked:  data/220407_pH_colorimetric_pH_standard_60ul_mu_opt_T0.xlsx
+    Untracked:  data/220408_pH_colorimetric_pH_limit_mu_opt_water.xlsx
+    Untracked:  data/220412_pH_colorimetric_pH_half_mu_opt_WW.xlsx
+    Untracked:  data/220414_Ammonia_sample_plate0.xlsx
+    Untracked:  data/220418_Ammonia_sample_plate0.xlsx
+    Untracked:  data/220419_Ammonia_sample_plate0.xlsx
+    Untracked:  data/220420-2_Ammonia_bcf.xlsx
+    Untracked:  data/220420_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220420_Ammonia_sample_plate10.xlsx
+    Untracked:  data/220420_Ammonia_sample_plate11.xlsx
+    Untracked:  data/220420_Ammonia_sample_plate12.xlsx
+    Untracked:  data/220420_Ammonia_sample_plate13.xlsx
+    Untracked:  data/220420_Ammonia_sample_plate14.xlsx
+    Untracked:  data/220420_Ammonia_sample_plate15.xlsx
+    Untracked:  data/220420_Ammonia_sample_plate16.xlsx
+    Untracked:  data/220420_Ammonia_sample_plate2.xlsx
+    Untracked:  data/220420_Ammonia_sample_plate3.xlsx
+    Untracked:  data/220420_Ammonia_sample_plate4.xlsx
+    Untracked:  data/220420_Ammonia_sample_plate5.xlsx
+    Untracked:  data/220420_Ammonia_sample_plate6.xlsx
+    Untracked:  data/220420_Ammonia_sample_plate7.xlsx
+    Untracked:  data/220420_Ammonia_sample_plate8.xlsx
+    Untracked:  data/220420_Ammonia_sample_plate9.xlsx
+    Untracked:  data/220421_Ammonia_df_a_bcf.xlsx
+    Untracked:  data/220421_Ammonia_df_pH_range.xlsx
+    Untracked:  data/220421_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220421_Ammonia_sample_plate10.xlsx
+    Untracked:  data/220421_Ammonia_sample_plate11.xlsx
+    Untracked:  data/220421_Ammonia_sample_plate2.xlsx
+    Untracked:  data/220421_Ammonia_sample_plate3.xlsx
+    Untracked:  data/220421_Ammonia_sample_plate4.xlsx
+    Untracked:  data/220421_Ammonia_sample_plate5.xlsx
+    Untracked:  data/220421_Ammonia_sample_plate6.xlsx
+    Untracked:  data/220421_Ammonia_sample_plate7.xlsx
+    Untracked:  data/220421_Ammonia_sample_plate8.xlsx
+    Untracked:  data/220421_Ammonia_sample_plate9.xlsx
+    Untracked:  data/220421_Ammonia_sterile.xlsx
+    Untracked:  data/220421_Griess_antibiotics_experiment_to_kyle_remove_blanks.xlsx
+    Untracked:  data/220421_Griess_antibiotics_experiment_to_kyle_remove_blanks_add_pH.xlsx
+    Untracked:  data/220421_Griess_plate1.xlsx
+    Untracked:  data/220421_Griess_plate10.xlsx
+    Untracked:  data/220421_Griess_plate11.xlsx
+    Untracked:  data/220421_Griess_plate2.xlsx
+    Untracked:  data/220421_Griess_plate3.xlsx
+    Untracked:  data/220421_Griess_plate4.xlsx
+    Untracked:  data/220421_Griess_plate5.xlsx
+    Untracked:  data/220421_Griess_plate6.xlsx
+    Untracked:  data/220421_Griess_plate7.xlsx
+    Untracked:  data/220421_Griess_plate8.xlsx
+    Untracked:  data/220421_Griess_plate9.xlsx
+    Untracked:  data/220421_nitrate_reduced_autoclaved_samples.xlsx
+    Untracked:  data/220421_time_table.xlsx
+    Untracked:  data/220422_pH_Antibiotics_Sterile_experiment.xlsx
+    Untracked:  data/220422_pH_colorimetric_LBA_Sterile_T0_mu_opt_T0.xlsx
+    Untracked:  data/220422_pH_colorimetric_LBA_Sterile_T4_mu_opt_T0.xlsx
+    Untracked:  data/220422_pH_colorimetric_LBA_Sterile_T4_mu_opt_T4.xlsx
+    Untracked:  data/220422_pH_colorimetric_LBA_Sterile_T7_mu_opt_T0.xlsx
+    Untracked:  data/220422_pH_colorimetric_LBA_Sterile_T7_mu_opt_T7.xlsx
+    Untracked:  data/220422_pH_colorimetric_LBA_Sterile_T9_mu_opt_T0.xlsx
+    Untracked:  data/220422_pH_colorimetric_LBA_Sterile_T9_mu_opt_T9.xlsx
+    Untracked:  data/220508_TOC_sample_plate1.xlsx
+    Untracked:  data/220513_TOC_sample_plate1.xlsx
+    Untracked:  data/220513_TOC_sample_plate2.xlsx
+    Untracked:  data/220513_TOC_sample_plate3.xlsx
+    Untracked:  data/220517_time_table.xlsx
+    Untracked:  data/220519_Griess_antibiotics_dose_experiment_remove_blanks.xlsx
+    Untracked:  data/220519_Griess_crerar7_extreme.xlsx
+    Untracked:  data/220519_Griess_plate1.xlsx
+    Untracked:  data/220519_Griess_plate10.xlsx
+    Untracked:  data/220519_Griess_plate11.xlsx
+    Untracked:  data/220519_Griess_plate2.xlsx
+    Untracked:  data/220519_Griess_plate3.xlsx
+    Untracked:  data/220519_Griess_plate4.xlsx
+    Untracked:  data/220519_Griess_plate5.xlsx
+    Untracked:  data/220519_Griess_plate6.xlsx
+    Untracked:  data/220519_Griess_plate7.xlsx
+    Untracked:  data/220519_Griess_plate8.xlsx
+    Untracked:  data/220519_Griess_plate9.xlsx
+    Untracked:  data/220519_time_table.xlsx
+    Untracked:  data/220520_TOC_sample_plate1.xlsx
+    Untracked:  data/220520_TOC_sample_plate2.xlsx
+    Untracked:  data/220520_TOC_sample_plate3.xlsx
+    Untracked:  data/220521_pH_Antibiotics_dose_effect_experiment.xlsx
+    Untracked:  data/220521_pH_colorimetric_Barneveld2_Sterile_T0_mu_opt_T0.xlsx
+    Untracked:  data/220521_pH_colorimetric_Barneveld2_Sterile_T10_mu_opt_T0.xlsx
+    Untracked:  data/220521_pH_colorimetric_Barneveld2_Sterile_T7_mu_opt_T0.xlsx
+    Untracked:  data/220526_TOC_sample_plate1.xlsx
+    Untracked:  data/220527_TOC_sample_plate1.xlsx
+    Untracked:  data/220601_TOC_sample_plate1.xlsx
+    Untracked:  data/220602-2_TOC_sample_plate1.xlsx
+    Untracked:  data/220602-2_control_OD600.xlsx
+    Untracked:  data/220602-3_TOC_sample_plate1.xlsx
+    Untracked:  data/220602-3_control_OD600.xlsx
+    Untracked:  data/220602_TOC_sample_plate1.xlsx
+    Untracked:  data/220603_100ul_OD600.xlsx
+    Untracked:  data/220603_TOC_sample_plate1.xlsx
+    Untracked:  data/220603_TOC_sample_plate2.xlsx
+    Untracked:  data/220606_TOC_sample_plate1.xlsx
+    Untracked:  data/220606_TOC_sample_plate2.xlsx
+    Untracked:  data/ForKiseok_from_Dr_Cuhel.xlsx
+    Untracked:  data/ForKiseok_from_Dr_Cuhel_format_edited.xlsx
+    Untracked:  data/OD434_OD585_C_WB_T5_220329.xlsx
+    Untracked:  data/OD434_OD585_WW_C_T0_220329.xlsx
+    Untracked:  data/OD434_OD585_pH3_half_area_220407.xlsx
+    Untracked:  data/OD434_OD585_pH_base_treated_T0_220407.xlsx
+    Untracked:  data/OD434_OD585_pH_half_150ul_220412.xlsx
+    Untracked:  data/SPNa_86437_021122_edit.xlsx
+    Untracked:  data/SPNa_86437_021122_edit2.xlsx
+    Untracked:  data/TOC_TN_measurement_2_labs_211014.xlsx
+    Untracked:  data/dry_weight_curve(9.5.21).xlsx
+    Untracked:  data/pH_data(11.17.21)-Midway_etc.xlsx
+    Untracked:  data/pH_data(12.6.21)-Midway_incubation_endpoint.xlsx
+    Untracked:  data/pH_data(9.14.21).xlsx
+    Untracked:  data/pH_data(9.28.21).xlsx
+    Untracked:  data/pH_standard_150ul_220407.xlsx
+    Untracked:  data/pH_standard_300ul_220407.xlsx
+    Untracked:  data/pH_standard_60ul_220407.xlsx
+    Untracked:  data/~$220513_TOC_sample_plate1.xlsx
+    Untracked:  data/~$SPNa_86437_021122_edit.xlsx
+    Untracked:  past_figures/
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/220508_TOC_time_series.Rmd</code>) and HTML (<code>docs/220508_TOC_time_series.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/KiseokUchicago/Denit_visualization_R/blob/7905c9343b41b0f3a42aba137993e7c632c5b0e2/analysis/220508_TOC_time_series.Rmd" target="_blank">7905c93</a>
+</td>
+<td>
+KiseokUchicago
+</td>
+<td>
+2022-06-08
+</td>
+<td>
+wflow_publish("analysis/*.Rmd")
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="toctotal-organic-carbon-measurements" class="section level2">
+<h2>TOC(Total organic carbon) measurements</h2>
+<p>Researcher: <strong>Kiseok Lee</strong><br />
+Experiment Date: 5/8/22<br />
+Analysis Date: 5/11/22<br />
+Lab: <strong>Seppe Kuehn</strong></p>
+<pre class="r"><code># libraries
+library(dplyr)
+library(ggplot2)
+library(RColorBrewer)
+library(vegan)
+library(tidyverse)
+library(magrittr)
+library(readxl)
+library(reshape2)
+library(gtools)
+library(devtools)
+library(openxlsx)
+library(ape)
+library(stringr)
+library(tidyr)
+library(ggrepel)
+library(ggpubr)
+
+## theme for ggplot
+mytheme &lt;- theme_bw() + 
+  theme(text = element_text(face=&quot;bold&quot;, colour = &#39;black&#39;)) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5,face=&quot;bold&quot;, colour = &#39;black&#39;)) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5,face=&quot;bold&quot;, colour = &#39;black&#39;)) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5,face=&quot;bold&quot;, colour = &#39;black&#39;)) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13,face=&quot;bold&quot;, colour = &#39;black&#39;))+
+  theme(axis.text.y = element_text(size=13,face=&quot;bold&quot;, colour = &#39;black&#39;))+
+  theme(panel.grid.major = element_blank()) +
+  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),panel.border=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))+
+  theme(legend.text=element_text(size=10,face=&quot;bold&quot;, colour = &#39;black&#39;))
+
+
+mytheme_2d &lt;- theme_bw() + 
+  theme(text = element_text(face=&quot;bold&quot;, colour = &#39;black&#39;)) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5,face=&quot;bold&quot;, colour = &#39;black&#39;)) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5,face=&quot;bold&quot;, colour = &#39;black&#39;)) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5,face=&quot;bold&quot;, colour = &#39;black&#39;)) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13,face=&quot;bold&quot;, colour = &#39;black&#39;))+
+  theme(axis.text.y = element_text(size=13,face=&quot;bold&quot;, colour = &#39;black&#39;))+
+  # theme(panel.grid.major = element_blank()) +
+  # theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))+
+  theme(legend.text=element_text(size=10,face=&quot;bold&quot;, colour = &#39;black&#39;))
+
+
+
+# color collection
+my_color_collection &lt;- c(
+  &quot;#CBD588&quot;, &quot;#5F7FC7&quot;, &quot;orange&quot;, &quot;#AD6F3B&quot;, &quot;#673770&quot;, 
+  &quot;#D14285&quot;, &quot;#652926&quot;, &quot;#C84248&quot;, &quot;#8569D5&quot;, &quot;#5E738F&quot;,
+  &quot;#D1A33D&quot;, &quot;#8A7C64&quot;, &quot;#599861&quot;,&quot;#616163&quot;, &quot;#FFCDB2&quot;,
+  &quot;#6D9F71&quot;, &quot;#242F40&quot;,
+  &quot;#CCA43B&quot;, &quot;#F92A82&quot;, &quot;#ED7B84&quot;, &quot;#7EB77F&quot;, 
+  &quot;#DEC4A1&quot;, &quot;#E5D1D0&quot;, &#39;#0E8482&#39;, &#39;#C9DAEA&#39;, &#39;#337357&#39;, 
+  &#39;#95C623&#39;, &#39;#E55812&#39;, &#39;#04471C&#39;, &#39;#F2D7EE&#39;, &#39;#D3BCC0&#39;, 
+  &#39;#A5668B&#39;, &#39;#69306D&#39;, &#39;#0E103D&#39;, &#39;#1A535C&#39;, &#39;#4ECDC4&#39;, 
+  &#39;#F7FFF7&#39;, &#39;#FF6B6B&#39;, &#39;#FFE66D&#39;, &#39;#6699CC&#39;, &#39;#FFF275&#39;, 
+  &#39;#FF8C42&#39;, &#39;#FF3C38&#39;, &#39;#A23E48&#39;, &#39;#000000&#39;, &#39;#CF5C36&#39;, 
+  &#39;#EEE5E9&#39;, &#39;#7C7C7C&#39;, &#39;#EFC88B&#39;, &#39;#2E5266&#39;, &#39;#6E8898&#39;, 
+  &#39;#9FB1BC&#39;, &#39;#D3D0CB&#39;, &#39;#E2C044&#39;, &#39;#5BC0EB&#39;, &#39;#FDE74C&#39;, 
+  &#39;#9BC53D&#39;, &#39;#E55934&#39;, &#39;#FA7921&#39;, &quot;#CD9BCD&quot;, &quot;#508578&quot;, &quot;#DA5724&quot;)
+
+# for git push, use this instead of using wflow_git_push()
+# git push -u origin master (in the Git app / in the working directory)
+
+# for making pdf file
+library(rmarkdown)
+# render(&quot;analysis/~~.Rmd&quot;, &quot;pdf_document&quot;)</code></pre>
+</div>
+<div id="import-data-table-from-python-code" class="section level2">
+<h2>1. Import data table from python code</h2>
+<pre class="r"><code># import file
+# 10ul
+df_20ul &lt;- openxlsx::read.xlsx(&quot;data/220508_TOC_sample_plate1.xlsx&quot;)
+df_C_T8 &lt;- openxlsx::read.xlsx(&quot;data/220513_TOC_sample_plate1.xlsx&quot;)
+df_C_T8 &lt;- df_C_T8 %&gt;% filter(Time_point == &quot;C_T8&quot;) %&gt;% select(-Antibiotics_type, -Treatment)
+
+head(df_20ul)</code></pre>
+<pre><code>  Well Nitrite_input Nitrate_input Ammonium_input           Soil Sample_type
+1  A01             0             2              0 Crerar7_pH8.05      Slurry
+2  A02             0             2              0 Crerar7_pH8.05      Slurry
+3  A03             0             2              0 Crerar7_pH8.05      Slurry
+4  A04             0             2              0 Crerar7_pH8.05      Slurry
+5  A05             0             2              0 Crerar7_pH8.05      Slurry
+6  A06             0             2              0 Crerar7_pH8.05      Slurry
+  Titration_type Unit Concentration_M Added_ul Time_point TOC_OD600   TOC_mgml
+1            HCl    1             0.5       20       C_T0    0.0000 0.00000000
+2            HCl    3             1.5       20       C_T0    0.0000 0.00000000
+3            HCl    5             2.5       20       C_T0    0.0000 0.00000000
+4            HCl    7             3.5       20       C_T0    0.0070 0.02727148
+5            HCl    9             4.5       20       C_T0    0.0305 0.16037321
+6            HCl   11             5.5       20       C_T0    0.0224 0.11449395</code></pre>
+<pre class="r"><code>colnames(df_20ul)</code></pre>
+<pre><code> [1] &quot;Well&quot;            &quot;Nitrite_input&quot;   &quot;Nitrate_input&quot;   &quot;Ammonium_input&quot; 
+ [5] &quot;Soil&quot;            &quot;Sample_type&quot;     &quot;Titration_type&quot;  &quot;Unit&quot;           
+ [9] &quot;Concentration_M&quot; &quot;Added_ul&quot;        &quot;Time_point&quot;      &quot;TOC_OD600&quot;      
+[13] &quot;TOC_mgml&quot;       </code></pre>
+<pre class="r"><code>dim(df_20ul)</code></pre>
+<pre><code>[1] 96 13</code></pre>
+<pre class="r"><code>colnames(df_C_T8)</code></pre>
+<pre><code> [1] &quot;Well&quot;            &quot;Nitrite_input&quot;   &quot;Nitrate_input&quot;   &quot;Ammonium_input&quot; 
+ [5] &quot;Soil&quot;            &quot;Sample_type&quot;     &quot;Titration_type&quot;  &quot;Unit&quot;           
+ [9] &quot;Concentration_M&quot; &quot;Added_ul&quot;        &quot;Time_point&quot;      &quot;TOC_OD600&quot;      
+[13] &quot;TOC_mgml&quot;       </code></pre>
+<pre class="r"><code>dim(df_C_T8)</code></pre>
+<pre><code>[1] 48 13</code></pre>
+<pre class="r"><code># remove wells H06, H09
+df_C_T8 %&lt;&gt;% filter(!(Well %in% c(&quot;A10&quot;,&quot;F08&quot;,&quot;F09&quot;,&quot;F10&quot;, &quot;E10&quot;,&quot;E11&quot;)))
+
+
+# remove NA
+dim(df_20ul)</code></pre>
+<pre><code>[1] 96 13</code></pre>
+<pre class="r"><code>df_20ul &lt;- na.omit(df_20ul)
+dim(df_20ul)</code></pre>
+<pre><code>[1] 96 13</code></pre>
+<pre class="r"><code>dim(df_C_T8)</code></pre>
+<pre><code>[1] 42 13</code></pre>
+<pre class="r"><code>df_C_T8 &lt;- na.omit(df_C_T8)
+dim(df_C_T8)</code></pre>
+<pre><code>[1] 42 13</code></pre>
+<pre class="r"><code># merge two
+df_20ul &lt;- rbind(df_20ul, df_C_T8)
+dim(df_20ul)</code></pre>
+<pre><code>[1] 138  13</code></pre>
+<pre class="r"><code># dim(df_p)
+# Get the metadata for time point and left join
+Time_table &lt;- openxlsx::read.xlsx(&quot;data/220327_time_table.xlsx&quot;)
+# Time_table_BN &lt;- openxlsx::read.xlsx(&quot;data/220327_time_table_BN.xlsx&quot;)
+# Time_table &lt;- rbind(Time_table_AU, Time_table_BN)
+
+Time_table %&lt;&gt;% select(-Date) 
+Time_table$Time_hours &lt;- round(Time_table$Time_hours, 1)
+Time_table$Time_days &lt;- round(Time_table$Time_days, 1)
+df_time &lt;- Time_table
+dim(df_20ul)</code></pre>
+<pre><code>[1] 138  13</code></pre>
+<pre class="r"><code>df_20ul &lt;- df_20ul %&gt;% left_join(Time_table, by=(&quot;Time_point&quot;=&quot;Time_point&quot;))
+dim(df_20ul)</code></pre>
+<pre><code>[1] 138  16</code></pre>
+<pre class="r"><code>colnames(df_20ul)</code></pre>
+<pre><code> [1] &quot;Well&quot;            &quot;Nitrite_input&quot;   &quot;Nitrate_input&quot;   &quot;Ammonium_input&quot; 
+ [5] &quot;Soil&quot;            &quot;Sample_type&quot;     &quot;Titration_type&quot;  &quot;Unit&quot;           
+ [9] &quot;Concentration_M&quot; &quot;Added_ul&quot;        &quot;Time_point&quot;      &quot;TOC_OD600&quot;      
+[13] &quot;TOC_mgml&quot;        &quot;Time_minutes&quot;    &quot;Time_hours&quot;      &quot;Time_days&quot;      </code></pre>
+<pre class="r"><code># get F11
+df_20ul %&gt;% filter(Well == &quot;F11&quot;)</code></pre>
+<pre><code>  Well Nitrite_input Nitrate_input Ammonium_input           Soil Sample_type
+1  F11             0             0              0 Crerar7_pH8.05  No_Nitrate
+2  F11             0             0              0 Crerar7_pH8.05  No_Nitrate
+  Titration_type Unit Concentration_M Added_ul Time_point TOC_OD600   TOC_mgml
+1     No_Nitrate    0               0       20      C_T10   0.01415 0.06776685
+2     No_Nitrate    0               0       20       C_T8   0.11620 0.64319925
+  Time_minutes Time_hours Time_days
+1         5915       98.6       4.1
+2         3190       53.2       2.2</code></pre>
+</div>
+<div id="preprocess-data-and-select-datapoints-to-visualize" class="section level2">
+<h2>2. Preprocess data and select datapoints to visualize</h2>
+<pre class="r"><code># 1. multiply dilution factor
+df_20ul %&lt;&gt;% mutate(TOC_mgml = TOC_mgml * (5/2))
+df_20ul %&gt;% filter(Well == &quot;F11&quot;)</code></pre>
+<pre><code>  Well Nitrite_input Nitrate_input Ammonium_input           Soil Sample_type
+1  F11             0             0              0 Crerar7_pH8.05  No_Nitrate
+2  F11             0             0              0 Crerar7_pH8.05  No_Nitrate
+  Titration_type Unit Concentration_M Added_ul Time_point TOC_OD600  TOC_mgml
+1     No_Nitrate    0               0       20      C_T10   0.01415 0.1694171
+2     No_Nitrate    0               0       20       C_T8   0.11620 1.6079981
+  Time_minutes Time_hours Time_days
+1         5915       98.6       4.1
+2         3190       53.2       2.2</code></pre>
+<pre class="r"><code># 2. Apply moisture correction factor (correcting for moisture in soil)
+Added_Volume &lt;- 1.7 # ml
+Soil_mg &lt;- 0.85
+moisture_percent_1 = 63.1 # Webster
+Added_Volume + Soil_mg*(moisture_percent_1/100)</code></pre>
+<pre><code>[1] 2.23635</code></pre>
+<pre class="r"><code>moisture_percent_2 = 6.8 # WarrenWoods1
+Added_Volume + Soil_mg*(moisture_percent_2/100)</code></pre>
+<pre><code>[1] 1.7578</code></pre>
+<pre class="r"><code>moisture_percent_3 = 9.0 # Crerar7
+Added_Volume + Soil_mg*(moisture_percent_3/100)</code></pre>
+<pre><code>[1] 1.7765</code></pre>
+<pre class="r"><code>## acid/base
+df_20ul$Added_ul &lt;- ifelse(df_20ul$Titration_type == &quot;NaOH&quot;, -1*df_20ul$Added_ul, df_20ul$Added_ul) # HCl is +, NaOH is -
+df_20ul %&lt;&gt;% mutate(H_mol = Concentration_M * Added_ul * 10^(-6)) # Calculate H mol 
+df_20ul$Volume &lt;- ifelse(df_20ul$Soil == &quot;Webster_pH3.3&quot;, Added_Volume + Soil_mg*(moisture_percent_1/100),
+                      ifelse(df_20ul$Soil == &quot;WarrenWoods1_pH5.23&quot;, Added_Volume + Soil_mg*(moisture_percent_2/100),
+                             ifelse(df_20ul$Soil == &quot;Crerar7_pH8.05&quot;, Added_Volume + Soil_mg*(moisture_percent_3/100),
+                                    0))) # Calc total volume
+
+# df_20ul$Volume &lt;- ifelse(df_20ul$Soil == &quot;Allandale_pH4&quot;, Added_Volume + Soil_mg*(moisture_percent_2/100), df_20ul$Volume) # Calc total volume
+# df_20ul$Volume %&gt;% unique()
+df_20ul %&lt;&gt;% mutate(H_Molarity = H_mol / (Volume * 10^(-3)))
+df_20ul %&lt;&gt;% mutate(H_mM = H_Molarity * 1000)
+# openxlsx::write.xlsx(df_20ul, &quot;df_20ul.xlsx&quot;)
+
+# how many levels of H_mM?
+df_20ul %&gt;% filter(Soil == &quot;Webster_pH3.3&quot;)%&gt;% select(H_mM) %&gt;% unique() %&gt;% arrange(H_mM)</code></pre>
+<pre><code>[1] H_mM
+&lt;0 rows&gt; (or 0-length row.names)</code></pre>
+<pre class="r"><code>df_20ul %&gt;% filter(Soil == &quot;WarrenWoods1_pH5.23&quot;)%&gt;% select(H_mM) %&gt;% unique() %&gt;% arrange()</code></pre>
+<pre><code>[1] H_mM
+&lt;0 rows&gt; (or 0-length row.names)</code></pre>
+<pre class="r"><code>df_20ul %&gt;% filter(Soil == &quot;Crerar7_pH8.05&quot;)%&gt;% select(H_mM) %&gt;% unique() %&gt;% arrange()</code></pre>
+<pre><code>         H_mM
+1    5.629046
+2   16.887138
+3   28.145229
+4   39.403321
+5   50.661413
+6   61.919505
+7   11.258092
+8   22.516184
+9   33.774275
+10  45.032367
+11  56.290459
+12  67.548551
+13  73.177596
+14  84.435688
+15  -5.629046
+16 -16.887138
+17 -28.145229
+18 -39.403321
+19  78.806642
+20  90.064734
+21 -11.258092
+22 -22.516184
+23 -33.774275
+24 -45.032367
+25 -50.661413
+26 -61.919505
+27 -73.177596
+28 -84.435688
+29 -95.693780
+30   0.000000
+31 -56.290459
+32 -67.548551
+33 -78.806642
+34 -90.064734</code></pre>
+<pre class="r"><code>colnames(df_20ul)</code></pre>
+<pre><code> [1] &quot;Well&quot;            &quot;Nitrite_input&quot;   &quot;Nitrate_input&quot;   &quot;Ammonium_input&quot; 
+ [5] &quot;Soil&quot;            &quot;Sample_type&quot;     &quot;Titration_type&quot;  &quot;Unit&quot;           
+ [9] &quot;Concentration_M&quot; &quot;Added_ul&quot;        &quot;Time_point&quot;      &quot;TOC_OD600&quot;      
+[13] &quot;TOC_mgml&quot;        &quot;Time_minutes&quot;    &quot;Time_hours&quot;      &quot;Time_days&quot;      
+[17] &quot;H_mol&quot;           &quot;Volume&quot;          &quot;H_Molarity&quot;      &quot;H_mM&quot;           </code></pre>
+<pre class="r"><code>## Moisture correction
+dim(df_20ul)</code></pre>
+<pre><code>[1] 138  20</code></pre>
+<pre class="r"><code># Testing negative samples
+df_no3_blank &lt;- df_20ul %&gt;% filter(Sample_type == &quot;Nitrate_Blank&quot;)  # Use Nitrate_Blank instead in the future
+df_no3_blank # 33</code></pre>
+<pre><code>  Well Nitrite_input Nitrate_input Ammonium_input           Soil   Sample_type
+1  G06             0             2              0 Crerar7_pH8.05 Nitrate_Blank
+2  G12             0             2              0 Crerar7_pH8.05 Nitrate_Blank
+3  H05             0             2              0 Crerar7_pH8.05 Nitrate_Blank
+4  H06             0             2              0 Crerar7_pH8.05 Nitrate_Blank
+5  H11             0             2              0 Crerar7_pH8.05 Nitrate_Blank
+6  H12             0             2              0 Crerar7_pH8.05 Nitrate_Blank
+7  G12             0             2              0 Crerar7_pH8.05 Nitrate_Blank
+8  H11             0             2              0 Crerar7_pH8.05 Nitrate_Blank
+9  H12             0             2              0 Crerar7_pH8.05 Nitrate_Blank
+  Titration_type Unit Concentration_M Added_ul Time_point TOC_OD600   TOC_mgml
+1        Nitrate    0               0       20       C_T0   0.00000 0.00000000
+2        Nitrate    0               0       20      C_T10   0.00000 0.00000000
+3        Nitrate    0               0       20       C_T0   0.00000 0.00000000
+4        Nitrate    0               0       20       C_T0   0.00000 0.00000000
+5        Nitrate    0               0       20      C_T10   0.00445 0.03207349
+6        Nitrate    0               0       20      C_T10   0.00165 0.00000000
+7        Nitrate    0               0       20       C_T8   0.00000 0.00000000
+8        Nitrate    0               0       20       C_T8   0.00000 0.00000000
+9        Nitrate    0               0       20       C_T8   0.00000 0.00000000
+  Time_minutes Time_hours Time_days H_mol Volume H_Molarity H_mM
+1            0        0.0       0.0     0 1.7765          0    0
+2         5915       98.6       4.1     0 1.7765          0    0
+3            0        0.0       0.0     0 1.7765          0    0
+4            0        0.0       0.0     0 1.7765          0    0
+5         5915       98.6       4.1     0 1.7765          0    0
+6         5915       98.6       4.1     0 1.7765          0    0
+7         3190       53.2       2.2     0 1.7765          0    0
+8         3190       53.2       2.2     0 1.7765          0    0
+9         3190       53.2       2.2     0 1.7765          0    0</code></pre>
+<pre class="r"><code>df_no2_blank &lt;- df_20ul %&gt;% filter(Sample_type == &quot;Nitrite_Blank&quot;)
+df_no2_blank # 33</code></pre>
+<pre><code>  Well Nitrite_input Nitrate_input Ammonium_input           Soil   Sample_type
+1  G04             2             0              0 Crerar7_pH8.05 Nitrite_Blank
+2  G05             2             0              0 Crerar7_pH8.05 Nitrite_Blank
+3  G10             2             0              0 Crerar7_pH8.05 Nitrite_Blank
+4  G11             2             0              0 Crerar7_pH8.05 Nitrite_Blank
+5  H04             2             0              0 Crerar7_pH8.05 Nitrite_Blank
+6  H10             2             0              0 Crerar7_pH8.05 Nitrite_Blank
+7  G10             2             0              0 Crerar7_pH8.05 Nitrite_Blank
+8  G11             2             0              0 Crerar7_pH8.05 Nitrite_Blank
+9  H10             2             0              0 Crerar7_pH8.05 Nitrite_Blank
+  Titration_type Unit Concentration_M Added_ul Time_point TOC_OD600   TOC_mgml
+1        Nitrite    0               0       20       C_T0   0.00000 0.00000000
+2        Nitrite    0               0       20       C_T0   0.00105 0.00000000
+3        Nitrite    0               0       20      C_T10   0.00910 0.09791271
+4        Nitrite    0               0       20      C_T10   0.00685 0.06605485
+5        Nitrite    0               0       20       C_T0   0.00000 0.00000000
+6        Nitrite    0               0       20      C_T10   0.00635 0.05897537
+7        Nitrite    0               0       20       C_T8   0.05335 0.72425924
+8        Nitrite    0               0       20       C_T8   0.00000 0.00000000
+9        Nitrite    0               0       20       C_T8   0.00000 0.00000000
+  Time_minutes Time_hours Time_days H_mol Volume H_Molarity H_mM
+1            0        0.0       0.0     0 1.7765          0    0
+2            0        0.0       0.0     0 1.7765          0    0
+3         5915       98.6       4.1     0 1.7765          0    0
+4         5915       98.6       4.1     0 1.7765          0    0
+5            0        0.0       0.0     0 1.7765          0    0
+6         5915       98.6       4.1     0 1.7765          0    0
+7         3190       53.2       2.2     0 1.7765          0    0
+8         3190       53.2       2.2     0 1.7765          0    0
+9         3190       53.2       2.2     0 1.7765          0    0</code></pre>
+<pre class="r"><code>soil_spike_ratio = 0.5 # soil weight(0.85g) / spike in volume (1.7ml) 
+
+mcf_1 = (soil_spike_ratio*(moisture_percent_1/100) + 1)
+mcf_1</code></pre>
+<pre><code>[1] 1.3155</code></pre>
+<pre class="r"><code>mcf_2 = (soil_spike_ratio*(moisture_percent_2/100) + 1)
+mcf_2</code></pre>
+<pre><code>[1] 1.034</code></pre>
+<pre class="r"><code>mcf_3 = (soil_spike_ratio*(moisture_percent_3/100) + 1)
+mcf_3</code></pre>
+<pre><code>[1] 1.045</code></pre>
+<pre class="r"><code># this is a special case with no replicates
+df_20ul_mcf_1 &lt;- df_20ul %&gt;% filter(Soil == &quot;Webster_pH3.3&quot;) %&gt;% filter(Titration_type %in% c(&quot;NaOH&quot;,&quot;HCl&quot;,&quot;No_Nitrate&quot;)) %&gt;% mutate(TOC_mgml = TOC_mgml * mcf_1)
+dim(df_20ul_mcf_1) #306</code></pre>
+<pre><code>[1]  0 20</code></pre>
+<pre class="r"><code>df_20ul_mcf_2 &lt;- df_20ul %&gt;% filter(Soil == &quot;WarrenWoods1_pH5.23&quot;) %&gt;%  filter(Titration_type %in% c(&quot;NaOH&quot;,&quot;HCl&quot;,&quot;No_Nitrate&quot;)) %&gt;% mutate(TOC_mgml = TOC_mgml * mcf_2)
+dim(df_20ul_mcf_2) #429</code></pre>
+<pre><code>[1]  0 20</code></pre>
+<pre class="r"><code>df_20ul_mcf_3 &lt;- df_20ul %&gt;% filter(Soil == &quot;Crerar7_pH8.05&quot;) %&gt;% filter(Titration_type %in% c(&quot;NaOH&quot;,&quot;HCl&quot;,&quot;No_Nitrate&quot;)) %&gt;% mutate(TOC_mgml = TOC_mgml * mcf_3)
+dim(df_20ul_mcf_3) #426</code></pre>
+<pre><code>[1] 111  20</code></pre>
+<pre class="r"><code>df_20ul_others_mcf &lt;- df_20ul %&gt;% filter(Sample_type %in% c(&quot;Nitrite_Blank&quot;, &quot;Nitrate_Blank&quot;, &quot;Ammonium_Blank&quot;)) # Use Nitrate_Blank instead in the future
+dim(df_20ul_others_mcf) #287</code></pre>
+<pre><code>[1] 27 20</code></pre>
+<pre class="r"><code>df_20ul_mcf &lt;- rbind(df_20ul_mcf_1, df_20ul_mcf_2, df_20ul_mcf_3, df_20ul_others_mcf)
+dim(df_20ul_mcf) # 96</code></pre>
+<pre><code>[1] 138  20</code></pre>
+<pre class="r"><code>df_20ul_mcf %&gt;% filter(Well == &quot;F11&quot;)</code></pre>
+<pre><code>  Well Nitrite_input Nitrate_input Ammonium_input           Soil Sample_type
+1  F11             0             0              0 Crerar7_pH8.05  No_Nitrate
+2  F11             0             0              0 Crerar7_pH8.05  No_Nitrate
+  Titration_type Unit Concentration_M Added_ul Time_point TOC_OD600  TOC_mgml
+1     No_Nitrate    0               0       20      C_T10   0.01415 0.1770409
+2     No_Nitrate    0               0       20       C_T8   0.11620 1.6803581
+  Time_minutes Time_hours Time_days H_mol Volume H_Molarity H_mM
+1         5915       98.6       4.1     0 1.7765          0    0
+2         3190       53.2       2.2     0 1.7765          0    0</code></pre>
+<pre class="r"><code># 3. Calculate soil TOC percent
+# soil_weight_g = 0.85
+# spike_in_volume_ml = 1.7
+# df_20ul_mcf %&lt;&gt;% mutate(TOC_percent = TOC_mgml * 0.001 * (spike_in_volume_ml / soil_weight_g) *100) 
+# df_percent &lt;- df_20ul_mcf
+# colnames(df_percent)
+
+
+# average technical replicate
+# 
+# df_ave &lt;- df_percent %&gt;% group_by(Sample, TOC, Sample_type) %&gt;% summarise(Ave_TOC_percent = mean(TOC_percent), Std_TOC_percent = sd(TOC_percent), Ave_TOC_mgml = mean(TOC_mgml), Std_TOC_mgml = sd(TOC_mgml)) %&gt;% ungroup()
+# 
+# colnames(df_ave)</code></pre>
+</div>
+<div id="get-the-concentrations" class="section level2">
+<h2>3. Get the concentrations</h2>
+<pre class="r"><code># (1) Water soluble organic C mg/ml
+ggplot(df_20ul_mcf, aes(x=Time_hours, y=TOC_mgml)) +
+  geom_point(size=2.5, shape=21, color = &quot;brown&quot;) +
+  geom_line(size=1, color=&#39;brown&#39;)+
+  # geom_errorbar(aes(ymin=Ave_TOC_mgml - Std_TOC_mgml, ymax=Ave_TOC_mgml + Std_TOC_mgml), width=.05)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;Water Soluble Organic Carbon (C mg/ml) \n&quot;) +
+  xlab(&quot;\n Time (hr)&quot;) +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;[Before evaporation correction] Water-soluble organic carbon dynamics of no acid/base samples (3 replicates) \n&quot;) +
+  # label
+  # geom_text(aes(label = round(Ave_TOC_mgml,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d</code></pre>
+<p><img src="figure/220508_TOC_time_series.Rmd/unnamed-chunk-4-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot blanks
+
+
+# (2) plot separately only the H_mM  == 0 samples
+df_20ul_mcf_null &lt;- df_20ul_mcf %&gt;% filter(H_mM  == 0, Sample_type == &quot;Slurry&quot;)
+
+ggplot(df_20ul_mcf_null, aes(x=Time_hours, y=TOC_mgml)) +
+  geom_point(size=3, shape=16, color = &quot;brown&quot;) +
+  # geom_line(size=1, color=&#39;brown&#39;)+
+  # geom_errorbar(aes(ymin=Ave_TOC_mgml - Std_TOC_mgml, ymax=Ave_TOC_mgml + Std_TOC_mgml), width=.05)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;Water Soluble Organic Carbon (C mg/ml) \n&quot;) +
+  xlab(&quot;\n Time (hr)&quot;) +
+  scale_y_continuous(breaks = seq(0,1.5,0.1), limits=c(0, 1.5))+
+  ggtitle(&quot;[Before evaporation correction] Water-soluble organic carbon dynamics of no acid/base samples (3 replicates) \n&quot;) +
+  # label
+  # geom_text(aes(label = round(Ave_TOC_mgml,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d</code></pre>
+<p><img src="figure/220508_TOC_time_series.Rmd/unnamed-chunk-4-2.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># (3) plot no nitrate samples
+df_20ul_mcf_nn &lt;- df_20ul_mcf %&gt;% filter(H_mM  == 0, Titration_type == &quot;No_Nitrate&quot;)
+# df_20ul_mcf$Titration_type
+
+ggplot(df_20ul_mcf_nn, aes(x=Time_hours, y=TOC_mgml)) +
+  geom_point(size=3, shape=16, color = &quot;brown&quot;) +
+  # geom_line(size=1, color=&#39;brown&#39;)+
+  # geom_errorbar(aes(ymin=Ave_TOC_mgml - Std_TOC_mgml, ymax=Ave_TOC_mgml + Std_TOC_mgml), width=.05)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;Water Soluble Organic Carbon (C mg/ml) \n&quot;) +
+  xlab(&quot;\n Time (hr)&quot;) +
+  # scale_y_continuous(breaks = seq(0,1.5,0.1), limits=c(0, 1.5))+
+  ggtitle(&quot;[Before evaporation correction] Water-soluble organic carbon dynamics of no NO3- samples (3 replicates) \n&quot;) +
+  # label
+  # geom_text(aes(label = round(Ave_TOC_mgml,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d</code></pre>
+<p><img src="figure/220508_TOC_time_series.Rmd/unnamed-chunk-4-3.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># what is happening with no nitrate sample?
+df_20ul_mcf_nn</code></pre>
+<pre><code>  Well Nitrite_input Nitrate_input Ammonium_input           Soil Sample_type
+1  E06             0             0              0 Crerar7_pH8.05  No_Nitrate
+2  E12             0             0              0 Crerar7_pH8.05  No_Nitrate
+3  F05             0             0              0 Crerar7_pH8.05  No_Nitrate
+4  F06             0             0              0 Crerar7_pH8.05  No_Nitrate
+5  F11             0             0              0 Crerar7_pH8.05  No_Nitrate
+6  F12             0             0              0 Crerar7_pH8.05  No_Nitrate
+7  E12             0             0              0 Crerar7_pH8.05  No_Nitrate
+8  F11             0             0              0 Crerar7_pH8.05  No_Nitrate
+9  F12             0             0              0 Crerar7_pH8.05  No_Nitrate
+  Titration_type Unit Concentration_M Added_ul Time_point TOC_OD600  TOC_mgml
+1     No_Nitrate    0               0       20       C_T0   0.00000 0.0000000
+2     No_Nitrate    0               0       20      C_T10   0.01100 0.1304319
+3     No_Nitrate    0               0       20       C_T0   0.01975 0.2599031
+4     No_Nitrate    0               0       20       C_T0   0.01030 0.1200744
+5     No_Nitrate    0               0       20      C_T10   0.01415 0.1770409
+6     No_Nitrate    0               0       20      C_T10   0.01410 0.1763011
+7     No_Nitrate    0               0       20       C_T8   0.00000 0.0000000
+8     No_Nitrate    0               0       20       C_T8   0.11620 1.6803581
+9     No_Nitrate    0               0       20       C_T8   0.00000 0.0000000
+  Time_minutes Time_hours Time_days H_mol Volume H_Molarity H_mM
+1            0        0.0       0.0     0 1.7765          0    0
+2         5915       98.6       4.1     0 1.7765          0    0
+3            0        0.0       0.0     0 1.7765          0    0
+4            0        0.0       0.0     0 1.7765          0    0
+5         5915       98.6       4.1     0 1.7765          0    0
+6         5915       98.6       4.1     0 1.7765          0    0
+7         3190       53.2       2.2     0 1.7765          0    0
+8         3190       53.2       2.2     0 1.7765          0    0
+9         3190       53.2       2.2     0 1.7765          0    0</code></pre>
+<p>Correcting for evaporation</p>
+<pre class="r"><code># for Crerar7 NO2, correction factor for T10 is 
+# 0.9825210
+
+0.983/1.05 # NO2</code></pre>
+<pre><code>[1] 0.9361905</code></pre>
+<pre class="r"><code>0.973/0.999 # NO3</code></pre>
+<pre><code>[1] 0.973974</code></pre>
+<pre class="r"><code># for T8
+1.0384184/1.05 # NO2</code></pre>
+<pre><code>[1] 0.9889699</code></pre>
+<pre class="r"><code>1.0316592/0.999 # NO3</code></pre>
+<pre><code>[1] 1.032692</code></pre>
+<pre class="r"><code># let&#39;s use NO2&#39;s evaporation factor
+eva_correction_factor = 0.983/1.05
+df_20ul_mcf_bcf_1 &lt;- df_20ul_mcf %&gt;% filter(Time_point == &quot;C_T10&quot;) %&gt;% mutate(TOC_mgml = TOC_mgml * eva_correction_factor)
+eva_correction_factor = 1.0384184/1.05
+df_20ul_mcf_bcf_2 &lt;- df_20ul_mcf %&gt;% filter(Time_point == &quot;C_T8&quot;) %&gt;% mutate(TOC_mgml = TOC_mgml * eva_correction_factor)
+
+df_20ul_mcf_bcf_others &lt;- df_20ul_mcf %&gt;% filter(Time_point == &quot;C_T0&quot;)
+df_20ul_mcf_bcf &lt;- rbind(df_20ul_mcf_bcf_1, df_20ul_mcf_bcf_2, df_20ul_mcf_bcf_others)
+dim(df_20ul_mcf_bcf)</code></pre>
+<pre><code>[1] 138  20</code></pre>
+<pre class="r"><code># Redo the plots
+# (1) Water soluble organic C mg/ml
+ggplot(df_20ul_mcf_bcf, aes(x=Time_hours, y=TOC_mgml)) +
+  geom_point(size=2.5, shape=21, color = &quot;brown&quot;) +
+  geom_line(size=1, color=&#39;brown&#39;)+
+  # geom_errorbar(aes(ymin=Ave_TOC_mgml - Std_TOC_mgml, ymax=Ave_TOC_mgml + Std_TOC_mgml), width=.05)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;Water Soluble Organic Carbon (C mg/ml) \n&quot;) +
+  xlab(&quot;\n Time (hr)&quot;) +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;[After evaporation correction] Water-soluble organic carbon dynamics of no acid/base samples (3 replicates) \n&quot;) +
+  # label
+  # geom_text(aes(label = round(Ave_TOC_mgml,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d</code></pre>
+<p><img src="figure/220508_TOC_time_series.Rmd/unnamed-chunk-5-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># (2) plot separately only the H_mM  == 0 samples
+df_20ul_mcf_bcf_null &lt;- df_20ul_mcf_bcf %&gt;% filter(H_mM  == 0, Sample_type == &quot;Slurry&quot;)
+
+ggplot(df_20ul_mcf_bcf_null, aes(x=Time_hours, y=TOC_mgml)) +
+  geom_point(size=3, shape=16, color = &quot;brown&quot;) +
+  # geom_line(size=1, color=&#39;brown&#39;)+
+  # geom_errorbar(aes(ymin=Ave_TOC_mgml - Std_TOC_mgml, ymax=Ave_TOC_mgml + Std_TOC_mgml), width=.05)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;Water Soluble Organic Carbon (C mg/ml) \n&quot;) +
+  xlab(&quot;\n Time (hr)&quot;) +
+  scale_y_continuous(breaks = seq(0,1.5,0.1), limits=c(0, 1.5))+
+  ggtitle(&quot;[After evaporation correction] Water-soluble organic carbon dynamics of no acid/base samples (3 replicates) \n&quot;) +
+  # label
+  # geom_text(aes(label = round(Ave_TOC_mgml,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d</code></pre>
+<p><img src="figure/220508_TOC_time_series.Rmd/unnamed-chunk-5-2.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># (3) plot no nitrate samples
+df_20ul_mcf_bcf_nn &lt;- df_20ul_mcf_bcf %&gt;% filter(H_mM  == 0, Titration_type == &quot;No_Nitrate&quot;)
+# df_20ul_mcf$Titration_type
+
+ggplot(df_20ul_mcf_bcf_nn, aes(x=Time_hours, y=TOC_mgml)) +
+  geom_point(size=3, shape=16, color = &quot;brown&quot;) +
+  # geom_line(size=1, color=&#39;brown&#39;)+
+  # geom_errorbar(aes(ymin=Ave_TOC_mgml - Std_TOC_mgml, ymax=Ave_TOC_mgml + Std_TOC_mgml), width=.05)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;Water Soluble Organic Carbon (C mg/ml) \n&quot;) +
+  xlab(&quot;\n Time (hr)&quot;) +
+  scale_y_continuous(breaks = seq(0,2,0.1), limits=c(0, 2))+
+  ggtitle(&quot;[After evaporation correction] Water-soluble organic carbon dynamics of no NO3- samples (3 replicates) \n&quot;) +
+  # label
+  # geom_text(aes(label = round(Ave_TOC_mgml,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d</code></pre>
+<p><img src="figure/220508_TOC_time_series.Rmd/unnamed-chunk-5-3.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># (4) plot blanks
+df_20ul_mcf_bcf_blk &lt;- df_20ul_mcf_bcf %&gt;% filter(Sample_type %in% c(&quot;Nitrite_Blank&quot;, &quot;Nitrate_Blank&quot;, &quot;Ammonium_Blank&quot;))
+# df_20ul_mcf$Titration_type
+
+ggplot(df_20ul_mcf_bcf_blk, aes(x=Time_hours, y=TOC_mgml)) +
+  geom_point(size=3, shape=16, aes(color = Sample_type)) +
+  # geom_line(size=1, color=&#39;brown&#39;)+
+  # geom_errorbar(aes(ymin=Ave_TOC_mgml - Std_TOC_mgml, ymax=Ave_TOC_mgml + Std_TOC_mgml), width=.05)+
+  scale_fill_brewer(palette=&#39;Set2&#39;) +
+  ylab(&quot;Water Soluble Organic Carbon (C mg/ml) \n&quot;) +
+  xlab(&quot;\n Time (hr)&quot;) +
+  scale_y_continuous(breaks = seq(0,1.5,0.1), limits=c(0, 1.5))+
+  ggtitle(&quot;[After evaporation correction] Water-soluble organic carbon dynamics of blanks (3 replicates) \n&quot;) +
+  # label
+  # geom_text(aes(label = round(Ave_TOC_mgml,3)), size = 3, vjust = -1.5, family=&quot;serif&quot;, show.legend = FALSE)+
+  mytheme_2d</code></pre>
+<p><img src="figure/220508_TOC_time_series.Rmd/unnamed-chunk-5-4.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>df_20ul_mcf_bcf_blk %&gt;% filter(Sample_type == &quot;Nitrite_Blank&quot;)</code></pre>
+<pre><code>  Well Nitrite_input Nitrate_input Ammonium_input           Soil   Sample_type
+1  G10             2             0              0 Crerar7_pH8.05 Nitrite_Blank
+2  G11             2             0              0 Crerar7_pH8.05 Nitrite_Blank
+3  H10             2             0              0 Crerar7_pH8.05 Nitrite_Blank
+4  G10             2             0              0 Crerar7_pH8.05 Nitrite_Blank
+5  G11             2             0              0 Crerar7_pH8.05 Nitrite_Blank
+6  H10             2             0              0 Crerar7_pH8.05 Nitrite_Blank
+7  G04             2             0              0 Crerar7_pH8.05 Nitrite_Blank
+8  G05             2             0              0 Crerar7_pH8.05 Nitrite_Blank
+9  H04             2             0              0 Crerar7_pH8.05 Nitrite_Blank
+  Titration_type Unit Concentration_M Added_ul Time_point TOC_OD600   TOC_mgml
+1        Nitrite    0               0       20      C_T10   0.00910 0.09166495
+2        Nitrite    0               0       20      C_T10   0.00685 0.06183992
+3        Nitrite    0               0       20      C_T10   0.00635 0.05521218
+4        Nitrite    0               0       20       C_T8   0.05335 0.71627059
+5        Nitrite    0               0       20       C_T8   0.00000 0.00000000
+6        Nitrite    0               0       20       C_T8   0.00000 0.00000000
+7        Nitrite    0               0       20       C_T0   0.00000 0.00000000
+8        Nitrite    0               0       20       C_T0   0.00105 0.00000000
+9        Nitrite    0               0       20       C_T0   0.00000 0.00000000
+  Time_minutes Time_hours Time_days H_mol Volume H_Molarity H_mM
+1         5915       98.6       4.1     0 1.7765          0    0
+2         5915       98.6       4.1     0 1.7765          0    0
+3         5915       98.6       4.1     0 1.7765          0    0
+4         3190       53.2       2.2     0 1.7765          0    0
+5         3190       53.2       2.2     0 1.7765          0    0
+6         3190       53.2       2.2     0 1.7765          0    0
+7            0        0.0       0.0     0 1.7765          0    0
+8            0        0.0       0.0     0 1.7765          0    0
+9            0        0.0       0.0     0 1.7765          0    0</code></pre>
+<pre class="r"><code>df_20ul_mcf_bcf_blk %&gt;% filter(Sample_type == &quot;Nitrate_Blank&quot;)</code></pre>
+<pre><code>  Well Nitrite_input Nitrate_input Ammonium_input           Soil   Sample_type
+1  G12             0             2              0 Crerar7_pH8.05 Nitrate_Blank
+2  H11             0             2              0 Crerar7_pH8.05 Nitrate_Blank
+3  H12             0             2              0 Crerar7_pH8.05 Nitrate_Blank
+4  G12             0             2              0 Crerar7_pH8.05 Nitrate_Blank
+5  H11             0             2              0 Crerar7_pH8.05 Nitrate_Blank
+6  H12             0             2              0 Crerar7_pH8.05 Nitrate_Blank
+7  G06             0             2              0 Crerar7_pH8.05 Nitrate_Blank
+8  H05             0             2              0 Crerar7_pH8.05 Nitrate_Blank
+9  H06             0             2              0 Crerar7_pH8.05 Nitrate_Blank
+  Titration_type Unit Concentration_M Added_ul Time_point TOC_OD600  TOC_mgml
+1        Nitrate    0               0       20      C_T10   0.00000 0.0000000
+2        Nitrate    0               0       20      C_T10   0.00445 0.0300269
+3        Nitrate    0               0       20      C_T10   0.00165 0.0000000
+4        Nitrate    0               0       20       C_T8   0.00000 0.0000000
+5        Nitrate    0               0       20       C_T8   0.00000 0.0000000
+6        Nitrate    0               0       20       C_T8   0.00000 0.0000000
+7        Nitrate    0               0       20       C_T0   0.00000 0.0000000
+8        Nitrate    0               0       20       C_T0   0.00000 0.0000000
+9        Nitrate    0               0       20       C_T0   0.00000 0.0000000
+  Time_minutes Time_hours Time_days H_mol Volume H_Molarity H_mM
+1         5915       98.6       4.1     0 1.7765          0    0
+2         5915       98.6       4.1     0 1.7765          0    0
+3         5915       98.6       4.1     0 1.7765          0    0
+4         3190       53.2       2.2     0 1.7765          0    0
+5         3190       53.2       2.2     0 1.7765          0    0
+6         3190       53.2       2.2     0 1.7765          0    0
+7            0        0.0       0.0     0 1.7765          0    0
+8            0        0.0       0.0     0 1.7765          0    0
+9            0        0.0       0.0     0 1.7765          0    0</code></pre>
+<pre class="r"><code>df_20ul_mcf_bcf_blk %&gt;% filter(Sample_type == &quot;Ammonium_Blank&quot;)</code></pre>
+<pre><code>  Well Nitrite_input Nitrate_input Ammonium_input           Soil    Sample_type
+1  G09             0             0              2 Crerar7_pH8.05 Ammonium_Blank
+2  H08             0             0              2 Crerar7_pH8.05 Ammonium_Blank
+3  H09             0             0              2 Crerar7_pH8.05 Ammonium_Blank
+4  G09             0             0              2 Crerar7_pH8.05 Ammonium_Blank
+5  H08             0             0              2 Crerar7_pH8.05 Ammonium_Blank
+6  H09             0             0              2 Crerar7_pH8.05 Ammonium_Blank
+7  G03             0             0              2 Crerar7_pH8.05 Ammonium_Blank
+8  H02             0             0              2 Crerar7_pH8.05 Ammonium_Blank
+9  H03             0             0              2 Crerar7_pH8.05 Ammonium_Blank
+  Titration_type Unit Concentration_M Added_ul Time_point TOC_OD600   TOC_mgml
+1       Ammonium    0               0       20      C_T10   0.00930 0.09431608
+2       Ammonium    0               0       20      C_T10   0.00515 0.03930566
+3       Ammonium    0               0       20      C_T10   0.00310 0.01213223
+4       Ammonium    0               0       20       C_T8   0.00000 0.00000000
+5       Ammonium    0               0       20       C_T8   0.02195 0.28210364
+6       Ammonium    0               0       20       C_T8   0.00000 0.00000000
+7       Ammonium    0               0       20       C_T0   0.00000 0.00000000
+8       Ammonium    0               0       20       C_T0   0.00350 0.01862264
+9       Ammonium    0               0       20       C_T0   0.00000 0.00000000
+  Time_minutes Time_hours Time_days H_mol Volume H_Molarity H_mM
+1         5915       98.6       4.1     0 1.7765          0    0
+2         5915       98.6       4.1     0 1.7765          0    0
+3         5915       98.6       4.1     0 1.7765          0    0
+4         3190       53.2       2.2     0 1.7765          0    0
+5         3190       53.2       2.2     0 1.7765          0    0
+6         3190       53.2       2.2     0 1.7765          0    0
+7            0        0.0       0.0     0 1.7765          0    0
+8            0        0.0       0.0     0 1.7765          0    0
+9            0        0.0       0.0     0 1.7765          0    0</code></pre>
+<p>Plot by coloring it</p>
+<pre class="r"><code># pH color
+col_pH &lt;- colorRampPalette(c(&quot;gold&quot;,&quot;red&quot;,&quot;purple&quot;))
+
+library(colorRamps)
+colorRamps::green2red</code></pre>
+<pre><code>function (n) 
+rgb.tables(n, red = c(1, 0, 2), green = c(0, 0, 2), blue = c(0, 
+    0, 0, 0))
+&lt;bytecode: 0x00000000309a6390&gt;
+&lt;environment: namespace:colorRamps&gt;</code></pre>
+<pre class="r"><code>plot(rep(1,13),col=col_pH(13),pch=19,cex=3)</code></pre>
+<p><img src="figure/220508_TOC_time_series.Rmd/unnamed-chunk-6-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>grad_pH &lt;- scale_colour_gradientn(colours = col_pH(100))
+
+# Confer this page (https://stackoverflow.com/questions/21537782/how-to-set-fixed-continuous-colour-values-in-ggplot2)
+# myPalette &lt;- colorRampPalette(rev(brewer.pal(11, &quot;Spectral&quot;)))
+# sc &lt;- scale_colour_gradientn(colours = myPalette(100), limits=c(1, 8))
+
+# 1. pH perturbation
+# plot Ammonia
+df_20ul_mcf &lt;- df_20ul_mcf %&gt;% filter(Titration_type %in% c(&quot;NaOH&quot;,&quot;HCl&quot;))
+
+dim(df_20ul_mcf)</code></pre>
+<pre><code>[1] 102  20</code></pre>
+<pre class="r"><code>colnames(df_20ul_mcf)</code></pre>
+<pre><code> [1] &quot;Well&quot;            &quot;Nitrite_input&quot;   &quot;Nitrate_input&quot;   &quot;Ammonium_input&quot; 
+ [5] &quot;Soil&quot;            &quot;Sample_type&quot;     &quot;Titration_type&quot;  &quot;Unit&quot;           
+ [9] &quot;Concentration_M&quot; &quot;Added_ul&quot;        &quot;Time_point&quot;      &quot;TOC_OD600&quot;      
+[13] &quot;TOC_mgml&quot;        &quot;Time_minutes&quot;    &quot;Time_hours&quot;      &quot;Time_days&quot;      
+[17] &quot;H_mol&quot;           &quot;Volume&quot;          &quot;H_Molarity&quot;      &quot;H_mM&quot;           </code></pre>
+<pre class="r"><code># average the no acid base one.
+df_plot &lt;- df_20ul_mcf %&gt;% select(H_mM, TOC_mgml, Soil, Time_hours)
+df_plot %&gt;% filter(H_mM == 0) %&gt;% dim()</code></pre>
+<pre><code>[1] 9 4</code></pre>
+<pre class="r"><code>df_plot %&gt;% filter(H_mM == 0) %&gt;% group_by(H_mM, Soil, Time_hours) %&gt;% summarize(TOC_mgml = mean(TOC_mgml)) %&gt;% ungroup()</code></pre>
+<pre><code># A tibble: 3 x 4
+   H_mM Soil           Time_hours TOC_mgml
+  &lt;dbl&gt; &lt;chr&gt;               &lt;dbl&gt;    &lt;dbl&gt;
+1     0 Crerar7_pH8.05        0      0    
+2     0 Crerar7_pH8.05       53.2    0    
+3     0 Crerar7_pH8.05       98.6    0.153</code></pre>
+<pre class="r"><code>df_sub &lt;- df_plot %&gt;% filter(H_mM == 0) %&gt;% group_by(H_mM, Soil, Time_hours) %&gt;% summarize(TOC_mgml = mean(TOC_mgml)) %&gt;% ungroup()
+df_main &lt;- df_plot %&gt;% filter(H_mM != 0)
+dim(df_plot)</code></pre>
+<pre><code>[1] 102   4</code></pre>
+<pre class="r"><code>dim(df_main)</code></pre>
+<pre><code>[1] 93  4</code></pre>
+<pre class="r"><code>df_plot2 &lt;- rbind(df_main, df_sub)
+dim(df_plot2)</code></pre>
+<pre><code>[1] 96  4</code></pre>
+<pre class="r"><code>#export to plot with nitrate, nitrite
+# write.xlsx(df_plot2, &quot;220420-2_Ammonia_bcf.xlsx&quot;)
+
+ggplot(df_plot2, aes(x=Time_hours, y=TOC_mgml, color=H_mM, group=H_mM)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+
+  scale_colour_gradientn(colours = col_pH(100)) +
+  # scale_color_manual(values=grad_pH) +
+  ylab(&quot;Water Soluble Organic Carbon (C mg/ml) \n&quot;) +
+  xlab(&quot;\n Time (hr)&quot;) +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle(&quot;[Before evaporation correction] Water-soluble organic carbon dynamics \n&quot;) +
+  # label
+  # geom_text(aes(label = round(NH4_mM,3)), size = 3, vjust = -1.5, face=&quot;bold&quot;, show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Soil) +
+  theme(strip.background = element_rect(colour=&quot;black&quot;, fill=&quot;white&quot;, size=0.1))+
+  theme(strip.text.x = element_text(size = 17))</code></pre>
+<p><img src="figure/220508_TOC_time_series.Rmd/unnamed-chunk-6-2.png" width="1056" style="display: block; margin: auto;" /></p>
+<p>Evaporation correction</p>
+<pre class="r"><code># average the no acid base one.
+df_20ul_mcf_bcf %&gt;% filter(Titration_type %in% c(&quot;NaOH&quot;, &quot;HCl&quot;))</code></pre>
+<pre><code>    Well Nitrite_input Nitrate_input Ammonium_input           Soil Sample_type
+1    A07             0             2              0 Crerar7_pH8.05      Slurry
+2    A08             0             2              0 Crerar7_pH8.05      Slurry
+3    A09             0             2              0 Crerar7_pH8.05      Slurry
+4    A10             0             2              0 Crerar7_pH8.05      Slurry
+5    A11             0             2              0 Crerar7_pH8.05      Slurry
+6    A12             0             2              0 Crerar7_pH8.05      Slurry
+7    B07             0             2              0 Crerar7_pH8.05      Slurry
+8    B08             0             2              0 Crerar7_pH8.05      Slurry
+9    B09             0             2              0 Crerar7_pH8.05      Slurry
+10   B10             0             2              0 Crerar7_pH8.05      Slurry
+11   B11             0             2              0 Crerar7_pH8.05      Slurry
+12   B12             0             2              0 Crerar7_pH8.05      Slurry
+13   C07             0             2              0 Crerar7_pH8.05      Slurry
+14   C08             0             2              0 Crerar7_pH8.05      Slurry
+15   C09             0             2              0 Crerar7_pH8.05      Slurry
+16   C10             0             2              0 Crerar7_pH8.05      Slurry
+17   C11             0             2              0 Crerar7_pH8.05      Slurry
+18   C12             0             2              0 Crerar7_pH8.05      Slurry
+19   D07             0             2              0 Crerar7_pH8.05      Slurry
+20   D08             0             2              0 Crerar7_pH8.05      Slurry
+21   D09             0             2              0 Crerar7_pH8.05      Slurry
+22   D10             0             2              0 Crerar7_pH8.05      Slurry
+23   D11             0             2              0 Crerar7_pH8.05      Slurry
+24   D12             0             2              0 Crerar7_pH8.05      Slurry
+25   E07             0             2              0 Crerar7_pH8.05      Slurry
+26   E08             0             2              0 Crerar7_pH8.05      Slurry
+27   E09             0             2              0 Crerar7_pH8.05      Slurry
+28   E10             0             2              0 Crerar7_pH8.05      Slurry
+29   E11             0             2              0 Crerar7_pH8.05      Slurry
+30   F07             0             2              0 Crerar7_pH8.05      Slurry
+31   F08             0             2              0 Crerar7_pH8.05      Slurry
+32   F09             0             2              0 Crerar7_pH8.05      Slurry
+33   F10             0             2              0 Crerar7_pH8.05      Slurry
+34   G07             0             2              0 Crerar7_pH8.05      Slurry
+35   G08             0             2              0 Crerar7_pH8.05      Slurry
+36   H07             0             2              0 Crerar7_pH8.05      Slurry
+37   A07             0             2              0 Crerar7_pH8.05      Slurry
+38   A08             0             2              0 Crerar7_pH8.05      Slurry
+39   A09             0             2              0 Crerar7_pH8.05      Slurry
+40   A11             0             2              0 Crerar7_pH8.05      Slurry
+41   A12             0             2              0 Crerar7_pH8.05      Slurry
+42   B07             0             2              0 Crerar7_pH8.05      Slurry
+43   B08             0             2              0 Crerar7_pH8.05      Slurry
+44   B09             0             2              0 Crerar7_pH8.05      Slurry
+45   B10             0             2              0 Crerar7_pH8.05      Slurry
+46   B11             0             2              0 Crerar7_pH8.05      Slurry
+47   B12             0             2              0 Crerar7_pH8.05      Slurry
+48   C07             0             2              0 Crerar7_pH8.05      Slurry
+49   C08             0             2              0 Crerar7_pH8.05      Slurry
+50   C09             0             2              0 Crerar7_pH8.05      Slurry
+51   C10             0             2              0 Crerar7_pH8.05      Slurry
+52   C11             0             2              0 Crerar7_pH8.05      Slurry
+53   C12             0             2              0 Crerar7_pH8.05      Slurry
+54   D07             0             2              0 Crerar7_pH8.05      Slurry
+55   D08             0             2              0 Crerar7_pH8.05      Slurry
+56   D09             0             2              0 Crerar7_pH8.05      Slurry
+57   D10             0             2              0 Crerar7_pH8.05      Slurry
+58   D11             0             2              0 Crerar7_pH8.05      Slurry
+59   D12             0             2              0 Crerar7_pH8.05      Slurry
+60   E07             0             2              0 Crerar7_pH8.05      Slurry
+61   E08             0             2              0 Crerar7_pH8.05      Slurry
+62   E09             0             2              0 Crerar7_pH8.05      Slurry
+63   F07             0             2              0 Crerar7_pH8.05      Slurry
+64   G07             0             2              0 Crerar7_pH8.05      Slurry
+65   G08             0             2              0 Crerar7_pH8.05      Slurry
+66   H07             0             2              0 Crerar7_pH8.05      Slurry
+67   A01             0             2              0 Crerar7_pH8.05      Slurry
+68   A02             0             2              0 Crerar7_pH8.05      Slurry
+69   A03             0             2              0 Crerar7_pH8.05      Slurry
+70   A04             0             2              0 Crerar7_pH8.05      Slurry
+71   A05             0             2              0 Crerar7_pH8.05      Slurry
+72   A06             0             2              0 Crerar7_pH8.05      Slurry
+73   B01             0             2              0 Crerar7_pH8.05      Slurry
+74   B02             0             2              0 Crerar7_pH8.05      Slurry
+75   B03             0             2              0 Crerar7_pH8.05      Slurry
+76   B04             0             2              0 Crerar7_pH8.05      Slurry
+77   B05             0             2              0 Crerar7_pH8.05      Slurry
+78   B06             0             2              0 Crerar7_pH8.05      Slurry
+79   C01             0             2              0 Crerar7_pH8.05      Slurry
+80   C02             0             2              0 Crerar7_pH8.05      Slurry
+81   C03             0             2              0 Crerar7_pH8.05      Slurry
+82   C04             0             2              0 Crerar7_pH8.05      Slurry
+83   C05             0             2              0 Crerar7_pH8.05      Slurry
+84   C06             0             2              0 Crerar7_pH8.05      Slurry
+85   D01             0             2              0 Crerar7_pH8.05      Slurry
+86   D02             0             2              0 Crerar7_pH8.05      Slurry
+87   D03             0             2              0 Crerar7_pH8.05      Slurry
+88   D04             0             2              0 Crerar7_pH8.05      Slurry
+89   D05             0             2              0 Crerar7_pH8.05      Slurry
+90   D06             0             2              0 Crerar7_pH8.05      Slurry
+91   E01             0             2              0 Crerar7_pH8.05      Slurry
+92   E02             0             2              0 Crerar7_pH8.05      Slurry
+93   E03             0             2              0 Crerar7_pH8.05      Slurry
+94   E04             0             2              0 Crerar7_pH8.05      Slurry
+95   E05             0             2              0 Crerar7_pH8.05      Slurry
+96   F01             0             2              0 Crerar7_pH8.05      Slurry
+97   F02             0             2              0 Crerar7_pH8.05      Slurry
+98   F03             0             2              0 Crerar7_pH8.05      Slurry
+99   F04             0             2              0 Crerar7_pH8.05      Slurry
+100  G01             0             2              0 Crerar7_pH8.05      Slurry
+101  G02             0             2              0 Crerar7_pH8.05      Slurry
+102  H01             0             2              0 Crerar7_pH8.05      Slurry
+    Titration_type Unit Concentration_M Added_ul Time_point TOC_OD600
+1              HCl    1             0.5       20      C_T10   0.02175
+2              HCl    3             1.5       20      C_T10   0.02105
+3              HCl    5             2.5       20      C_T10   0.02450
+4              HCl    7             3.5       20      C_T10   0.02440
+5              HCl    9             4.5       20      C_T10   0.04435
+6              HCl   11             5.5       20      C_T10   0.02760
+7              HCl    2             1.0       20      C_T10   0.03045
+8              HCl    4             2.0       20      C_T10   0.02090
+9              HCl    6             3.0       20      C_T10   0.03585
+10             HCl    8             4.0       20      C_T10   0.03865
+11             HCl   10             5.0       20      C_T10   0.02525
+12             HCl   12             6.0       20      C_T10   0.02725
+13             HCl   13             6.5       20      C_T10   0.03880
+14             HCl   15             7.5       20      C_T10   0.06080
+15            NaOH    1             0.5      -20      C_T10   0.01905
+16            NaOH    3             1.5      -20      C_T10   0.03780
+17            NaOH    5             2.5      -20      C_T10   0.03065
+18            NaOH    7             3.5      -20      C_T10   0.02995
+19             HCl   14             7.0       20      C_T10   0.03960
+20             HCl   16             8.0       20      C_T10   0.04135
+21            NaOH    2             1.0      -20      C_T10   0.03050
+22            NaOH    4             2.0      -20      C_T10   0.03640
+23            NaOH    6             3.0      -20      C_T10   0.02740
+24            NaOH    8             4.0      -20      C_T10   0.02920
+25            NaOH    9             4.5      -20      C_T10   0.04380
+26            NaOH   11             5.5      -20      C_T10   0.04145
+27            NaOH   13             6.5      -20      C_T10   0.05895
+28            NaOH   15             7.5      -20      C_T10   0.07990
+29            NaOH   17             8.5      -20      C_T10   0.08200
+30            NaOH   10             5.0      -20      C_T10   0.05630
+31            NaOH   12             6.0      -20      C_T10   0.07590
+32            NaOH   14             7.0      -20      C_T10   0.07480
+33            NaOH   16             8.0      -20      C_T10   0.07400
+34             HCl    0             0.0       20      C_T10   0.01595
+35             HCl    0             0.0       20      C_T10   0.01280
+36             HCl    0             0.0       20      C_T10   0.00880
+37             HCl    1             0.5       20       C_T8   0.00440
+38             HCl    3             1.5       20       C_T8   0.00000
+39             HCl    5             2.5       20       C_T8   0.00115
+40             HCl    9             4.5       20       C_T8   0.00260
+41             HCl   11             5.5       20       C_T8   0.00425
+42             HCl    2             1.0       20       C_T8   0.00430
+43             HCl    4             2.0       20       C_T8   0.00895
+44             HCl    6             3.0       20       C_T8   0.00255
+45             HCl    8             4.0       20       C_T8   0.00510
+46             HCl   10             5.0       20       C_T8   0.00445
+47             HCl   12             6.0       20       C_T8   0.00385
+48             HCl   13             6.5       20       C_T8   0.01475
+49             HCl   15             7.5       20       C_T8   0.02220
+50            NaOH    1             0.5      -20       C_T8   0.00000
+51            NaOH    3             1.5      -20       C_T8   0.00220
+52            NaOH    5             2.5      -20       C_T8   0.00410
+53            NaOH    7             3.5      -20       C_T8   0.00585
+54             HCl   14             7.0       20       C_T8   0.01420
+55             HCl   16             8.0       20       C_T8   0.01585
+56            NaOH    2             1.0      -20       C_T8   0.00875
+57            NaOH    4             2.0      -20       C_T8   0.00810
+58            NaOH    6             3.0      -20       C_T8   0.00695
+59            NaOH    8             4.0      -20       C_T8   0.01485
+60            NaOH    9             4.5      -20       C_T8   0.02315
+61            NaOH   11             5.5      -20       C_T8   0.01385
+62            NaOH   13             6.5      -20       C_T8   0.02960
+63            NaOH   10             5.0      -20       C_T8   0.03390
+64             HCl    0             0.0       20       C_T8   0.00015
+65             HCl    0             0.0       20       C_T8   0.00000
+66             HCl    0             0.0       20       C_T8   0.00000
+67             HCl    1             0.5       20       C_T0   0.00000
+68             HCl    3             1.5       20       C_T0   0.00000
+69             HCl    5             2.5       20       C_T0   0.00000
+70             HCl    7             3.5       20       C_T0   0.00700
+71             HCl    9             4.5       20       C_T0   0.03050
+72             HCl   11             5.5       20       C_T0   0.02240
+73             HCl    2             1.0       20       C_T0   0.00000
+74             HCl    4             2.0       20       C_T0   0.00000
+75             HCl    6             3.0       20       C_T0   0.00000
+76             HCl    8             4.0       20       C_T0   0.00890
+77             HCl   10             5.0       20       C_T0   0.02605
+78             HCl   12             6.0       20       C_T0   0.02500
+79             HCl   13             6.5       20       C_T0   0.00500
+80             HCl   15             7.5       20       C_T0   0.01770
+81            NaOH    1             0.5      -20       C_T0   0.00000
+82            NaOH    3             1.5      -20       C_T0   0.00865
+83            NaOH    5             2.5      -20       C_T0   0.02075
+84            NaOH    7             3.5      -20       C_T0   0.03235
+85             HCl   14             7.0       20       C_T0   0.00560
+86             HCl   16             8.0       20       C_T0   0.01225
+87            NaOH    2             1.0      -20       C_T0   0.00000
+88            NaOH    4             2.0      -20       C_T0   0.00900
+89            NaOH    6             3.0      -20       C_T0   0.02295
+90            NaOH    8             4.0      -20       C_T0   0.02255
+91            NaOH    9             4.5      -20       C_T0   0.00185
+92            NaOH   11             5.5      -20       C_T0   0.01020
+93            NaOH   13             6.5      -20       C_T0   0.01520
+94            NaOH   15             7.5      -20       C_T0   0.02345
+95            NaOH   17             8.5      -20       C_T0   0.03525
+96            NaOH   10             5.0      -20       C_T0   0.00765
+97            NaOH   12             6.0      -20       C_T0   0.01535
+98            NaOH   14             7.0      -20       C_T0   0.01325
+99            NaOH   16             8.0      -20       C_T0   0.02560
+100            HCl    0             0.0       20       C_T0   0.00000
+101            HCl    0             0.0       20       C_T0   0.00010
+102            HCl    0             0.0       20       C_T0   0.00000
+      TOC_mgml Time_minutes Time_hours Time_days    H_mol Volume   H_Molarity
+1   0.27102460         5915       98.6       4.1  0.00001 1.7765  0.005629046
+2   0.26132755         5915       98.6       4.1  0.00003 1.7765  0.016887138
+3   0.30912047         5915       98.6       4.1  0.00005 1.7765  0.028145229
+4   0.30773516         5915       98.6       4.1  0.00007 1.7765  0.039403321
+5   0.58411776         5915       98.6       4.1  0.00009 1.7765  0.050661413
+6   0.35206548         5915       98.6       4.1  0.00011 1.7765  0.061919505
+7   0.39154773         5915       98.6       4.1  0.00002 1.7765  0.011258092
+8   0.25924962         5915       98.6       4.1  0.00004 1.7765  0.022516184
+9   0.46635763         5915       98.6       4.1  0.00006 1.7765  0.033774275
+10  0.50514869         5915       98.6       4.1  0.00008 1.7765  0.045032367
+11  0.31951034         5915       98.6       4.1  0.00010 1.7765  0.056290459
+12  0.34721682         5915       98.6       4.1  0.00012 1.7765  0.067548551
+13  0.50722680         5915       98.6       4.1  0.00013 1.7765  0.073177596
+14  0.81203140         5915       98.6       4.1  0.00015 1.7765  0.084435688
+15  0.23362186         5915       98.6       4.1 -0.00001 1.7765 -0.005629046
+16  0.49337278         5915       98.6       4.1 -0.00003 1.7765 -0.016887138
+17  0.39431844         5915       98.6       4.1 -0.00005 1.7765 -0.028145229
+18  0.38462098         5915       98.6       4.1 -0.00007 1.7765 -0.039403321
+19  0.51831006         5915       98.6       4.1  0.00014 1.7765  0.078806642
+20  0.54255483         5915       98.6       4.1  0.00016 1.7765  0.090064734
+21  0.39224041         5915       98.6       4.1 -0.00002 1.7765 -0.011258092
+22  0.47397727         5915       98.6       4.1 -0.00004 1.7765 -0.022516184
+23  0.34929482         5915       98.6       4.1 -0.00006 1.7765 -0.033774275
+24  0.37423089         5915       98.6       4.1 -0.00008 1.7765 -0.045032367
+25  0.57649784         5915       98.6       4.1 -0.00009 1.7765 -0.050661413
+26  0.54394025         5915       98.6       4.1 -0.00011 1.7765 -0.061919505
+27  0.78639891         5915       98.6       4.1 -0.00013 1.7765 -0.073177596
+28  1.07668243         5915       98.6       4.1 -0.00015 1.7765 -0.084435688
+29  1.10578162         5915       98.6       4.1 -0.00017 1.7765 -0.095693780
+30  0.74968248         5915       98.6       4.1 -0.00010 1.7765 -0.056290459
+31  1.02125619         5915       98.6       4.1 -0.00012 1.7765 -0.067548551
+32  1.00601415         5915       98.6       4.1 -0.00014 1.7765 -0.078806642
+33  0.99492909         5915       98.6       4.1 -0.00016 1.7765 -0.090064734
+34  0.19067855         5915       98.6       4.1  0.00000 1.7765  0.000000000
+35  0.14704324         5915       98.6       4.1  0.00000 1.7765  0.000000000
+36  0.09163423         5915       98.6       4.1  0.00000 1.7765  0.000000000
+37  0.04195759         3190       53.2       2.2  0.00001 1.7765  0.005629046
+38  0.00000000         3190       53.2       2.2  0.00003 1.7765  0.016887138
+39  0.00000000         3190       53.2       2.2  0.00005 1.7765  0.028145229
+40  0.01605513         3190       53.2       2.2  0.00009 1.7765  0.050661413
+41  0.03979884         3190       53.2       2.2  0.00011 1.7765  0.061919505
+42  0.04051842         3190       53.2       2.2  0.00002 1.7765  0.011258092
+43  0.10745804         3190       53.2       2.2  0.00004 1.7765  0.022516184
+44  0.01533570         3190       53.2       2.2  0.00006 1.7765  0.033774275
+45  0.05203227         3190       53.2       2.2  0.00008 1.7765  0.045032367
+46  0.04267719         3190       53.2       2.2  0.00010 1.7765  0.056290459
+47  0.03404236         3190       53.2       2.2  0.00012 1.7765  0.067548551
+48  0.19100467         3190       53.2       2.2  0.00013 1.7765  0.073177596
+49  0.29840386         3190       53.2       2.2  0.00015 1.7765  0.084435688
+50  0.00000000         3190       53.2       2.2 -0.00001 1.7765 -0.005629046
+51  0.01029979         3190       53.2       2.2 -0.00003 1.7765 -0.016887138
+52  0.03764013         3190       53.2       2.2 -0.00005 1.7765 -0.028145229
+53  0.06282750         3190       53.2       2.2 -0.00007 1.7765 -0.039403321
+54  0.18307966         3190       53.2       2.2  0.00014 1.7765  0.078806642
+55  0.20685625         3190       53.2       2.2  0.00016 1.7765  0.090064734
+56  0.10457815         3190       53.2       2.2 -0.00002 1.7765 -0.011258092
+57  0.09521899         3190       53.2       2.2 -0.00004 1.7765 -0.022516184
+58  0.07866226         3190       53.2       2.2 -0.00006 1.7765 -0.033774275
+59  0.19244564         3190       53.2       2.2 -0.00008 1.7765 -0.045032367
+60  0.31210594         3190       53.2       2.2 -0.00009 1.7765 -0.050661413
+61  0.17803675         3190       53.2       2.2 -0.00011 1.7765 -0.061919505
+62  0.40517708         3190       53.2       2.2 -0.00013 1.7765 -0.073177596
+63  0.46726449         3190       53.2       2.2 -0.00010 1.7765 -0.056290459
+64  0.00000000         3190       53.2       2.2  0.00000 1.7765  0.000000000
+65  0.00000000         3190       53.2       2.2  0.00000 1.7765  0.000000000
+66  0.00000000         3190       53.2       2.2  0.00000 1.7765  0.000000000
+67  0.00000000            0        0.0       0.0  0.00001 1.7765  0.005629046
+68  0.00000000            0        0.0       0.0  0.00003 1.7765  0.016887138
+69  0.00000000            0        0.0       0.0  0.00005 1.7765  0.028145229
+70  0.07124674            0        0.0       0.0  0.00007 1.7765  0.039403321
+71  0.41897500            0        0.0       0.0  0.00009 1.7765  0.050661413
+72  0.29911545            0        0.0       0.0  0.00011 1.7765  0.061919505
+73  0.00000000            0        0.0       0.0  0.00002 1.7765  0.011258092
+74  0.00000000            0        0.0       0.0  0.00004 1.7765  0.022516184
+75  0.00000000            0        0.0       0.0  0.00006 1.7765  0.033774275
+76  0.09935953            0        0.0       0.0  0.00008 1.7765  0.045032367
+77  0.35312568            0        0.0       0.0  0.00010 1.7765  0.056290459
+78  0.33758840            0        0.0       0.0  0.00012 1.7765  0.067548551
+79  0.04165459            0        0.0       0.0  0.00013 1.7765  0.073177596
+80  0.22956938            0        0.0       0.0  0.00015 1.7765  0.084435688
+81  0.00000000            0        0.0       0.0 -0.00001 1.7765 -0.005629046
+82  0.09566047            0        0.0       0.0 -0.00003 1.7765 -0.016887138
+83  0.27470017            0        0.0       0.0 -0.00005 1.7765 -0.028145229
+84  0.44635096            0        0.0       0.0 -0.00007 1.7765 -0.039403321
+85  0.05053221            0        0.0       0.0  0.00014 1.7765  0.078806642
+86  0.14892743            0        0.0       0.0  0.00016 1.7765  0.090064734
+87  0.00000000            0        0.0       0.0 -0.00002 1.7765 -0.011258092
+88  0.10083916            0        0.0       0.0 -0.00004 1.7765 -0.022516184
+89  0.30725392            0        0.0       0.0 -0.00006 1.7765 -0.033774275
+90  0.30133503            0        0.0       0.0 -0.00008 1.7765 -0.045032367
+91  0.00000000            0        0.0       0.0 -0.00009 1.7765 -0.050661413
+92  0.11859474            0        0.0       0.0 -0.00011 1.7765 -0.061919505
+93  0.19257741            0        0.0       0.0 -0.00013 1.7765 -0.073177596
+94  0.31465255            0        0.0       0.0 -0.00015 1.7765 -0.084435688
+95  0.48926510            0        0.0       0.0 -0.00017 1.7765 -0.095693780
+96  0.08086424            0        0.0       0.0 -0.00010 1.7765 -0.056290459
+97  0.19479691            0        0.0       0.0 -0.00012 1.7765 -0.067548551
+98  0.16372396            0        0.0       0.0 -0.00014 1.7765 -0.078806642
+99  0.34646684            0        0.0       0.0 -0.00016 1.7765 -0.090064734
+100 0.00000000            0        0.0       0.0  0.00000 1.7765  0.000000000
+101 0.00000000            0        0.0       0.0  0.00000 1.7765  0.000000000
+102 0.00000000            0        0.0       0.0  0.00000 1.7765  0.000000000
+          H_mM
+1     5.629046
+2    16.887138
+3    28.145229
+4    39.403321
+5    50.661413
+6    61.919505
+7    11.258092
+8    22.516184
+9    33.774275
+10   45.032367
+11   56.290459
+12   67.548551
+13   73.177596
+14   84.435688
+15   -5.629046
+16  -16.887138
+17  -28.145229
+18  -39.403321
+19   78.806642
+20   90.064734
+21  -11.258092
+22  -22.516184
+23  -33.774275
+24  -45.032367
+25  -50.661413
+26  -61.919505
+27  -73.177596
+28  -84.435688
+29  -95.693780
+30  -56.290459
+31  -67.548551
+32  -78.806642
+33  -90.064734
+34    0.000000
+35    0.000000
+36    0.000000
+37    5.629046
+38   16.887138
+39   28.145229
+40   50.661413
+41   61.919505
+42   11.258092
+43   22.516184
+44   33.774275
+45   45.032367
+46   56.290459
+47   67.548551
+48   73.177596
+49   84.435688
+50   -5.629046
+51  -16.887138
+52  -28.145229
+53  -39.403321
+54   78.806642
+55   90.064734
+56  -11.258092
+57  -22.516184
+58  -33.774275
+59  -45.032367
+60  -50.661413
+61  -61.919505
+62  -73.177596
+63  -56.290459
+64    0.000000
+65    0.000000
+66    0.000000
+67    5.629046
+68   16.887138
+69   28.145229
+70   39.403321
+71   50.661413
+72   61.919505
+73   11.258092
+74   22.516184
+75   33.774275
+76   45.032367
+77   56.290459
+78   67.548551
+79   73.177596
+80   84.435688
+81   -5.629046
+82  -16.887138
+83  -28.145229
+84  -39.403321
+85   78.806642
+86   90.064734
+87  -11.258092
+88  -22.516184
+89  -33.774275
+90  -45.032367
+91  -50.661413
+92  -61.919505
+93  -73.177596
+94  -84.435688
+95  -95.693780
+96  -56.290459
+97  -67.548551
+98  -78.806642
+99  -90.064734
+100   0.000000
+101   0.000000
+102   0.000000</code></pre>
+<pre class="r"><code>df_plot &lt;- df_20ul_mcf_bcf %&gt;% filter(Titration_type %in% c(&quot;NaOH&quot;, &quot;HCl&quot;)) %&gt;% select(H_mM, TOC_mgml, Soil, Time_hours)
+df_plot %&gt;% filter(H_mM == 0) %&gt;% dim()</code></pre>
+<pre><code>[1] 9 4</code></pre>
+<pre class="r"><code>df_plot %&gt;% filter(H_mM == 0) %&gt;% group_by(H_mM, Soil, Time_hours) %&gt;% summarize(TOC_mgml = mean(TOC_mgml)) %&gt;% ungroup()</code></pre>
+<pre><code># A tibble: 3 x 4
+   H_mM Soil           Time_hours TOC_mgml
+  &lt;dbl&gt; &lt;chr&gt;               &lt;dbl&gt;    &lt;dbl&gt;
+1     0 Crerar7_pH8.05        0      0    
+2     0 Crerar7_pH8.05       53.2    0    
+3     0 Crerar7_pH8.05       98.6    0.143</code></pre>
+<pre class="r"><code>df_sub &lt;- df_plot %&gt;% filter(H_mM == 0) %&gt;% group_by(H_mM, Soil, Time_hours) %&gt;% summarize(TOC_mgml = mean(TOC_mgml)) %&gt;% ungroup()
+df_main &lt;- df_plot %&gt;% filter(H_mM != 0)
+dim(df_plot)</code></pre>
+<pre><code>[1] 102   4</code></pre>
+<pre class="r"><code>dim(df_main)</code></pre>
+<pre><code>[1] 93  4</code></pre>
+<pre class="r"><code>df_plot2 &lt;- rbind(df_main, df_sub)
+dim(df_plot2)</code></pre>
+<pre><code>[1] 96  4</code></pre>
+<pre class="r"><code># export to plot with nitrate, nitrite
+# write.xlsx(df_plot2, &quot;220420-2_Ammonia_bcf.xlsx&quot;)
+
+ggplot(df_plot2, aes(x=Time_hours, y=TOC_mgml, color=H_mM, group=H_mM)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+
+  scale_colour_gradientn(colours = col_pH(100)) +
+  # scale_color_manual(values=grad_pH) +
+  ylab(&quot;Water Soluble Organic Carbon (C mg/ml) \n&quot;) +
+  xlab(&quot;\n Time (hr)&quot;) +
+  scale_y_continuous(breaks = seq(0,1.5,0.5), limits=c(0, 1.5))+
+  ggtitle(&quot;[After evaporation correction] Water-soluble organic carbon dynamics \n&quot;) +
+  # label
+  # geom_text(aes(label = round(NH4_mM,3)), size = 3, vjust = -1.5, face=&quot;bold&quot;, show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Soil) +
+  theme(strip.background = element_rect(colour=&quot;black&quot;, fill=&quot;white&quot;, size=0.1))+
+  theme(strip.text.x = element_text(size = 17))</code></pre>
+<p><img src="figure/220508_TOC_time_series.Rmd/unnamed-chunk-7-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot by treatment (titration type)
+df_plot3 &lt;- df_plot2
+df_plot3$Titration_type &lt;- ifelse(df_plot3$H_mM &gt; 40, &quot;Acidic perturbation&quot;,
+                                  ifelse(df_plot3$H_mM &lt; -40, &quot;Basic perturbation&quot;,
+                                         &quot;Neutral range&quot;))
+
+ggplot(df_plot3, aes(x=Time_hours, y=TOC_mgml, color=H_mM, group=H_mM)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+
+  scale_colour_gradientn(colours = col_pH(100)) +
+  # scale_color_manual(values=grad_pH) +
+  ylab(&quot;Water Soluble Organic Carbon (C mg/ml) \n&quot;) +
+  xlab(&quot;\n Time (hr)&quot;) +
+  scale_y_continuous(breaks = seq(0,1.5,0.5), limits=c(0, 1.5))+
+  ggtitle(&quot;[After evaporation correction] Water-soluble organic carbon dynamics \n&quot;) +
+  # label
+  # geom_text(aes(label = round(NH4_mM,3)), size = 3, vjust = -1.5, face=&quot;bold&quot;, show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Titration_type) +
+  theme(strip.background = element_rect(colour=&quot;black&quot;, fill=&quot;white&quot;, size=0.1))+
+  theme(strip.text.x = element_text(size = 17))</code></pre>
+<p><img src="figure/220508_TOC_time_series.Rmd/unnamed-chunk-7-2.png" width="1056" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>## plot the
+ggplot(df_plot2, aes(x=H_mM, y=TOC_mgml, color=H_mM, group=H_mM)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+
+  scale_colour_gradientn(colours = col_pH(100)) +
+  # scale_color_manual(values=grad_pH) +
+  ylab(&quot;Water Soluble Organic Carbon (C mg/ml) \n&quot;) +
+  xlab(&quot;\n H+ (mM)&quot;) +
+  scale_y_continuous(breaks = seq(0,1.5,0.5), limits=c(0, 1.5))+
+  ggtitle(&quot;[After evaporation correction] Water-soluble organic carbon at beginning and endpoint \n&quot;) +
+  # label
+  # geom_text(aes(label = round(NH4_mM,3)), size = 3, vjust = -1.5, face=&quot;bold&quot;, show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Time_hours) +
+  theme(strip.background = element_rect(colour=&quot;black&quot;, fill=&quot;white&quot;, size=0.1))+
+  theme(strip.text.x = element_text(size = 17))</code></pre>
+<p><img src="figure/220508_TOC_time_series.Rmd/unnamed-chunk-7-3.png" width="1056" style="display: block; margin: auto;" /></p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.0.3 (2020-10-10)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 10 x64 (build 22000)
+
+Matrix products: default
+
+locale:
+[1] LC_COLLATE=English_United States.1252 
+[2] LC_CTYPE=English_United States.1252   
+[3] LC_MONETARY=English_United States.1252
+[4] LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.1252    
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] colorRamps_2.3     rmarkdown_2.9      ggpubr_0.4.0       ggrepel_0.9.1     
+ [5] ape_5.5            openxlsx_4.2.3     devtools_2.4.0     usethis_2.0.1     
+ [9] gtools_3.8.2       reshape2_1.4.4     readxl_1.3.1       magrittr_2.0.1    
+[13] forcats_0.5.1      stringr_1.4.0      purrr_0.3.4        readr_1.4.0       
+[17] tidyr_1.1.3        tibble_3.0.4       tidyverse_1.3.1    vegan_2.5-7       
+[21] lattice_0.20-41    permute_0.9-5      RColorBrewer_1.1-2 ggplot2_3.3.5     
+[25] dplyr_1.0.5        workflowr_1.6.2   
+
+loaded via a namespace (and not attached):
+ [1] colorspace_2.0-0  ggsignif_0.6.2    ellipsis_0.3.2    rio_0.5.27       
+ [5] rprojroot_2.0.2   fs_1.5.0          rstudioapi_0.13   farver_2.1.0     
+ [9] remotes_2.4.0     fansi_0.4.2       lubridate_1.7.10  xml2_1.3.2       
+[13] splines_4.0.3     cachem_1.0.4      knitr_1.37        pkgload_1.2.1    
+[17] jsonlite_1.7.2    broom_0.7.9       cluster_2.1.0     dbplyr_2.1.1     
+[21] compiler_4.0.3    httr_1.4.2        backports_1.2.1   assertthat_0.2.1 
+[25] Matrix_1.2-18     fastmap_1.1.0     cli_3.0.1         later_1.2.0      
+[29] htmltools_0.5.1.1 prettyunits_1.1.1 tools_4.0.3       gtable_0.3.0     
+[33] glue_1.4.2        Rcpp_1.0.8.3      carData_3.0-4     cellranger_1.1.0 
+[37] jquerylib_0.1.4   vctrs_0.3.8       nlme_3.1-149      xfun_0.29        
+[41] ps_1.6.0          testthat_3.0.2    rvest_1.0.1       lifecycle_1.0.0  
+[45] rstatix_0.7.0     MASS_7.3-53       scales_1.1.1      hms_1.1.0        
+[49] promises_1.2.0.1  parallel_4.0.3    yaml_2.2.1        curl_4.3.2       
+[53] memoise_2.0.0     sass_0.4.0        stringi_1.5.3     highr_0.9        
+[57] desc_1.3.0        pkgbuild_1.2.0    zip_2.1.1         rlang_0.4.10     
+[61] pkgconfig_2.0.3   evaluate_0.14     labeling_0.4.2    tidyselect_1.1.1 
+[65] processx_3.5.1    plyr_1.8.6        R6_2.5.0          generics_0.1.0   
+[69] DBI_1.1.1         pillar_1.6.0      haven_2.4.1       whisker_0.4      
+[73] foreign_0.8-80    withr_2.4.2       mgcv_1.8-33       abind_1.4-5      
+[77] modelr_0.1.8      crayon_1.4.1      car_3.0-11        utf8_1.1.4       
+[81] grid_4.0.3        data.table_1.14.0 callr_3.7.0       git2r_0.28.0     
+[85] reprex_2.0.0      digest_0.6.27     httpuv_1.6.0      munsell_0.5.0    
+[89] bslib_0.2.5.1     sessioninfo_1.1.1</code></pre>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

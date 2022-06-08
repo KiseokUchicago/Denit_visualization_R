@@ -1,0 +1,1682 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="KiseokUchicago" />
+
+<meta name="date" content="2022-04-30" />
+
+<title>220428_Ammonia_211128_aerobic_vs_anaerobic</title>
+
+<script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/master/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Denit_visualization_R</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/KiseokUchicago/Denit_visualization_R">
+    <span class="fa fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">220428_Ammonia_211128_aerobic_vs_anaerobic</h1>
+<h4 class="author">KiseokUchicago</h4>
+<h4 class="date">2022-04-30</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2022-06-08
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>Denit_visualization_R/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.2). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20210924code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20210924)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20210924code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20210924)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomKiseokUchicagoDenitvisualizationRtree7905c9343b41b0f3a42aba137993e7c632c5b0e2targetblank7905c93a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/KiseokUchicago/Denit_visualization_R/tree/7905c9343b41b0f3a42aba137993e7c632c5b0e2" target="_blank">7905c93</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomKiseokUchicagoDenitvisualizationRtree7905c9343b41b0f3a42aba137993e7c632c5b0e2targetblank7905c93a" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://github.com/KiseokUchicago/Denit_visualization_R/tree/7905c9343b41b0f3a42aba137993e7c632c5b0e2" target="_blank">7905c93</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+
+Untracked files:
+    Untracked:  211020_df_full_innate.xlsx
+    Untracked:  220421_Griess_antibiotics_experiment_to_kyle_remove_blanks.xlsx
+    Untracked:  220421_Griess_antibiotics_experiment_to_kyle_remove_blanks_add_pH.xlsx
+    Untracked:  220421_Griess_antibiotics_experiment_to_kyle_w_autoclaved.xlsx
+    Untracked:  220422_pH_Antibiotics_Sterile_experiment.xlsx
+    Untracked:  220519_Griess_antibiotics_experiment_to_kyle_w_autoclaved.xlsx
+    Untracked:  220521_pH_Antibiotics_dose_effect_experiment.xlsx
+    Untracked:  data/120321_soil_buffering_capacity_Nichols-B.xlsx
+    Untracked:  data/210911_TOC_sample_plate1.xlsx
+    Untracked:  data/210922_Griess_sample_plate1-investigating.xlsx
+    Untracked:  data/210922_Griess_sample_plate1.xlsx
+    Untracked:  data/210927_TOC_sample_plate1_100ul.xlsx
+    Untracked:  data/210927_TOC_sample_plate1_10ul.xlsx
+    Untracked:  data/210928_Griess_sample_plate1.xlsx
+    Untracked:  data/211005_Griess_sample_plate1.xlsx
+    Untracked:  data/211007_Griess_blank_plate1.xlsx
+    Untracked:  data/211007_Griess_blank_plate2.xlsx
+    Untracked:  data/211008_Griess_blank_plate0.xlsx
+    Untracked:  data/211008_Griess_blank_plate1.xlsx
+    Untracked:  data/211017_Griess_plate0.xlsx
+    Untracked:  data/211017_Griess_plate1.xlsx
+    Untracked:  data/211017_Griess_plate2.xlsx
+    Untracked:  data/211017_Griess_plate3.xlsx
+    Untracked:  data/211017_Griess_plate4.xlsx
+    Untracked:  data/211017_Griess_plate5.xlsx
+    Untracked:  data/211017_Griess_plate6.xlsx
+    Untracked:  data/211017_Griess_plate7.xlsx
+    Untracked:  data/211017_Griess_plate8.xlsx
+    Untracked:  data/211019_Griess_plate1.xlsx
+    Untracked:  data/211020_Griess_plate0.xlsx
+    Untracked:  data/211020_Griess_plate1.xlsx
+    Untracked:  data/211020_df_full_innate.xlsx
+    Untracked:  data/211025_Griess_no3_fit_plate0.xlsx
+    Untracked:  data/211025_Griess_no3_fit_plate1.xlsx
+    Untracked:  data/211025_Griess_plate0.xlsx
+    Untracked:  data/211025_Griess_plate1.xlsx
+    Untracked:  data/211028_Griess_plate1.xlsx
+    Untracked:  data/211028_Griess_plate1_no3_fit.xlsx
+    Untracked:  data/211028_Griess_plate2.xlsx
+    Untracked:  data/211028_Griess_plate2_no3_fit.xlsx
+    Untracked:  data/211028_Griess_plate3.xlsx
+    Untracked:  data/211028_Griess_plate3_no3_fit.xlsx
+    Untracked:  data/211028_Griess_plate4.xlsx
+    Untracked:  data/211028_Griess_plate4_no3_fit.xlsx
+    Untracked:  data/211028_time_table.xlsx
+    Untracked:  data/211127_Griess_SUP1.xlsx
+    Untracked:  data/211127_Griess_SUP11.xlsx
+    Untracked:  data/211127_Griess_SUP3.xlsx
+    Untracked:  data/211127_Griess_SUP5.xlsx
+    Untracked:  data/211127_Griess_SUP7.xlsx
+    Untracked:  data/211127_Griess_SUP9.xlsx
+    Untracked:  data/211127_Griess_plate0.xlsx
+    Untracked:  data/211127_time_table.xlsx
+    Untracked:  data/211128_Ammonia_sample_plate10.xlsx
+    Untracked:  data/211128_Ammonia_sample_plate11.xlsx
+    Untracked:  data/211128_Griess_plate1.xlsx
+    Untracked:  data/211128_Griess_plate10.xlsx
+    Untracked:  data/211128_Griess_plate11.xlsx
+    Untracked:  data/211128_Griess_plate2.xlsx
+    Untracked:  data/211128_Griess_plate3.xlsx
+    Untracked:  data/211128_Griess_plate4.xlsx
+    Untracked:  data/211128_Griess_plate5.xlsx
+    Untracked:  data/211128_Griess_plate6.xlsx
+    Untracked:  data/211128_Griess_plate7.xlsx
+    Untracked:  data/211128_Griess_plate8.xlsx
+    Untracked:  data/211128_Griess_plate9.xlsx
+    Untracked:  data/211128_time_table.xlsx
+    Untracked:  data/211201_pH_colorimetric.xlsx
+    Untracked:  data/211203_slurry_vs_water_drying_table.xlsx
+    Untracked:  data/211203_slurry_vs_water_drying_time.xlsx
+    Untracked:  data/211208_pH_colorimetric_T3.xlsx
+    Untracked:  data/211208_pH_colorimetric_T4.xlsx
+    Untracked:  data/211208_pH_colorimetric_T5.xlsx
+    Untracked:  data/211208_pH_colorimetric_plate1.xlsx
+    Untracked:  data/211208_pH_colorimetric_plate2.xlsx
+    Untracked:  data/211208_pH_colorimetric_plate3.xlsx
+    Untracked:  data/211208_time_table.xlsx
+    Untracked:  data/211209_OD600_T1.xlsx
+    Untracked:  data/211209_OD600_T2.xlsx
+    Untracked:  data/211209_OD600_T3.xlsx
+    Untracked:  data/211209_time_table.xlsx
+    Untracked:  data/211210_pH_colorimetric_T0.xlsx
+    Untracked:  data/211210_pH_colorimetric_T1.xlsx
+    Untracked:  data/211210_pH_colorimetric_T2.xlsx
+    Untracked:  data/211210_pH_colorimetric_T3.xlsx
+    Untracked:  data/211210_time_table.xlsx
+    Untracked:  data/211218_pH_colorimetric_t0.xlsx
+    Untracked:  data/211218_pH_colorimetric_t1.xlsx
+    Untracked:  data/211218_pH_colorimetric_t2.xlsx
+    Untracked:  data/211218_pH_colorimetric_t3.xlsx
+    Untracked:  data/211218_pH_colorimetric_t4.xlsx
+    Untracked:  data/211218_time_table.xlsx
+    Untracked:  data/211220_Griess_plate1.xlsx
+    Untracked:  data/211220_Griess_plate10.xlsx
+    Untracked:  data/211220_Griess_plate11.xlsx
+    Untracked:  data/211220_Griess_plate2.xlsx
+    Untracked:  data/211220_Griess_plate3.xlsx
+    Untracked:  data/211220_Griess_plate4.xlsx
+    Untracked:  data/211220_Griess_plate5.xlsx
+    Untracked:  data/211220_Griess_plate6.xlsx
+    Untracked:  data/211220_Griess_plate7.xlsx
+    Untracked:  data/211220_Griess_plate8.xlsx
+    Untracked:  data/211220_Griess_plate9.xlsx
+    Untracked:  data/211220_time_table_AU.xlsx
+    Untracked:  data/211220_time_table_BN.xlsx
+    Untracked:  data/211224_TOC_sample_plate1.xlsx
+    Untracked:  data/220103_Griess_T0.xlsx
+    Untracked:  data/220103_Griess_T1.xlsx
+    Untracked:  data/220103_Griess_T11.xlsx
+    Untracked:  data/220103_Griess_T12.xlsx
+    Untracked:  data/220103_Griess_T2.xlsx
+    Untracked:  data/220103_Griess_T3.xlsx
+    Untracked:  data/220103_Griess_T4.xlsx
+    Untracked:  data/220103_Griess_T5.xlsx
+    Untracked:  data/220103_Griess_T6.xlsx
+    Untracked:  data/220103_Griess_T7.xlsx
+    Untracked:  data/220103_Griess_T8.xlsx
+    Untracked:  data/220103_Griess_T9.xlsx
+    Untracked:  data/220103_time_table.xlsx
+    Untracked:  data/220106_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107-2_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107-3_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107-4_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107-5_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107-6_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107-7_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107-8_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107-9_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220107_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220108_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220110_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220110_Ammonia_sample_plate2.xlsx
+    Untracked:  data/220111_Ammonia_sample_T0.xlsx
+    Untracked:  data/220111_Ammonia_sample_T1.xlsx
+    Untracked:  data/220111_Ammonia_sample_T2.xlsx
+    Untracked:  data/220111_Ammonia_sample_T3.xlsx
+    Untracked:  data/220111_TOC_sample_plate1.xlsx
+    Untracked:  data/220112_Ammonia_sample_T11.xlsx
+    Untracked:  data/220112_Ammonia_sample_T12.xlsx
+    Untracked:  data/220112_Ammonia_sample_T4.xlsx
+    Untracked:  data/220112_Ammonia_sample_T5.xlsx
+    Untracked:  data/220112_Ammonia_sample_T6.xlsx
+    Untracked:  data/220112_Ammonia_sample_T7.xlsx
+    Untracked:  data/220112_Ammonia_sample_T8.xlsx
+    Untracked:  data/220112_Ammonia_sample_T9.xlsx
+    Untracked:  data/220113_pH_colorimetric_T0.xlsx
+    Untracked:  data/220113_pH_colorimetric_T12.xlsx
+    Untracked:  data/220113_pH_colorimetric_T2.xlsx
+    Untracked:  data/220113_pH_colorimetric_T3.xlsx
+    Untracked:  data/220113_pH_colorimetric_T8.xlsx
+    Untracked:  data/220125_pH_colorimetric_pH1_mu_opt0.099.xlsx
+    Untracked:  data/220125_pH_colorimetric_pH1_using6.66.xlsx
+    Untracked:  data/220125_pH_colorimetric_pH2_mu_opt0.099.xlsx
+    Untracked:  data/220125_pH_colorimetric_pH2_using6.66.xlsx
+    Untracked:  data/220125_time_table.xlsx
+    Untracked:  data/220128_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220128_Ammonia_sample_plate2.xlsx
+    Untracked:  data/220128_Ammonia_sample_plate3.xlsx
+    Untracked:  data/220128_Ammonia_sample_plate4.xlsx
+    Untracked:  data/220128_Ammonia_sample_plate5.xlsx
+    Untracked:  data/220128_Ammonia_sample_plate6.xlsx
+    Untracked:  data/220128_Griess_plate1.xlsx
+    Untracked:  data/220128_Griess_plate2.xlsx
+    Untracked:  data/220128_Griess_plate3.xlsx
+    Untracked:  data/220128_Griess_plate4.xlsx
+    Untracked:  data/220128_Griess_plate5.xlsx
+    Untracked:  data/220128_Griess_plate6.xlsx
+    Untracked:  data/220128_time_table.xlsx
+    Untracked:  data/220131_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220131_Ammonia_sample_plate2.xlsx
+    Untracked:  data/220131_Ammonia_sample_plate3.xlsx
+    Untracked:  data/220131_Ammonia_sample_plate4.xlsx
+    Untracked:  data/220131_Ammonia_sample_plate5.xlsx
+    Untracked:  data/220131_Ammonia_sample_plate6.xlsx
+    Untracked:  data/220131_Griess_plate1.xlsx
+    Untracked:  data/220131_Griess_plate2.xlsx
+    Untracked:  data/220131_Griess_plate3.xlsx
+    Untracked:  data/220131_Griess_plate4.xlsx
+    Untracked:  data/220131_Griess_plate5.xlsx
+    Untracked:  data/220131_Griess_plate6.xlsx
+    Untracked:  data/220131_pH_colorimetric_pH1_mu_opt_T0.xlsx
+    Untracked:  data/220131_pH_colorimetric_pH2_mu_opt_T0.xlsx
+    Untracked:  data/220131_time_table.xlsx
+    Untracked:  data/220327_Griess_pastplate9.xlsx
+    Untracked:  data/220327_Griess_plate1.xlsx
+    Untracked:  data/220327_Griess_plate10.xlsx
+    Untracked:  data/220327_Griess_plate11.xlsx
+    Untracked:  data/220327_Griess_plate12.xlsx
+    Untracked:  data/220327_Griess_plate13.xlsx
+    Untracked:  data/220327_Griess_plate14.xlsx
+    Untracked:  data/220327_Griess_plate15.xlsx
+    Untracked:  data/220327_Griess_plate16.xlsx
+    Untracked:  data/220327_Griess_plate2.xlsx
+    Untracked:  data/220327_Griess_plate3.xlsx
+    Untracked:  data/220327_Griess_plate4.xlsx
+    Untracked:  data/220327_Griess_plate5.xlsx
+    Untracked:  data/220327_Griess_plate6.xlsx
+    Untracked:  data/220327_Griess_plate7.xlsx
+    Untracked:  data/220327_Griess_plate8.xlsx
+    Untracked:  data/220327_Griess_plate9.xlsx
+    Untracked:  data/220327_time_table.xlsx
+    Untracked:  data/220329_pH_colorimetric_pH1_mu_opt_T0.xlsx
+    Untracked:  data/220329_pH_colorimetric_pH2_mu_opt_T0.xlsx
+    Untracked:  data/220329_pH_colorimetric_pH3_mu_opt_T0.xlsx
+    Untracked:  data/220329_pH_colorimetric_pH4_mu_opt_T0.xlsx
+    Untracked:  data/220329_pH_colorimetric_pH6_mu_opt_T0.xlsx
+    Untracked:  data/220329_pH_colorimetric_pH7_mu_opt_T0.xlsx
+    Untracked:  data/220407_pH_colorimetric_pH3_half_mu_opt_T0.xlsx
+    Untracked:  data/220407_pH_colorimetric_pH_base_treatment_mu_opt_T0.xlsx
+    Untracked:  data/220407_pH_colorimetric_pH_standard_150ul_mu_opt_T0.xlsx
+    Untracked:  data/220407_pH_colorimetric_pH_standard_300ul_mu_opt_T0.xlsx
+    Untracked:  data/220407_pH_colorimetric_pH_standard_60ul_mu_opt_T0.xlsx
+    Untracked:  data/220408_pH_colorimetric_pH_limit_mu_opt_water.xlsx
+    Untracked:  data/220412_pH_colorimetric_pH_half_mu_opt_WW.xlsx
+    Untracked:  data/220414_Ammonia_sample_plate0.xlsx
+    Untracked:  data/220418_Ammonia_sample_plate0.xlsx
+    Untracked:  data/220419_Ammonia_sample_plate0.xlsx
+    Untracked:  data/220420-2_Ammonia_bcf.xlsx
+    Untracked:  data/220420_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220420_Ammonia_sample_plate10.xlsx
+    Untracked:  data/220420_Ammonia_sample_plate11.xlsx
+    Untracked:  data/220420_Ammonia_sample_plate12.xlsx
+    Untracked:  data/220420_Ammonia_sample_plate13.xlsx
+    Untracked:  data/220420_Ammonia_sample_plate14.xlsx
+    Untracked:  data/220420_Ammonia_sample_plate15.xlsx
+    Untracked:  data/220420_Ammonia_sample_plate16.xlsx
+    Untracked:  data/220420_Ammonia_sample_plate2.xlsx
+    Untracked:  data/220420_Ammonia_sample_plate3.xlsx
+    Untracked:  data/220420_Ammonia_sample_plate4.xlsx
+    Untracked:  data/220420_Ammonia_sample_plate5.xlsx
+    Untracked:  data/220420_Ammonia_sample_plate6.xlsx
+    Untracked:  data/220420_Ammonia_sample_plate7.xlsx
+    Untracked:  data/220420_Ammonia_sample_plate8.xlsx
+    Untracked:  data/220420_Ammonia_sample_plate9.xlsx
+    Untracked:  data/220421_Ammonia_df_a_bcf.xlsx
+    Untracked:  data/220421_Ammonia_df_pH_range.xlsx
+    Untracked:  data/220421_Ammonia_sample_plate1.xlsx
+    Untracked:  data/220421_Ammonia_sample_plate10.xlsx
+    Untracked:  data/220421_Ammonia_sample_plate11.xlsx
+    Untracked:  data/220421_Ammonia_sample_plate2.xlsx
+    Untracked:  data/220421_Ammonia_sample_plate3.xlsx
+    Untracked:  data/220421_Ammonia_sample_plate4.xlsx
+    Untracked:  data/220421_Ammonia_sample_plate5.xlsx
+    Untracked:  data/220421_Ammonia_sample_plate6.xlsx
+    Untracked:  data/220421_Ammonia_sample_plate7.xlsx
+    Untracked:  data/220421_Ammonia_sample_plate8.xlsx
+    Untracked:  data/220421_Ammonia_sample_plate9.xlsx
+    Untracked:  data/220421_Ammonia_sterile.xlsx
+    Untracked:  data/220421_Griess_antibiotics_experiment_to_kyle_remove_blanks.xlsx
+    Untracked:  data/220421_Griess_antibiotics_experiment_to_kyle_remove_blanks_add_pH.xlsx
+    Untracked:  data/220421_Griess_plate1.xlsx
+    Untracked:  data/220421_Griess_plate10.xlsx
+    Untracked:  data/220421_Griess_plate11.xlsx
+    Untracked:  data/220421_Griess_plate2.xlsx
+    Untracked:  data/220421_Griess_plate3.xlsx
+    Untracked:  data/220421_Griess_plate4.xlsx
+    Untracked:  data/220421_Griess_plate5.xlsx
+    Untracked:  data/220421_Griess_plate6.xlsx
+    Untracked:  data/220421_Griess_plate7.xlsx
+    Untracked:  data/220421_Griess_plate8.xlsx
+    Untracked:  data/220421_Griess_plate9.xlsx
+    Untracked:  data/220421_nitrate_reduced_autoclaved_samples.xlsx
+    Untracked:  data/220421_time_table.xlsx
+    Untracked:  data/220422_pH_Antibiotics_Sterile_experiment.xlsx
+    Untracked:  data/220422_pH_colorimetric_LBA_Sterile_T0_mu_opt_T0.xlsx
+    Untracked:  data/220422_pH_colorimetric_LBA_Sterile_T4_mu_opt_T0.xlsx
+    Untracked:  data/220422_pH_colorimetric_LBA_Sterile_T4_mu_opt_T4.xlsx
+    Untracked:  data/220422_pH_colorimetric_LBA_Sterile_T7_mu_opt_T0.xlsx
+    Untracked:  data/220422_pH_colorimetric_LBA_Sterile_T7_mu_opt_T7.xlsx
+    Untracked:  data/220422_pH_colorimetric_LBA_Sterile_T9_mu_opt_T0.xlsx
+    Untracked:  data/220422_pH_colorimetric_LBA_Sterile_T9_mu_opt_T9.xlsx
+    Untracked:  data/220508_TOC_sample_plate1.xlsx
+    Untracked:  data/220513_TOC_sample_plate1.xlsx
+    Untracked:  data/220513_TOC_sample_plate2.xlsx
+    Untracked:  data/220513_TOC_sample_plate3.xlsx
+    Untracked:  data/220517_time_table.xlsx
+    Untracked:  data/220519_Griess_antibiotics_dose_experiment_remove_blanks.xlsx
+    Untracked:  data/220519_Griess_crerar7_extreme.xlsx
+    Untracked:  data/220519_Griess_plate1.xlsx
+    Untracked:  data/220519_Griess_plate10.xlsx
+    Untracked:  data/220519_Griess_plate11.xlsx
+    Untracked:  data/220519_Griess_plate2.xlsx
+    Untracked:  data/220519_Griess_plate3.xlsx
+    Untracked:  data/220519_Griess_plate4.xlsx
+    Untracked:  data/220519_Griess_plate5.xlsx
+    Untracked:  data/220519_Griess_plate6.xlsx
+    Untracked:  data/220519_Griess_plate7.xlsx
+    Untracked:  data/220519_Griess_plate8.xlsx
+    Untracked:  data/220519_Griess_plate9.xlsx
+    Untracked:  data/220519_time_table.xlsx
+    Untracked:  data/220520_TOC_sample_plate1.xlsx
+    Untracked:  data/220520_TOC_sample_plate2.xlsx
+    Untracked:  data/220520_TOC_sample_plate3.xlsx
+    Untracked:  data/220521_pH_Antibiotics_dose_effect_experiment.xlsx
+    Untracked:  data/220521_pH_colorimetric_Barneveld2_Sterile_T0_mu_opt_T0.xlsx
+    Untracked:  data/220521_pH_colorimetric_Barneveld2_Sterile_T10_mu_opt_T0.xlsx
+    Untracked:  data/220521_pH_colorimetric_Barneveld2_Sterile_T7_mu_opt_T0.xlsx
+    Untracked:  data/220526_TOC_sample_plate1.xlsx
+    Untracked:  data/220527_TOC_sample_plate1.xlsx
+    Untracked:  data/220601_TOC_sample_plate1.xlsx
+    Untracked:  data/220602-2_TOC_sample_plate1.xlsx
+    Untracked:  data/220602-2_control_OD600.xlsx
+    Untracked:  data/220602-3_TOC_sample_plate1.xlsx
+    Untracked:  data/220602-3_control_OD600.xlsx
+    Untracked:  data/220602_TOC_sample_plate1.xlsx
+    Untracked:  data/220603_100ul_OD600.xlsx
+    Untracked:  data/220603_TOC_sample_plate1.xlsx
+    Untracked:  data/220603_TOC_sample_plate2.xlsx
+    Untracked:  data/220606_TOC_sample_plate1.xlsx
+    Untracked:  data/220606_TOC_sample_plate2.xlsx
+    Untracked:  data/ForKiseok_from_Dr_Cuhel.xlsx
+    Untracked:  data/ForKiseok_from_Dr_Cuhel_format_edited.xlsx
+    Untracked:  data/OD434_OD585_C_WB_T5_220329.xlsx
+    Untracked:  data/OD434_OD585_WW_C_T0_220329.xlsx
+    Untracked:  data/OD434_OD585_pH3_half_area_220407.xlsx
+    Untracked:  data/OD434_OD585_pH_base_treated_T0_220407.xlsx
+    Untracked:  data/OD434_OD585_pH_half_150ul_220412.xlsx
+    Untracked:  data/SPNa_86437_021122_edit.xlsx
+    Untracked:  data/SPNa_86437_021122_edit2.xlsx
+    Untracked:  data/TOC_TN_measurement_2_labs_211014.xlsx
+    Untracked:  data/dry_weight_curve(9.5.21).xlsx
+    Untracked:  data/pH_data(11.17.21)-Midway_etc.xlsx
+    Untracked:  data/pH_data(12.6.21)-Midway_incubation_endpoint.xlsx
+    Untracked:  data/pH_data(9.14.21).xlsx
+    Untracked:  data/pH_data(9.28.21).xlsx
+    Untracked:  data/pH_standard_150ul_220407.xlsx
+    Untracked:  data/pH_standard_300ul_220407.xlsx
+    Untracked:  data/pH_standard_60ul_220407.xlsx
+    Untracked:  data/~$220513_TOC_sample_plate1.xlsx
+    Untracked:  data/~$SPNa_86437_021122_edit.xlsx
+    Untracked:  past_figures/
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/220428_Ammonia_211128_aerobic_vs_anaerobic.Rmd</code>) and HTML (<code>docs/220428_Ammonia_211128_aerobic_vs_anaerobic.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/KiseokUchicago/Denit_visualization_R/blob/7905c9343b41b0f3a42aba137993e7c632c5b0e2/analysis/220428_Ammonia_211128_aerobic_vs_anaerobic.Rmd" target="_blank">7905c93</a>
+</td>
+<td>
+KiseokUchicago
+</td>
+<td>
+2022-06-08
+</td>
+<td>
+wflow_publish("analysis/*.Rmd")
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="aerobic-incubation-and-ammonium-accumulation-ammonia-assay---salicylate-hypochloride-assay" class="section level2">
+<h2>220428 Aerobic incubation and ammonium accumulation (Ammonia assay - Salicylate-Hypochloride assay)</h2>
+<p>Researcher: <strong>Kiseok Lee</strong><br />
+Experiment Date: 211128 experiment comparing aerobic vs anaerobic<br />
+Analysis Date: 4/30/21 Lab: <strong>Seppe Kuehn</strong></p>
+<pre class="r"><code># libraries
+library(dplyr)
+library(ggplot2)
+library(RColorBrewer)
+library(vegan)
+library(tidyverse)
+library(magrittr)
+library(readxl)
+library(reshape2)
+library(gtools)
+library(devtools)
+library(openxlsx)
+library(ape)
+library(stringr)
+library(tidyr)
+library(ggrepel)
+library(ggpubr)
+
+## theme for ggplot
+mytheme &lt;- theme_bw() + theme(text = element_text(face = &quot;bold&quot;,
+    colour = &quot;black&quot;)) + theme(plot.title = element_text(size = 19,
+    hjust = 0.5, face = &quot;bold&quot;, colour = &quot;black&quot;)) +
+    theme(axis.title.x = element_text(size = 17,
+        hjust = 0.5, face = &quot;bold&quot;, colour = &quot;black&quot;)) +
+    theme(axis.title.y = element_text(size = 17,
+        hjust = 0.5, face = &quot;bold&quot;, colour = &quot;black&quot;)) +
+    theme(axis.text.x = element_text(hjust = 0.5,
+        vjust = 0.3, size = 13, face = &quot;bold&quot;,
+        colour = &quot;black&quot;)) + theme(axis.text.y = element_text(size = 13,
+    face = &quot;bold&quot;, colour = &quot;black&quot;)) + theme(panel.grid.major = element_blank()) +
+    theme(panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        panel.border = element_blank(), plot.background = element_blank()) +
+    theme(axis.ticks = element_line(size = 1.1)) +
+    theme(legend.text = element_text(size = 10,
+        face = &quot;bold&quot;, colour = &quot;black&quot;))
+
+
+mytheme_2d &lt;- theme_bw() + theme(text = element_text(face = &quot;bold&quot;,
+    colour = &quot;black&quot;)) + theme(plot.title = element_text(size = 19,
+    hjust = 0.5, face = &quot;bold&quot;, colour = &quot;black&quot;)) +
+    theme(axis.title.x = element_text(size = 17,
+        hjust = 0.5, face = &quot;bold&quot;, colour = &quot;black&quot;)) +
+    theme(axis.title.y = element_text(size = 17,
+        hjust = 0.5, face = &quot;bold&quot;, colour = &quot;black&quot;)) +
+    theme(axis.text.x = element_text(hjust = 0.5,
+        vjust = 0.3, size = 13, face = &quot;bold&quot;,
+        colour = &quot;black&quot;)) + theme(axis.text.y = element_text(size = 13,
+    face = &quot;bold&quot;, colour = &quot;black&quot;)) + # theme(panel.grid.major = element_blank()) +  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) + face
+    face = &quot;bold&quot;, colour = &quot;black&quot;)) + # theme(panel.grid.major = element_blank()) +  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) + =
+    face = &quot;bold&quot;, colour = &quot;black&quot;)) + # theme(panel.grid.major = element_blank()) +  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) + &quot;bold&quot;,
+    face = &quot;bold&quot;, colour = &quot;black&quot;)) + # theme(panel.grid.major = element_blank()) +  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) + colour
+    face = &quot;bold&quot;, colour = &quot;black&quot;)) + # theme(panel.grid.major = element_blank()) +  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) + =
+    face = &quot;bold&quot;, colour = &quot;black&quot;)) + # theme(panel.grid.major = element_blank()) +  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) + &quot;black&quot;))
+    face = &quot;bold&quot;, colour = &quot;black&quot;)) + # theme(panel.grid.major = element_blank()) +  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) + +
+    face = &quot;bold&quot;, colour = &quot;black&quot;)) + # theme(panel.grid.major = element_blank()) +  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) + #
+    face = &quot;bold&quot;, colour = &quot;black&quot;)) + # theme(panel.grid.major = element_blank()) +  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) + theme(panel.grid.major
+    face = &quot;bold&quot;, colour = &quot;black&quot;)) + # theme(panel.grid.major = element_blank()) +  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) + =
+    face = &quot;bold&quot;, colour = &quot;black&quot;)) + # theme(panel.grid.major = element_blank()) +  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) + element_blank())
+    face = &quot;bold&quot;, colour = &quot;black&quot;)) + # theme(panel.grid.major = element_blank()) +  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) + +
+    face = &quot;bold&quot;, colour = &quot;black&quot;)) + # theme(panel.grid.major = element_blank()) +  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) + theme(panel.grid.minor
+    face = &quot;bold&quot;, colour = &quot;black&quot;)) + # theme(panel.grid.major = element_blank()) +  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) + =
+    face = &quot;bold&quot;, colour = &quot;black&quot;)) + # theme(panel.grid.major = element_blank()) +  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) + element_blank(),panel.background=element_blank(),plot.background=element_blank())
+    face = &quot;bold&quot;, colour = &quot;black&quot;)) + # theme(panel.grid.major = element_blank()) +  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) + +
+theme(axis.ticks = element_line(size = 1.1)) +
+    theme(legend.text = element_text(size = 10,
+        face = &quot;bold&quot;, colour = &quot;black&quot;))
+
+
+
+# color collection
+my_color_collection &lt;- c(&quot;#CBD588&quot;, &quot;#5F7FC7&quot;,
+    &quot;orange&quot;, &quot;#AD6F3B&quot;, &quot;#673770&quot;, &quot;#D14285&quot;,
+    &quot;#652926&quot;, &quot;#C84248&quot;, &quot;#8569D5&quot;, &quot;#5E738F&quot;,
+    &quot;#D1A33D&quot;, &quot;#8A7C64&quot;, &quot;#599861&quot;, &quot;#616163&quot;,
+    &quot;#FFCDB2&quot;, &quot;#6D9F71&quot;, &quot;#242F40&quot;, &quot;#CCA43B&quot;,
+    &quot;#F92A82&quot;, &quot;#ED7B84&quot;, &quot;#7EB77F&quot;, &quot;#DEC4A1&quot;,
+    &quot;#E5D1D0&quot;, &quot;#0E8482&quot;, &quot;#C9DAEA&quot;, &quot;#337357&quot;,
+    &quot;#95C623&quot;, &quot;#E55812&quot;, &quot;#04471C&quot;, &quot;#F2D7EE&quot;,
+    &quot;#D3BCC0&quot;, &quot;#A5668B&quot;, &quot;#69306D&quot;, &quot;#0E103D&quot;,
+    &quot;#1A535C&quot;, &quot;#4ECDC4&quot;, &quot;#F7FFF7&quot;, &quot;#FF6B6B&quot;,
+    &quot;#FFE66D&quot;, &quot;#6699CC&quot;, &quot;#FFF275&quot;, &quot;#FF8C42&quot;,
+    &quot;#FF3C38&quot;, &quot;#A23E48&quot;, &quot;#000000&quot;, &quot;#CF5C36&quot;,
+    &quot;#EEE5E9&quot;, &quot;#7C7C7C&quot;, &quot;#EFC88B&quot;, &quot;#2E5266&quot;,
+    &quot;#6E8898&quot;, &quot;#9FB1BC&quot;, &quot;#D3D0CB&quot;, &quot;#E2C044&quot;,
+    &quot;#5BC0EB&quot;, &quot;#FDE74C&quot;, &quot;#9BC53D&quot;, &quot;#E55934&quot;,
+    &quot;#FA7921&quot;, &quot;#CD9BCD&quot;, &quot;#508578&quot;, &quot;#DA5724&quot;)
+
+# for git push, use this instead of
+# using wflow_git_push() git push -u
+# origin master (in the Git app / in
+# the working directory)
+
+# for making pdf file
+library(rmarkdown)
+# render(&#39;analysis/~~.Rmd&#39;,
+# &#39;pdf_document&#39;)</code></pre>
+<pre><code>Error: &lt;text&gt;:50:18: unexpected &#39;,&#39;
+49:     face = &quot;bold&quot;, colour = &quot;black&quot;)) + # theme(panel.grid.major = element_blank()) +  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()
+50:     face = &quot;bold&quot;,
+                     ^</code></pre>
+</div>
+<div id="import-data-table-from-python-code" class="section level2">
+<h2>1. Import data table from python code</h2>
+<p>We are going to use the vcl3 treated standard curve that is fitted with pure Ammonia standards</p>
+<pre class="r"><code># import file
+df_plate10 &lt;- openxlsx::read.xlsx(&quot;data/211128_Ammonia_sample_plate10.xlsx&quot;)
+df_plate11 &lt;- openxlsx::read.xlsx(&quot;data/211128_Ammonia_sample_plate11.xlsx&quot;)
+
+head(df_plate10)</code></pre>
+<pre><code>  Well                         Sample Extraction_method Extraction_ul
+1  A01 Anaerobic_Midway-A_6.89_pH4_T9         0.5_1_1.5            70
+2  A02 Anaerobic_Midway-A_6.89_pH6_T9         0.5_1_1.5            70
+3  A03 Anaerobic_Midway-A_6.89_pH4_T9         0.5_1_1.5            70
+4  A04 Anaerobic_Midway-A_6.89_pH6_T9         0.5_1_1.5            70
+5  A05 Anaerobic_Midway-A_6.89_pH4_T9         0.5_1_1.5            70
+6  A06 Anaerobic_Midway-A_6.89_pH6_T9         0.5_1_1.5            70
+  Nitrite_input Nitrate_input  Category Sample_type          Soil pH Time_point
+1             0             2 Anaerobic        Soil Midway-A_6.89  4         T9
+2             0             2 Anaerobic        Soil Midway-A_6.89  6         T9
+3             0             2 Anaerobic        Soil Midway-A_6.89  4         T9
+4             0             2 Anaerobic        Soil Midway-A_6.89  6         T9
+5             0             2 Anaerobic        Soil Midway-A_6.89  4         T9
+6             0             2 Anaerobic        Soil Midway-A_6.89  6         T9
+  Plate Ammonia_OD650 Ammonia_mM
+1   P10       1.35515  0.6384116
+2   P10       1.54070  0.7277513
+3   P10       1.49900  0.7076324
+4   P10       1.41180  0.6656380
+5   P10       1.52670  0.7209941
+6   P10       1.42060  0.6698713</code></pre>
+<pre class="r"><code>colnames(df_plate10)</code></pre>
+<pre><code> [1] &quot;Well&quot;              &quot;Sample&quot;            &quot;Extraction_method&quot;
+ [4] &quot;Extraction_ul&quot;     &quot;Nitrite_input&quot;     &quot;Nitrate_input&quot;    
+ [7] &quot;Category&quot;          &quot;Sample_type&quot;       &quot;Soil&quot;             
+[10] &quot;pH&quot;                &quot;Time_point&quot;        &quot;Plate&quot;            
+[13] &quot;Ammonia_OD650&quot;     &quot;Ammonia_mM&quot;       </code></pre>
+<pre class="r"><code>dim(df_plate10)</code></pre>
+<pre><code>[1] 96 14</code></pre>
+<pre class="r"><code>head(df_plate11)</code></pre>
+<pre><code>  Well                        Sample Extraction_method Extraction_ul
+1  A07 Aerobic_Midway-A_6.89_pH4_T10         0.5_1_1.5            70
+2  A08 Aerobic_Midway-A_6.89_pH6_T10         0.5_1_1.5            70
+3  A09 Aerobic_Midway-A_6.89_pH4_T10         0.5_1_1.5            70
+4  A10 Aerobic_Midway-A_6.89_pH6_T10         0.5_1_1.5            70
+5  A11 Aerobic_Midway-A_6.89_pH4_T10         0.5_1_1.5            70
+6  A12 Aerobic_Midway-A_6.89_pH6_T10         0.5_1_1.5            70
+  Nitrite_input Nitrate_input Category Sample_type          Soil pH Time_point
+1             0             2  Aerobic        Soil Midway-A_6.89  4        T10
+2             0             2  Aerobic        Soil Midway-A_6.89  6        T10
+3             0             2  Aerobic        Soil Midway-A_6.89  4        T10
+4             0             2  Aerobic        Soil Midway-A_6.89  6        T10
+5             0             2  Aerobic        Soil Midway-A_6.89  4        T10
+6             0             2  Aerobic        Soil Midway-A_6.89  6        T10
+  Plate Ammonia_OD650 Ammonia_mM
+1   P11       0.10845 0.04988303
+2   P11       0.09395 0.04315359
+3   P11       0.08115 0.03721526
+4   P11       0.08195 0.03758635
+5   P11       0.08240 0.03779509
+6   P11       0.11060 0.05088106</code></pre>
+<pre class="r"><code>colnames(df_plate11)</code></pre>
+<pre><code> [1] &quot;Well&quot;              &quot;Sample&quot;            &quot;Extraction_method&quot;
+ [4] &quot;Extraction_ul&quot;     &quot;Nitrite_input&quot;     &quot;Nitrate_input&quot;    
+ [7] &quot;Category&quot;          &quot;Sample_type&quot;       &quot;Soil&quot;             
+[10] &quot;pH&quot;                &quot;Time_point&quot;        &quot;Plate&quot;            
+[13] &quot;Ammonia_OD650&quot;     &quot;Ammonia_mM&quot;       </code></pre>
+<pre class="r"><code>dim(df_plate11)</code></pre>
+<pre><code>[1] 48 14</code></pre>
+<pre class="r"><code># X1 to Well df_p0 %&lt;&gt;% rename(Well =
+# X1) df_p2 %&lt;&gt;% rename(Well = X1)
+# df_p3 %&lt;&gt;% rename(Well = X1) df_p4
+# %&lt;&gt;% rename(Well = X1) df_p5 %&lt;&gt;%
+# rename(Well = X1) df_p6 %&lt;&gt;%
+# rename(Well = X1) df_p7 %&lt;&gt;%
+# rename(Well = X1) df_p8 %&lt;&gt;%
+# rename(Well = X1) df_p9 %&lt;&gt;%
+# rename(Well = X1) df_p10 %&lt;&gt;%
+# rename(Well = X1) df_p11 %&lt;&gt;%
+# rename(Well = X1)
+
+# remove wells that were contaminated
+# during the experiment df_plate2 %&lt;&gt;%
+# filter(!(Well %in% c(&#39;D02&#39;, &#39;D03&#39;)))
+# # filter defect df_plate4 %&lt;&gt;%
+# filter(!(Well %in% c(&#39;H05&#39;))) #
+# filter defect df_plate5 %&lt;&gt;%
+# filter(!(Well %in% c(&#39;B03&#39;, &#39;B04&#39;,
+# &#39;C03&#39;))) # filter defect df_plate8
+# %&lt;&gt;% filter(!(Well %in% c(&#39;A01&#39;,
+# &#39;A09&#39;))) # filter defect df_plate9
+# %&lt;&gt;% filter(!(Well %in% c(&#39;D11&#39;))) #
+# NA detected below...  df_plate11 %&lt;&gt;%
+# filter(!(Well %in% c(&#39;A12&#39;))) #
+# filter defect
+
+# bind two dataframe
+df_a &lt;- rbind(df_plate10, df_plate11)
+colnames(df_a)</code></pre>
+<pre><code> [1] &quot;Well&quot;              &quot;Sample&quot;            &quot;Extraction_method&quot;
+ [4] &quot;Extraction_ul&quot;     &quot;Nitrite_input&quot;     &quot;Nitrate_input&quot;    
+ [7] &quot;Category&quot;          &quot;Sample_type&quot;       &quot;Soil&quot;             
+[10] &quot;pH&quot;                &quot;Time_point&quot;        &quot;Plate&quot;            
+[13] &quot;Ammonia_OD650&quot;     &quot;Ammonia_mM&quot;       </code></pre>
+<pre class="r"><code># remove NA
+dim(df_a)  # 1046</code></pre>
+<pre><code>[1] 144  14</code></pre>
+<pre class="r"><code>rowSums(is.na(df_a)) &gt; 0</code></pre>
+<pre><code>  [1] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+ [13] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+ [25] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+ [37] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+ [49] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+ [61] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+ [73] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+ [85] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+ [97] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+[109] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+[121] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+[133] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE</code></pre>
+<pre class="r"><code>df_a[rowSums(is.na(df_a)) &gt; 0, ]</code></pre>
+<pre><code> [1] Well              Sample            Extraction_method Extraction_ul    
+ [5] Nitrite_input     Nitrate_input     Category          Sample_type      
+ [9] Soil              pH                Time_point        Plate            
+[13] Ammonia_OD650     Ammonia_mM       
+&lt;0 rows&gt; (or 0-length row.names)</code></pre>
+<pre class="r"><code>df_a &lt;- na.omit(df_a)  # what is being omitted?
+dim(df_a)  # 1046</code></pre>
+<pre><code>[1] 144  14</code></pre>
+<pre class="r"><code># multiply dilution factor which is 5/2
+df_a %&lt;&gt;%
+    mutate(NH4_mM = Ammonia_mM * (5/2))</code></pre>
+<pre><code>Error in df_a %&lt;&gt;% mutate(NH4_mM = Ammonia_mM * (5/2)): could not find function &quot;%&lt;&gt;%&quot;</code></pre>
+<pre class="r"><code>head(df_a)</code></pre>
+<pre><code>  Well                         Sample Extraction_method Extraction_ul
+1  A01 Anaerobic_Midway-A_6.89_pH4_T9         0.5_1_1.5            70
+2  A02 Anaerobic_Midway-A_6.89_pH6_T9         0.5_1_1.5            70
+3  A03 Anaerobic_Midway-A_6.89_pH4_T9         0.5_1_1.5            70
+4  A04 Anaerobic_Midway-A_6.89_pH6_T9         0.5_1_1.5            70
+5  A05 Anaerobic_Midway-A_6.89_pH4_T9         0.5_1_1.5            70
+6  A06 Anaerobic_Midway-A_6.89_pH6_T9         0.5_1_1.5            70
+  Nitrite_input Nitrate_input  Category Sample_type          Soil pH Time_point
+1             0             2 Anaerobic        Soil Midway-A_6.89  4         T9
+2             0             2 Anaerobic        Soil Midway-A_6.89  6         T9
+3             0             2 Anaerobic        Soil Midway-A_6.89  4         T9
+4             0             2 Anaerobic        Soil Midway-A_6.89  6         T9
+5             0             2 Anaerobic        Soil Midway-A_6.89  4         T9
+6             0             2 Anaerobic        Soil Midway-A_6.89  6         T9
+  Plate Ammonia_OD650 Ammonia_mM
+1   P10       1.35515  0.6384116
+2   P10       1.54070  0.7277513
+3   P10       1.49900  0.7076324
+4   P10       1.41180  0.6656380
+5   P10       1.52670  0.7209941
+6   P10       1.42060  0.6698713</code></pre>
+<pre class="r"><code># extraction correction factor (only
+# about 80% extraction) let&#39;s not
+# multiply this at this moment.  df_a
+# %&lt;&gt;% mutate(Ammonia_ppm = Ammonia_ppm
+# * (5/4))
+
+colnames(df_a)</code></pre>
+<pre><code> [1] &quot;Well&quot;              &quot;Sample&quot;            &quot;Extraction_method&quot;
+ [4] &quot;Extraction_ul&quot;     &quot;Nitrite_input&quot;     &quot;Nitrate_input&quot;    
+ [7] &quot;Category&quot;          &quot;Sample_type&quot;       &quot;Soil&quot;             
+[10] &quot;pH&quot;                &quot;Time_point&quot;        &quot;Plate&quot;            
+[13] &quot;Ammonia_OD650&quot;     &quot;Ammonia_mM&quot;       </code></pre>
+<pre class="r"><code># Get the metadata for time point and
+# left join
+Time_table &lt;- openxlsx::read.xlsx(&quot;data/211128_time_table.xlsx&quot;)
+# Time_table_BN &lt;-
+# openxlsx::read.xlsx(&#39;data/220111_time_table_BN.xlsx&#39;)
+# Time_table &lt;- rbind(Time_table_AU,
+# Time_table_BN)
+Time_table %&lt;&gt;%
+    select(-Date)</code></pre>
+<pre><code>Error in Time_table %&lt;&gt;% select(-Date): could not find function &quot;%&lt;&gt;%&quot;</code></pre>
+<pre class="r"><code>Time_table$Time_hours &lt;- round(Time_table$Time_hours,
+    1)
+Time_table$Time_days &lt;- round(Time_table$Time_days,
+    1)
+df_time &lt;- Time_table
+
+dim(df_a)</code></pre>
+<pre><code>[1] 144  14</code></pre>
+<pre class="r"><code>df_a &lt;- df_a %&gt;%
+    left_join(Time_table, by = (&quot;Time_point&quot; = &quot;Time_point&quot;))</code></pre>
+<pre><code>Error in df_a %&gt;% left_join(Time_table, by = (&quot;Time_point&quot; = &quot;Time_point&quot;)): could not find function &quot;%&gt;%&quot;</code></pre>
+<pre class="r"><code>dim(df_a)</code></pre>
+<pre><code>[1] 144  14</code></pre>
+<pre class="r"><code>colnames(df_a)</code></pre>
+<pre><code> [1] &quot;Well&quot;              &quot;Sample&quot;            &quot;Extraction_method&quot;
+ [4] &quot;Extraction_ul&quot;     &quot;Nitrite_input&quot;     &quot;Nitrate_input&quot;    
+ [7] &quot;Category&quot;          &quot;Sample_type&quot;       &quot;Soil&quot;             
+[10] &quot;pH&quot;                &quot;Time_point&quot;        &quot;Plate&quot;            
+[13] &quot;Ammonia_OD650&quot;     &quot;Ammonia_mM&quot;       </code></pre>
+<pre class="r"><code># time_point order
+df_a$Time_point &lt;- factor(df_a$Time_point,
+    levels = c(&quot;T9&quot;, &quot;T10&quot;))
+# df_a$Soil &lt;- factor(df_a$Soil, levels
+# =
+# c(&#39;LaBaghWoods_pH6.66&#39;,&#39;LaBaghWoods_autoclaved_pH6.66&#39;))</code></pre>
+</div>
+<div id="get-average-and-standard-deviation-moisture-correction-blank-correction" class="section level2">
+<h2>2. Get average and standard deviation &amp; Moisture correction &amp; Blank correction</h2>
+<pre class="r"><code># plot to see
+ggplot(df_a, aes(x = Time_point, y = NH4_mM,
+    color = Sample_type, group = Sample_type)) +
+    geom_point(size = 2.5, shape = 21) +
+    # geom_line(size=1)+
+scale_fill_brewer(palette = &quot;Set2&quot;) + ylab(&quot;NH4+ (mM) \n&quot;) +
+    xlab(&quot;\n Time point&quot;) + # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+ xlab(&quot;\n
+    xlab(&quot;\n Time point&quot;) + # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+ Time
+    xlab(&quot;\n Time point&quot;) + # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+ point&quot;)
+    xlab(&quot;\n Time point&quot;) + # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+ +
+    xlab(&quot;\n Time point&quot;) + # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+ #
+    xlab(&quot;\n Time point&quot;) + # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+ scale_y_continuous(breaks
+    xlab(&quot;\n Time point&quot;) + # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+ =
+    xlab(&quot;\n Time point&quot;) + # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+ seq(0,0.3,0.05),
+    xlab(&quot;\n Time point&quot;) + # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+ limits=c(0,
+    xlab(&quot;\n Time point&quot;) + # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+ 0.3))+
+ggtitle(&quot;Without averaging \n&quot;) + mytheme_2d +
+    theme(axis.text.x = element_text(hjust = 0.8,
+        vjust = 0.8, size = 13, face = &quot;bold&quot;,
+        angle = 40))</code></pre>
+<pre><code>Error in ggplot(df_a, aes(x = Time_point, y = NH4_mM, color = Sample_type, : could not find function &quot;ggplot&quot;</code></pre>
+<pre class="r"><code># plot all of blank together
+df_a_blank &lt;- df_a %&gt;%
+    filter(Sample_type %in% c(&quot;No_Nitrate&quot;,
+        &quot;Nitrate_Blank&quot;, &quot;Ammonium_Blank&quot;,
+        &quot;Nitrite_Blank&quot;))</code></pre>
+<pre><code>Error in df_a %&gt;% filter(Sample_type %in% c(&quot;No_Nitrate&quot;, &quot;Nitrate_Blank&quot;, : could not find function &quot;%&gt;%&quot;</code></pre>
+<pre class="r"><code>df_a_blank$Time_point &lt;- str_replace(df_a_blank$Time_point,
+    &quot;.*_&quot;, &quot;&quot;)</code></pre>
+<pre><code>Error in str_replace(df_a_blank$Time_point, &quot;.*_&quot;, &quot;&quot;): could not find function &quot;str_replace&quot;</code></pre>
+<pre class="r"><code>ggplot(df_a_blank, aes(x = Time_hours, y = NH4_mM,
+    color = Sample_type, group = Sample_type)) +
+    geom_point(size = 3, shape = 16, alpha = 0.6) +
+    # geom_line(size=1)+
+scale_fill_brewer(palette = &quot;Set2&quot;) + ylab(&quot;NH4+ (mM) \n&quot;) +
+    xlab(&quot;\n Time_point&quot;) + # scale_y_continuous(breaks = seq(0,0.5,0.05), limits=c(0, 0.5))+ xlab(&quot;\n
+    xlab(&quot;\n Time_point&quot;) + # scale_y_continuous(breaks = seq(0,0.5,0.05), limits=c(0, 0.5))+ Time_point&quot;)
+    xlab(&quot;\n Time_point&quot;) + # scale_y_continuous(breaks = seq(0,0.5,0.05), limits=c(0, 0.5))+ +
+    xlab(&quot;\n Time_point&quot;) + # scale_y_continuous(breaks = seq(0,0.5,0.05), limits=c(0, 0.5))+ #
+    xlab(&quot;\n Time_point&quot;) + # scale_y_continuous(breaks = seq(0,0.5,0.05), limits=c(0, 0.5))+ scale_y_continuous(breaks
+    xlab(&quot;\n Time_point&quot;) + # scale_y_continuous(breaks = seq(0,0.5,0.05), limits=c(0, 0.5))+ =
+    xlab(&quot;\n Time_point&quot;) + # scale_y_continuous(breaks = seq(0,0.5,0.05), limits=c(0, 0.5))+ seq(0,0.5,0.05),
+    xlab(&quot;\n Time_point&quot;) + # scale_y_continuous(breaks = seq(0,0.5,0.05), limits=c(0, 0.5))+ limits=c(0,
+    xlab(&quot;\n Time_point&quot;) + # scale_y_continuous(breaks = seq(0,0.5,0.05), limits=c(0, 0.5))+ 0.5))+
+ggtitle(&quot;Samples without moisture/blank correction \n&quot;) +
+    mytheme_2d + theme(axis.text.x = element_text(hjust = 0.8,
+    vjust = 0.8, size = 13, face = &quot;bold&quot;,
+    angle = 40)) + facet_grid(. ~ Soil) +
+    theme(strip.background = element_rect(colour = &quot;black&quot;,
+        fill = &quot;white&quot;, size = 0.1)) + theme(strip.text.x = element_text(size = 17))</code></pre>
+<pre><code>Error in ggplot(df_a_blank, aes(x = Time_hours, y = NH4_mM, color = Sample_type, : could not find function &quot;ggplot&quot;</code></pre>
+<pre class="r"><code># let&#39;s plot the no nitrate sample&#39;s
+# nitrate, nitrite levels
+df_no_nitrite &lt;- df_a %&gt;%
+    filter(Sample_type == &quot;No_Nitrate&quot;)</code></pre>
+<pre><code>Error in df_a %&gt;% filter(Sample_type == &quot;No_Nitrate&quot;): could not find function &quot;%&gt;%&quot;</code></pre>
+<pre class="r"><code>ggplot(df_no_nitrite, aes(x = Time_point,
+    y = NH4_mM, color = Sample_type, group = Sample_type)) +
+    geom_point(size = 2.5, shape = 21) +
+    # geom_line(size=1)+
+scale_fill_brewer(palette = &quot;Set2&quot;) + ylab(&quot;NH4+ (mM) \n&quot;) +
+    xlab(&quot;\n Time_point&quot;) + # scale_y_continuous(breaks = seq(0,0.5,0.05), limits=c(0, 0.5))+ xlab(&quot;\n
+    xlab(&quot;\n Time_point&quot;) + # scale_y_continuous(breaks = seq(0,0.5,0.05), limits=c(0, 0.5))+ Time_point&quot;)
+    xlab(&quot;\n Time_point&quot;) + # scale_y_continuous(breaks = seq(0,0.5,0.05), limits=c(0, 0.5))+ +
+    xlab(&quot;\n Time_point&quot;) + # scale_y_continuous(breaks = seq(0,0.5,0.05), limits=c(0, 0.5))+ #
+    xlab(&quot;\n Time_point&quot;) + # scale_y_continuous(breaks = seq(0,0.5,0.05), limits=c(0, 0.5))+ scale_y_continuous(breaks
+    xlab(&quot;\n Time_point&quot;) + # scale_y_continuous(breaks = seq(0,0.5,0.05), limits=c(0, 0.5))+ =
+    xlab(&quot;\n Time_point&quot;) + # scale_y_continuous(breaks = seq(0,0.5,0.05), limits=c(0, 0.5))+ seq(0,0.5,0.05),
+    xlab(&quot;\n Time_point&quot;) + # scale_y_continuous(breaks = seq(0,0.5,0.05), limits=c(0, 0.5))+ limits=c(0,
+    xlab(&quot;\n Time_point&quot;) + # scale_y_continuous(breaks = seq(0,0.5,0.05), limits=c(0, 0.5))+ 0.5))+
+ggtitle(&quot;Samples without nitrate addition \n&quot;) +
+    mytheme_2d + theme(axis.text.x = element_text(hjust = 0.8,
+    vjust = 0.8, size = 13, family = &quot;serif&quot;,
+    angle = 40))</code></pre>
+<pre><code>Error in ggplot(df_no_nitrite, aes(x = Time_point, y = NH4_mM, color = Sample_type, : could not find function &quot;ggplot&quot;</code></pre>
+<pre class="r"><code># let&#39;s plot the blank sample&#39;s
+# nitrate, nitrite levels
+df_A_blank &lt;- df_a %&gt;%
+    filter(Sample_type == &quot;Nitrate_Blank&quot;)</code></pre>
+<pre><code>Error in df_a %&gt;% filter(Sample_type == &quot;Nitrate_Blank&quot;): could not find function &quot;%&gt;%&quot;</code></pre>
+<pre class="r"><code>ggplot(df_A_blank, aes(x = Time_point, y = NH4_mM,
+    color = Sample_type, group = Sample_type)) +
+    geom_point(size = 2.5, shape = 21) +
+    # geom_line(size=1)+
+scale_fill_brewer(palette = &quot;Set2&quot;) + ylab(&quot;NH4+ (mM) \n&quot;) +
+    xlab(&quot;\n Time_point&quot;) + scale_y_continuous(breaks = seq(0,
+    2.5, 0.1), limits = c(0, 2.5)) + ggtitle(&quot;Nitrate blanks \n&quot;) +
+    mytheme_2d + theme(axis.text.x = element_text(hjust = 0.8,
+    vjust = 0.8, size = 13, family = &quot;serif&quot;,
+    angle = 40))</code></pre>
+<pre><code>Error in ggplot(df_A_blank, aes(x = Time_point, y = NH4_mM, color = Sample_type, : could not find function &quot;ggplot&quot;</code></pre>
+<pre class="r"><code># let&#39;s plot the Ammonium blank
+# sample&#39;s nitrate, nitrite levels
+df_NH4_blank &lt;- df_a %&gt;%
+    filter(Sample_type == &quot;Ammonium_Blank&quot;)</code></pre>
+<pre><code>Error in df_a %&gt;% filter(Sample_type == &quot;Ammonium_Blank&quot;): could not find function &quot;%&gt;%&quot;</code></pre>
+<pre class="r"><code>ggplot(df_NH4_blank, aes(x = Time_point,
+    y = NH4_mM, color = Sample_type, group = Sample_type)) +
+    geom_point(size = 2.5, shape = 21) +
+    # geom_line(size=1)+
+scale_fill_brewer(palette = &quot;Set2&quot;) + ylab(&quot;NH4+ (mM) \n&quot;) +
+    xlab(&quot;\n Time_point&quot;) + scale_y_continuous(breaks = seq(0,
+    2.5, 0.1), limits = c(0, 2.5)) + ggtitle(&quot;Ammonium blanks \n&quot;) +
+    mytheme_2d + theme(axis.text.x = element_text(hjust = 0.8,
+    vjust = 0.8, size = 13, family = &quot;serif&quot;,
+    angle = 40))</code></pre>
+<pre><code>Error in ggplot(df_NH4_blank, aes(x = Time_point, y = NH4_mM, color = Sample_type, : could not find function &quot;ggplot&quot;</code></pre>
+<pre class="r"><code># 1. Apply moisture correction factor
+# (correcting for moisture in soil)
+Added_Volume &lt;- 1.4  # ml
+Soil_mg &lt;- 0.7
+
+# soil_spike_ratio = 0.5 # soil
+# weight(0.7g) / spike in volume
+# (1.4ml)
+moisture_percent_1 = 19.9  # MIDWAY-A 
+moisture_percent_2 = 53.9  # Washington-A 
+moisture_percent_3 = 16.52  # Nichols-A 
+
+mcf_1 = (soil_spike_ratio * (moisture_percent_1/100) +
+    1)</code></pre>
+<pre><code>Error in eval(expr, envir, enclos): object &#39;soil_spike_ratio&#39; not found</code></pre>
+<pre class="r"><code>mcf_1</code></pre>
+<pre><code>Error in eval(expr, envir, enclos): object &#39;mcf_1&#39; not found</code></pre>
+<pre class="r"><code>mcf_2 = (soil_spike_ratio * (moisture_percent_2/100) +
+    1)</code></pre>
+<pre><code>Error in eval(expr, envir, enclos): object &#39;soil_spike_ratio&#39; not found</code></pre>
+<pre class="r"><code>mcf_2</code></pre>
+<pre><code>Error in eval(expr, envir, enclos): object &#39;mcf_2&#39; not found</code></pre>
+<pre class="r"><code>mcf_3 = (soil_spike_ratio * (moisture_percent_3/100) +
+    1)</code></pre>
+<pre><code>Error in eval(expr, envir, enclos): object &#39;soil_spike_ratio&#39; not found</code></pre>
+<pre class="r"><code>mcf_3</code></pre>
+<pre><code>Error in eval(expr, envir, enclos): object &#39;mcf_3&#39; not found</code></pre>
+<pre class="r"><code># apply moisture factor to each soil
+dim(df_a)</code></pre>
+<pre><code>[1] 144  14</code></pre>
+<pre class="r"><code>df_a %&gt;%
+    select(Soil) %&gt;%
+    unique()</code></pre>
+<pre><code>Error in df_a %&gt;% select(Soil) %&gt;% unique(): could not find function &quot;%&gt;%&quot;</code></pre>
+<pre class="r"><code># this is a special case with no
+# replicates
+df_a_mcf_1 &lt;- df_a %&gt;%
+    filter(Soil == &quot;Midway-A_6.89&quot;) %&gt;%
+    filter(Sample_type == &quot;Soil&quot;) %&gt;%
+    mutate(NH4_mM = NH4_mM * mcf_1)</code></pre>
+<pre><code>Error in df_a %&gt;% filter(Soil == &quot;Midway-A_6.89&quot;) %&gt;% filter(Sample_type == : could not find function &quot;%&gt;%&quot;</code></pre>
+<pre class="r"><code>dim(df_a_mcf_1)  #423</code></pre>
+<pre><code>Error in eval(expr, envir, enclos): object &#39;df_a_mcf_1&#39; not found</code></pre>
+<pre class="r"><code>df_a_mcf_2 &lt;- df_a %&gt;%
+    filter(Soil == &quot;Washington-A_7.88&quot;) %&gt;%
+    filter(Sample_type == &quot;Soil&quot;) %&gt;%
+    mutate(NH4_mM = NH4_mM * mcf_2)</code></pre>
+<pre><code>Error in df_a %&gt;% filter(Soil == &quot;Washington-A_7.88&quot;) %&gt;% filter(Sample_type == : could not find function &quot;%&gt;%&quot;</code></pre>
+<pre class="r"><code>dim(df_a_mcf_2)  #426</code></pre>
+<pre><code>Error in eval(expr, envir, enclos): object &#39;df_a_mcf_2&#39; not found</code></pre>
+<pre class="r"><code>df_a_mcf_3 &lt;- df_a %&gt;%
+    filter(Soil == &quot;Nichols-B_7.29&quot;) %&gt;%
+    filter(Sample_type == &quot;Soil&quot;) %&gt;%
+    mutate(NH4_mM = NH4_mM * mcf_1)</code></pre>
+<pre><code>Error in df_a %&gt;% filter(Soil == &quot;Nichols-B_7.29&quot;) %&gt;% filter(Sample_type == : could not find function &quot;%&gt;%&quot;</code></pre>
+<pre class="r"><code>dim(df_a_mcf_3)  #426</code></pre>
+<pre><code>Error in eval(expr, envir, enclos): object &#39;df_a_mcf_3&#39; not found</code></pre>
+<pre class="r"><code>df_a_others_mcf &lt;- df_a %&gt;%
+    filter(Sample_type %in% c(&quot;Nitrite_Blank&quot;,
+        &quot;Nitrate_Blank&quot;, &quot;Ammonium_Blank&quot;))  # Use Nitrate_Blank instead in the future</code></pre>
+<pre><code>Error in df_a %&gt;% filter(Sample_type %in% c(&quot;Nitrite_Blank&quot;, &quot;Nitrate_Blank&quot;, : could not find function &quot;%&gt;%&quot;</code></pre>
+<pre class="r"><code>dim(df_a_others_mcf)  #197</code></pre>
+<pre><code>Error in eval(expr, envir, enclos): object &#39;df_a_others_mcf&#39; not found</code></pre>
+<pre class="r"><code>df_a_mcf &lt;- rbind(df_a_mcf_1, df_a_mcf_2,
+    df_a_mcf_3, df_a_others_mcf)</code></pre>
+<pre><code>Error in rbind(df_a_mcf_1, df_a_mcf_2, df_a_mcf_3, df_a_others_mcf): object &#39;df_a_mcf_1&#39; not found</code></pre>
+<pre class="r"><code>dim(df_a_mcf)  # 1046</code></pre>
+<pre><code>Error in eval(expr, envir, enclos): object &#39;df_a_mcf&#39; not found</code></pre>
+<pre class="r"><code># plot to see
+ggplot(df_a_mcf, aes(x = Time_hours, y = NH4_mM,
+    color = Sample_type, group = Sample_type)) +
+    geom_point(size = 2.5, shape = 21) +
+    # geom_line(size=1)+
+    # geom_errorbar(aes(ymin=NO3_mM -
+    # Std_NO3_mM, ymax=NO3_mM +
+    # Std_NO3_mM), width=.05)+
+scale_fill_brewer(palette = &quot;Set2&quot;) + ylab(&quot;NH4+ (mM) \n&quot;) +
+    xlab(&quot;\n Time (hours)&quot;) + # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+ xlab(&quot;\n
+    xlab(&quot;\n Time (hours)&quot;) + # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+ Time
+    xlab(&quot;\n Time (hours)&quot;) + # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+ (hours)&quot;)
+    xlab(&quot;\n Time (hours)&quot;) + # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+ +
+    xlab(&quot;\n Time (hours)&quot;) + # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+ #
+    xlab(&quot;\n Time (hours)&quot;) + # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+ scale_y_continuous(breaks
+    xlab(&quot;\n Time (hours)&quot;) + # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+ =
+    xlab(&quot;\n Time (hours)&quot;) + # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+ seq(0,0.3,0.05),
+    xlab(&quot;\n Time (hours)&quot;) + # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+ limits=c(0,
+    xlab(&quot;\n Time (hours)&quot;) + # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+ 0.3))+
+ggtitle(&quot;No averaging with biological replicates \n&quot;) +
+    mytheme_2d</code></pre>
+<pre><code>Error in ggplot(df_a_mcf, aes(x = Time_hours, y = NH4_mM, color = Sample_type, : could not find function &quot;ggplot&quot;</code></pre>
+</div>
+<div id="sanity-check-moisture-correction-blank-correction-factor" class="section level2">
+<h2>3. Sanity check: moisture correction &amp; blank correction factor</h2>
+<p>Blank correction<br />
+Use the Ammonia concentration of the blank and use the ratio.<br />
+For example, multiply to Ammonia concentration x (2mM / changed [NO3])<br />
+</p>
+<pre class="r"><code># without any correction
+ggplot(df_a, aes(x = Time_hours, y = NH4_mM,
+    color = Sample_type, group = Sample_type)) +
+    geom_point(size = 2.5, shape = 21) +
+    # geom_line(size=1)+
+    # geom_errorbar(aes(ymin=NH4_mM -
+    # Std_NH4_mM, ymax=NH4_mM +
+    # Std_NH4_mM), width=.05)+
+    # scale_color_brewer(palette=&#39;Set2&#39;)
+    # + scale_color_manual(values =
+    # c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+
+ylab(&quot;Measured NH4+ (mM) \n&quot;) + xlab(&quot;\n Time (hr)&quot;) +
+    # scale_y_continuous(breaks =
+    # seq(0,5.1,1), limits=c(0, 5.1))+
+    # scale_x_continuous(breaks =
+    # seq(0,5.1,1), limits=c(0, 5.1))+
+ggtitle(&quot;(Before moisture correction) All samples \n&quot;) +
+    mytheme_2d + facet_grid(. ~ Soil) + theme(strip.background = element_rect(colour = &quot;black&quot;,
+    fill = &quot;white&quot;, size = 0.1)) + theme(strip.text.x = element_text(size = 17))</code></pre>
+<pre><code>Error in ggplot(df_a, aes(x = Time_hours, y = NH4_mM, color = Sample_type, : could not find function &quot;ggplot&quot;</code></pre>
+<pre class="r"><code># After moisture correction
+ggplot(df_a_mcf, aes(x = Time_hours, y = NH4_mM,
+    color = Sample_type, group = Sample_type)) +
+    geom_point(size = 2.5, shape = 21) +
+    # geom_line(size=1)+
+    # geom_errorbar(aes(ymin=NH4_mM -
+    # Std_NH4_mM, ymax=NH4_mM +
+    # Std_NH4_mM), width=.05)+
+    # scale_color_brewer(palette=&#39;Set2&#39;)
+    # + scale_color_manual(values =
+    # c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+
+ylab(&quot;Measured NH4+ (mM) \n&quot;) + xlab(&quot;\n Time (hr)&quot;) +
+    # scale_y_continuous(breaks =
+    # seq(0,5.1,1), limits=c(0, 5.1))+
+    # scale_x_continuous(breaks =
+    # seq(0,5.1,1), limits=c(0, 5.1))+
+ggtitle(&quot;(After moisture correction) All samples \n&quot;) +
+    mytheme_2d + facet_grid(. ~ Soil) + theme(strip.background = element_rect(colour = &quot;black&quot;,
+    fill = &quot;white&quot;, size = 0.1)) + theme(strip.text.x = element_text(size = 17))</code></pre>
+<pre><code>Error in ggplot(df_a_mcf, aes(x = Time_hours, y = NH4_mM, color = Sample_type, : could not find function &quot;ggplot&quot;</code></pre>
+</div>
+<div id="comparing-aerobic-and-anaerobic-samples" class="section level2">
+<h2>4. Comparing aerobic and anaerobic samples</h2>
+<pre class="r"><code>colnames(df_a_mcf)
+df_a_mcf$Category
+
+df_compare &lt;- df_a_mcf %&gt;%
+    filter(Sample_type == &quot;Soil&quot;)
+ggplot(df_compare, aes(x = Time_hours, y = NH4_mM,
+    color = Soil, group = Soil)) + geom_point(size = 2.5,
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ shape
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ =
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ 21)
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ +
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ #
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ geom_line(size=1)+
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ geom_errorbar(aes(ymin=NH4_mM
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ -
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ Std_NH4_mM,
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ ymax=NH4_mM
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ +
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ Std_NH4_mM),
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ width=.05)+
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ scale_color_brewer(palette=&#39;Set2&#39;)
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ +
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ scale_color_manual(values
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ =
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+
+ylab(&quot;Measured NH4+ (mM) \n&quot;) + xlab(&quot;\n Time (hr)&quot;) +
+    # scale_y_continuous(breaks =
+    # seq(0,5.1,1), limits=c(0, 5.1))+
+    # scale_x_continuous(breaks =
+    # seq(0,5.1,1), limits=c(0, 5.1))+
+ggtitle(&quot;Comparing aerobic and anaerobic samples \n&quot;) +
+    mytheme_2d + facet_grid(. ~ Category) +
+    theme(strip.background = element_rect(colour = &quot;black&quot;,
+        fill = &quot;white&quot;, size = 0.1)) + theme(strip.text.x = element_text(size = 17))
+
+# time point
+ggplot(df_compare, aes(x = Time_point, y = NH4_mM,
+    color = Soil, group = Soil)) + geom_point(size = 2.5,
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ shape
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ =
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ 21)
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ +
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ #
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ geom_line(size=1)+
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ geom_errorbar(aes(ymin=NH4_mM
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ -
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ Std_NH4_mM,
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ ymax=NH4_mM
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ +
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ Std_NH4_mM),
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ width=.05)+
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ scale_color_brewer(palette=&#39;Set2&#39;)
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ +
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ scale_color_manual(values
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ =
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+
+ylab(&quot;Measured NH4+ (mM) \n&quot;) + xlab(&quot;\n Time point&quot;) +
+    # scale_y_continuous(breaks =
+    # seq(0,5.1,1), limits=c(0, 5.1))+
+    # scale_x_continuous(breaks =
+    # seq(0,5.1,1), limits=c(0, 5.1))+
+ggtitle(&quot;Comparing aerobic and anaerobic samples \n&quot;) +
+    mytheme_2d + facet_grid(. ~ Category) +
+    theme(strip.background = element_rect(colour = &quot;black&quot;,
+        fill = &quot;white&quot;, size = 0.1)) + theme(strip.text.x = element_text(size = 17))
+
+# only timepoint T9
+
+df_compare_T9 &lt;- df_compare %&gt;%
+    filter(Time_point == &quot;T9&quot;)
+ggplot(df_compare_T9, aes(x = Category, y = NH4_mM,
+    color = Soil)) + geom_point(size = 2.5,
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ shape
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ =
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ 21)
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ +
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ #
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ geom_line(size=1)+
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ geom_errorbar(aes(ymin=NH4_mM
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ -
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ Std_NH4_mM,
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ ymax=NH4_mM
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ +
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ Std_NH4_mM),
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ width=.05)+
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ scale_color_brewer(palette=&#39;Set2&#39;)
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ +
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ scale_color_manual(values
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ =
+    shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+ c(&#39;deepskyblue4&#39;,&#39;maroon2&#39;))+
+ylab(&quot;Measured NH4+ (mM) \n&quot;) + xlab(&quot;\n Time point&quot;) +
+    # scale_y_continuous(breaks =
+    # seq(0,5.1,1), limits=c(0, 5.1))+
+    # scale_x_continuous(breaks =
+    # seq(0,5.1,1), limits=c(0, 5.1))+
+ggtitle(&quot;Comparing aerobic and anaerobic samples (Time point T9: +200hr) \n&quot;) +
+    mytheme_2d</code></pre>
+<pre><code>Error: &lt;text&gt;:9:15: unexpected &#39;)&#39;
+8:     shape = 21) + # geom_line(size=1)+  geom_errorbar(aes(ymin=NH4_mM - Std_NH4_mM, ymax=NH4_mM + Std_NH4_mM), width=.05)+  scale_color_brewer(palette=&#39;Set2&#39;) +  scale_color_manual(values = c(
+9:     shape = 21)
+                 ^</code></pre>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.0.3 (2020-10-10)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 10 x64 (build 22000)
+
+Matrix products: default
+
+locale:
+[1] LC_COLLATE=English_United States.1252 
+[2] LC_CTYPE=English_United States.1252   
+[3] LC_MONETARY=English_United States.1252
+[4] LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.1252    
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] knitr_1.37      workflowr_1.6.2
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_1.0.8.3      whisker_0.4       magrittr_2.0.1    R6_2.5.0         
+ [5] rlang_0.4.10      fansi_0.4.2       stringr_1.4.0     tools_4.0.3      
+ [9] xfun_0.29         utf8_1.1.4        git2r_0.28.0      jquerylib_0.1.4  
+[13] htmltools_0.5.1.1 ellipsis_0.3.2    rprojroot_2.0.2   yaml_2.2.1       
+[17] digest_0.6.27     tibble_3.0.4      lifecycle_1.0.0   crayon_1.4.1     
+[21] zip_2.1.1         formatR_1.11      later_1.2.0       sass_0.4.0       
+[25] vctrs_0.3.8       promises_1.2.0.1  fs_1.5.0          glue_1.4.2       
+[29] evaluate_0.14     rmarkdown_2.9     openxlsx_4.2.3    stringi_1.5.3    
+[33] bslib_0.2.5.1     compiler_4.0.3    pillar_1.6.0      jsonlite_1.7.2   
+[37] httpuv_1.6.0      pkgconfig_2.0.3  </code></pre>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
