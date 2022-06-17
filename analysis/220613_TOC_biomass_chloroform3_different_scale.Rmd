@@ -1,7 +1,7 @@
 ---
-title: "220606_TOC_biomass_chloroform2_large_scale"
+title: "220613_TOC_biomass_chloroform3_different_scale"
 author: "KiseokUchicago"
-date: "2022-06-08"
+date: "2022-06-17"
 output: workflowr::wflow_html
 editor_options:
   chunk_output_type: console
@@ -15,8 +15,8 @@ knitr::opts_chunk$set(fig.width=11, fig.height=9,
 
 ## TOC(Total organic carbon) measurements: Biomass measurement with chloroform direct application
 Researcher: **Kiseok Lee** \
-Experiment Date: 6/3/22 \
-Analysis Date: 6/4/22 \
+Experiment Date: 6/13/22 \
+Analysis Date: 6/17/22 \
 Lab: **Seppe Kuehn**
 
 ```{r}
@@ -95,9 +95,9 @@ library(rmarkdown)
 ```{r}
 # import file
 # 20ul
-df_20ul_1 <- openxlsx::read.xlsx("data/220606_TOC_sample_plate1.xlsx")
-df_20ul_2 <- openxlsx::read.xlsx("data/220606_TOC_sample_plate2.xlsx")
-# df_20ul_3 <- openxlsx::read.xlsx("data/220606_TOC_sample_plate3.xlsx")
+df_20ul_1 <- openxlsx::read.xlsx("data/220613_TOC_sample_plate1.xlsx")
+# df_20ul_2 <- openxlsx::read.xlsx("data/220613_TOC_sample_plate2.xlsx")
+# df_20ul_3 <- openxlsx::read.xlsx("data/220613_TOC_sample_plate3.xlsx")
 
 # only use left six columns
 # df_20ul_1 %<>% filter(Soil == "LaBaghWoods_pH6.66")
@@ -112,7 +112,7 @@ df_20ul_2 <- openxlsx::read.xlsx("data/220606_TOC_sample_plate2.xlsx")
 # colnames(df_20ul_2)
 # dim(df_20ul_2)
 
-df_20ul <- rbind(df_20ul_1, df_20ul_2)
+df_20ul <- rbind(df_20ul_1)
 
 # remove NA
 dim(df_20ul)
@@ -216,3 +216,4 @@ ggplot(df_ave, aes(x=Sample_type, y=TOC_mgml, color=Chloroform, group=Chloroform
 
 
 ```
+
