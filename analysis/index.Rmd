@@ -71,5 +71,12 @@ Welcome to Kiseok Denitrification data visualization website.
 * [220603_TOC_biomass_chloroform (6/4/22)](220603_TOC_biomass_chloroform.html)
 * [220606_TOC_biomass_chloroform2_large_scale (6/8/22)](220606_TOC_biomass_chloroform2_large_scale.html)
 * [220613_TOC_biomass_chloroform3_different_scale (6/17/22)](220613_TOC_biomass_chloroform3_different_scale.html)
-
-
+* [220621_Griess_2soil_pH7_2soil_pH5 (6/24/22)](220621_Griess_2soil_pH7_2soil_pH5.html)
+* [220622_pH_2soil_pH7_2soil_pH5 (6/24/22)](220622_pH_2soil_pH7_2soil_pH5.html)
+* [221015_Griess_Cook_before_wetting (10/17/22)](221015_Griess_Cook_before_wetting.html)
+* [221016_pH_Cook_before_wetting (10/17/22)](221016_pH_Cook_before_wetting.html)
+* [221025_Griess_Cook_after_wetting (10/26/22)](221025_Griess_Cook_after_wetting.html)
+* [221026_pH_Cook_after_wetting (10/27/22)](221026_pH_Cook_after_wetting.html)
+* [221027_pH_Cook_after_wetting with 1M KCl (10/27/22)](221027_pH_Cook_after_wetting_KCl.html)
+* [221101_pH_Cook_Main_soil_KCl (12/12/22)](221101_pH_Cook_Main_soil_KCl.html)
+* [221207_Griess_Cook_Main_soil (12/12/22)](221207_Griess_Cook_Main_soil.html)
