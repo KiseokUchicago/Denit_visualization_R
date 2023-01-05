@@ -1,0 +1,4069 @@
+---
+title: "221207_Griess_Cook_Main_soil"
+author: "KiseokUchicago"
+date: "2022-12-12"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Cook Main (soil13, 14, 15) (Griess assay)
+Researcher: **Kiseok Lee** \
+Experiment Date: 10/29/22 - 11/26/22 (5 days) \
+Analysis Date: 12/12/22
+Lab: **Seppe Kuehn**
+
+```{r}
+# libraries
+library(dplyr)
+library(ggplot2)
+library(RColorBrewer)
+library(vegan)
+library(tidyverse)
+library(magrittr)
+library(readxl)
+library(reshape2)
+library(gtools)
+library(devtools)
+library(openxlsx)
+library(ape)
+library(stringr)
+library(tidyr)
+library(ggrepel)
+library(ggpubr)
+require(gridExtra)
+# grid.arrange(p_strain, p_ai, nrow=1)
+
+## theme for ggplot
+mytheme <- theme_bw() + 
+  theme(text = element_text(face="bold", colour = 'black')) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13,face="bold", colour = 'black'))+
+  theme(axis.text.y = element_text(size=13,face="bold", colour = 'black'))+
+  theme(panel.grid.major = element_blank()) +
+  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),panel.border=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))+
+  theme(legend.text=element_text(size=10,face="bold", colour = 'black'))
+
+
+mytheme_2d <- theme_bw() + 
+  theme(text = element_text(face="bold", colour = 'black')) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13,face="bold", colour = 'black'))+
+  theme(axis.text.y = element_text(size=13,face="bold", colour = 'black'))+
+  # theme(panel.grid.major = element_blank()) +
+  # theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))+
+  theme(legend.text=element_text(size=10,face="bold", colour = 'black'))
+
+
+# color collection
+my_color_collection <- c(
+  "#CBD588", "#5F7FC7", "orange", "#AD6F3B", "#673770", 
+  "#D14285", "#652926", "#C84248", "#8569D5", "#5E738F",
+  "#D1A33D", "#8A7C64", "#599861","#616163", "#FFCDB2",
+  "#6D9F71", "#242F40",
+  "#CCA43B", "#F92A82", "#ED7B84", "#7EB77F", 
+  "#DEC4A1", "#E5D1D0", '#0E8482', '#C9DAEA', '#337357', 
+  '#95C623', '#E55812', '#04471C', '#F2D7EE', '#D3BCC0', 
+  '#A5668B', '#69306D', '#0E103D', '#1A535C', '#4ECDC4', 
+  '#F7FFF7', '#FF6B6B', '#FFE66D', '#6699CC', '#FFF275', 
+  '#FF8C42', '#FF3C38', '#A23E48', '#000000', '#CF5C36', 
+  '#EEE5E9', '#7C7C7C', '#EFC88B', '#2E5266', '#6E8898', 
+  '#9FB1BC', '#D3D0CB', '#E2C044', '#5BC0EB', '#FDE74C', 
+  '#9BC53D', '#E55934', '#FA7921', "#CD9BCD", "#508578", "#DA5724")
+
+# for git push, use this instead of using wflow_git_push()
+# git push -u origin master (in the Git app / in the working directory)
+
+# for making pdf file
+library(rmarkdown)
+# render("analysis/~~.Rmd", "pdf_document")
+
+```
+
+
+## 1. Import data table from python code
+We are going to use the vcl3 treated standard curve that is fitted with pure nitrate standards
+```{r error=TRUE}
+# import file
+# automate this
+# vec_sample <- c("Barneveld2_pH5.73", "Starke3_pH5.69", "Oxbow3_pH7.29", "Washington2_pH7.33")
+vec_sample <- c("Soil13","Soil14","Soil15",
+                "Soil6", "Soil9", "Soil11",
+                "Soil18", "Soil3", "Soil16"
+                )
+vec_date <- c(rep(221207, 3), rep(221215, 3), rep(221218, 3))
+vec_time <- paste0("T",0:9)
+
+vec_platename = c()
+vec_timepoint = c()
+list_df <- list()
+
+for (i in 1:length(vec_sample)){
+  for (j in vec_time){
+    platename = paste0("df_",vec_sample[i],"_",j)
+    timepoint = paste0(vec_sample[i],"_",j)
+    print(platename)
+    # import files
+    assign(platename, openxlsx::read.xlsx(paste0("data/",vec_date[i],"_Griess_",timepoint,".xlsx")))
+    # make vectors
+    vec_platename = append(vec_platename, platename)
+    vec_timepoint = append(vec_timepoint, timepoint)
+  }
+}
+
+vec_platename
+vec_timepoint
+
+# assign(vec_platename[1], openxlsx::read.xlsx(paste0("data/221207_Griess_",vec_timepoint[1],".xlsx")))
+df_Soil13_T0
+df_Soil13_T1
+
+
+head(df_Soil13_T0)
+colnames(df_Soil13_T1)
+dim(df_Soil13_T0)
+
+# df_plate1 %<>% rename(Well = X1)
+# df_plate2 %<>% rename(Well = X1)
+# df_plate3 %<>% rename(Well = X1)
+# df_plate4 %<>% rename(Well = X1)
+# df_plate5 %<>% rename(Well = X1)
+# df_plate6 %<>% rename(Well = X1)
+# df_plate7 %<>% rename(Well = X1)
+# df_plate8 %<>% rename(Well = X1)
+# df_plate9 %<>% rename(Well = X1)
+# df_plate10 %<>% rename(Well = X1)
+# df_plate11 %<>% rename(Well = X1)
+# df_plate12 %<>% rename(Well = X1)
+# df_plate13 %<>% rename(Well = X1)
+# df_plate14 %<>% rename(Well = X1)
+# df_plate15 %<>% rename(Well = X1)
+# df_plate16 %<>% rename(Well = X1)
+
+
+# remove wells that were contaminated during the experiment
+df_Soil9_T8 %<>% filter(!(Well %in% paste0("B", sprintf("%02d", 1:12)))) # forgot to put in the 10ul sample
+dim(df_Soil9_T8)
+df_Soil16_T4 %<>% filter(!(Well %in% c("D10"))) # Nitrate blank contamination
+dim(df_Soil16_T4)
+df_Soil3_T6 %<>% filter(!(Well %in% paste0("E", sprintf("%02d", 1:12)))) # Messed up Griess assay
+dim(df_Soil3_T6)
+# df_plate6 %<>% filter(!(Well %in% c("G05"))) # Too low.... why???
+# df_plate8 %<>% filter(!(Well %in% c("A01", "A09"))) # filter defect
+# df_plate9 %<>% filter(!(Well %in% c("D11"))) # NA detected below...
+# df_plate11 %<>% filter(!(Well %in% c("A12"))) # filter defect
+
+# bind two dataframe
+
+# failed attempt to pass vector as arguments for rbind
+  # do.call(expand.grid, mget(ls(vec_platename)))
+  # do.call(rbind, get(ls(vec_platename)))
+  # do.call(vec_platename[1])
+  # eval(parse(text = vec_platename))
+
+df_p = data.frame()
+for (i in vec_platename){
+  df_p = rbind(df_p, eval(parse(text = i)))
+}
+
+# remove NA
+dim(df_p) # 2880  20 -> 5760 (221215)
+df_p[is.na(df_p)]
+df_na <- df_p[rowSums(is.na(df_p)) > 0,]  # 6 wells that have NA for reasons I don't know (12/17/22)
+                                          # plus 1 well Soil18 12/18/22
+# df_p <- na.omit(df_p)
+df_p <- df_p[rowSums(is.na(df_p)) == 0,]
+dim(df_p) # 2877 # removed 3 wells <--- why????
+          # 5754 # removed another 3 wells <--- I don't know why
+          # 8620 (12/18/22)
+
+# multiply dilution factor which is 5/2
+# df_p %<>% select(-NO2_OD540, -NO2NO3_OD540)
+df_p %<>% mutate(NO2_mM = NO2_mM * (5/2), NO2NO3_mM = NO2NO3_mM * (5/2), NO3_mM = NO3_mM * (5/2))
+
+# Get the metadata for time point and left join
+Time_table <- openxlsx::read.xlsx("data/221207_time_table.xlsx")
+# Time_table_BN <- openxlsx::read.xlsx("data/221207_time_table_BN.xlsx")
+# Time_table <- rbind(Time_table_AU, Time_table_BN)
+
+Time_table %<>% select(-Date) 
+Time_table$Time_hours <- round(Time_table$Time_hours, 1)
+Time_table$Time_days <- round(Time_table$Time_days, 1)
+df_time <- Time_table
+dim(df_p)
+df_p <- df_p %>% left_join(Time_table, by=("Time_point"="Time_point"))
+dim(df_p)
+colnames(df_p)
+head(df_p)
+# time_point order
+# df_p$Time_point <-  factor(df_p$Time_point, levels = c(paste0("LBA_T",0:10), paste0("Sterile_T",0:10)))
+# df_p$Time_point <-  factor(df_p$Time_point, levels = c(paste0("T",0:10)))
+
+```
+
+## 2. Get average and standard deviation & Moisture correction & Blank correction
+```{r}
+# plot to see
+ggplot(df_p, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time_point") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Without averaging \n") +
+  mytheme_2d +
+  theme(axis.text.x = element_text(hjust = 0.8, vjust=0.8, size=13, angle = 40))
+
+# Hmmm... what are the > 3 ones?
+df_p_exceed3 <- df_p %>% filter(NO3_mM > 2.7)
+
+# plot with soil 
+ggplot(df_p, aes(x=Time_point, y=NO3_mM, color=Soil, group=Soil)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time_point") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Without averaging \n") +
+  mytheme_2d +
+  theme(axis.text.x = element_text(hjust = 0.8, vjust=0.8, size=13, angle = 40))
+
+
+# plot to see
+ggplot(df_p, aes(x=Time_point, y=NO2_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO2- (mM) \n") +
+  xlab("\n Time_point") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Without averaging \n") +
+  mytheme_2d+
+  theme(axis.text.x = element_text(hjust = 0.8, vjust=0.8, size=13, angle = 40))
+
+# let's plot the no nitrate sample's nitrate, nitrite levels
+df_no_nitrite <- df_p %>% filter(Sample_type == "No_Nitrate")
+
+ggplot(df_no_nitrite, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time_point") +
+  # scale_y_continuous(breaks = seq(0,0.5,0.05), limits=c(0, 0.5))+
+  ggtitle("Samples without nitrate addition \n") +
+  mytheme_2d +
+  theme(axis.text.x = element_text(hjust = 0.8, vjust=0.8, size=13, angle = 40))
+
+ggplot(df_no_nitrite, aes(x=Time_point, y=NO2_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO2- (mM) \n") +
+  xlab("\n Time_point") +
+  scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Samples without nitrate addition \n") +
+  mytheme_2d+
+  theme(axis.text.x = element_text(hjust = 0.8, vjust=0.8, size=13, angle = 40))
+
+# T8 is weird
+# how about blanks?
+
+# let's plot the blank sample's nitrate, nitrite levels
+df_A_blank <- df_p %>% filter(Sample_type == "Nitrate_Blank")
+ggplot(df_A_blank, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time_point") +
+  scale_y_continuous(breaks = seq(0,2.8,0.1), limits=c(0, 2.8))+
+  ggtitle("Nitrate blanks \n") +
+  mytheme_2d +
+  theme(axis.text.x = element_text(hjust = 0.95, vjust=0.9, size=13,  angle = 40))
+
+ggplot(df_A_blank, aes(x=Time_point, y=NO2_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO2- (mM) \n") +
+  xlab("\n Time_point") +
+  scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("Nitrate blanks \n") +
+  mytheme_2d+
+  theme(axis.text.x = element_text(hjust = 0.95, vjust=0.9, size=13,  angle = 40))
+
+# let's plot the Nitrite blank sample's nitrate, nitrite levels
+df_I_blank <- df_p %>% filter(Sample_type == "Nitrite_Blank")
+ggplot(df_I_blank, aes(x=Time_point, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time_point") +
+  scale_y_continuous(breaks = seq(0,2.5,0.1), limits=c(0, 2.5))+
+  ggtitle("Nitrite blanks \n") +
+  mytheme_2d +
+  theme(axis.text.x = element_text(hjust = 0.95, vjust=0.9, size=13,  angle = 40))
+
+ggplot(df_I_blank, aes(x=Time_point, y=NO2_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO2- (mM) \n") +
+  xlab("\n Time_point") +
+  scale_y_continuous(breaks = seq(0,2.7,0.1), limits=c(0, 2.7))+
+  ggtitle("Nitrite blanks \n") +
+  mytheme_2d+
+  theme(axis.text.x = element_text(hjust = 0.95, vjust=0.9, size=13,  angle = 40))
+
+### Important ###
+# Due to the nitrate decrease in time, something is wrong. Therefore, I would omit the evaporation correction????
+
+
+# average technical replicate
+colnames(df_p)
+dim(df_p)
+
+# df_p <- df_p %>% group_by(Nitrite_input, Nitrate_input, Ammonium_input, Soil, Soil_ID, Titration_type, Unit, Concentration_M, Added_ul, Sample_type, Expected_pH, Chloramphenicol, Cycloheximide, Time_point, Time_minutes, Time_hours, Time_days) %>% summarise(Ave_NO2_mM = mean(NO2_mM), Std_NO2_mM = sd(NO2_mM), Ave_NO3_mM = mean(NO3_mM), Std_NO3_mM = sd(NO3_mM)) %>% ungroup()
+
+df_p %>% select(Soil) %>% unique()
+
+# mols and molarity unit conversion
+# test
+df_p$Titration_type %>% length()
+
+# Setting H_mM column
+# df_soil <- df_p %>% filter(Titration_type %in% c("NaOH","HCl"))
+
+# import moisture and pH data
+moisture_pH_table <- openxlsx::read.xlsx("data/221025_soil_moisture_pH.xlsx")
+moisture_pH_table %<>% select(Soil, Depth, pH, Moisture_percent)
+moisture_pH_table$Soil_name <- paste0(moisture_pH_table$Soil, "_pH", round(moisture_pH_table$pH, 2))
+moisture_pH_table %<>% select(Soil, Soil_name, Depth, pH, Moisture_percent) %>% rename(Soil_pH = pH) %>% rename(Soil_ID = Soil)
+
+
+
+Added_Volume <- 1.7 # ml
+Soil_mg <- 0.85
+
+df_p %<>% mutate(H_mol = Concentration_M * Added_ul * 10^(-6)) # Calculate H mol 
+df_p %<>% left_join(moisture_pH_table, by = c("Soil_ID"="Soil_ID"))
+df_p %<>% mutate(Volume = Added_Volume + Soil_mg*(Moisture_percent/100))
+
+df_p %<>% mutate(H_Molarity = H_mol / (Volume * 10^(-3)))
+df_p %<>% mutate(H_mM = H_Molarity * 1000)
+# openxlsx::write.xlsx(df_pH, "df_pH.xlsx")
+
+# moisture_percent_1 = 21.14 # Barneveld2
+# moisture_percent_2 = 5.6 # Starke3
+# moisture_percent_3 = 27.84 # Oxbow3
+# moisture_percent_4 = 30 # Washington2 (this value is arbitrary, fake)
+
+# moisture_percent_2 = 8.12 # Sterile - LaBaghWoods that has been autoclaved 5 times.
+# Added_Volume + Soil_mg*(moisture_percent_2/100)
+# moisture_percent_3 = 9.0 # Crerar7
+# Added_Volume + Soil_mg*(moisture_percent_3/100)
+# how many levels of H_mM?
+df_p %>% select(Soil) %>% unique() %>% arrange(Soil)
+df_p %>% select(Soil_ID) %>% unique() %>% arrange(Soil_ID)
+
+# df_p %>% filter(Soil_ID == "Soil1_Acidic4")%>% select(H_mM) %>% unique() %>% arrange(H_mM)
+# df_p %>% filter(Soil == "Soil10_CE253")%>% select(H_mM) %>% unique() %>% arrange(H_mM)
+# df_p %>% filter(Soil == "Soil14_Neutral2")%>% select(H_mM) %>% unique() %>% arrange(H_mM)
+# df_p %>% filter(Soil == "Soil5_CE201")%>% select(H_mM) %>% unique() %>% arrange(H_mM)
+
+colnames(df_p)
+
+# Soil_name_pH column
+df_p$Soil_name <- paste0(df_p$Soil_ID, "_pH", round(df_p$Soil_pH, 2))
+
+
+## Moisture correction
+dim(df_p)
+
+# Testing negative samples
+df_no3_blank <- df_p %>% filter(Sample_type == "Nitrate_Blank")  # Use Nitrate_Blank instead in the future
+df_no3_blank # 20
+
+df_no2_blank <- df_p %>% filter(Sample_type == "Nitrite_Blank")
+df_no2_blank # 20
+# close to zero
+
+# 1. Apply moisture correction factor (correcting for moisture in soil)
+soil_spike_ratio = 0.5 # soil weight(0.85g) / spike in volume (1.7ml) 
+df_p %<>% mutate(mcf = soil_spike_ratio*(Moisture_percent/100) + 1)
+
+# mcf_1 = (soil_spike_ratio*(moisture_percent_1/100) + 1)
+# mcf_1
+# mcf_2 = (soil_spike_ratio*(moisture_percent_2/100) + 1)
+# mcf_2
+# mcf_3 = (soil_spike_ratio*(moisture_percent_3/100) + 1)
+# mcf_3
+# mcf_4 = (soil_spike_ratio*(moisture_percent_4/100) + 1)
+# mcf_4
+
+# apply moisture factor to each soil
+dim(df_p) # 959 29
+
+# this is a special case with no replicates
+df_p_mcf <- df_p %>% filter(Titration_type %in% c("HCl_NaOH","No_Nitrate")) %>% mutate(NO3_mM = NO3_mM * mcf, NO2_mM = NO2_mM * mcf)
+dim(df_p_mcf) # 919
+
+df_p_others_mcf <- df_p %>% filter(Sample_type %in% c("Nitrite_Blank", "Nitrate_Blank", "Ammonium_Blank")) 
+dim(df_p_others_mcf) # 40
+
+# df_p_mcf_1 <- df_p %>% filter(Soil == "Barneveld2_pH5.73") %>% filter(Titration_type %in% c("NaOH","HCl","No_Nitrate")) %>% mutate(NO3_mM = NO3_mM * mcf_1, NO2_mM = NO2_mM * mcf_1)
+# dim(df_p_mcf_1) #780
+# df_p_mcf_2 <- df_p %>% filter(Soil == "Starke3_pH5.69") %>%  filter(Titration_type %in% c("NaOH","HCl","No_Nitrate")) %>% mutate(NO3_mM = NO3_mM * mcf_2, NO2_mM = NO2_mM * mcf_2)
+# dim(df_p_mcf_2) #780
+# df_p_mcf_3 <- df_p %>% filter(Soil == "Oxbow3_pH7.29") %>% filter(Titration_type %in% c("NaOH","HCl","No_Nitrate")) %>% mutate(NO3_mM = NO3_mM * mcf_3, NO2_mM = NO2_mM * mcf_3)
+# dim(df_p_mcf_3) #780
+# df_p_mcf_4 <- df_p %>% filter(Soil == "Washington2_pH7.33") %>% filter(Titration_type %in% c("NaOH","HCl","No_Nitrate")) %>% mutate(NO3_mM = NO3_mM * mcf_4, NO2_mM = NO2_mM * mcf_4)
+# dim(df_p_mcf_4) #779
+# 
+# df_p_others_mcf <- df_p %>% filter(Sample_type %in% c("Nitrite_Blank", "Nitrate_Blank", "Ammonium_Blank")) # Use Nitrate_Blank instead in the future
+# dim(df_p_others_mcf) #132
+
+df_p_mcf <- rbind(df_p_mcf, df_p_others_mcf)
+dim(df_p_mcf) # 959
+
+# plot to see
+ggplot(df_p_mcf, aes(x=Time_hours, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  # geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_fill_brewer(palette='Set2') +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time (hours)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  ggtitle("After moisture correction \n") +
+  mytheme_2d
+
+# 2. Apply blank correction factor (drying effect during incubation)
+# Blank reads
+df_no3_blank <- df_p %>% filter(Sample_type == "Nitrate_Blank")
+df_no3_blank
+df_no2_blank <- df_p %>% filter(Sample_type == "Nitrite_Blank")
+df_no2_blank
+
+# df_aero_blank$Nitrate_input <- as.numeric(as.character(df_aero_blank$Nitrate_input))
+df_no2_blank %<>% mutate(Correction_factor_NO2 = (Nitrite_input / NO2_mM)) 
+df_no3_blank %<>% mutate(Correction_factor_NO3 = (Nitrate_input / NO3_mM)) 
+
+# average the blanks by time point
+## removing soil in select (10/17/22)
+cf_no2 <- df_no2_blank %>% select(Time_point, Correction_factor_NO2) %>% group_by(Time_point) %>% summarize(Correction_factor_NO2 = mean(Correction_factor_NO2)) %>% ungroup()
+cf_no3 <- df_no3_blank %>% select(Time_point, Correction_factor_NO3) %>% group_by(Time_point) %>% summarize(Correction_factor_NO3 = mean(Correction_factor_NO3)) %>% ungroup()
+# why is nitrate decreasing????
+
+
+# left join and multiply the correction factor
+# left join to samples
+df_sample_mcf <- df_p_mcf %>% filter(!(Sample_type %in% c("Nitrite_Blank","Nitrate_Blank","Ammonium_Blank")))
+dim(df_sample_mcf) #919
+df_sample_mcf$Sample_type %>% unique()
+
+## removing Soil in left_join (10/17/22)
+df_p_bcf <- df_p_mcf %>% left_join(cf_no2, by = c("Time_point"="Time_point")) %>% left_join(cf_no3, by = c("Time_point"="Time_point"))
+dim(df_p_bcf)
+
+df_sample_bcf <- df_p_bcf %>% filter(!(Sample_type %in% c("Nitrite_Blank","Nitrate_Blank","Ammonium_Blank"))) %>% mutate(NO3_mM = NO3_mM * Correction_factor_NO3, NO2_mM = NO2_mM * Correction_factor_NO2)
+
+df_blanks_bcf <- df_p_bcf %>% filter(Sample_type %in% c("Nitrite_Blank","Nitrate_Blank","Ammonium_Blank"))
+
+# merge dataframe with blank just for convenience
+df_p_bcf <- rbind(df_sample_bcf, df_blanks_bcf)
+dim(df_p_bcf) # 959
+colnames(df_p_bcf)
+## innate nitrate
+# df_p_bcf %>% filter(Titration_type == "No_Nitrate" & Time_point == "Barneveld2_T0") %>% select(NO3_mM) %>% unlist() %>% mean()
+# df_p_bcf %>% filter(Titration_type == "No_Nitrate" & Time_point == "Starke3_T0") %>% select(NO3_mM) %>% unlist() %>% mean()
+# df_p_bcf %>% filter(Titration_type == "No_Nitrate" & Time_point == "Oxbow3_T0") %>% select(NO3_mM) %>% unlist() %>% mean()
+# df_p_bcf %>% filter(Titration_type == "No_Nitrate" & Time_point == "Washington2_T0") %>% select(NO3_mM) %>% unlist() %>% mean()
+
+
+```
+
+
+## 3. Sanity check: moisture correction & blank correction factor 
+
+Blank correction \
+Use the nitrate concentration of the blank and use the ratio. \
+For example, multiply to nitrate concentration x (2mM / changed [NO3]) \
+
+```{r}
+# without any correction
+# nitrate blanks
+dim(df_no3_blank)
+# , color=Soil, group=Soil
+ggplot(df_no3_blank, aes(x=Time_hours, y=NO3_mM)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  # geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Time (hr)") +
+  scale_y_continuous(breaks = seq(0,2.8,0.5), limits=c(0, 2.8))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle("Nitrate blank \n") +
+  mytheme_2d
+
+# nitrite blanks
+dim(df_no2_blank)
+# , color=Soil, group=Soil
+ggplot(df_no2_blank, aes(x=Time_hours, y=NO2_mM)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  # geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO2- (mM) \n") +
+  xlab("\n Time (hr)") +
+  scale_y_continuous(breaks = seq(0,2.7,0.5), limits=c(0, 2.7))+
+  # scale_x_continuous(breaks = seq(0,2.1,0.25), limits=c(0, 2.1))+
+  ggtitle("Nitrite blank \n") +
+  mytheme_2d
+
+# without any correction
+ggplot(df_p, aes(x=Time_hours, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  # geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  # scale_x_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  ggtitle("(Without any correction) All samples \n") +
+  mytheme_2d +
+  facet_grid(. ~ Soil) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+
+### What are those points with very high std?
+colnames(df_p)
+# df_p %>% arrange(desc(Std_NO3_mM)) %>% select(Soil, Titration_type, Concentration_M, Sample_type, Time_point, Std_NO3_mM) 
+## based on this I corrected the wrongly removed E02 -< removed E01 (filter burst). Eliminated point P11 G11.
+
+# After moisture correction
+ggplot(df_p_mcf, aes(x=Time_hours, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  # geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  # scale_x_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  ggtitle("(After moisture correction) All samples \n") +
+  mytheme_2d +
+  facet_grid(. ~ Soil) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+# After blank correction (evaporation) 
+ggplot(df_p_bcf, aes(x=Time_hours, y=NO3_mM, color=Sample_type, group=Sample_type)) +
+  geom_point(size=2.5, shape=21) +
+  # geom_line(size=1)+
+  # geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("deepskyblue4","maroon2"))+
+  ylab("Measured NO3- (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  # scale_x_continuous(breaks = seq(0,5.1,1), limits=c(0, 5.1))+
+  ggtitle("(After moisture + blank correction) All samples \n") +
+  mytheme_2d +
+  facet_grid(. ~ Soil) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))
+
+
+## what??
+dim(df_p_bcf) # 2877 # 5754 # 8620
+df_p_bcf %<>% filter( !(NO3_mM > 2.5 & Sample_type == "Slurry"))
+dim(df_p_bcf) # 2875 # 5752 # 8618
+## Is it okay to eliminate these outliers? Removed 2 wells
+
+
+```
+
+## To siqi, Export
+```{r}
+# include pH data
+# plot together with pH data
+df_221207_pH <- read.xlsx("data/221101_pH_Cook_Main_soil_KCl.xlsx") %>% select(-H_mM)
+df_221207_pH$Time_point # T9
+df_221207_pH$Cycloheximide %>% unique()
+df_221207_pH$Sample_type %>% unique()
+
+dim(df_221207_pH)
+colnames(df_221207_pH)
+df_221207_pH %>% unique() %>% nrow # 1615
+
+colnames(df_221207_pH)
+dim(df_221207_pH) # 1615
+
+# 
+df_221207_pH$Time <- str_split(df_221207_pH$Time_point, "_", simplify = T)[,2]
+
+# I need to average the pH of no_nitrate and no-acid base samples
+df_pH_T9 <- df_221207_pH %>% filter(Time == "T9") %>% group_by(Soil, Soil_ID, Sample_type, Titration_type, Unit, Chloramphenicol, Cycloheximide, Time) %>% summarize(pH = mean(pH))
+dim(df_pH_T9) # 648
+colnames(df_pH_T9)
+
+df_pH_T9$Cycloheximide %>% unique()
+df_pH_T9$Sample_type %>% unique()
+df_pH_T9 %>% unique() %>% nrow
+
+
+# Testing just join 1 soil
+# df_p_bcf %>% filter(Soil == "Soil13")
+# df_pH_T9_Soil13 <- df_pH_T9 %>% filter(Soil == "Soil13")
+
+df_p_bcf %>% unique() %>% nrow
+df_p_bcf_pH <- df_p_bcf
+dim(df_p_bcf_pH) # 5740 # 8618
+df_p_bcf_pH %<>% left_join(df_pH_T9, by=c("Soil"="Soil", "Soil_ID"="Soil_ID", "Sample_type"="Sample_type", "Titration_type"="Titration_type","Unit"="Unit", "Chloramphenicol"="Chloramphenicol", "Cycloheximide"="Cycloheximide" ))
+
+colnames(df_p_bcf_pH)
+head(df_p_bcf_pH)
+dim(df_p_bcf_pH) # 5740 # 8618
+
+df_p_bcf_pH %>% filter(Sample_type == "Slurry") %>% dim()
+
+# df_p_bcf_pH_Soil13_T9 <- df_p_bcf_pH %>% filter(Soil == "Soil13", Time_point == "Soil13_T9")
+df_p_bcf_pH %>% filter(is.na(pH)) %>% dim()
+
+# 
+df_p_bcf_pH %<>% filter(!(Sample_type %in% c("Nitrite_Blank", "Nitrate_Blank", "Ammonium_Blank"))) 
+df_p_bcf_pH %<>% filter(Cycloheximide == "None")
+df_p_bcf_pH %<>% filter(Titration_type != "No_Nitrate")
+df_p_bcf_pH %<>% filter(Sample_type == "Slurry")
+dim(df_p_bcf_pH) # 4660
+
+df_p_bcf_pH %>% select(Time_point) %>% unique()
+
+# write.xlsx(df_p_bcf_pH, "221218_Griess_export_9_soils_N_dynamics_with_pH.xlsx")
+
+
+```
+
+
+
+## 3.2. Trouble shooting
+```{r}
+# pH color
+col_pH <- colorRampPalette(c("gold","red","purple"))
+
+library(colorRamps)
+colorRamps::green2red
+plot(rep(1,13),col=col_pH(13),pch=19,cex=3)
+grad_pH <- scale_colour_gradientn(colours = col_pH(100))
+
+
+# Soil9
+df_p_bcf_Soil9 <- df_p_bcf %>% filter(Soil == "Soil9") %>% filter(!(Sample_type %in% c("Nitrite_Blank", "Nitrate_Blank", "Ammonium_Blank", "No_Nitrate"))) %>% filter(Cycloheximide == "None")
+
+ggplot(df_p_bcf_Soil9, aes(x=Time_hours, y=NO3_mM, color=H_mM, group= H_mM)) +
+  geom_point(size=2.5, shape=16) +
+  # geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+df_p_bcf_Soil9_T8 <- df_p_bcf_Soil9 %>% filter(Time_point == "Soil9_T8")
+colnames(df_p_bcf_Soil9_T8)
+
+ggplot(df_p_bcf_Soil9_T8, aes(x=H_mM, y=NO3_mM)) +
+  geom_point(size=2.5, shape=16) +
+  # geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO3- (mM) \n") +
+  xlab("\n H+ mM") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, show.legend = FALSE)+
+  mytheme_2d
+
+df_p_bcf_Soil9_T8_weird <- df_p_bcf_Soil9_T8 %>% filter(NO3_mM < 0.1)
+
+## Soil 3 time point T6
+df_p_bcf_Soil3 <- df_p_bcf %>% filter(Soil == "Soil3") %>% filter(!(Sample_type %in% c("Nitrite_Blank", "Nitrate_Blank", "Ammonium_Blank", "No_Nitrate"))) %>% filter(Cycloheximide == "None")
+
+ggplot(df_p_bcf_Soil3, aes(x=Time_hours, y=NO3_mM, color=H_mM, group= H_mM)) +
+  geom_point(size=2.5, shape=16) +
+  # geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+```
+
+
+
+## 4. Nitrogen dynamics
+
+```{r}
+## Average them (Use group_by and mutate to keep all the other columns)
+colnames(df_p_bcf)
+dim(df_p_bcf) # 2875
+
+df_ave_bcf <- df_p_bcf
+
+df_ave_bcf <- df_p_bcf %>% group_by(Nitrite_input, Nitrate_input, Ammonium_input, Soil, Soil_ID, Soil_name,  Sample_type, Titration_type, Unit, Concentration_M, H_mM, Added_ul, Expected_pH,  Chloramphenicol, Cycloheximide, Time_point, Time_minutes, Time_hours, Time_days, Depth, Soil_pH, Moisture_percent) %>% summarise(Ave_NO2_mM = mean(NO2_mM), Std_NO2_mM = sd(NO2_mM), Ave_NO3_mM = mean(NO3_mM), Std_NO3_mM = sd(NO3_mM)) %>% ungroup()
+
+dim(df_ave_bcf)  # 2875 -> 1200
+#
+
+```
+
+
+
+
+## 4.1. pH perturbation experiment.
+- Is there a difference in pH perturbation levels?
+```{r}
+# pH color
+col_pH <- colorRampPalette(c("gold","red","purple"))
+
+library(colorRamps)
+colorRamps::green2red
+plot(rep(1,13),col=col_pH(13),pch=19,cex=3)
+grad_pH <- scale_colour_gradientn(colours = col_pH(100))
+
+# Confer this page (https://stackoverflow.com/questions/21537782/how-to-set-fixed-continuous-colour-values-in-ggplot2)
+# myPalette <- colorRampPalette(rev(brewer.pal(11, "Spectral")))
+# sc <- scale_colour_gradientn(colours = myPalette(100), limits=c(1, 8))
+
+# 1. pH perturbation
+# plot Nitrate
+
+# only autoclaved soil is relevant for this analysis
+# vec_soil <- df_ave_bcf %>% select(Soil) %>% unique() %>% arrange(Soil) %>% unlist()
+vec_soil <- paste0("Soil", 1:20)
+vec_soil_id <- c("Soil1_Acidic4", "Soil2_Acidic12","Soil3_CE239", "Soil4_CE56b","Soil5_CE201",
+                "Soil6_CE73", "Soil7_CE153", "Soil8_CE56a", "Soil9_CE277", "Soil10_CE253",
+                "Soil11_CE234", "Soil12_CE229", "Soil13_Neutral7", "Soil14_Neutral2","Soil15_Neutral5",
+                "Soil16_Neutral6", "Soil17_Neutral3", "Soil18_Neutral1", "Soil19_Neutral4", "Soil20_CE251")
+
+vec_soil_name <- moisture_pH_table$Soil_name
+
+df_ave_bcf$Soil <-  factor(df_ave_bcf$Soil, levels = vec_soil)
+df_ave_bcf$Soil_name <-  factor(df_ave_bcf$Soil_name, levels = vec_soil_name )
+
+dim(df_ave_bcf) # 393
+
+# new short label, soil + pH
+df_ave_bcf$Soil_and_pH <- paste0(df_ave_bcf$Soil, "_pH", round(df_ave_bcf$Soil_pH, 2))
+moisture_pH_table$Soil_and_pH <- paste0(str_split(moisture_pH_table$Soil_ID, "_", simplify = T)[,1], "_pH", round(moisture_pH_table$Soil_pH, 2))
+df_ave_bcf$Soil_and_pH <-  factor(df_ave_bcf$Soil_and_pH, levels = moisture_pH_table$Soil_and_pH )
+
+vec_soil_and_pH <- moisture_pH_table$Soil_and_pH
+
+# plot
+df_plot <- df_ave_bcf
+df_plot2 <- df_plot
+
+df_plot2 %<>% filter(Cycloheximide == "None")
+df_plot2 %<>% filter(Titration_type != "No_Nitrate")
+df_plot2 %<>% filter(Sample_type == "Slurry")
+
+df_plot2$Chloramphenicol <- factor(df_plot2$Chloramphenicol, levels = c("None", "CHL"))
+
+# df_plot2 %>% filter(H_mM == 0, Time_hours == 0)
+
+# what is happening with the time table
+Time_table
+
+# plot with H_mM
+ggplot(df_plot2, aes(x=Time_hours, y=Ave_NO3_mM, color=H_mM, group=H_mM)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_colour_gradientn(colours = (col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(Chloramphenicol ~ Soil_and_pH) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# plot Nitrite
+ggplot(df_plot2, aes(x=Time_hours, y=Ave_NO2_mM, color=H_mM, group=H_mM)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  scale_colour_gradientn(colours = (col_pH(100))) +
+  # scale_color_manual(values=col_pH(4)) +
+  ylab("NO2- (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # label
+  # geom_text(aes(label = round(NO2_mM,3)), size = 3, vjust = -1.5, show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(Chloramphenicol ~ Soil_and_pH) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# include pH data
+# plot together with pH data
+df_221207_pH <- read.xlsx("data/221101_pH_Cook_Main_soil_KCl.xlsx") %>% select(-H_mM)
+df_221207_pH$Time_point # T9
+dim(df_221207_pH)
+colnames(df_221207_pH)
+df_221207_pH %>% unique() %>% nrow
+
+colnames(df_221207_pH)
+dim(df_221207_pH) # 1135
+
+df_221207_pH$Time <- str_split(df_221207_pH$Time_point, "_", simplify = T)[,2]
+
+# I need to average the pH of no_nitrate and no-acid base samples
+df_pH_T9 <- df_221207_pH %>% filter(Time == "T9") %>% group_by(Soil, Soil_ID, Sample_type, Titration_type, Unit, Chloramphenicol, Cycloheximide) %>% summarize(pH = mean(pH))
+dim(df_pH_T9) # 568
+colnames(df_pH_T9)
+
+dim(df_ave_bcf) # 780
+colnames(df_ave_bcf)
+
+
+df_ave_bcf %>% unique() %>% nrow
+
+head(df_ave_bcf)
+dim(df_ave_bcf) # 1560
+df_plot_pH <- df_ave_bcf
+
+dim(df_plot_pH) # 780
+colnames(df_plot_pH)
+head(df_pH_T9)
+df_plot_pH %<>% left_join(df_pH_T9, by=c("Soil"="Soil", "Soil_ID"="Soil_ID", "Sample_type"="Sample_type", "Titration_type"="Titration_type","Unit"="Unit", "Chloramphenicol"="Chloramphenicol", "Cycloheximide"="Cycloheximide" ))
+
+colnames(df_plot_pH)
+head(df_plot_pH)
+dim(df_plot_pH) # 2400
+
+df_plot_pH %>% unique() %>% nrow # success 880 unique rows preserved
+
+## why did the number of rows increase?
+# remove NA
+dim(df_plot_pH) # 2880  20
+df_plot_pH[is.na(df_plot_pH)]
+df_na <- df_plot_pH[rowSums(is.na(df_plot_pH)) > 0,]  # A04 in plate1 has NA. Let's remove from the wells above.
+# df_p <- na.omit(df_p)
+
+# df_pH_label <- df_221026_pH %>% group_by(Titration_type, Unit) %>% summarize(pH_min = round(min(pH), 2), pH_max = round(max(pH), 2))
+# df_pH_label$pH_ave <- (df_pH_label$pH_max + df_pH_label$pH_min)/2
+# df_pH_label %<>% unite(col='pH_range', c("pH_min","pH_max"), sep=" - ", remove=F)
+# df_pH_label
+# df_pH_range <- df_plot2 %>% left_join(df_pH_label, by =c("Titration_type"="Titration_type", "Unit"="Unit"))
+
+# plot with pH
+
+df_plot_pH$Soil <- factor(df_plot_pH$Soil, levels = vec_soil)
+df_plot_pH$Soil_name <-  factor(df_plot_pH$Soil_name, levels = vec_soil_name)
+
+df_plot_pH$Chloramphenicol <- factor(df_plot_pH$Chloramphenicol, levels = c("None", "CHL"))
+
+df_plot_pH$pH
+
+# Soil13
+df_plot_pH_Soil13 <- df_plot_pH %>% filter(Soil == "Soil13")
+ggplot(df_plot_pH_Soil13, aes(x=Time_hours, y=Ave_NO3_mM, color=pH, group= pH)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# Soil9
+df_plot_pH_Soil9 <- df_plot_pH %>% filter(Soil == "Soil9")
+ggplot(df_plot_pH_Soil9, aes(x=Time_hours, y=Ave_NO3_mM, color=pH, group= pH)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+
+dim(df_plot_pH) # 1800
+df_plot_pH2 <- df_plot_pH
+df_plot_pH2 %<>% filter(!(Sample_type %in% c("Nitrite_Blank", "Nitrate_Blank", "Ammonium_Blank"))) 
+df_plot_pH2 %<>% filter(Cycloheximide == "None")
+df_plot_pH2 %<>% filter(Titration_type != "No_Nitrate")
+df_plot_pH2 %<>% filter(Sample_type == "Slurry")
+dim(df_plot_pH2) # 1800
+
+# df_plot_pH$Sample_type %>% unique()
+
+ggplot(df_plot_pH2, aes(x=Time_hours, y=Ave_NO3_mM, color=pH, group=pH)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(-0.3,2.4,0.5), limits=c(-0.3, 2.3))+
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(Chloramphenicol ~ Soil_and_pH) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# plot Nitrite
+ggplot(df_plot_pH2, aes(x=Time_hours, y=Ave_NO2_mM, color=pH, group=pH)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=col_pH(4)) +
+  ylab("NO2- (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # label
+  # geom_text(aes(label = round(NO2_mM,3)), size = 3, vjust = -1.5, show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(Chloramphenicol ~ Soil_and_pH) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+
+## export 
+# write.xlsx(df_plot_pH, "221207_Griess_Cook_after_wetting_water.xlsx")
+
+## plot nitrate and nitrite at the same time
+p_A_noCHL <- ggplot(df_plot_pH2 %>% filter(Chloramphenicol == "None"), aes(x=Time_hours, y=Ave_NO3_mM, color=pH, group=pH)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO3- (mM)") +
+  xlab("\n Time (hr)") +
+  scale_y_continuous(breaks = seq(-0.5,2.5,1), limits=c(-0.5, 2.5))+
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Soil_and_pH) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 15))+
+  theme(strip.text.y = element_text(size = 15))
+p_A_noCHL
+
+# plot Nitrite
+p_I_noCHL <- ggplot(df_plot_pH2  %>% filter(Chloramphenicol == "None"), aes(x=Time_hours, y=Ave_NO2_mM, color=pH, group=pH)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=col_pH(4)) +
+  ylab("NO2- (mM)") +
+  xlab("\n Time (hr)") +
+  scale_y_continuous(breaks = seq(-0.5,2,1), limits=c(-0.5, 2))+
+  # label
+  # geom_text(aes(label = round(NO2_mM,3)), size = 3, vjust = -1.5, show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Soil_and_pH) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 15))+
+  theme(strip.text.y = element_text(size = 15))
+
+p_I_noCHL
+
+require(gridExtra)
+library(grid)
+library(gtable)
+
+legend = gtable_filter(ggplotGrob(p_A_noCHL), "guide-box")
+
+grid.arrange(arrangeGrob(p_A_noCHL+xlab(NULL)+theme(legend.position="none"), 
+                         p_I_noCHL+xlab(NULL)+theme(legend.position="none")+theme(strip.background = element_blank(), strip.text = element_blank(), strip.text.x = element_blank()), nrow=2,
+             top = textGrob("[No CHL] pH perturbation in 9 soils of different pH levels", vjust = 0.5, gp = gpar(fontface = "bold", cex = 1.5)),
+             # left = textGrob("Relative abundance of strains with opt_pH", vjust = 0.5, rot=90, gp = gpar(fontface = "bold", cex = 1.5)),
+             bottom = textGrob("Time (hr)", vjust = 0, gp = gpar(fontface="bold", cex = 1.5)),
+             
+             right = legend
+             ))
+
+### With CHL
+## plot nitrate and nitrite at the same time
+p_A_CHL <- ggplot(df_plot_pH2  %>% filter(Chloramphenicol == "CHL"), aes(x=Time_hours, y=Ave_NO3_mM, color=pH, group=pH)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO3- (mM)") +
+  xlab("\n Time (hr)") +
+  scale_y_continuous(breaks = seq(-0.5,2.5,1), limits=c(-0.5, 2.5))+
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Soil_and_pH) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 15))+
+  theme(strip.text.y = element_text(size = 15))
+p_A_CHL
+
+# plot Nitrite
+p_I_CHL <- ggplot(df_plot_pH2  %>% filter(Chloramphenicol == "CHL"), aes(x=Time_hours, y=Ave_NO2_mM, color=pH, group=pH)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=col_pH(4)) +
+  ylab("NO2- (mM)") +
+  xlab("\n Time (hr)") +
+  scale_y_continuous(breaks = seq(-0.5,2,1), limits=c(-0.5, 2))+
+  # label
+  # geom_text(aes(label = round(NO2_mM,3)), size = 3, vjust = -1.5, show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(. ~ Soil_and_pH) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 15))+
+  theme(strip.text.y = element_text(size = 15))
+
+p_I_CHL
+
+require(gridExtra)
+library(grid)
+library(gtable)
+
+legend = gtable_filter(ggplotGrob(p_A_noCHL), "guide-box")
+
+grid.arrange(arrangeGrob(p_A_CHL+xlab(NULL)+theme(legend.position="none"), 
+                         p_I_CHL+xlab(NULL)+theme(legend.position="none")+theme(strip.background = element_blank(), strip.text = element_blank(), strip.text.x = element_blank()), nrow=2,
+             top = textGrob("[CHL] pH perturbation in 9 soils of different pH levels", vjust = 0.5, gp = gpar(fontface = "bold", cex = 1.5)),
+             # left = textGrob("Relative abundance of strains with opt_pH", vjust = 0.5, rot=90, gp = gpar(fontface = "bold", cex = 1.5)),
+             bottom = textGrob("Time (hr)", vjust = 0, gp = gpar(fontface="bold", cex = 1.5)),
+             
+             right = legend
+             ))
+
+
+
+
+```
+
+# Cycloheximide samples
+```{r}
+
+df_CHX <- df_plot_pH %>% filter(Cycloheximide == "CHX") 
+
+ggplot(df_CHX, aes(x=Time_hours, y=Ave_NO3_mM, color=pH, group=pH)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(-0.3,2.4,0.5), limits=c(-0.3, 2.3))+
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(Chloramphenicol ~ Soil_name) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# plot Nitrite
+ggplot(df_CHX, aes(x=Time_hours, y=Ave_NO2_mM, color=pH, group=pH)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=col_pH(4)) +
+  ylab("NO2- (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # label
+  # geom_text(aes(label = round(NO2_mM,3)), size = 3, vjust = -1.5, show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(Chloramphenicol ~ Soil_name) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+## compare
+df_CHL_CHX <- df_plot_pH %>% filter(Sample_type == "Slurry")
+
+ggplot(df_CHL_CHX, aes(x=Time_hours, y=Ave_NO3_mM, color=pH, group=pH)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(-0.3,2.4,0.5), limits=c(-0.3, 2.3))+
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(Chloramphenicol ~ Cycloheximide) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+## compare in 1 soil
+df_CHL_CHX <- df_plot_pH %>% filter(Sample_type == "Slurry")
+
+df_CHL_CHX_1soil <- df_CHL_CHX %>% filter(Soil == "Soil6")
+vec_unit <- df_CHL_CHX_1soil %>% filter(Cycloheximide == "CHX") %>% select(Unit) %>% unique() %>% unlist()
+df_CHL_CHX_1soil %<>% filter(Unit %in% vec_unit)
+
+ggplot(df_CHL_CHX_1soil, aes(x=Time_hours, y=Ave_NO3_mM, color=pH, group=pH)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO3- (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(-0.3,2.4,0.5), limits=c(-0.3, 2.3))+
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(Chloramphenicol ~ Cycloheximide) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+ggplot(df_CHL_CHX_1soil, aes(x=Time_hours, y=Ave_NO2_mM, color=pH, group=pH)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=col_pH(4)) +
+  ylab("NO2- (mM) \n") +
+  xlab("\n Time (hr)") +
+  # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # label
+  # geom_text(aes(label = round(NO2_mM,3)), size = 3, vjust = -1.5, show.legend = FALSE)+
+  mytheme_2d +
+  facet_grid(Chloramphenicol ~ Cycloheximide) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+```
+
+
+## Area under curve calculation
+```{r echo=F}
+df_plot_pH$Time_hours
+require(pracma)
+colnames(df_plot_pH2)
+df_plot_pH2 %>% filter(Cycloheximide == "CHX")
+df_plot_pH2$Sample_type %>% unique()
+df_plot_pH2$Titration_type %>% unique()
+dim(df_plot_pH2) # 2340
+colnames(df_plot_pH2)
+
+# df_corr <- df_plot_pH2 %>% select(H_mM, Unit, Soil_pH, pH, Soil, Soil_name, Soil_and_pH, Time_hours, Ave_NO3_mM, Ave_NO2_mM, Chloramphenicol) %>% group_by(H_mM, Unit, Soil_pH, pH, Soil, Soil_name, Soil_and_pHChloramphenicol) %>% mutate(auc = trapz(Time_hours, Ave_NO3_mM)) %>% ungroup()
+
+df_corr_no3 <- df_plot_pH2 %>% group_by(H_mM, Unit, Soil_pH, pH, Soil, Soil_ID, Soil_name, Soil_and_pH, Chloramphenicol) %>% summarize(auc = trapz(Time_hours, Ave_NO3_mM)) %>% ungroup() %>% arrange(Chloramphenicol, Soil, Unit)
+dim(df_corr_no3) # 234
+
+plot(df_corr_no3$pH, df_corr_no3$auc)
+
+df_corr_no3$pH_2 <- (df_corr_no3$pH)^2
+fit.no3 <- lm(auc ~ pH + pH_2, df_corr_no3)
+summary(fit.no3)
+
+perturbpH <- seq(3, 9, 0.1)
+aucPredict <- predict(fit.no3,list(pH=perturbpH, pH_2=perturbpH^2))
+df_auc_quad <- data.frame(pH=perturbpH, Time_hours = aucPredict)
+plot(perturbpH, aucPredict)
+
+colnames(df_corr_no3)
+
+# (1) Plot fitted linear regression line
+ggplot(df_corr_no3, aes(x=H_mM, y=auc, color = Soil_and_pH, group = Soil_and_pH )) +
+  geom_point(size=3, shape=16) +
+  # geom_line()+
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  xlab("Amount of pH perturbation (H+ mM) \n") +
+  ylab("\n Area under curve (NO3-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("Perturbation and area under nitrate curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# scale_colour_gradientn(colours = rev(col_pH(100))) +
+ggplot(df_corr_no3, aes(x=H_mM, y=auc, color = Soil_pH, group = Soil_pH )) +
+  geom_point(size=3, shape=16) +
+  # geom_line()+
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  xlab("Amount of pH perturbation (H+ mM) \n") +
+  ylab("\n Area under curve (NO3-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("Perturbation and area under nitrate curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+ggplot(df_corr_no3, aes(x=pH, y=auc, color = Soil_and_pH, group = Soil_and_pH)) +
+  geom_point(size=3, shape=16) +
+  # geom_line()+
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  xlab("pH \n") +
+  ylab("\n Area under curve (NO3-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("pH and area under nitrate curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# scale_colour_gradientn(colours = rev(col_pH(100))) +
+ggplot(df_corr_no3, aes(x=pH, y=auc, color = Soil_pH, group = Soil_pH)) +
+  geom_point(size=3, shape=16) +
+  # geom_line()+
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # scale_color_brewer(palette='Set2') +
+  scale_colour_gradientn(colours = rev(col_pH(100))) +  xlab("pH \n") +
+  ylab("\n Area under curve (NO3-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("pH and area under nitrate curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+## Delta pH can start from no acid/base treated samples... not like this.
+df_corr_no3$delta_pH <- df_corr_no3$pH - df_corr_no3$Soil_pH 
+
+ggplot(df_corr_no3, aes(x=delta_pH, y=auc, color = Soil_and_pH)) +
+  geom_point(size=3, shape=16) +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  xlab("delta pH \n") +
+  ylab("\n Area under curve (NO3-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("delta pH and area under nitrate curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# scale_colour_gradientn(colours = rev(col_pH(100))) +
+ggplot(df_corr_no3, aes(x=delta_pH, y=auc, color = Soil_pH)) +
+  geom_point(size=3, shape=16) +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  xlab("delta pH \n") +
+  ylab("\n Area under curve (NO3-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("delta pH and area under nitrate curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+## Delta pH calculate the right way (12/18/22)
+colnames(df_corr_no3)
+df_control_T9 <- df_corr_no3 %>% filter(Unit == 0) %>% select(Soil, pH, Chloramphenicol) %>% unique() %>% rename(pH_control_T9 = pH)
+dim(df_corr_no3) # 234 12
+df_corr_no3 %<>% left_join(df_control_T9, by = c("Soil"="Soil", "Chloramphenicol"="Chloramphenicol"))
+dim(df_corr_no3) # 234 13 (Very good)
+
+# Delta pH definition 2 (delta_pH_T9): T9 of the soil sample - T9 of no acid base  
+df_corr_no3$delta_pH_T9 <- df_corr_no3$pH - df_corr_no3$pH_control_T9 
+
+ggplot(df_corr_no3, aes(x=delta_pH_T9, y=auc, color = Soil_and_pH)) +
+  geom_point(size=3, shape=16) +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  xlab("delta pH \n") +
+  ylab("\n Area under curve (NO3-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("delta pH [T9 - T9_control] and area under nitrate curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# scale_colour_gradientn(colours = rev(col_pH(100))) +
+ggplot(df_corr_no3, aes(x=delta_pH_T9, y=auc, color = Soil_pH)) +
+  geom_point(size=3, shape=16) +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  xlab("delta pH \n") +
+  ylab("\n Area under curve (NO3-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("delta pH [T9 - T9_control] and area under nitrate curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# Definition of delta pH with pH measured by micro pH meter T0
+df_pH_T0 <- df_221207_pH %>% filter(Time == "T0") %>% group_by(Soil, Soil_ID, Sample_type, Titration_type, Unit, Chloramphenicol, Cycloheximide, Time) %>% summarize(pH = mean(pH)) %>% ungroup()
+dim(df_pH_T0) # 647
+colnames(df_pH_T0)
+
+df_pH_T0$Cycloheximide %>% unique()
+df_pH_T0$Sample_type %>% unique()
+df_pH_T0 %>% unique() %>% nrow
+
+df_pH_T0 %<>% filter(!(Sample_type %in% c("Nitrite_Blank", "Nitrate_Blank", "Ammonium_Blank"))) 
+df_pH_T0 %<>% filter(Titration_type != "No_Nitrate")
+df_pH_T0 %<>% filter(Sample_type == "Slurry")
+df_pH_T0 %<>% filter(Cycloheximide == "None") 
+df_pH_T0 %<>% filter(Unit == 0) 
+dim(df_pH_T0) # 40
+colnames(df_pH_T0)
+df_pH_micro <- df_pH_T0
+
+df_pH_T0 %<>% select(Soil, Chloramphenicol, pH) %>% rename(pH_micro_T0 = pH)
+# left join
+df_corr_no3 %<>% left_join(df_pH_T0, by = c("Soil"="Soil", "Chloramphenicol"="Chloramphenicol"))
+colnames(df_corr_no3)
+# Delta pH definition 3 (delta_pH_micro_T0): T9 of the soil sample - T0 of no acid base measured by micro pH
+df_corr_no3$delta_pH_micro_T0 <- df_corr_no3$pH - df_corr_no3$pH_micro_T0 
+
+df_corr_no3$Chloramphenicol <- factor(df_corr_no3$Chloramphenicol, levels = c("None", "CHL"))
+
+ggplot(df_corr_no3, aes(x=delta_pH_micro_T0, y=auc, color = Soil_and_pH)) +
+  geom_point(size=3, shape=16) +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  xlab("delta pH \n") +
+  ylab("\n Area under curve (NO3-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("delta pH [T9 - T0_control_micro] and area under nitrate curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# scale_colour_gradientn(colours = rev(col_pH(100))) +
+ggplot(df_corr_no3, aes(x=delta_pH_micro_T0, y=auc, color = Soil_pH)) +
+  geom_point(size=3, shape=16) +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  xlab("delta pH \n") +
+  ylab("\n Area under curve (NO3-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("delta pH [T9 - T0_control_micro] and area under nitrate curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+
+# plot T0 micro and soil pH
+df_Soil_pH <- moisture_pH_table %>% select(Soil_ID, Soil_pH)
+df_pH_micro %<>% rename(pH_micro_T0 = pH) %>% left_join(df_Soil_pH, by = c("Soil_ID"="Soil_ID"))
+dim(df_pH_micro)
+colnames(df_pH_micro)
+
+df_pH_micro$Soil <- factor(df_pH_micro$Soil, levels = vec_soil)
+
+ggplot(df_pH_micro, aes(x=Soil_pH, y=pH_micro_T0, color = Soil, shape = Chloramphenicol)) +
+  geom_point(size=3) +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  xlab("Soil pH (measured by pH meter by water method) \n") +
+  ylab("\n pH measured by micro pH meter at T0 by 1M KCl method") +
+  scale_x_continuous(breaks = seq(3,9,1), limits=c(3.5, 8.5))+
+  scale_y_continuous(breaks = seq(3,9,1), limits=c(3.5, 8.5))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("Comparing soil pH measurement methods") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d
+
+```
+
+## 221219 Let's normalize the y axis (AUC)
+For each soil, maximum auc value is 1
+
+```{r}
+## Normalization
+df_corr_no3
+colnames(df_corr_no3)
+dim(df_corr_no3)
+df_max_auc <- df_corr_no3 %>% group_by(Soil, Chloramphenicol) %>% summarize(auc_max = max(auc)) %>% ungroup()
+
+df_corr_no3_norm <- df_corr_no3
+dim(df_corr_no3)
+df_corr_no3_norm %<>% left_join(df_max_auc, by = c("Soil"="Soil", "Chloramphenicol"="Chloramphenicol")) %>% mutate(auc_norm = auc /auc_max)
+df_corr_no3_norm2 <- df_corr_no3_norm
+dim(df_corr_no3_norm)
+
+# (1) Plot fitted linear regression line
+ggplot(df_corr_no3_norm, aes(x=H_mM, y=auc_norm, color = Soil_and_pH, group = Soil_and_pH )) +
+  geom_point(size=3, shape=16) +
+  # geom_line()+
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  xlab("Amount of pH perturbation (H+ mM) \n") +
+  ylab("\n Normalized Area under curve (NO3-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("Perturbation and area under nitrate curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_norm_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# scale_colour_gradientn(colours = rev(col_pH(100))) +
+ggplot(df_corr_no3_norm, aes(x=H_mM, y=auc_norm, color = Soil_pH, group = Soil_pH )) +
+  geom_point(size=3, shape=16) +
+  # geom_line()+
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  xlab("Amount of pH perturbation (H+ mM) \n") +
+  ylab("\n Normalized Area under curve (NO3-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("Perturbation and area under nitrate curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_norm_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# pH
+ggplot(df_corr_no3_norm, aes(x=pH, y=auc_norm, color = Soil_and_pH, group = Soil_and_pH)) +
+  geom_point(size=3, shape=16) +
+  geom_line()+
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  xlab("pH \n") +
+  ylab("\n Normalized Area under curve (NO3-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("pH and area under nitrate curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_norm_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# pH and reverse the auc_norm
+ggplot(df_corr_no3_norm, aes(x=pH, y=1/auc_norm, color = Soil_and_pH, group = Soil_and_pH)) +
+  geom_point(size=3, shape=16) +
+  geom_line()+
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  xlab("pH \n") +
+  ylab("\n 1 / Normalized Area under curve (NO3-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("pH and 1/AUC") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_norm_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# scale_colour_gradientn(colours = rev(col_pH(100))) +
+ggplot(df_corr_no3_norm, aes(x=pH, y=auc_norm, color = Soil_pH, group = Soil_pH)) +
+  geom_point(size=3, shape=16) +
+  # geom_line()+
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # scale_color_brewer(palette='Set2') +
+  scale_colour_gradientn(colours = rev(col_pH(100))) +  xlab("pH \n") +
+  ylab("\n Normalized Area under curve (NO3-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("pH and area under nitrate curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_norm_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+
+## Delta pH can start from no acid/base treated samples... not like this.
+df_corr_no3_norm$delta_pH <- df_corr_no3_norm$pH - df_corr_no3_norm$Soil_pH 
+
+ggplot(df_corr_no3_norm, aes(x=delta_pH, y=auc_norm, color = Soil_and_pH)) +
+  geom_point(size=3, shape=16) +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  xlab("delta pH \n") +
+  ylab("\n Normalized Area under curve (NO3-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("delta pH and area under nitrate curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_norm_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# scale_colour_gradientn(colours = rev(col_pH(100))) +
+ggplot(df_corr_no3_norm, aes(x=delta_pH, y=auc_norm, color = Soil_pH)) +
+  geom_point(size=3, shape=16) +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_colour_gradientn(colours = rev(col_pH(100))) +  xlab("delta pH \n") +
+  ylab("\n Normalized Area under curve (NO3-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("delta pH and area under nitrate curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_norm_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# line
+ggplot(df_corr_no3_norm, aes(x=delta_pH, y=auc_norm, color = Soil_pH, group=Soil_pH)) +
+  geom_point(size=3, shape=16) +
+  geom_line()+
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_colour_gradientn(colours = rev(col_pH(100))) +  xlab("delta pH \n") +
+  ylab("\n Normalized Area under curve (NO3-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("delta pH and area under nitrate curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_norm_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# 1/AUC
+ggplot(df_corr_no3_norm, aes(x=delta_pH, y=1/auc_norm, color = Soil_pH, group=Soil_pH)) +
+  geom_point(size=3, shape=16) +
+  geom_line()+
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_colour_gradientn(colours = rev(col_pH(100))) +  xlab("delta pH \n") +
+  ylab("\n 1 / Normalized Area under curve (NO3-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("delta pH and 1/AUC") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_norm_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+## Delta pH calculate the right way (12/18/22)
+colnames(df_corr_no3)
+df_control_T9 <- df_corr_no3 %>% filter(Unit == 0) %>% select(Soil, pH, Chloramphenicol) %>% unique() %>% rename(pH_control_T9 = pH)
+dim(df_corr_no3_norm) # 234 12
+df_corr_no3_norm %<>% left_join(df_control_T9, by = c("Soil"="Soil", "Chloramphenicol"="Chloramphenicol"))
+dim(df_corr_no3_norm) # 234 13 (Very good)
+
+# Delta pH definition 2 (delta_pH_T9): T9 of the soil sample - T9 of no acid base  
+df_corr_no3_norm$delta_pH_T9 <- df_corr_no3_norm$pH - df_corr_no3_norm$pH_control_T9 
+
+ggplot(df_corr_no3_norm, aes(x=delta_pH_T9, y=auc_norm, color = Soil_and_pH)) +
+  geom_point(size=3, shape=16) +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  xlab("delta pH \n") +
+  ylab("\n Normalized Area under curve (NO3-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("delta pH [T9 - T9_control] and area under nitrate curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_norm_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# This plot above is interesting, how about we chose the colors from pH
+
+
+# pH color
+col_pH <- colorRampPalette(c("gold","red","purple"))
+
+library(colorRamps)
+colorRamps::green2red
+plot(rep(1,13),col=col_pH(13),pch=19,cex=3)
+grad_pH <- scale_colour_gradientn(colours = col_pH(100))
+
+
+# scale_colour_gradientn(colours = rev(col_pH(100))) +
+ggplot(df_corr_no3_norm, aes(x=delta_pH_T9, y=auc_norm, color = Soil_pH)) +
+  geom_point(size=3, shape=16) +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  xlab("delta pH \n") +
+  ylab("\n Normalized Area under curve (NO3-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("delta pH [T9 - T9_control] and area under nitrate curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_norm_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# line
+ggplot(df_corr_no3_norm, aes(x=delta_pH_T9, y=auc_norm, color = Soil_pH, group = Soil_pH)) +
+  geom_point(size=3, shape=16) +
+  geom_line() +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  xlab("delta pH \n") +
+  ylab("\n Normalized Area under curve (NO3-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("delta pH [T9 - T9_control] and area under nitrate curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_norm_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# 1/AUC
+# line
+ggplot(df_corr_no3_norm, aes(x=delta_pH_T9, y=1/auc_norm, color = Soil_pH, group = Soil_pH)) +
+  geom_point(size=3, shape=16) +
+  geom_line() +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  xlab("delta pH \n") +
+  ylab("\n 1 / Normalized Area under curve (NO3-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("delta pH [T9 - T9_control] and 1/AUC") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_norm_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# Definition of delta pH with pH measured by micro pH meter T0
+df_pH_T0 <- df_221207_pH %>% filter(Time == "T0") %>% group_by(Soil, Soil_ID, Sample_type, Titration_type, Unit, Chloramphenicol, Cycloheximide, Time) %>% summarize(pH = mean(pH)) %>% ungroup()
+dim(df_pH_T0) # 647
+colnames(df_pH_T0)
+
+df_pH_T0$Cycloheximide %>% unique()
+df_pH_T0$Sample_type %>% unique()
+df_pH_T0 %>% unique() %>% nrow
+
+df_pH_T0 %<>% filter(!(Sample_type %in% c("Nitrite_Blank", "Nitrate_Blank", "Ammonium_Blank"))) 
+df_pH_T0 %<>% filter(Titration_type != "No_Nitrate")
+df_pH_T0 %<>% filter(Sample_type == "Slurry")
+df_pH_T0 %<>% filter(Cycloheximide == "None") 
+df_pH_T0 %<>% filter(Unit == 0) 
+dim(df_pH_T0) # 40
+colnames(df_pH_T0)
+df_pH_micro <- df_pH_T0
+
+df_pH_T0 %<>% select(Soil, Unit, Chloramphenicol, pH) %>% rename(pH_micro_T0 = pH)
+# left join
+df_corr_no3_norm %<>% left_join(df_pH_T0, by = c("Soil"="Soil", "Chloramphenicol"="Chloramphenicol"))
+colnames(df_corr_no3_norm)
+# Delta pH definition 3 (delta_pH_micro_T0): T9 of the soil sample - T0 of no acid base measured by micro pH
+df_corr_no3_norm$delta_pH_micro_T0 <- df_corr_no3_norm$pH - df_corr_no3_norm$pH_micro_T0 
+
+df_corr_no3_norm$Chloramphenicol <- factor(df_corr_no3_norm$Chloramphenicol, levels = c("None", "CHL"))
+
+ggplot(df_corr_no3_norm, aes(x=delta_pH_micro_T0, y=auc_norm, color = Soil_and_pH)) +
+  geom_point(size=3, shape=16) +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  xlab("delta pH \n") +
+  ylab("\n Area under curve (NO3-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("delta pH [T9 - T0_control_micro] and area under nitrate curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_norm_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+
+
+```
+
+## With CHL, is Homefield advantage true??
+Tiedje's hypothesis...
+
+```{r}
+# 1/AUC
+ggplot(df_corr_no3_norm %>% filter(Chloramphenicol == "CHL"), aes(x=delta_pH, y=1/auc_norm, color = Soil_pH, group=Soil_pH)) +
+  geom_point(size=3, shape=16) +
+  geom_line()+
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_colour_gradientn(colours = rev(col_pH(100))) +  xlab("delta pH \n") +
+  ylab("\n 1 / Normalized Area under curve (NO3-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("delta pH and 1/AUC") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_norm_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+
+# Let's plot peak vs. Soil_pH
+df_peak_finder <- df_corr_no3_norm %>% filter(Chloramphenicol == "CHL") %>% group_by(Soil) %>% mutate(max_rev_auc = max(1/auc_norm)) %>% select(H_mM, Soil_pH, pH, Soil, Soil_ID, Soil_name, Soil_and_pH, Chloramphenicol, auc, auc_norm,  delta_pH, max_rev_auc)
+colnames(df_peak_finder)
+dim(df_peak_finder)
+df_peak_finder %<>% filter(max_rev_auc == 1/auc_norm) %>% rename(pH_max_rev_auc = pH)
+
+ggplot(df_peak_finder, aes(x=Soil_pH, y=pH_max_rev_auc, color = Soil_pH, shape = Chloramphenicol)) +
+  geom_point(size=3) +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  xlab("Soil pH \n") +
+  ylab("\n pH where it maximize 1/AUC") +
+  scale_x_continuous(breaks = seq(3,9,1), limits=c(3.5, 8.5))+
+  scale_y_continuous(breaks = seq(3,9,1), limits=c(3.5, 8.5))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("Tiedje's hypothesis") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d
+
+head(df_corr_no3_norm)
+
+# pH and reverse the auc_norm
+ggplot(df_corr_no3_norm %>% filter(Chloramphenicol == "CHL"), aes(x=pH, y=1/auc_norm, color = Soil_pH, group = Soil_pH)) +
+  geom_point(size=3, shape=16) +
+  geom_line()+
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # scale_color_brewer(palette='Set2') +
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  xlab("pH \n") +
+  ylab("\n 1 / Normalized Area under curve (NO3-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("pH and 1/AUC") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_norm_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+
+
+# 1/AUC
+# line
+ggplot(df_corr_no3_norm %>% filter(Chloramphenicol == "CHL"), aes(x=delta_pH_T9, y=1/auc_norm, color = Soil_pH, group = Soil_pH)) +
+  geom_point(size=3, shape=16) +
+  geom_line() +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  xlab("delta pH \n") +
+  ylab("\n 1 / Normalized Area under curve (NO3-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("delta pH [T9 - T9_control] and 1/AUC") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_norm_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+```
+
+
+## Next up is nitrite
+```{r}
+df_corr_no2 <- df_plot_pH2 %>% group_by(H_mM, Unit, Soil_pH, pH, Soil, Soil_ID, Soil_name, Soil_and_pH, Chloramphenicol) %>% summarize(auc = trapz(Time_hours, Ave_NO2_mM)) %>% ungroup() %>% arrange(Chloramphenicol, Soil, Unit)
+dim(df_corr_no2) # 234
+
+# (1) Plot fitted linear regression line
+ggplot(df_corr_no2, aes(x=H_mM, y=auc, color = Soil_and_pH, group = Soil_and_pH )) +
+  geom_point(size=3, shape=16) +
+  # geom_line()+
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  xlab("Amount of pH perturbation (H+ mM) \n") +
+  ylab("\n Area under curve (NO2-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("Perturbation and area under nitrite curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# scale_colour_gradientn(colours = rev(col_pH(100))) +
+ggplot(df_corr_no2, aes(x=H_mM, y=auc, color = Soil_pH, group = Soil_pH )) +
+  geom_point(size=3, shape=16) +
+  # geom_line()+
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  xlab("Amount of pH perturbation (H+ mM) \n") +
+  ylab("\n Area under curve (NO2-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("Perturbation and area under nitrite curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+ggplot(df_corr_no2, aes(x=pH, y=auc, color = Soil_and_pH, group = Soil_and_pH)) +
+  geom_point(size=3, shape=16) +
+  # geom_line()+
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  xlab("pH \n") +
+  ylab("\n Area under curve (NO2-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("pH and area under nitrite curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# scale_colour_gradientn(colours = rev(col_pH(100))) +
+ggplot(df_corr_no2, aes(x=pH, y=auc, color = Soil_pH, group = Soil_pH)) +
+  geom_point(size=3, shape=16) +
+  # geom_line()+
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # scale_color_brewer(palette='Set2') +
+  scale_colour_gradientn(colours = rev(col_pH(100))) +  xlab("pH \n") +
+  ylab("\n Area under curve (NO2-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("pH and area under nitrite curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# line
+ggplot(df_corr_no2, aes(x=pH, y=auc, color = Soil_pH, group = Soil_pH)) +
+  geom_point(size=3, shape=16) +
+  geom_line() +
+  # geom_line()+
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # scale_color_brewer(palette='Set2') +
+  scale_colour_gradientn(colours = rev(col_pH(100))) +  xlab("pH \n") +
+  ylab("\n Area under curve (NO2-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("pH and area under nitrite curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+## Delta pH can start from no acid/base treated samples... not like this.
+df_corr_no2$delta_pH <- df_corr_no2$pH - df_corr_no2$Soil_pH 
+
+ggplot(df_corr_no2, aes(x=delta_pH, y=auc, color = Soil_and_pH)) +
+  geom_point(size=3, shape=16) +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  xlab("delta pH \n") +
+  ylab("\n Area under curve (NO2-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("delta pH and area under nitrite curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# scale_colour_gradientn(colours = rev(col_pH(100))) +
+ggplot(df_corr_no2, aes(x=delta_pH, y=auc, color = Soil_pH)) +
+  geom_point(size=3, shape=16) +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  xlab("delta pH \n") +
+  ylab("\n Area under curve (NO2-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("delta pH and area under nitrite curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# line
+ggplot(df_corr_no2, aes(x=delta_pH, y=auc, color = Soil_pH, group = Soil_pH)) +
+  geom_point(size=3, shape=16) +
+  geom_line() +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  xlab("delta pH \n") +
+  ylab("\n Area under curve (NO2-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("delta pH and area under nitrite curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+## Delta pH calculate the right way (12/18/22)
+colnames(df_corr_no2)
+df_control_T9 <- df_corr_no2 %>% filter(Unit == 0) %>% select(Soil, pH, Chloramphenicol) %>% unique() %>% rename(pH_control_T9 = pH)
+dim(df_corr_no2) # 234 12
+df_corr_no2 %<>% left_join(df_control_T9, by = c("Soil"="Soil", "Chloramphenicol"="Chloramphenicol"))
+dim(df_corr_no2) # 234 13 (Very good)
+
+# Delta pH definition 2 (delta_pH_T9): T9 of the soil sample - T9 of no acid base  
+df_corr_no2$delta_pH_T9 <- df_corr_no2$pH - df_corr_no2$pH_control_T9 
+
+ggplot(df_corr_no2, aes(x=delta_pH_T9, y=auc, color = Soil_and_pH)) +
+  geom_point(size=3, shape=16) +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  xlab("delta pH \n") +
+  ylab("\n Area under curve (NO2-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("delta pH [T9 - T9_control] and area under nitrite curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# scale_colour_gradientn(colours = rev(col_pH(100))) +
+ggplot(df_corr_no2, aes(x=delta_pH_T9, y=auc, color = Soil_pH)) +
+  geom_point(size=3, shape=16) +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  xlab("delta pH \n") +
+  ylab("\n Area under curve (NO2-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("delta pH [T9 - T9_control] and area under nitrite curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# Definition of delta pH with pH measured by micro pH meter T0
+df_pH_T0 <- df_221207_pH %>% filter(Time == "T0") %>% group_by(Soil, Soil_ID, Sample_type, Titration_type, Unit, Chloramphenicol, Cycloheximide, Time) %>% summarize(pH = mean(pH)) %>% ungroup()
+dim(df_pH_T0) # 647
+colnames(df_pH_T0)
+
+df_pH_T0$Cycloheximide %>% unique()
+df_pH_T0$Sample_type %>% unique()
+df_pH_T0 %>% unique() %>% nrow
+
+df_pH_T0 %<>% filter(!(Sample_type %in% c("Nitrite_Blank", "nitrite_Blank", "Ammonium_Blank"))) 
+df_pH_T0 %<>% filter(Titration_type != "No_nitrite")
+df_pH_T0 %<>% filter(Sample_type == "Slurry")
+df_pH_T0 %<>% filter(Cycloheximide == "None") 
+df_pH_T0 %<>% filter(Unit == 0) 
+dim(df_pH_T0) # 40
+colnames(df_pH_T0)
+df_pH_micro <- df_pH_T0
+
+df_pH_T0 %<>% select(Soil, Chloramphenicol, pH) %>% rename(pH_micro_T0 = pH)
+# left join
+df_corr_no2 %<>% left_join(df_pH_T0, by = c("Soil"="Soil", "Chloramphenicol"="Chloramphenicol"))
+colnames(df_corr_no2)
+# Delta pH definition 3 (delta_pH_micro_T0): T9 of the soil sample - T0 of no acid base measured by micro pH
+df_corr_no2$delta_pH_micro_T0 <- df_corr_no2$pH - df_corr_no2$pH_micro_T0 
+
+df_corr_no2$Chloramphenicol <- factor(df_corr_no2$Chloramphenicol, levels = c("None", "CHL"))
+
+ggplot(df_corr_no2, aes(x=delta_pH_micro_T0, y=auc, color = Soil_and_pH)) +
+  geom_point(size=3, shape=16) +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  xlab("delta pH \n") +
+  ylab("\n Area under curve (NO2-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("delta pH [T9 - T0_control_micro] and area under nitrite curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# scale_colour_gradientn(colours = rev(col_pH(100))) +
+ggplot(df_corr_no2, aes(x=delta_pH_micro_T0, y=auc, color = Soil_pH)) +
+  geom_point(size=3, shape=16) +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  xlab("delta pH \n") +
+  ylab("\n Area under curve (NO2-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("delta pH [T9 - T0_control_micro] and area under nitrite curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+
+# plot T0 micro and soil pH
+df_Soil_pH <- moisture_pH_table %>% select(Soil_ID, Soil_pH)
+df_pH_micro %<>% rename(pH_micro_T0 = pH) %>% left_join(df_Soil_pH, by = c("Soil_ID"="Soil_ID"))
+dim(df_pH_micro)
+colnames(df_pH_micro)
+
+df_pH_micro$Soil <- factor(df_pH_micro$Soil, levels = vec_soil)
+
+ggplot(df_pH_micro, aes(x=Soil_pH, y=pH_micro_T0, color = Soil, shape = Chloramphenicol)) +
+  geom_point(size=3) +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  xlab("Soil pH (measured by pH meter by water method) \n") +
+  ylab("\n pH measured by micro pH meter at T0 by 1M KCl method") +
+  scale_x_continuous(breaks = seq(3,9,1), limits=c(3.5, 8.5))+
+  scale_y_continuous(breaks = seq(3,9,1), limits=c(3.5, 8.5))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("Comparing soil pH measurement methods") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d
+
+
+##### Normalization maybe too much...
+##### Normalization
+# df_corr_no2
+# colnames(df_corr_no2)
+# dim(df_corr_no2)
+# df_max_auc <- df_corr_no2 %>% group_by(Soil, Chloramphenicol) %>% summarize(auc_max = max(auc)) %>% ungroup()
+# 
+# df_corr_no2_norm <- df_corr_no2
+# dim(df_corr_no2)
+# df_corr_no2_norm %<>% left_join(df_max_auc, by = c("Soil"="Soil", "Chloramphenicol"="Chloramphenicol")) %>% mutate(auc_norm = auc /auc_max)
+# dim(df_corr_no2_norm)
+# 
+# # (1) Plot fitted linear regression line
+# ggplot(df_corr_no2_norm, aes(x=H_mM, y=auc_norm, color = Soil_and_pH, group = Soil_and_pH )) +
+#   geom_point(size=3, shape=16) +
+#   # geom_line()+
+#   # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+#   # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+#   # scale_color_brewer(palette='Set2') +
+#   # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+#   xlab("Amount of pH perturbation (H+ mM) \n") +
+#   ylab("\n Normalized Area under curve (NO2-)") +
+#   # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+#   #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+#   # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+#   ggtitle("Perturbation and area under nitrite curve") +
+#   # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+#   # regression line
+#   # geom_line(data = df_auc_norm_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+#   # show equation
+#   # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+#   mytheme_2d +
+#   facet_grid(. ~ Chloramphenicol) +
+#   theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+#   theme(strip.text.x = element_text(size = 17))+
+#   theme(strip.text.y = element_text(size = 17))
+# 
+# # scale_colour_gradientn(colours = rev(col_pH(100))) +
+# ggplot(df_corr_no2_norm, aes(x=H_mM, y=auc_norm, color = Soil_pH, group = Soil_pH )) +
+#   geom_point(size=3, shape=16) +
+#   # geom_line()+
+#   # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+#   # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+#   # scale_color_brewer(palette='Set2') +
+#   scale_colour_gradientn(colours = rev(col_pH(100))) +
+#   xlab("Amount of pH perturbation (H+ mM) \n") +
+#   ylab("\n Normalized Area under curve (NO2-)") +
+#   # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+#   #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+#   # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+#   ggtitle("Perturbation and area under nitrite curve") +
+#   # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+#   # regression line
+#   # geom_line(data = df_auc_norm_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+#   # show equation
+#   # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+#   mytheme_2d +
+#   facet_grid(. ~ Chloramphenicol) +
+#   theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+#   theme(strip.text.x = element_text(size = 17))+
+#   theme(strip.text.y = element_text(size = 17))
+# 
+# # pH
+# ggplot(df_corr_no2_norm, aes(x=pH, y=auc_norm, color = Soil_and_pH, group = Soil_and_pH)) +
+#   geom_point(size=3, shape=16) +
+#   geom_line()+
+#   # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+#   # scale_color_brewer(palette='Set2') +
+#   # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+#   xlab("pH \n") +
+#   ylab("\n Normalized Area under curve (NO2-)") +
+#   # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+#   #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+#   # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+#   ggtitle("pH and area under nitrite curve") +
+#   # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+#   # regression line
+#   # geom_line(data = df_auc_norm_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+#   # show equation
+#   # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+#   mytheme_2d +
+#   facet_grid(. ~ Chloramphenicol) +
+#   theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+#   theme(strip.text.x = element_text(size = 17))+
+#   theme(strip.text.y = element_text(size = 17))
+# 
+# # pH and reverse the auc_norm
+# ggplot(df_corr_no2_norm, aes(x=pH, y=1/auc_norm, color = Soil_and_pH, group = Soil_and_pH)) +
+#   geom_point(size=3, shape=16) +
+#   geom_line()+
+#   # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+#   # scale_color_brewer(palette='Set2') +
+#   # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+#   xlab("pH \n") +
+#   ylab("\n 1 / Normalized Area under curve (NO2-)") +
+#   # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+#   #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+#   # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+#   ggtitle("pH and 1/AUC") +
+#   # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+#   # regression line
+#   # geom_line(data = df_auc_norm_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+#   # show equation
+#   # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+#   mytheme_2d +
+#   facet_grid(. ~ Chloramphenicol) +
+#   theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+#   theme(strip.text.x = element_text(size = 17))+
+#   theme(strip.text.y = element_text(size = 17))
+# 
+# # scale_colour_gradientn(colours = rev(col_pH(100))) +
+# ggplot(df_corr_no2_norm, aes(x=pH, y=auc_norm, color = Soil_pH, group = Soil_pH)) +
+#   geom_point(size=3, shape=16) +
+#   # geom_line()+
+#   # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+#   # scale_color_brewer(palette='Set2') +
+#   scale_colour_gradientn(colours = rev(col_pH(100))) +  xlab("pH \n") +
+#   ylab("\n Normalized Area under curve (NO2-)") +
+#   # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+#   #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+#   # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+#   ggtitle("pH and area under nitrite curve") +
+#   # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+#   # regression line
+#   # geom_line(data = df_auc_norm_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+#   # show equation
+#   # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+#   mytheme_2d +
+#   facet_grid(. ~ Chloramphenicol) +
+#   theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+#   theme(strip.text.x = element_text(size = 17))+
+#   theme(strip.text.y = element_text(size = 17))
+# 
+# 
+# ## Delta pH can start from no acid/base treated samples... not like this.
+# df_corr_no2_norm$delta_pH <- df_corr_no2_norm$pH - df_corr_no2_norm$Soil_pH 
+# 
+# ggplot(df_corr_no2_norm, aes(x=delta_pH, y=auc_norm, color = Soil_and_pH)) +
+#   geom_point(size=3, shape=16) +
+#   # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+#   # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+#   # scale_color_brewer(palette='Set2') +
+#   # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+#   xlab("delta pH \n") +
+#   ylab("\n Normalized Area under curve (NO2-)") +
+#   # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+#   #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+#   # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+#   ggtitle("delta pH and area under nitrite curve") +
+#   # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+#   # regression line
+#   # geom_line(data = df_auc_norm_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+#   # show equation
+#   # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+#   mytheme_2d +
+#   facet_grid(. ~ Chloramphenicol) +
+#   theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+#   theme(strip.text.x = element_text(size = 17))+
+#   theme(strip.text.y = element_text(size = 17))
+# 
+# # scale_colour_gradientn(colours = rev(col_pH(100))) +
+# ggplot(df_corr_no2_norm, aes(x=delta_pH, y=auc_norm, color = Soil_pH)) +
+#   geom_point(size=3, shape=16) +
+#   # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+#   # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+#   # scale_color_brewer(palette='Set2') +
+#   scale_colour_gradientn(colours = rev(col_pH(100))) +  xlab("delta pH \n") +
+#   ylab("\n Normalized Area under curve (NO2-)") +
+#   # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+#   #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+#   # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+#   ggtitle("delta pH and area under nitrite curve") +
+#   # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+#   # regression line
+#   # geom_line(data = df_auc_norm_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+#   # show equation
+#   # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+#   mytheme_2d +
+#   facet_grid(. ~ Chloramphenicol) +
+#   theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+#   theme(strip.text.x = element_text(size = 17))+
+#   theme(strip.text.y = element_text(size = 17))
+# 
+# # line
+# ggplot(df_corr_no2_norm, aes(x=delta_pH, y=auc_norm, color = Soil_pH, group=Soil_pH)) +
+#   geom_point(size=3, shape=16) +
+#   geom_line()+
+#   # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+#   # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+#   # scale_color_brewer(palette='Set2') +
+#   scale_colour_gradientn(colours = rev(col_pH(100))) +  xlab("delta pH \n") +
+#   ylab("\n Normalized Area under curve (NO2-)") +
+#   # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+#   #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+#   # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+#   ggtitle("delta pH and area under nitrite curve") +
+#   # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+#   # regression line
+#   # geom_line(data = df_auc_norm_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+#   # show equation
+#   # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+#   mytheme_2d +
+#   facet_grid(. ~ Chloramphenicol) +
+#   theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+#   theme(strip.text.x = element_text(size = 17))+
+#   theme(strip.text.y = element_text(size = 17))
+# 
+# # 1/AUC
+# ggplot(df_corr_no2_norm, aes(x=delta_pH, y=1/auc_norm, color = Soil_pH, group=Soil_pH)) +
+#   geom_point(size=3, shape=16) +
+#   geom_line()+
+#   # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+#   # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+#   # scale_color_brewer(palette='Set2') +
+#   scale_colour_gradientn(colours = rev(col_pH(100))) +  xlab("delta pH \n") +
+#   ylab("\n 1 / Normalized Area under curve (NO2-)") +
+#   # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+#   #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+#   # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+#   ggtitle("delta pH and 1/AUC") +
+#   # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+#   # regression line
+#   # geom_line(data = df_auc_norm_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+#   # show equation
+#   # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+#   mytheme_2d +
+#   facet_grid(. ~ Chloramphenicol) +
+#   theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+#   theme(strip.text.x = element_text(size = 17))+
+#   theme(strip.text.y = element_text(size = 17))
+# 
+# ## Delta pH calculate the right way (12/18/22)
+# colnames(df_corr_no2)
+# df_control_T9 <- df_corr_no2 %>% filter(Unit == 0) %>% select(Soil, pH, Chloramphenicol) %>% unique() %>% rename(pH_control_T9 = pH)
+# dim(df_corr_no2_norm) # 234 12
+# df_corr_no2_norm %<>% left_join(df_control_T9, by = c("Soil"="Soil", "Chloramphenicol"="Chloramphenicol"))
+# dim(df_corr_no2_norm) # 234 13 (Very good)
+# 
+# # Delta pH definition 2 (delta_pH_T9): T9 of the soil sample - T9 of no acid base  
+# df_corr_no2_norm$delta_pH_T9 <- df_corr_no2_norm$pH - df_corr_no2_norm$pH_control_T9 
+# 
+# ggplot(df_corr_no2_norm, aes(x=delta_pH_T9, y=auc_norm, color = Soil_and_pH)) +
+#   geom_point(size=3, shape=16) +
+#   # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+#   # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+#   # scale_color_brewer(palette='Set2') +
+#   # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+#   xlab("delta pH \n") +
+#   ylab("\n Normalized Area under curve (NO2-)") +
+#   # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+#   #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+#   # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+#   ggtitle("delta pH [T9 - T9_control] and area under nitrite curve") +
+#   # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+#   # regression line
+#   # geom_line(data = df_auc_norm_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+#   # show equation
+#   # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+#   mytheme_2d +
+#   facet_grid(. ~ Chloramphenicol) +
+#   theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+#   theme(strip.text.x = element_text(size = 17))+
+#   theme(strip.text.y = element_text(size = 17))
+# 
+# # This plot above is interesting, how about we chose the colors from pH
+# 
+# 
+# # pH color
+# col_pH <- colorRampPalette(c("gold","red","purple"))
+# 
+# library(colorRamps)
+# colorRamps::green2red
+# plot(rep(1,13),col=col_pH(13),pch=19,cex=3)
+# grad_pH <- scale_colour_gradientn(colours = col_pH(100))
+# 
+# 
+# # scale_colour_gradientn(colours = rev(col_pH(100))) +
+# ggplot(df_corr_no2_norm, aes(x=delta_pH_T9, y=auc_norm, color = Soil_pH)) +
+#   geom_point(size=3, shape=16) +
+#   # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+#   # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+#   # scale_color_brewer(palette='Set2') +
+#   scale_colour_gradientn(colours = rev(col_pH(100))) +
+#   xlab("delta pH \n") +
+#   ylab("\n Normalized Area under curve (NO2-)") +
+#   # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+#   #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+#   # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+#   ggtitle("delta pH [T9 - T9_control] and area under nitrite curve") +
+#   # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+#   # regression line
+#   # geom_line(data = df_auc_norm_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+#   # show equation
+#   # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+#   mytheme_2d +
+#   facet_grid(. ~ Chloramphenicol) +
+#   theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+#   theme(strip.text.x = element_text(size = 17))+
+#   theme(strip.text.y = element_text(size = 17))
+# 
+# # line
+# ggplot(df_corr_no2_norm, aes(x=delta_pH_T9, y=auc_norm, color = Soil_pH, group = Soil_pH)) +
+#   geom_point(size=3, shape=16) +
+#   geom_line() +
+#   # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+#   # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+#   # scale_color_brewer(palette='Set2') +
+#   scale_colour_gradientn(colours = rev(col_pH(100))) +
+#   xlab("delta pH \n") +
+#   ylab("\n Normalized Area under curve (NO2-)") +
+#   # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+#   #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+#   # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+#   ggtitle("delta pH [T9 - T9_control] and area under nitrite curve") +
+#   # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+#   # regression line
+#   # geom_line(data = df_auc_norm_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+#   # show equation
+#   # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+#   mytheme_2d +
+#   facet_grid(. ~ Chloramphenicol) +
+#   theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+#   theme(strip.text.x = element_text(size = 17))+
+#   theme(strip.text.y = element_text(size = 17))
+# 
+# # 1/AUC
+# # line
+# ggplot(df_corr_no2_norm, aes(x=delta_pH_T9, y=1/auc_norm, color = Soil_pH, group = Soil_pH)) +
+#   geom_point(size=3, shape=16) +
+#   geom_line() +
+#   # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+#   # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+#   # scale_color_brewer(palette='Set2') +
+#   scale_colour_gradientn(colours = rev(col_pH(100))) +
+#   xlab("delta pH \n") +
+#   ylab("\n 1 / Normalized Area under curve (NO2-)") +
+#   # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+#   #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+#   # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+#   ggtitle("delta pH [T9 - T9_control] and 1/AUC") +
+#   # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+#   # regression line
+#   # geom_line(data = df_auc_norm_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+#   # show equation
+#   # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+#   mytheme_2d +
+#   facet_grid(. ~ Chloramphenicol) +
+#   theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+#   theme(strip.text.x = element_text(size = 17))+
+#   theme(strip.text.y = element_text(size = 17))
+# 
+# # Definition of delta pH with pH measured by micro pH meter T0
+# df_pH_T0 <- df_221207_pH %>% filter(Time == "T0") %>% group_by(Soil, Soil_ID, Sample_type, Titration_type, Unit, Chloramphenicol, Cycloheximide, Time) %>% summarize(pH = mean(pH)) %>% ungroup()
+# dim(df_pH_T0) # 647
+# colnames(df_pH_T0)
+# 
+# df_pH_T0$Cycloheximide %>% unique()
+# df_pH_T0$Sample_type %>% unique()
+# df_pH_T0 %>% unique() %>% nrow
+# 
+# df_pH_T0 %<>% filter(!(Sample_type %in% c("Nitrite_Blank", "nitrite_Blank", "Ammonium_Blank"))) 
+# df_pH_T0 %<>% filter(Titration_type != "No_nitrite")
+# df_pH_T0 %<>% filter(Sample_type == "Slurry")
+# df_pH_T0 %<>% filter(Cycloheximide == "None") 
+# df_pH_T0 %<>% filter(Unit == 0) 
+# dim(df_pH_T0) # 40
+# colnames(df_pH_T0)
+# df_pH_micro <- df_pH_T0
+# 
+# df_pH_T0 %<>% select(Soil, Unit, Chloramphenicol, pH) %>% rename(pH_micro_T0 = pH)
+# # left join
+# df_corr_no2_norm %<>% left_join(df_pH_T0, by = c("Soil"="Soil", "Chloramphenicol"="Chloramphenicol"))
+# colnames(df_corr_no2_norm)
+# # Delta pH definition 3 (delta_pH_micro_T0): T9 of the soil sample - T0 of no acid base measured by micro pH
+# df_corr_no2_norm$delta_pH_micro_T0 <- df_corr_no2_norm$pH - df_corr_no2_norm$pH_micro_T0 
+# 
+# df_corr_no2_norm$Chloramphenicol <- factor(df_corr_no2_norm$Chloramphenicol, levels = c("None", "CHL"))
+# 
+# ggplot(df_corr_no2_norm, aes(x=delta_pH_micro_T0, y=auc_norm, color = Soil_and_pH)) +
+#   geom_point(size=3, shape=16) +
+#   # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+#   # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+#   # scale_color_brewer(palette='Set2') +
+#   # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+#   xlab("delta pH \n") +
+#   ylab("\n Area under curve (NO2-)") +
+#   # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+#   #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+#   # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+#   ggtitle("delta pH [T9 - T0_control_micro] and area under nitrite curve") +
+#   # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+#   # regression line
+#   # geom_line(data = df_auc_norm_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+#   # show equation
+#   # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+#   mytheme_2d +
+#   facet_grid(. ~ Chloramphenicol) +
+#   theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+#   theme(strip.text.x = element_text(size = 17))+
+#   theme(strip.text.y = element_text(size = 17))
+
+
+
+```
+
+
+## 5. Get Ir dynamics (Reduction rate of the nitrite)
+
+## 5.1. I p (Nitrite produced) = A 0 - A(t)
+```{r}
+
+df_plot_pH2
+df_plot_pH2$Time <- str_split(df_plot_pH2$Time_point, "_", simplify = T)[,2]
+# I don't need to make a matrix
+df_plot_Ip <- df_plot_pH2
+
+colnames(df_plot_Ip)
+df_AI0 <- df_plot_Ip %>% filter(Time == "T0") %>% select(Soil, Chloramphenicol, Unit, Ave_NO3_mM, Ave_NO2_mM) %>% unique() %>% arrange(Chloramphenicol, Soil, Unit) %>% rename(T0_NO3_mM = Ave_NO3_mM, T0_NO2_mM = Ave_NO2_mM)  # 234
+
+df_plot_Ip %<>% left_join(df_AI0, by = c("Soil"="Soil", "Chloramphenicol"="Chloramphenicol", "Unit"="Unit"))
+dim(df_plot_Ip) # 2340
+
+df_plot_Ip$Ave_NO2_produced <- df_plot_Ip$T0_NO3_mM - df_plot_Ip$Ave_NO3_mM
+
+df_plot_Ip_Ir <- df_plot_Ip
+
+df_plot_Ip_Ir$Ave_NO2_reduced <- df_plot_Ip_Ir$T0_NO2_mM + df_plot_Ip$Ave_NO2_produced - df_plot_Ip_Ir$Ave_NO2_mM
+
+# Nitrite produced
+ggplot(df_plot_Ip_Ir, aes(x=Time_hours, y=Ave_NO2_produced, color=pH, group=pH)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=Ave_NO2_produced - Std_NO3_mM, ymax=Ave_NO2_produced + Std_NO3_mM), width=.05)+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO2- produced (mM)") +
+  xlab("Time (hr)") +
+  # scale_y_continuous(breaks = seq(-0.3,2.4,0.5), limits=c(-0.3, 2.3))+
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, show.legend = FALSE)+
+  ggtitle("Nitrite produced I_p(t) = A0 - A(t)") +
+  mytheme_2d +
+  facet_grid(Chloramphenicol ~ Soil_and_pH) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 15))+
+  theme(strip.text.y = element_text(size = 15))
+
+# Nitrite reduced
+ggplot(df_plot_Ip_Ir, aes(x=Time_hours, y=Ave_NO2_reduced, color=pH, group=pH)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  geom_errorbar(aes(ymin=Ave_NO2_reduced - Std_NO2_mM, ymax=Ave_NO2_reduced + Std_NO2_mM), width=.05)+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO2- reduced (mM)") +
+  xlab("Time (hr)") +
+  # scale_y_continuous(breaks = seq(-0.3,2.4,0.5), limits=c(-0.3, 2.3))+
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, show.legend = FALSE)+
+  ggtitle("Nitrite reduced I_r(t) = I_p + I0 - I(t)") +
+  mytheme_2d +
+  facet_grid(Chloramphenicol ~ Soil_and_pH) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 15))+
+  theme(strip.text.y = element_text(size = 15))
+
+## AUC analysis
+
+df_corr_Ir <- df_plot_Ip_Ir %>% group_by(H_mM, Unit, Soil_pH, pH, Soil, Soil_ID, Soil_name, Soil_and_pH, Chloramphenicol) %>% summarize(auc = trapz(Time_hours, Ave_NO2_reduced)) %>% ungroup() %>% arrange(Chloramphenicol, Soil, Unit)
+dim(df_corr_Ir) # 234
+
+# (1) Plot fitted linear regression line
+ggplot(df_corr_Ir, aes(x=H_mM, y=auc, color = Soil_and_pH, group = Soil_and_pH )) +
+  geom_point(size=3, shape=16) +
+  # geom_line()+
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  xlab("Amount of pH perturbation (H+ mM) \n") +
+  ylab("\n Area under curve (reduced NO2-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("Perturbation and area under reduced nitrite curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# scale_colour_gradientn(colours = rev(col_pH(100))) +
+ggplot(df_corr_Ir, aes(x=H_mM, y=auc, color = Soil_pH, group = Soil_pH )) +
+  geom_point(size=3, shape=16) +
+  # geom_line()+
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  xlab("Amount of pH perturbation (H+ mM) \n") +
+  ylab("\n Area under curve (reduced NO2-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("Perturbation and area under reduced nitrite curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+ggplot(df_corr_Ir, aes(x=pH, y=auc, color = Soil_and_pH, group = Soil_and_pH)) +
+  geom_point(size=3, shape=16) +
+  # geom_line()+
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  xlab("pH \n") +
+  ylab("\n Area under curve (reduced NO2-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("pH and area under reduced nitrite curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# scale_colour_gradientn(colours = rev(col_pH(100))) +
+ggplot(df_corr_Ir, aes(x=pH, y=auc, color = Soil_pH, group = Soil_pH)) +
+  geom_point(size=3, shape=16) +
+  # geom_line()+
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # scale_color_brewer(palette='Set2') +
+  scale_colour_gradientn(colours = rev(col_pH(100))) +  xlab("pH \n") +
+  ylab("\n Area under curve (reduced NO2-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("pH and area under reduced nitrite curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# line
+ggplot(df_corr_Ir, aes(x=pH, y=auc, color = Soil_pH, group = Soil_pH)) +
+  geom_point(size=3, shape=16) +
+  geom_line() +
+  # geom_line()+
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # scale_color_brewer(palette='Set2') +
+  scale_colour_gradientn(colours = rev(col_pH(100))) +  xlab("pH \n") +
+  ylab("\n Area under curve (reduced NO2-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("pH and area under reduced nitrite curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+## Delta pH can start from no acid/base treated samples... not like this.
+df_corr_Ir$delta_pH <- df_corr_Ir$pH - df_corr_Ir$Soil_pH 
+
+ggplot(df_corr_Ir, aes(x=delta_pH, y=auc, color = Soil_and_pH)) +
+  geom_point(size=3, shape=16) +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  xlab("delta pH \n") +
+  ylab("\n Area under curve (reduced NO2-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("delta pH and area under reduced nitrite curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# scale_colour_gradientn(colours = rev(col_pH(100))) +
+ggplot(df_corr_Ir, aes(x=delta_pH, y=auc, color = Soil_pH)) +
+  geom_point(size=3, shape=16) +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  xlab("delta pH \n") +
+  ylab("\n Area under curve (reduced NO2-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("delta pH and area under reduced nitrite curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# line
+ggplot(df_corr_Ir, aes(x=delta_pH, y=auc, color = Soil_pH, group = Soil_pH)) +
+  geom_point(size=3, shape=16) +
+  geom_line() +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  xlab("delta pH \n") +
+  ylab("\n Area under curve (reduced NO2-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("delta pH and area under reduced nitrite curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# Let's plot peak vs. Soil_pH
+df_peak_finder_Ir <- df_corr_Ir %>% filter(Chloramphenicol == "CHL") %>% group_by(Soil) %>% mutate(max_auc = max(auc)) %>% select(H_mM, Soil_pH, pH, Soil, Soil_ID, Soil_name, Soil_and_pH, Chloramphenicol, auc, delta_pH, max_auc)
+colnames(df_peak_finder_Ir)
+dim(df_peak_finder_Ir)
+df_peak_finder_Ir %<>% filter(max_auc == auc) %>% rename(pH_max_auc = pH)
+
+ggplot(df_peak_finder_Ir, aes(x=Soil_pH, y=pH_max_auc, color = Soil_pH, shape = Chloramphenicol)) +
+  geom_point(size=3) +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  xlab("Soil pH \n") +
+  ylab("\n pH where it maximize AUC (nitrite reduction)") +
+  scale_x_continuous(breaks = seq(3,9,1), limits=c(3.5, 8.5))+
+  scale_y_continuous(breaks = seq(3,9,1), limits=c(3.5, 8.5))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("Tiedje's hypothesis") +
+  geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d
+
+
+## Delta pH calculate the right way (12/18/22)
+colnames(df_corr_Ir)
+df_control_T9 <- df_corr_Ir %>% filter(Unit == 0) %>% select(Soil, pH, Chloramphenicol) %>% unique() %>% rename(pH_control_T9 = pH)
+dim(df_corr_Ir) # 234 12
+df_corr_Ir %<>% left_join(df_control_T9, by = c("Soil"="Soil", "Chloramphenicol"="Chloramphenicol"))
+dim(df_corr_Ir) # 234 13 (Very good)
+
+# Delta pH definition 2 (delta_pH_T9): T9 of the soil sample - T9 of no acid base  
+df_corr_Ir$delta_pH_T9 <- df_corr_Ir$pH - df_corr_Ir$pH_control_T9 
+
+ggplot(df_corr_Ir, aes(x=delta_pH_T9, y=auc, color = Soil_and_pH)) +
+  geom_point(size=3, shape=16) +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  xlab("delta pH \n") +
+  ylab("\n Area under curve (reduced NO2-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("delta pH [T9 - T9_control] and area under reduced nitrite curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# scale_colour_gradientn(colours = rev(col_pH(100))) +
+ggplot(df_corr_Ir, aes(x=delta_pH_T9, y=auc, color = Soil_pH)) +
+  geom_point(size=3, shape=16) +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  xlab("delta pH \n") +
+  ylab("\n Area under curve (reduced NO2-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("delta pH [T9 - T9_control] and area under reduced nitrite curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# Definition of delta pH with pH measured by micro pH meter T0
+df_pH_T0 <- df_221207_pH %>% filter(Time == "T0") %>% group_by(Soil, Soil_ID, Sample_type, Titration_type, Unit, Chloramphenicol, Cycloheximide, Time) %>% summarize(pH = mean(pH)) %>% ungroup()
+dim(df_pH_T0) # 647
+colnames(df_pH_T0)
+
+df_pH_T0$Cycloheximide %>% unique()
+df_pH_T0$Sample_type %>% unique()
+df_pH_T0 %>% unique() %>% nrow
+
+df_pH_T0 %<>% filter(!(Sample_type %in% c("Nitrite_Blank", "nitrite_Blank", "Ammonium_Blank"))) 
+df_pH_T0 %<>% filter(Titration_type != "No_nitrite")
+df_pH_T0 %<>% filter(Sample_type == "Slurry")
+df_pH_T0 %<>% filter(Cycloheximide == "None") 
+df_pH_T0 %<>% filter(Unit == 0) 
+dim(df_pH_T0) # 40
+colnames(df_pH_T0)
+df_pH_micro <- df_pH_T0
+
+df_pH_T0 %<>% select(Soil, Chloramphenicol, pH) %>% rename(pH_micro_T0 = pH)
+# left join
+df_corr_Ir %<>% left_join(df_pH_T0, by = c("Soil"="Soil", "Chloramphenicol"="Chloramphenicol"))
+colnames(df_corr_Ir)
+# Delta pH definition 3 (delta_pH_micro_T0): T9 of the soil sample - T0 of no acid base measured by micro pH
+df_corr_Ir$delta_pH_micro_T0 <- df_corr_Ir$pH - df_corr_Ir$pH_micro_T0 
+
+df_corr_Ir$Chloramphenicol <- factor(df_corr_Ir$Chloramphenicol, levels = c("None", "CHL"))
+
+ggplot(df_corr_Ir, aes(x=delta_pH_micro_T0, y=auc, color = Soil_and_pH)) +
+  geom_point(size=3, shape=16) +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  # scale_color_manual(values = c("maroon2","deepskyblue4"))+
+  xlab("delta pH \n") +
+  ylab("\n Area under curve (reduced NO2-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("delta pH [T9 - T0_control_micro] and area under reduced nitrite curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# scale_colour_gradientn(colours = rev(col_pH(100))) +
+ggplot(df_corr_Ir, aes(x=delta_pH_micro_T0, y=auc, color = Soil_pH)) +
+  geom_point(size=3, shape=16) +
+  # stat_smooth(method = "lm", formula = y ~ x + I(x^2), size = 1) +
+  # geom_errorbar(aes(ymin=NO3_mM - sd_NO3_mM, ymax=NO3_mM + sd_NO3_mM), width=.05)+
+  # scale_color_brewer(palette='Set2') +
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  xlab("delta pH \n") +
+  ylab("\n Area under curve (reduced NO2-)") +
+  # scale_x_continuous(breaks = seq(0,16,1), limits=c(0, 16))+
+  #scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+
+  # geom_text_repel(aes(label = round(NO3_mM,3)), size = 3,show.legend = FALSE)+
+  ggtitle("delta pH [T9 - T0_control_micro] and area under reduced nitrite curve") +
+  # geom_abline(slope = 1, intercept=0, show.legend = "y=x")+
+  # regression line
+  # geom_line(data = df_auc_quad, aes(x = H_mM, y = Time_hours), color = "maroon2", size = 1) +
+  # show equation
+  # annotate("text",x=0,y=100, label= paste0("y = ", round(coef(fit.no3)[[1]],3), "+", round(coef(fit.no3)[[2]],3),"x+",round(coef(fit.no3)[[3]],3), "x^2", ",  R^2: ", round(summary(fit.no3)$r.squared,3)), color = "maroon2") +
+  mytheme_2d +
+  facet_grid(. ~ Chloramphenicol) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+
+```
+
+## How about we subtract the CHL from No_CHL. This will be delta tau. 
+This means the function that is solely brought by the abundance reshuffling and adjustment, not by the existing enzymes.
+
+```{r}
+df_plot_tau <- df_plot_pH2
+df_plot_tau
+colnames(df_plot_tau)
+dim(df_plot_tau) # 2340
+df_tau_no3 <- dcast(df_plot_tau, H_mM+Unit+Soil_pH+Soil+Soil_ID+Soil_name+Soil_and_pH+Time_point+Time+Time_hours ~ Chloramphenicol, value.var = "Ave_NO3_mM")
+
+# Hmm... pH is not the same for CHL and None.. How should I resolve this. Average? okay.
+df_tau_pH <- dcast(df_plot_tau, Unit+Soil+Time_point ~ Chloramphenicol, value.var = "pH")
+df_tau_ave_pH <- df_tau_pH %>% group_by(Soil, Unit, Time_point) %>% summarize(Ave_pH = mean(None, CHL))
+df_tau_ave_pH$Ave_pH %>% unique()
+df_tau_no3 %<>% left_join(df_tau_ave_pH, by=c("Soil"="Soil", "Unit"="Unit", "Time_point"="Time_point"))  
+
+dim(df_tau_no3) # 1170
+colnames(df_tau_no3)
+head(df_tau_no3)
+
+df_tau_no3 %<>% mutate(Ave_NO3_mM = None - CHL)
+
+# Tau
+ggplot(df_tau_no3, aes(x=Time_hours, y=Ave_NO3_mM, color=Ave_pH, group=Ave_pH)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line(size=1.2)+
+  # geom_errorbar(aes(ymin=Ave_NO2_produced - Std_NO3_mM, ymax=Ave_NO2_produced + Std_NO3_mM), width=.05)+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("NO3- (of No_CHL - CHL) (mM)") +
+  xlab("Time (hr)") +
+  # scale_y_continuous(breaks = seq(-0.3,2.4,0.5), limits=c(-0.3, 2.3))+
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, show.legend = FALSE)+
+  ggtitle("Nitrite produced I_p(t) = A0 - A(t)") +
+  mytheme_2d+
+  facet_grid(. ~ Soil_and_pH) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+## Nope... this is not the way to go...
+
+## Just subtract the AUC
+df_corr_no3_norm2
+colnames(df_corr_no3_norm2)
+head(df_corr_no3_norm2)
+
+df_tau_no3_auc <- dcast(df_corr_no3_norm2, H_mM+Unit+Soil_pH+Soil+Soil_ID+Soil_name+Soil_and_pH ~ Chloramphenicol, value.var = "auc_norm")
+
+# Hmm... pH is not the same for CHL and None.. How should I resolve this. Average? okay.
+df_tau_pH <- dcast(df_corr_no3_norm2, H_mM+Unit+Soil_pH+Soil+Soil_ID+Soil_name+Soil_and_pH ~ Chloramphenicol, value.var = "pH")
+df_tau_ave_pH <- df_tau_pH %>% group_by(Soil, Unit, Time_point) %>% summarize(Ave_pH = mean(None, CHL))
+df_tau_ave_pH$Ave_pH %>% unique()
+df_tau_no3_auc %<>% left_join(df_tau_ave_pH, by=c("Soil"="Soil", "Unit"="Unit"))  
+
+
+dim(df_tau_no3_auc) # 1170 11
+colnames(df_tau_no3_auc)
+head(df_tau_no3_auc)
+
+df_tau_no3_auc %<>% mutate(delta_auc = CHL - None)
+colnames(df_tau_no3_auc)
+
+df_tau_no3_auc$delta_pH <- df_tau_no3_auc$Ave_pH - df_tau_no3_auc$Soil_pH 
+
+
+ggplot(df_tau_no3_auc, aes(x=Soil_pH, y=delta_auc, color=Ave_pH, group=Ave_pH)) +
+  geom_point(size=2.5, shape=16) +
+  # geom_errorbar(aes(ymin=Ave_NO2_produced - Std_NO3_mM, ymax=Ave_NO2_produced + Std_NO3_mM), width=.05)+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("Delta normalized AUC (CHL - No_CHL)") +
+  xlab("Soil pH (innate)") +
+  # scale_y_continuous(breaks = seq(-0.3,2.4,0.5), limits=c(-0.3, 2.3))+
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, show.legend = FALSE)+
+  ggtitle("Delta tau") +
+  mytheme_2d
+
+ggplot(df_tau_no3_auc, aes(x=Ave_pH, y=delta_auc, color=Soil_and_pH, group=Soil_and_pH)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line() +
+  # geom_errorbar(aes(ymin=Ave_NO2_produced - Std_NO3_mM, ymax=Ave_NO2_produced + Std_NO3_mM), width=.05)+
+  # scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("Delta normalized AUC (CHL - No_CHL)") +
+  xlab("pH") +
+  # scale_y_continuous(breaks = seq(-0.3,2.4,0.5), limits=c(-0.3, 2.3))+
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, show.legend = FALSE)+
+  ggtitle("Delta tau") +
+  mytheme_2d
+
+ggplot(df_tau_no3_auc, aes(x=Ave_pH, y=delta_auc, color=Soil_pH, group=Soil_pH)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line() +
+  # geom_errorbar(aes(ymin=Ave_NO2_produced - Std_NO3_mM, ymax=Ave_NO2_produced + Std_NO3_mM), width=.05)+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("Delta normalized AUC (CHL - No_CHL)") +
+  xlab("pH") +
+  # scale_y_continuous(breaks = seq(-0.3,2.4,0.5), limits=c(-0.3, 2.3))+
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, show.legend = FALSE)+
+  ggtitle("Delta tau") +
+  mytheme_2d
+
+# Delta pH
+ggplot(df_tau_no3_auc, aes(x=delta_pH, y=delta_auc, color=Soil_pH, group=Soil_pH)) +
+  geom_point(size=2.5, shape=16) +
+  geom_line() +
+  # geom_errorbar(aes(ymin=Ave_NO2_produced - Std_NO3_mM, ymax=Ave_NO2_produced + Std_NO3_mM), width=.05)+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  # scale_color_manual(values=grad_pH) +
+  ylab("Delta normalized AUC (CHL - No_CHL)") +
+  xlab("Delta pH") +
+  # scale_y_continuous(breaks = seq(-0.3,2.4,0.5), limits=c(-0.3, 2.3))+
+  # label
+  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, show.legend = FALSE)+
+  ggtitle("Delta tau") +
+  mytheme_2d
+
+
+```
+
+# PCA nitrate and nitrite at the same time.
+Also subtract CHL
+
+```{r}
+
+## make the above values to matrices
+df_pca_NoCHL <- df_plot_pH2 %>% filter(Chloramphenicol == "None")
+df_pca_CHL <- df_plot_pH2 %>% filter(Chloramphenicol == "CHL")
+
+colnames(df_plot_pH2) # This has time
+mat_NoCHL_no2 <- dcast(df_pca_NoCHL, Soil + Unit ~ Time, value.var = "Ave_NO2_mM")
+mat_NoCHL_no3 <- dcast(df_pca_NoCHL, Soil + Unit ~ Time, value.var = "Ave_NO3_mM")
+mat_CHL_no2 <- dcast(df_pca_CHL, Soil + Unit ~ Time, value.var = "Ave_NO2_mM")
+mat_CHL_no3 <- dcast(df_pca_CHL, Soil + Unit ~ Time, value.var = "Ave_NO3_mM")
+
+mat_NoCHL_no2[is.na(mat_NoCHL_no2)]
+mat_NoCHL_no3[is.na(mat_NoCHL_no3)]
+mat_CHL_no2[is.na(mat_CHL_no2)]
+mat_CHL_no3[is.na(mat_CHL_no3)]
+
+dim(mat_NoCHL_no2) ## 117 12
+dim(mat_NoCHL_no3) ## 117 12
+dim(mat_CHL_no2) ## 117 12
+dim(mat_CHL_no3) ## 117 12
+
+colnames(mat_NoCHL_no2)
+colnames(mat_NoCHL_no3)
+colnames(mat_CHL_no2)
+colnames(mat_CHL_no3)
+
+
+col_NoCHL_no2 <- mat_NoCHL_no2[,1:2]
+mat_NoCHL_no2 <- as.matrix(mat_NoCHL_no2[,3:ncol(mat_NoCHL_no2)]) 
+class(mat_NoCHL_no2)
+dim(mat_NoCHL_no2) # 117 10
+mat_NoCHL_no2[is.na(mat_NoCHL_no2)]
+
+col_NoCHL_no3 <- mat_NoCHL_no3[,1:2]
+mat_NoCHL_no3 <- as.matrix(mat_NoCHL_no3[,3:ncol(mat_NoCHL_no3)]) 
+class(mat_NoCHL_no3)
+dim(mat_NoCHL_no3) # 117 10
+mat_NoCHL_no3[is.na(mat_NoCHL_no3)]
+
+col_CHL_no2 <- mat_CHL_no2[,1:2]
+mat_CHL_no2 <- as.matrix(mat_CHL_no2[,3:ncol(mat_CHL_no2)]) 
+class(mat_CHL_no2)
+dim(mat_CHL_no2) # 117 10
+mat_CHL_no2[is.na(mat_CHL_no2)]
+
+col_CHL_no3 <- mat_CHL_no3[,1:2]
+mat_CHL_no3 <- as.matrix(mat_CHL_no3[,3:ncol(mat_CHL_no3)]) 
+class(mat_CHL_no3)
+dim(mat_CHL_no3) # 117 10
+mat_CHL_no3[is.na(mat_CHL_no3)]
+
+# merge 2 matrix
+col_NoCHL_no2
+col_NoCHL_no3
+identical(col_NoCHL_no2, col_NoCHL_no3) # True
+identical(col_NoCHL_no2, col_CHL_no2) # True
+identical(col_NoCHL_no2, col_CHL_no3) # True
+
+dim(mat_NoCHL_no2)
+dim(mat_NoCHL_no3)
+mat_NoCHL_no2no3 <- cbind(mat_NoCHL_no2, mat_NoCHL_no3)
+dim(mat_NoCHL_no2no3) # 117 20
+
+dim(mat_CHL_no2)
+dim(mat_CHL_no3)
+mat_CHL_no2no3 <- cbind(mat_CHL_no2, mat_CHL_no3)
+dim(mat_CHL_no2no3) # 117 20
+
+# put in the row names
+class(col_NoCHL_no2)
+vec_sample = unite(col_NoCHL_no2, "Sample", Soil, Unit, sep=":")
+vec_sample = vec_sample$Sample
+length(vec_sample) # 117
+dim(mat_NoCHL_no2no3)
+rownames(mat_NoCHL_no2no3) = vec_sample
+rownames(mat_CHL_no2no3) = vec_sample
+
+rownames(mat_NoCHL_no2no3)
+rownames(mat_CHL_no2no3)
+
+colnames(mat_NoCHL_no2no3) <- c(paste0("NO3_T",0:9), paste0("NO2_T",0:9))
+colnames(mat_CHL_no2no3) <- c(paste0("NO3_T",0:9), paste0("NO2_T",0:9))
+
+mat_NoCHL_no2no3
+mat_CHL_no2no3
+
+# Let's subtract 
+mat_NO2NO3 <- mat_CHL_no2no3 - mat_NoCHL_no2no3
+mat_NO2NO3 <- mat_CHL_no2no3
+dim(mat_NO2NO3)
+
+# First, the typical principal component analysis on the samples would be to transpose the data such that the samples are rows of the data matrix. The prcomp function can be used to return the principal components and other variables.(https://genomicsclass.github.io/book/pages/pca_svd.html)
+any(is.na(mat_NO2NO3))
+
+# PCA with prcomp
+pc <- prcomp(mat_NO2NO3)
+eigs <- pc$sdev^2
+# variance explained
+eigs[1] / sum(eigs) # pc1
+
+eigs[2] / sum(eigs) # pc2
+
+# First, a new dataframe should be created, with the information of sample-group. (http://huboqiang.cn/2016/03/03/RscatterPlotPCA)
+df_out <- as.data.frame(pc$x)
+df_out
+
+head(df_out)
+dim(df_out)
+df_out$new <- rownames(df_out)
+
+identical(vec_sample, df_out$new)
+df_out <- separate(df_out, new, c("Soil","Unit"), sep=":", remove=T)
+
+df_out$Unit <- as.numeric(df_out$Unit)
+
+## add on other metadata for plotting
+df_pcf_meta <- df_plot_pH2 %>% select(Soil, Soil_and_pH, Unit, Soil_pH, pH) %>% unique()
+df_out %<>% left_join(df_pcf_meta, by= c("Soil"="Soil", "Unit"="Unit"))
+df_out$Soil_and_pH <- factor(df_out$Soil_and_pH, levels = vec_soil_and_pH)
+vec_soil_and_pH
+
+# plot PCA with timepoint labels
+ggplot(df_out,aes(x=PC1,y=PC2))+
+  geom_point(size = 4, alpha=0.9, aes(col = pH))+
+  scale_colour_gradientn(colours = col_pH(100)) +
+  xlab(paste0('PC1', " (explained variance: ",round(eigs[1] / sum(eigs),3)*100,"%)"))+
+  ylab(paste0("PC2"," (explained variance: ",round(eigs[2] / sum(eigs),3)*100,"%)")) +
+  ggtitle("PCA on Nitrate + Nitrite dynamics (CHL - NoCHL)") +
+  mytheme_2d +
+  facet_wrap(. ~ Soil_and_pH, ncol = 3) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# collapse into 1
+ggplot(df_out,aes(x=PC1,y=PC2))+
+  geom_point(size = 4, alpha=0.9, aes(col = pH))+
+  scale_colour_gradientn(colours = col_pH(100)) +
+  xlab(paste0('PC1', " (explained variance: ",round(eigs[1] / sum(eigs),3)*100,"%)"))+
+  ylab(paste0("PC2"," (explained variance: ",round(eigs[2] / sum(eigs),3)*100,"%)")) +
+  ggtitle("PCA on Nitrate + Nitrite dynamics (CHL - NoCHL)") +
+  mytheme_2d
+
+# Label with pH
+ggplot(df_out,aes(x=PC1,y=PC2, label=sprintf("%0.2f", round(pH, digits = 2))))+
+  geom_point(size = 5, alpha=0.9, aes(col = pH))+
+  scale_colour_gradientn(colours = col_pH(100)) +
+  xlab(paste0('PC1', " (explained variance: ",round(eigs[1] / sum(eigs),3)*100,"%)"))+
+  ylab(paste0("PC2"," (explained variance: ",round(eigs[2] / sum(eigs),3)*100,"%)")) +
+  ggtitle("PCA on Nitrate + Nitrite dynamics (CHL - NoCHL)") +
+  ggrepel::geom_label_repel() +
+  mytheme_2d
+
+ggplot(df_out,aes(x=PC1,y=PC2, label=sprintf("%0.2f", round(pH, digits = 2))))+
+  geom_point(size = 5, alpha=0.9, aes(col = pH))+
+  scale_colour_gradientn(colours = col_pH(100)) +
+  xlab(paste0('PC1', " (explained variance: ",round(eigs[1] / sum(eigs),3)*100,"%)"))+
+  ylab(paste0("PC2"," (explained variance: ",round(eigs[2] / sum(eigs),3)*100,"%)")) +
+  ggtitle("PCA on Nitrate + Nitrite dynamics (CHL - NoCHL)") +
+  ggrepel::geom_label_repel() +
+  mytheme_2d +
+  facet_wrap(. ~ Soil_and_pH, ncol = 3) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# make histogram for PC1
+ggplot(df_out, aes(x=PC1)) +
+  geom_freqpoly(binwidth = 0.85, aes(color=Soil), size=2) +
+  scale_fill_brewer(palette='Set2') +
+  # scale_x_continuous(limits=c(-2.5, 2.5)) +
+  ylab("Freq") +
+  xlab("PC1") +
+  ggtitle(paste0("Marginal distribution of PC1"))+
+  mytheme_2d
+
+# make histogram for PC2
+ggplot(df_out, aes(x=PC2)) +
+  geom_freqpoly(binwidth = 0.85, aes(color=Soil), size=2) +
+  scale_fill_brewer(palette='Set2') +
+  # scale_x_continuous(limits=c(-2.5, 2.5)) +
+  ylab("Freq") +
+  xlab("PC2") +
+  ggtitle(paste0("Marginal distribution of PC2"))+
+  mytheme_2d
+
+# Does PC1 loadings correlate with pH or delta pH
+
+# 1. Soil's original pH
+ggplot(df_out,aes(x=Soil_pH, y=PC1))+
+  geom_point(size = 3, alpha=0.9, aes(col= pH))+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  ylab(paste0('PC1', " (explained variance: ",round(eigs[1] / sum(eigs),3)*100,"%)"))+
+  xlab("Soil pH (innate)") +
+  ggtitle("Correlation with principal components") +
+  mytheme_2d
+
+# 2. pH
+ggplot(df_out,aes(x=pH, y=PC1))+
+  geom_point(size = 3, alpha=0.9, aes(col= pH))+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  ylab(paste0('PC1', " (explained variance: ",round(eigs[1] / sum(eigs),3)*100,"%)"))+
+  xlab("pH (endpoint)") +
+  ggtitle("Correlation with principal components") +
+  mytheme_2d
+
+# 3. delta_pH
+df_out$delta_pH <- df_out$pH - df_out$Soil_pH
+
+ggplot(df_out,aes(x=delta_pH, y=PC1))+
+  geom_point(size = 3, alpha=0.9, aes(col= pH))+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  ylab(paste0('PC1', " (explained variance: ",round(eigs[1] / sum(eigs),3)*100,"%)"))+
+  xlab("delta pH") +
+  ggtitle("Correlation with principal components") +
+  mytheme_2d
+
+# PC2
+# 1. Soil's original pH
+ggplot(df_out,aes(x=Soil_pH, y=PC2))+
+  geom_point(size = 3, alpha=0.9, aes(col= pH))+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  ylab(paste0('PC2', " (explained variance: ",round(eigs[2] / sum(eigs),3)*100,"%)"))+
+  xlab("Soil pH (innate)") +
+  ggtitle("Correlation with principal components") +
+  mytheme_2d
+
+# 2. pH
+ggplot(df_out,aes(x=pH, y=PC2))+
+  geom_point(size = 3, alpha=0.9, aes(col= pH))+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  ylab(paste0('PC2', " (explained variance: ",round(eigs[2] / sum(eigs),3)*100,"%)"))+
+  xlab("pH (endpoint)") +
+  ggtitle("Correlation with principal components") +
+  mytheme_2d
+
+# 3. delta_pH
+ggplot(df_out,aes(x=delta_pH, y=PC2))+
+  geom_point(size = 3, alpha=0.9, aes(col= pH))+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  ylab(paste0('PC2', " (explained variance: ",round(eigs[2] / sum(eigs),3)*100,"%)"))+
+  xlab("delta pH") +
+  ggtitle("Correlation with principal components") +
+  mytheme_2d
+
+
+# PC3
+# 1. Soil's original pH
+ggplot(df_out,aes(x=Soil_pH, y=PC3))+
+  geom_point(size = 3, alpha=0.9, aes(col= pH))+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  ylab(paste0('PC3', " (explained variance: ",round(eigs[3] / sum(eigs),3)*100,"%)"))+
+  xlab("Soil pH (innate)") +
+  ggtitle("Correlation with principal components") +
+  mytheme_2d
+
+# 2. pH
+ggplot(df_out,aes(x=pH, y=PC3))+
+  geom_point(size = 3, alpha=0.9, aes(col= pH))+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  ylab(paste0('PC3', " (explained variance: ",round(eigs[3] / sum(eigs),3)*100,"%)"))+
+  xlab("pH (endpoint)") +
+  ggtitle("Correlation with principal components") +
+  mytheme_2d
+
+# 3. delta_pH
+ggplot(df_out,aes(x=delta_pH, y=PC3))+
+  geom_point(size = 3, alpha=0.9, aes(col= pH))+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  ylab(paste0('PC3', " (explained variance: ",round(eigs[3] / sum(eigs),3)*100,"%)"))+
+  xlab("delta pH") +
+  ggtitle("Correlation with principal components") +
+  mytheme_2d
+
+# 3D: http://www.sthda.com/english/wiki/impressive-package-for-3d-and-4d-graph-r-software-and-data-visualization
+# library("plot3D")
+# rownames(df_out) <- as.numeric(rownames(df_out))
+# scatter3D(df_out$PC1, df_out$PC2, df_out$PC3, bty = "b2", pch = 16, cex = 2,col = (col_pH(100)),
+#           main = "Principle component analysis (Nitrate dynamics)", xlab = "PC1",
+#           ylab ="PC2", zlab = "PC3",
+#           theta = 15, phi = 50)
+## is this correct? I don't think so.. doesn't agree with the 2d plot.... let's come back to this some time later..
+
+```
+
+## Do it one more time with only NoCHL
+```{r}
+mat_NO2NO3 <- mat_NoCHL_no2no3
+dim(mat_NO2NO3)
+
+# First, the typical principal component analysis on the samples would be to transpose the data such that the samples are rows of the data matrix. The prcomp function can be used to return the principal components and other variables.(https://genomicsclass.github.io/book/pages/pca_svd.html)
+any(is.na(mat_NO2NO3))
+
+# PCA with prcomp
+pc <- prcomp(mat_NO2NO3)
+eigs <- pc$sdev^2
+# variance explained
+eigs[1] / sum(eigs) # pc1
+
+eigs[2] / sum(eigs) # pc2
+
+# First, a new dataframe should be created, with the information of sample-group. (http://huboqiang.cn/2016/03/03/RscatterPlotPCA)
+df_out <- as.data.frame(pc$x)
+df_out
+
+head(df_out)
+dim(df_out)
+df_out$new <- rownames(df_out)
+
+identical(vec_sample, df_out$new)
+df_out <- separate(df_out, new, c("Soil","Unit"), sep=":", remove=T)
+
+df_out$Unit <- as.numeric(df_out$Unit)
+
+## add on other metadata for plotting
+df_pcf_meta <- df_plot_pH2 %>% select(Soil, Soil_and_pH, Unit, Soil_pH, pH) %>% unique()
+df_out %<>% left_join(df_pcf_meta, by= c("Soil"="Soil", "Unit"="Unit"))
+df_out$Soil_and_pH <- factor(df_out$Soil_and_pH, levels = vec_soil_and_pH)
+vec_soil_and_pH
+
+# plot PCA with timepoint labels
+ggplot(df_out,aes(x=PC1,y=PC2))+
+  geom_point(size = 4, alpha=0.9, aes(col = pH))+
+  scale_colour_gradientn(colours = col_pH(100)) +
+  xlab(paste0('PC1', " (explained variance: ",round(eigs[1] / sum(eigs),3)*100,"%)"))+
+  ylab(paste0("PC2"," (explained variance: ",round(eigs[2] / sum(eigs),3)*100,"%)")) +
+  ggtitle("PCA on Nitrate + Nitrite dynamics (NoCHL)") +
+  mytheme_2d +
+  facet_wrap(. ~ Soil_and_pH, ncol = 3) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# collapse into 1
+ggplot(df_out,aes(x=PC1,y=PC2))+
+  geom_point(size = 4, alpha=0.9, aes(col = pH))+
+  scale_colour_gradientn(colours = col_pH(100)) +
+  xlab(paste0('PC1', " (explained variance: ",round(eigs[1] / sum(eigs),3)*100,"%)"))+
+  ylab(paste0("PC2"," (explained variance: ",round(eigs[2] / sum(eigs),3)*100,"%)")) +
+  ggtitle("PCA on Nitrate + Nitrite dynamics (NoCHL)") +
+  mytheme_2d
+
+# Label with pH
+ggplot(df_out,aes(x=PC1,y=PC2, label=sprintf("%0.2f", round(pH, digits = 2))))+
+  geom_point(size = 5, alpha=0.9, aes(col = pH))+
+  scale_colour_gradientn(colours = col_pH(100)) +
+  xlab(paste0('PC1', " (explained variance: ",round(eigs[1] / sum(eigs),3)*100,"%)"))+
+  ylab(paste0("PC2"," (explained variance: ",round(eigs[2] / sum(eigs),3)*100,"%)")) +
+  ggtitle("PCA on Nitrate + Nitrite dynamics (NoCHL)") +
+  ggrepel::geom_label_repel() +
+  mytheme_2d
+
+ggplot(df_out,aes(x=PC1,y=PC2, label=sprintf("%0.2f", round(pH, digits = 2))))+
+  geom_point(size = 5, alpha=0.9, aes(col = pH))+
+  scale_colour_gradientn(colours = col_pH(100)) +
+  xlab(paste0('PC1', " (explained variance: ",round(eigs[1] / sum(eigs),3)*100,"%)"))+
+  ylab(paste0("PC2"," (explained variance: ",round(eigs[2] / sum(eigs),3)*100,"%)")) +
+  ggtitle("PCA on Nitrate + Nitrite dynamics (NoCHL)") +
+  ggrepel::geom_label_repel() +
+  mytheme_2d +
+  facet_wrap(. ~ Soil_and_pH, ncol = 3) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# make histogram for PC1
+ggplot(df_out, aes(x=PC1)) +
+  geom_freqpoly(binwidth = 0.85, aes(color=Soil), size=2) +
+  scale_fill_brewer(palette='Set2') +
+  # scale_x_continuous(limits=c(-2.5, 2.5)) +
+  ylab("Freq") +
+  xlab("PC1") +
+  ggtitle(paste0("Marginal distribution of PC1"))+
+  mytheme_2d
+
+# make histogram for PC2
+ggplot(df_out, aes(x=PC2)) +
+  geom_freqpoly(binwidth = 0.85, aes(color=Soil), size=2) +
+  scale_fill_brewer(palette='Set2') +
+  # scale_x_continuous(limits=c(-2.5, 2.5)) +
+  ylab("Freq") +
+  xlab("PC2") +
+  ggtitle(paste0("Marginal distribution of PC2"))+
+  mytheme_2d
+
+# Does PC1 loadings correlate with pH or delta pH
+
+# 1. Soil's original pH
+ggplot(df_out,aes(x=Soil_pH, y=PC1))+
+  geom_point(size = 3, alpha=0.9, aes(col= pH))+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  ylab(paste0('PC1', " (explained variance: ",round(eigs[1] / sum(eigs),3)*100,"%)"))+
+  xlab("Soil pH (innate)") +
+  ggtitle("Correlation with principal components") +
+  mytheme_2d
+
+# 2. pH
+ggplot(df_out,aes(x=pH, y=PC1))+
+  geom_point(size = 3, alpha=0.9, aes(col= pH))+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  ylab(paste0('PC1', " (explained variance: ",round(eigs[1] / sum(eigs),3)*100,"%)"))+
+  xlab("pH (endpoint)") +
+  ggtitle("Correlation with principal components") +
+  mytheme_2d
+
+# 3. delta_pH
+df_out$delta_pH <- df_out$pH - df_out$Soil_pH
+
+ggplot(df_out,aes(x=delta_pH, y=PC1))+
+  geom_point(size = 3, alpha=0.9, aes(col= pH))+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  ylab(paste0('PC1', " (explained variance: ",round(eigs[1] / sum(eigs),3)*100,"%)"))+
+  xlab("delta pH") +
+  ggtitle("Correlation with principal components") +
+  mytheme_2d
+
+# PC2
+# 1. Soil's original pH
+ggplot(df_out,aes(x=Soil_pH, y=PC2))+
+  geom_point(size = 3, alpha=0.9, aes(col= pH))+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  ylab(paste0('PC2', " (explained variance: ",round(eigs[2] / sum(eigs),3)*100,"%)"))+
+  xlab("Soil pH (innate)") +
+  ggtitle("Correlation with principal components") +
+  mytheme_2d
+
+# 2. pH
+ggplot(df_out,aes(x=pH, y=PC2))+
+  geom_point(size = 3, alpha=0.9, aes(col= pH))+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  ylab(paste0('PC2', " (explained variance: ",round(eigs[2] / sum(eigs),3)*100,"%)"))+
+  xlab("pH (endpoint)") +
+  ggtitle("Correlation with principal components") +
+  mytheme_2d
+
+# 3. delta_pH
+ggplot(df_out,aes(x=delta_pH, y=PC2))+
+  geom_point(size = 3, alpha=0.9, aes(col= pH))+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  ylab(paste0('PC2', " (explained variance: ",round(eigs[2] / sum(eigs),3)*100,"%)"))+
+  xlab("delta pH") +
+  ggtitle("Correlation with principal components") +
+  mytheme_2d
+
+
+# PC3
+# 1. Soil's original pH
+ggplot(df_out,aes(x=Soil_pH, y=PC3))+
+  geom_point(size = 3, alpha=0.9, aes(col= pH))+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  ylab(paste0('PC3', " (explained variance: ",round(eigs[3] / sum(eigs),3)*100,"%)"))+
+  xlab("Soil pH (innate)") +
+  ggtitle("Correlation with principal components") +
+  mytheme_2d
+
+# 2. pH
+ggplot(df_out,aes(x=pH, y=PC3))+
+  geom_point(size = 3, alpha=0.9, aes(col= pH))+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  ylab(paste0('PC3', " (explained variance: ",round(eigs[3] / sum(eigs),3)*100,"%)"))+
+  xlab("pH (endpoint)") +
+  ggtitle("Correlation with principal components") +
+  mytheme_2d
+
+# 3. delta_pH
+ggplot(df_out,aes(x=delta_pH, y=PC3))+
+  geom_point(size = 3, alpha=0.9, aes(col= pH))+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  ylab(paste0('PC3', " (explained variance: ",round(eigs[3] / sum(eigs),3)*100,"%)"))+
+  xlab("delta pH") +
+  ggtitle("Correlation with principal components") +
+  mytheme_2d
+
+# 3. delta_pH
+ggplot(df_out,aes(x=delta_pH, y=PC4))+
+  geom_point(size = 3, alpha=0.9, aes(col= pH))+
+  scale_colour_gradientn(colours = rev(col_pH(100))) +
+  ylab(paste0('PC4', " (explained variance: ",round(eigs[4] / sum(eigs),3)*100,"%)"))+
+  xlab("delta pH") +
+  ggtitle("Correlation with principal components") +
+  mytheme_2d
+```
+
+
+
+
+<!-- # plot differently with pH perturbation -->
+
+<!-- ```{r} -->
+<!-- df_H_mM_label <- df_plot_pH %>% group_by(Titration_type, Unit) %>% summarize(H_mM_min = round(min(H_mM), 2), H_mM_max = round(max(H_mM), 2)) -->
+<!-- df_H_mM_label$H_mM_ave <- (df_H_mM_label$H_mM_max + df_H_mM_label$H_mM_min)/2 -->
+<!-- df_H_mM_label %<>% unite(col='H_mM_range', c("H_mM_min","H_mM_max"), sep=" - ", remove=F) -->
+<!-- df_H_mM_label -->
+<!-- df_H_mM_range <- df_plot_pH %>% left_join(df_H_mM_label, by =c("Titration_type"="Titration_type", "Unit"="Unit")) -->
+
+<!-- dim(df_plot_pH) -->
+<!-- df_H_mM -->
+
+
+<!-- ggplot(df_H_mM_range, aes(x=Time_hours, y=Ave_NO3_mM, color=Chloramphenicol, group=Chloramphenicol)) + -->
+<!--   geom_point(size=2.5, shape=16) + -->
+<!--   geom_line(size=1.2)+ -->
+<!--   geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+ -->
+<!--   # scale_colour_gradientn(colours = rev(col_pH(100))) + -->
+<!--   # scale_color_manual(values=grad_pH) + -->
+<!--   ylab("NO3- (mM)") + -->
+<!--   xlab("Time (hr)") + -->
+<!--   # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+ -->
+<!--   # label -->
+<!--   # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, show.legend = FALSE)+ -->
+<!--   mytheme_2d + -->
+<!--   ggtitle("pH x antibiotic effect")+ -->
+<!--   facet_grid(Soil ~ H_mM_ave) + -->
+<!--   theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+ -->
+<!--   theme(strip.text.x = element_text(size = 13)) + -->
+<!--   theme(strip.text.y = element_text(size = 13, face="bold")) -->
+
+<!-- ggplot(df_H_mM_range, aes(x=Time_hours, y=Ave_NO2_mM, color=Chloramphenicol, group=Chloramphenicol)) + -->
+<!--   geom_point(size=2.5, shape=16) + -->
+<!--   geom_line(size=1.2)+ -->
+<!--   geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+ -->
+<!--   # scale_colour_gradientn(colours = rev(col_pH(100))) + -->
+<!--   # scale_color_manual(values=grad_pH) + -->
+<!--   ylab("NO2- (mM)") + -->
+<!--   xlab("Time (hr)") + -->
+<!--   # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+ -->
+<!--   # label -->
+<!--   # geom_text(aes(label = round(NO2_mM,3)), size = 3, vjust = -1.5, show.legend = FALSE)+ -->
+<!--   mytheme_2d + -->
+<!--   ggtitle("pH x antibiotic effect")+ -->
+<!--   facet_grid(Soil ~ H_mM_ave) + -->
+<!--   theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+ -->
+<!--   theme(strip.text.x = element_text(size = 13)) + -->
+<!--   theme(strip.text.y = element_text(size = 13, face="bold")) -->
+
+<!-- # pH range -->
+<!-- vec_soil <- c("Barneveld2_pH5.73", "Starke3_pH5.69", "Oxbow3_pH7.29", "Washington2_pH7.33") -->
+
+<!-- NO3_dynamics_each_soil_pH <- function(soil_name = "Barneveld2_pH5.73"){ -->
+<!--   df_plot_pH <- df_plot_pH %>% filter(Soil == soil_name) -->
+<!--   df_pH_label <- df_plot_pH %>% group_by(Titration_type, Unit) %>% summarize(pH_min = round(min(pH), 2), pH_max = round(max(pH), 2)) -->
+<!--   df_pH_label$pH_ave <- (df_pH_label$pH_max + df_pH_label$pH_min)/2 -->
+<!--   df_pH_label %<>% unite(col='pH_range', c("pH_min","pH_max"), sep=" - ", remove=F) -->
+<!--   df_pH_label -->
+<!--   df_pH_range <- df_plot_pH %>% left_join(df_pH_label, by =c("Titration_type"="Titration_type", "Unit"="Unit")) -->
+
+<!--   dim(df_plot_pH) -->
+<!--   dim(df_pH_range) -->
+
+<!--   ggplot(df_pH_range, aes(x=Time_hours, y=Ave_NO3_mM, color=Chloramphenicol, group=Chloramphenicol)) + -->
+<!--     geom_point(size=2.5, shape=16) + -->
+<!--     geom_line(size=1.2)+ -->
+<!--     geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+ -->
+<!--     # scale_colour_gradientn(colours = rev(col_pH(100))) + -->
+<!--     # scale_color_manual(values=grad_pH) + -->
+<!--     ylab("NO3- (mM) \n") + -->
+<!--     xlab("\n Time (hr)") + -->
+<!--     # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+ -->
+<!--     # label -->
+<!--     # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, show.legend = FALSE)+ -->
+<!--     mytheme_2d + -->
+<!--     facet_grid(Soil ~ pH_range) + -->
+<!--     theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+ -->
+<!--     theme(strip.text.x = element_text(size = 17))+ -->
+<!--     theme(strip.text.y = element_text(size = 17)) -->
+<!-- } -->
+
+<!-- NO2_dynamics_each_soil_pH <- function(soil_name = "Barneveld2_pH5.73"){ -->
+<!--   df_plot_pH <- df_plot_pH %>% filter(Soil == soil_name) -->
+<!--   df_pH_label <- df_plot_pH %>% group_by(Titration_type, Unit) %>% summarize(pH_min = round(min(pH), 2), pH_max = round(max(pH), 2)) -->
+<!--   df_pH_label$pH_ave <- (df_pH_label$pH_max + df_pH_label$pH_min)/2 -->
+<!--   df_pH_label %<>% unite(col='pH_range', c("pH_min","pH_max"), sep=" - ", remove=F) -->
+<!--   df_pH_label -->
+<!--   df_pH_range <- df_plot_pH %>% left_join(df_pH_label, by =c("Titration_type"="Titration_type", "Unit"="Unit")) -->
+
+<!--   dim(df_plot_pH) -->
+<!--   dim(df_pH_range) -->
+
+<!--   ggplot(df_pH_range, aes(x=Time_hours, y=Ave_NO2_mM, color=Chloramphenicol, group=Chloramphenicol)) + -->
+<!--     geom_point(size=2.5, shape=16) + -->
+<!--     geom_line(size=1.2)+ -->
+<!--     geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+ -->
+<!--     # scale_colour_gradientn(colours = rev(col_pH(100))) + -->
+<!--     # scale_color_manual(values=col_pH(4)) + -->
+<!--     ylab("NO2- (mM) \n") + -->
+<!--     xlab("\n Time (hr)") + -->
+<!--     # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+ -->
+<!--     # label -->
+<!--     # geom_text(aes(label = round(NO2_mM,3)), size = 3, vjust = -1.5, show.legend = FALSE)+ -->
+<!--     mytheme_2d + -->
+<!--     facet_grid(Soil ~ pH_range) + -->
+<!--     theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+ -->
+<!--     theme(strip.text.x = element_text(size = 17))+ -->
+<!--     theme(strip.text.y = element_text(size = 17)) -->
+<!-- } -->
+
+<!-- no3_1 <- NO3_dynamics_each_soil_pH(soil_name = vec_soil[1]) -->
+<!-- no3_2 <- NO3_dynamics_each_soil_pH(soil_name = vec_soil[2]) -->
+<!-- no3_3 <- NO3_dynamics_each_soil_pH(soil_name = vec_soil[3]) -->
+<!-- no3_4 <- NO3_dynamics_each_soil_pH(soil_name = vec_soil[4]) -->
+
+<!-- # plot in grids -->
+<!-- l_plot <- list() -->
+<!-- for (i in 1:length(vec_soil)){ -->
+<!--   print(i) -->
+<!--   l_plot[[i]] <-NO3_dynamics_each_soil_pH(soil_name = vec_soil[i]) + theme(legend.position="none", strip.text = element_blank())  -->
+<!-- } -->
+
+<!-- library(gridExtra) -->
+<!-- grid.arrange(grobs = l_plot, ncol=1) -->
+
+<!-- # plot in grids -->
+<!-- l_plot <- list() -->
+<!-- for (i in 1:length(vec_soil)){ -->
+<!--   print(i) -->
+<!--   l_plot[[i]] <-NO2_dynamics_each_soil_pH(soil_name = vec_soil[i]) + theme(legend.position="none", strip.text = element_blank())  -->
+<!-- } -->
+
+<!-- library(gridExtra) -->
+<!-- grid.arrange(grobs = l_plot, ncol=1) -->
+
+
+
+
+
+
+
+
+
+<!-- df_pH_label <- df_plot_pH %>% group_by(Titration_type, Unit) %>% summarize(pH_min = round(min(pH), 2), pH_max = round(max(pH), 2)) -->
+<!-- df_pH_label$pH_ave <- (df_pH_label$pH_max + df_pH_label$pH_min)/2 -->
+<!-- df_pH_label %<>% unite(col='pH_range', c("pH_min","pH_max"), sep=" - ", remove=F) -->
+<!-- df_pH_label -->
+<!-- df_pH_range <- df_plot_pH %>% left_join(df_pH_label, by =c("Titration_type"="Titration_type", "Unit"="Unit")) -->
+
+<!-- dim(df_plot_pH) -->
+<!-- dim(df_pH_range) -->
+
+<!-- ggplot(df_pH_range, aes(x=Time_hours, y=Ave_NO3_mM, color=Chloramphenicol, group=Chloramphenicol)) + -->
+<!--   geom_point(size=2.5, shape=16) + -->
+<!--   geom_line(size=1.2)+ -->
+<!--   geom_errorbar(aes(ymin=Ave_NO3_mM - Std_NO3_mM, ymax=Ave_NO3_mM + Std_NO3_mM), width=.05)+ -->
+<!--   # scale_colour_gradientn(colours = rev(col_pH(100))) + -->
+<!--   # scale_color_manual(values=grad_pH) + -->
+<!--   ylab("NO3- (mM) \n") + -->
+<!--   xlab("\n Time (hr)") + -->
+<!--   # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+ -->
+<!--   # label -->
+<!--   # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, show.legend = FALSE)+ -->
+<!--   mytheme_2d + -->
+<!--   facet_grid(Soil ~ pH_range) + -->
+<!--   theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+ -->
+<!--   theme(strip.text.x = element_text(size = 17))+ -->
+<!--   theme(strip.text.y = element_text(size = 17)) -->
+
+<!-- # plot Nitrite -->
+<!-- ggplot(df_plot_pH, aes(x=Time_hours, y=Ave_NO2_mM, color=pH, group=pH)) + -->
+<!--   geom_point(size=2.5, shape=16) + -->
+<!--   geom_line(size=1.2)+ -->
+<!--   geom_errorbar(aes(ymin=Ave_NO2_mM - Std_NO2_mM, ymax=Ave_NO2_mM + Std_NO2_mM), width=.05)+ -->
+<!--   scale_colour_gradientn(colours = rev(col_pH(100))) + -->
+<!--   # scale_color_manual(values=col_pH(4)) + -->
+<!--   ylab("NO2- (mM) \n") + -->
+<!--   xlab("\n Time (hr)") + -->
+<!--   # scale_y_continuous(breaks = seq(0,0.3,0.05), limits=c(0, 0.3))+ -->
+<!--   # label -->
+<!--   # geom_text(aes(label = round(NO2_mM,3)), size = 3, vjust = -1.5, show.legend = FALSE)+ -->
+<!--   mytheme_2d + -->
+<!--   facet_grid(Chloramphenicol ~ Soil) + -->
+<!--   theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+ -->
+<!--   theme(strip.text.x = element_text(size = 17))+ -->
+<!--   theme(strip.text.y = element_text(size = 17)) -->
+
+
+
+
+
+
+
+
+
+
+
+<!-- ``` -->
+

@@ -1,0 +1,358 @@
+---
+title: "220622_pH_2soil_pH7_2soil_pH5"
+author: "KiseokUchicago"
+date: "2022-06-24"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+
+```{r global_options, include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(fig.width=11, fig.height=9,
+                      error=TRUE, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE,
+                      tidy.opts=list(width.cutoff=40),tidy=TRUE)
+```
+
+## Time series analysis - pH analysis of antibiotic dosage effect 
+Researcher: **Kiseok Lee** \
+Experiment Date: 6/10/22 - 6/17/22 (5 day each) \
+Analysis Date: 6/24/21
+Lab: **Seppe Kuehn**
+
+```{r, include=FALSE}
+# libraries
+library(dplyr)
+library(ggplot2)
+library(RColorBrewer)
+library(vegan)
+library(tidyverse)
+library(magrittr)
+library(readxl)
+library(reshape2)
+library(gtools)
+library(devtools)
+library(openxlsx)
+library(ape)
+library(stringr)
+library(tidyr)
+library(ggrepel)
+library(ggpubr)
+require(gridExtra)
+# grid.arrange(p_strain, p_ai, nrow=1)
+
+# color collection
+my_color_collection <- c(
+  "#CBD588", "#5F7FC7", "orange", "#AD6F3B", "#673770", 
+  "#D14285", "#652926", "#C84248", "#8569D5", "#5E738F",
+  "#D1A33D", "#8A7C64", "#599861","#616163", "#FFCDB2",
+  "#6D9F71", "#242F40",
+  "#CCA43B", "#F92A82", "#ED7B84", "#7EB77F", 
+  "#DEC4A1", "#E5D1D0", '#0E8482', '#C9DAEA', '#337357', 
+  '#95C623', '#E55812', '#04471C', '#F2D7EE', '#D3BCC0', 
+  '#A5668B', '#69306D', '#0E103D', '#1A535C', '#4ECDC4', 
+  '#F7FFF7', '#FF6B6B', '#FFE66D', '#6699CC', '#FFF275', 
+  '#FF8C42', '#FF3C38', '#A23E48', '#000000', '#CF5C36', 
+  '#EEE5E9', '#7C7C7C', '#EFC88B', '#2E5266', '#6E8898', 
+  '#9FB1BC', '#D3D0CB', '#E2C044', '#5BC0EB', '#FDE74C', 
+  '#9BC53D', '#E55934', '#FA7921', "#CD9BCD", "#508578", "#DA5724")
+
+# for git push, use this instead of using wflow_git_push()
+# git push -u origin master (in the Git app / in the working directory)
+
+# for making pdf file
+library(rmarkdown)
+# render("analysis/~~.Rmd", "pdf_document")
+```
+
+
+```{r, echo=F}
+## theme for ggplot
+mytheme <- theme_bw() + 
+  theme(text = element_text(face="bold", colour = 'black')) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13,face="bold", colour = 'black'))+
+  theme(axis.text.y = element_text(size=13,face="bold", colour = 'black'))+
+  theme(panel.grid.major = element_blank()) +
+  theme(panel.grid.minor = element_blank(),panel.background=element_blank(),panel.border=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))+
+  theme(legend.text=element_text(size=10,face="bold", colour = 'black'))
+
+
+mytheme_2d <- theme_bw() + 
+  theme(text = element_text(face="bold", colour = 'black')) +
+  theme(plot.title = element_text(size = 19,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.title.x = element_text(size = 17,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.title.y = element_text(size = 17,hjust = 0.5,face="bold", colour = 'black')) + 
+  theme(axis.text.x = element_text(hjust = 0.5, vjust=0.3,size=13,face="bold", colour = 'black'))+
+  theme(axis.text.y = element_text(size=13,face="bold", colour = 'black'))+
+  # theme(panel.grid.major = element_blank()) +
+  # theme(panel.grid.minor = element_blank(),panel.background=element_blank(),plot.background=element_blank()) +
+  theme(axis.ticks = element_line(size = 1.1))+
+  theme(legend.text=element_text(size=10,face="bold", colour = 'black'))
+```
+
+
+## 1. 20ul of 0.5M HCl or 0.05M NaOH was incrementally added
+```{r}
+df_pH1 <- openxlsx::read.xlsx("data/220622_pH_colorimetric_Barneveld2_T0_mu_opt_T0.xlsx")
+df_pH2 <- openxlsx::read.xlsx("data/220622_pH_colorimetric_Barneveld2_T9_mu_opt_T9.xlsx")
+df_pH3 <- openxlsx::read.xlsx("data/220622_pH_colorimetric_Starke3_T0_mu_opt_T0.xlsx")
+df_pH4 <- openxlsx::read.xlsx("data/220622_pH_colorimetric_Starke3_T9_mu_opt_T9.xlsx") 
+df_pH5 <- openxlsx::read.xlsx("data/220622_pH_colorimetric_Oxbow3_T0_mu_opt_T0.xlsx")
+df_pH6 <- openxlsx::read.xlsx("data/220622_pH_colorimetric_Oxbow3_T9_mu_opt_T9.xlsx") 
+df_pH7 <- openxlsx::read.xlsx("data/220622_pH_colorimetric_Washington2_T0_mu_opt_T0.xlsx")
+df_pH8 <- openxlsx::read.xlsx("data/220622_pH_colorimetric_Washington2_T9_mu_opt_T9.xlsx") 
+
+
+# I incorporated pH meter into pH1 and pH3... so... I'll put pH_meter column for other df.
+colnames(df_pH1)
+colnames(df_pH2)
+colnames(df_pH3)
+colnames(df_pH4)
+colnames(df_pH5)
+colnames(df_pH6)
+colnames(df_pH7)
+colnames(df_pH8)
+
+
+# Filter defect
+# I ruined T10....
+# df_pH1 %<>% filter(!(Well %in% c("C01", "C10", "C11", "D01", "D11", "E10","F01","F11" ))) # less than 120ul
+# df_pH2 %<>% filter(!(Well %in% c("A01", "A03", "B02", "B05", "C08", "D04", "D12", "E06", "E07", "E12", "G12", "H02", "H04", "H05", "H07", "H09", "H10", "H11"))) # little sample
+# df_pH3 %<>% filter(!(Well %in% c("A02", "A04", "A05", "B02", "B04", "C04", "D03", "D04", "E01", "E05", "E07", "E09", "E12", "F05",
+                                 # "G09", "G10", "G11", "G12", "H03", "H04", "H05", "H06", "H09" ))) # little sample
+# df_pH4 %<>% filter(!(Well %in% c("H02","H05","F03"))) # Less than 90ul of sample
+dim(df_pH1)
+dim(df_pH2)
+dim(df_pH3)
+dim(df_pH4)
+dim(df_pH5)
+dim(df_pH6)
+dim(df_pH7)
+dim(df_pH8)
+
+
+df_time <- openxlsx::read.xlsx("data/220621_time_table.xlsx")
+df_time$Time_hours <- round(df_time$Time_hours, 1)
+df_time$Time_days <- round(df_time$Time_days, 2)
+
+df_pH_T <- rbind(df_pH1, df_pH2, df_pH3, df_pH4, df_pH5, df_pH6, df_pH7, df_pH8)
+df_pH_T %<>% left_join(df_time, by=c("Time_point"="Time_point"))
+dim(df_pH_T) # 768
+
+# remove NA # don't remove NA this time
+# dim(df_pH_T) # 575
+# df_pH_T[is.na(df_pH_T)]
+# df_na <- df_pH_T[rowSums(is.na(df_pH_T)) > 0,]
+# # df_pH_T <- na.omit(df_pH_T)
+# df_pH_T <- df_pH_T[rowSums(is.na(df_pH_T)) == 0,]
+# dim(df_pH_T) # 373
+
+# Change the soil names to include pH
+# df_pH_T$Soil <- str_replace(df_pH_T$Soil,"NicholsC","NicholsC_pH7")
+# df_pH_T$Soil <- str_replace(df_pH_T$Soil,"Allandale","Allandale_pH4")
+# df_pH_T$Soil <-  factor(df_pH_T$Soil, levels = c("NicholsC_pH7", "Allandale_pH4"))
+
+# mols and molarity unit conversion
+# test
+df_pH <- df_pH_T %>% filter(Titration_type %in% c("NaOH","HCl","No_Nitrate"))
+dim(df_pH) # 624
+df_pH$Titration_type %>% unique()
+
+Added_Volume <- 1.7 # ml
+Soil_mg <- 0.85
+moisture_percent_1 = 21.14 # Barneveld2
+moisture_percent_2 = 5.6 # Starke3
+moisture_percent_3 = 27.84 # Oxbow3
+moisture_percent_4 = 30 # Washington2 (this value is arbitrary, fake)
+
+# Added_Volume + Soil_mg*(moisture_percent_1/100)
+# moisture_percent_2 = 8.12 # Sterile - LaBaghWoods that has been autoclaved 5 times.
+# Added_Volume + Soil_mg*(moisture_percent_2/100)
+# moisture_percent_3 = 9.0 # Crerar7
+# Added_Volume + Soil_mg*(moisture_percent_3/100)
+
+df_pH$Added_ul <- ifelse(df_pH$Titration_type == "NaOH", -1*df_pH$Added_ul, df_pH$Added_ul) # HCl is +, NaOH is -
+df_pH %<>% mutate(H_mol = Concentration_M * Added_ul * 10^(-6)) # Calculate H mol 
+df_pH$Volume <- ifelse(df_pH$Soil == "Barneveld2_pH5.73", Added_Volume + Soil_mg*(moisture_percent_1/100),
+                      ifelse(df_pH$Soil == "Starke3_pH5.69", Added_Volume + Soil_mg*(moisture_percent_2/100),
+                             ifelse(df_pH$Soil == "Oxbow3_pH7.29", Added_Volume + Soil_mg*(moisture_percent_3/100),
+                                    ifelse(df_pH$Soil == "Washington2_pH7.33", Added_Volume + Soil_mg*(moisture_percent_4/100),
+                                    0)))) # Calc total volume
+
+df_pH %<>% mutate(H_Molarity = H_mol / (Volume * 10^(-3)))
+df_pH %<>% mutate(H_mM = H_Molarity * 1000)
+# openxlsx::write.xlsx(df_pH, "df_pH.xlsx")
+
+# how many levels of H_mM?
+df_pH %>% filter(Soil == "Barneveld2_pH5.73")%>% select(H_mM) %>% unique() %>% arrange(H_mM)
+df_pH %>% filter(Soil == "Starke3_pH5.69")%>% select(H_mM) %>% unique() %>% arrange(H_mM)
+df_pH %>% filter(Soil == "Oxbow3_pH7.29")%>% select(H_mM) %>% unique() %>% arrange(H_mM)
+df_pH %>% filter(Soil == "Washington2_pH7.33")%>% select(H_mM) %>% unique() %>% arrange(H_mM)
+
+colnames(df_pH)
+dim(df_pH) #624
+
+
+
+# average the pH
+# 220329 only used 1 replicate. So, no need to average.
+# df_pH_ave <- df_pH %>% group_by(Nitrite_input, Nitrate_input, Soil, Titration_type, Concentration_M, Added_ul, Sample_type, H_mol, H_Molarity, H_mM, Time_point, Time_minutes, Time_hours, Time_days) %>% summarise(Ave_pH = mean(pH_colorimetric), Std_pH = sd(pH_colorimetric)) %>% ungroup()
+
+# colnames(df_pH_ave)
+
+```
+
+
+
+It's time to compare colorimeteric vs. pH micrometer measurements
+```{r}
+# melt pH_colorimetric and pH_meter
+df_plot <- df_pH
+
+# df_mlt <- melt(df_plot, measure.vars = c("pH_colorimetric", "pH_meter"), variable.name = "pH_method", value.name = "pH")
+
+# plot scatter plot
+ggplot(df_plot, aes(x=pH_colorimetric, y=pH_meter)) +
+  # geom_line(size=1)+
+  geom_point(size=3, alpha=1, color="royalblue") +
+  # geom_errorbar(aes(ymin=Ave_pH - Std_pH, ymax=Ave_pH + Std_pH), width=.05)+
+  geom_abline(intercept=0, slope=1)+
+  scale_color_brewer(palette='Set1') +
+  ylab("pH by micro electrode \n") +
+  xlab("\n pH by colorimetric assay") +
+  scale_x_continuous(breaks = seq(1,14,1), limits=c(1, 14))+
+  scale_y_continuous(breaks = seq(1,14,1), limits=c(1, 14))+
+  ggtitle("Comparing pH measuring methods \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d
+
+# Now, substitute all pH colorimetric reads to pH micro-meter reads, if exists.
+
+df_pH
+colnames(df_pH)
+
+df_pH$pH_meter
+df_pH$pH_colorimetric
+df_pH$pH <- ifelse(is.na(df_pH$pH_meter), df_pH$pH_colorimetric, df_pH$pH_meter)
+
+# average
+colnames(df_pH)
+
+df_pH_ave <- df_pH %>% group_by(Nitrite_input, Nitrate_input, Ammonium_input, Soil,Sample_type, Unit,  Titration_type, Concentration_M, Added_ul, H_mol, H_Molarity, H_mM, Chloramphenicol, Cycloheximide, Time_point, Time_minutes, Time_hours, Time_days) %>% summarise(Std_pH = sd(pH), Ave_pH = mean(pH)) %>% ungroup()
+
+dim(df_pH_ave) # 240
+```
+
+## 2. Plot titration curves
+Plot one time point at the time
+```{r}
+df_time
+# df_T0 <- df_pH_ave %>% filter(Time_point == "T0")
+
+df_plot <- df_pH_ave
+dim(df_plot)
+
+# remove cycloheximide samples
+df_plot2 <- df_plot
+df_plot2 %<>% filter(Titration_type != "No_Nitrate")
+dim(df_plot2)
+
+df_plot2 %<>% filter(Cycloheximide == "None")
+dim(df_plot2)
+
+# remove soil names from timepoint
+df_plot2$Time_point <- str_remove(df_plot2$Time_point, c("Barneveld2_"))
+df_plot2$Time_point <- str_remove(df_plot2$Time_point, c("Starke3_"))
+df_plot2$Time_point <- str_remove(df_plot2$Time_point, c("Oxbow3_"))
+df_plot2$Time_point <- str_remove(df_plot2$Time_point, c("Washington2_"))
+
+df_plot2$Soil <- factor(df_plot2$Soil, levels = c("Barneveld2_pH5.73", "Starke3_pH5.69", "Oxbow3_pH7.29", "Washington2_pH7.33"))
+df_plot2$Chloramphenicol <- factor(df_plot2$Chloramphenicol, levels = c("None", "CHL"))
+
+ggplot(df_plot2, aes(x=H_mM, y=Ave_pH, color=Time_point, group=Time_point)) +
+  geom_point(size=3, shape=16, alpha=1) +
+  geom_errorbar(aes(ymin=Ave_pH - Std_pH, ymax=Ave_pH + Std_pH), width=.05)+
+  geom_line(size=1)+
+  # scale_color_brewer(palette='Set1') +
+  ylab("pH \n") +
+  xlab("\n added [H+] mM") +
+  scale_x_continuous(breaks = seq(-100,100,10))+
+  scale_y_continuous(breaks = seq(2,11,1), limits=c(2, 11))+
+  ggtitle("Soil pH perturbation & titration curves \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d +
+  facet_grid(Chloramphenicol ~ Soil) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# difference between chloramphenicol?
+
+ggplot(df_plot2, aes(x=H_mM, y=Ave_pH, color=Chloramphenicol, group=Chloramphenicol)) +
+  geom_point(size=3, shape=16, alpha=1) +
+  geom_errorbar(aes(ymin=Ave_pH - Std_pH, ymax=Ave_pH + Std_pH), width=.05)+
+  geom_line(size=1)+
+  # scale_color_brewer(palette='Set1') +
+  ylab("pH \n") +
+  xlab("\n added [H+] mM") +
+  scale_x_continuous(breaks = seq(-100,100,10))+
+  scale_y_continuous(breaks = seq(2,11,1), limits=c(2, 11))+
+  ggtitle("Soil pH perturbation & titration curves \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d +
+  facet_grid(Time_point ~ Soil) +
+  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
+  theme(strip.text.x = element_text(size = 17))+
+  theme(strip.text.y = element_text(size = 17))
+
+# overlap by T9 no chloramphenicol
+
+df_plot3 <- df_plot2 %>% filter(Time_point == "T9", Chloramphenicol == "None")
+
+ggplot(df_plot3, aes(x=H_mM, y=Ave_pH, color=Soil, group=Soil)) +
+  geom_point(size=3, shape=16, alpha=1) +
+  geom_errorbar(aes(ymin=Ave_pH - Std_pH, ymax=Ave_pH + Std_pH), width=.05)+
+  geom_line(size=1)+
+  # scale_color_brewer(palette='Set1') +
+  ylab("pH \n") +
+  xlab("\n added [H+] mM") +
+  scale_x_continuous(breaks = seq(-100,100,10))+
+  scale_y_continuous(breaks = seq(3,10,1), limits=c(3, 10))+
+  ggtitle("[What pH to sample] Soil pH perturbation & titration curves \n") +
+  # label
+  # geom_text(aes(label = pH_colorimetric), size = 3, vjust = -1.5, family="serif", show.legend  = FALSE)+
+  mytheme_2d
+
+
+
+```
+
+
+
+Export pH for N dynamics analysis
+```{r}
+# export averaged
+df_pH_export <- df_pH_ave
+df_pH_export$Time_point <- str_remove(df_pH_export$Time_point, c("Barneveld2_"))
+df_pH_export$Time_point <- str_remove(df_pH_export$Time_point, c("Starke3_"))
+df_pH_export$Time_point <- str_remove(df_pH_export$Time_point, c("Oxbow3_"))
+df_pH_export$Time_point <- str_remove(df_pH_export$Time_point, c("Washington2_"))
+
+df_pH_export <- df_pH_export %>% filter(Time_point == "T9")
+colnames(df_pH_export)
+df_pH_export %<>% rename(pH = Ave_pH)
+df_pH_export$pH <- as.numeric(df_pH_export$pH)
+dim(df_pH_export)
+# write.xlsx(df_pH_export, "220622_pH_2soil_pH7_2soil_pH5.xlsx")
+
+```
+
+

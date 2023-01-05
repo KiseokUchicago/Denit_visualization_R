@@ -148,26 +148,6 @@ colnames(df_plot)
 dim(df_plot)
 
 # plot all
-ggplot(df_plot, aes(x=Sample_type, y=TOC_mgml, color=Sample_type, group=Sample_type)) +
-  geom_point(size=3, shape=16) +
-  # geom_line(size=1.2)+
-  # geom_errorbar(aes(ymin=NO3_mM - Std_NO3_mM, ymax=NO3_mM + Std_NO3_mM), width=.05)+
-  # scale_colour_gradientn(colours = col_pH(100)) +
-  # scale_color_manual(values=c("Black","Red","Blue", "Purple", "Brown")) +
-  ylab("Carbon (mg/ml)") +
-  xlab("Dilution factor (serial dilution)") +
-  # scale_y_continuous(breaks = seq(0,0.25,0.05), limits=c(0, 0.25))+
-  ggtitle("Direct chloroform application method to soil \n") +
-  # label
-  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
-  mytheme_2d +
-  # ggtitle("pH (Cycloheximide-treated)") +
-  facet_grid(Filtered ~ Chloroform) +
-  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
-  theme(strip.text.x = element_text(size = 17))+
-  theme(strip.text.y = element_text(size = 17))
-
-# plot all
 ggplot(df_plot, aes(x=Sample_type, y=TOC_mgml, color=Chloroform, group=Chloroform)) +
   geom_point(size=3, shape=16) +
   # geom_line(size=1.2)+
@@ -175,41 +155,17 @@ ggplot(df_plot, aes(x=Sample_type, y=TOC_mgml, color=Chloroform, group=Chlorofor
   # scale_colour_gradientn(colours = col_pH(100)) +
   # scale_color_manual(values=c("Black","Red","Blue", "Purple", "Brown")) +
   ylab("Carbon (mg/ml)") +
-  xlab("Dilution factor (serial dilution)") +
-  # scale_y_continuous(breaks = seq(0,0.25,0.05), limits=c(0, 0.25))+
-  ggtitle("Direct chloroform application method to soil \n") +
+  xlab("E. coli (OD600 = 2.334)") +
+  scale_y_continuous(breaks = seq(0,0.25,0.05), limits=c(0, 0.25))+
+  ggtitle("Direct chloroform application method testing by reaction size (ul) \n") +
   # label
   # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
   mytheme_2d +
   # ggtitle("pH (Cycloheximide-treated)") +
-  facet_grid( ~ Filtered) +
+  facet_grid( ~ Scale_ul) +
   theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
   theme(strip.text.x = element_text(size = 17))+
   theme(strip.text.y = element_text(size = 17))
-
-# average
-df_ave <- df_plot %>% group_by(Sample_type, Chloroform, Filtered) %>% summarize(std_mgml = sd(TOC_mgml), TOC_mgml = mean(TOC_mgml))
-dim(df_ave)
-
-ggplot(df_ave, aes(x=Sample_type, y=TOC_mgml, color=Chloroform, group=Chloroform)) +
-  geom_point(size=3, shape=16) +
-  # geom_line(size=1.2)+
-  geom_errorbar(aes(ymin=TOC_mgml - std_mgml, ymax=TOC_mgml + std_mgml), width=.05)+
-  # scale_colour_gradientn(colours = col_pH(100)) +
-  # scale_color_manual(values=c("Black","Red","Blue", "Purple", "Brown")) +
-  ylab("Carbon (mg/ml)") +
-  xlab("Dilution factor (serial dilution)") +
-  # scale_y_continuous(breaks = seq(0,0.25,0.05), limits=c(0, 0.25))+
-  ggtitle("Direct chloroform application method \n") +
-  # label
-  # geom_text(aes(label = round(NO3_mM,3)), size = 3, vjust = -1.5, family="serif", show.legend = FALSE)+
-  mytheme_2d +
-  # ggtitle("pH (Cycloheximide-treated)") +
-  facet_grid( ~ Filtered) +
-  theme(strip.background = element_rect(colour="black", fill="white", size=0.1))+
-  theme(strip.text.x = element_text(size = 17))+
-  theme(strip.text.y = element_text(size = 17))
-
 
 
 
